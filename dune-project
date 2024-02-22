@@ -15,7 +15,7 @@
 
 (package
  (name vcs)
- (synopsis "A collection of OCaml libraries defining interfaces and providers to interact with git repositories")
+ (synopsis "A versatile OCaml library for Git interaction")
  (depends
   (ocaml
    (>= 5.1))
