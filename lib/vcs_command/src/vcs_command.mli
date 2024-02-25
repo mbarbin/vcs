@@ -19,4 +19,4 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(*_ This signature is deliberately empty. *)
+val main : Command.t

@@ -24,7 +24,7 @@ The `vcs` repository contains several components:
 - **executable**: A placeholder for a runtime component based on `user-lib` that
   commits to a specific provider and concurrency model.
 - **git-cli**: A IO-free library that parses the output of a `git` cli process.
-- **vcs-git-provider**: An instantiation of `Git_cli` based on an `Eio` runtime.
+- **vcs-git**: An instantiation of `Git_cli` based on an `Eio` runtime.
 - **vcs-git-blocking**: An instantiation of `Git_cli` based on the OCaml `Stdlib`.
 
 ![Stdlib diagram](doc/diagram/stdlib.png)
@@ -61,8 +61,26 @@ of the Git format and protocol. In the `Vcs` framework, an Eio compatible
 
 ![Ocaml-git diagram](doc/diagram/ocaml-git.png)
 
+## Acknowledgements
+
+We would like to express our gratitude to the `Eio` developers for their work on
+the [Eio](https://github.com/ocaml-multicore/eio) project. The development of
+`Eio` has sparked a great deal of enthusiasm for us in our work on the `Vcs`
+project.
+
+We would like to express our appreciation for the work done by the Jane Street
+developers and their significant contributions to the open source community. In
+particular, this project has drawn inspiration from the `Mercurial` backend of
+`Iron`, Jane Street's code review tool. For more details about how `Iron` has
+influenced this project and the licensing implications, please refer to the
+`NOTICE.md` file.
+
+We would like to thank Vincent Simonet and contributors for
+[headache](https://github.com/Frama-C/headache), which we use to manage the
+copyright headers at the beginning of our files.
+
 ## Current Status
 
 The project is currently in the draft stage in a private repository. We're in
-the process of selecting an appropriate license and seeking preliminary
-feedback.
+the process of seeking preliminary feedback, and gradually writing and
+publishing the code.

@@ -19,7 +19,11 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "hello" =
-  print_s Vcs.hello_world;
-  [%expect {| "Hello, World!" |}]
+let print_cmd =
+  Command.basic
+    ~summary:"print hello world"
+    (let%map_open.Command () = return () in
+     fun () -> Eio_main.run @@ fun env -> Eio_writer.print_sexp ~env Vcs.hello_world)
 ;;
+
+let main = Command.group ~summary:"" [ "print", print_cmd ]

@@ -1,7 +1,7 @@
 digraph G {
     "vcs *" -> "user-lib *";
     "user-lib *" -> "executable (eio)";
-    "git-cli" -> "vcs-git-provider";
-    eio -> "vcs-git-provider";
-    "vcs-git-provider" -> "executable (eio)";
+    "git-cli" -> "vcs-git";
+    eio -> "vcs-git";
+    "vcs-git" -> "executable (eio)";
 }

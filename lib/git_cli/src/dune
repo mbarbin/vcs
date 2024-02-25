@@ -1,6 +1,6 @@
 (library
- (name vcs)
- (public_name vcs)
+ (name git_cli)
+ (public_name git-cli)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
  (libraries base)
  (preprocess
