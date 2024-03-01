@@ -84,7 +84,7 @@
     (>= v0.16)
     (< v0.17)))
   (eio
-   (>= 0.14))
+   (>= 0.15))
   (expect_test_helpers_core
    (and
     :with-test
@@ -148,11 +148,11 @@
     (>= v0.16)
     (< v0.17)))
   (eio
-   (>= 0.14))
+   (>= 0.15))
   (eio-writer
    (>= 0.0.3))
   (eio_main
-   (>= 0.14))
+   (>= 0.15))
   (expect_test_helpers_core
    (and
     :with-test
@@ -268,7 +268,7 @@
     (>= v0.16)
     (< v0.17)))
   (eio
-   (>= 0.14))
+   (>= 0.15))
   (eio-process
    (>= 0.0.1))
   (expect_test_helpers_core

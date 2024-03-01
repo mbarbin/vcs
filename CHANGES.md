@@ -7,6 +7,7 @@
 
 ### Changed
 
+- Upgrade `eio` to `0.15`.
 - Run `ppx_js_style` as a linter & make it a `dev` dependency.
 - Upgrade GitHub workflows `actions/checkout` to v4.
 - In CI, specify build target `@all`, and add `@lint`.

@@ -13,9 +13,9 @@ depends: [
   "base" {>= "v0.16" & < "v0.17"}
   "command-unix-for-opam" {>= "0.0.2"}
   "core" {>= "v0.16" & < "v0.17"}
-  "eio" {>= "0.14"}
+  "eio" {>= "0.15"}
   "eio-writer" {>= "0.0.3"}
-  "eio_main" {>= "0.14"}
+  "eio_main" {>= "0.15"}
   "expect_test_helpers_core" {with-test & >= "v0.16" & < "v0.17"}
   "ppx_compare" {>= "v0.16" & < "v0.17"}
   "ppx_enumerate" {>= "v0.16" & < "v0.17"}
