@@ -20,7 +20,7 @@ depends: [
   "ppx_expect" {with-test & >= "v0.16" & < "v0.17"}
   "ppx_hash" {>= "v0.16" & < "v0.17"}
   "ppx_here" {>= "v0.16" & < "v0.17"}
-  "ppx_js_style" {>= "v0.16" & < "v0.17"}
+  "ppx_js_style" {dev & >= "v0.16" & < "v0.17"}
   "ppx_let" {>= "v0.16" & < "v0.17"}
   "ppx_sexp_conv" {>= "v0.16" & < "v0.17"}
   "ppx_sexp_value" {>= "v0.16" & < "v0.17"}

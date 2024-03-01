@@ -53,6 +53,7 @@
     (< v0.17)))
   (ppx_js_style
    (and
+    :dev
     (>= v0.16)
     (< v0.17)))
   (ppx_let
@@ -112,6 +113,7 @@
     (< v0.17)))
   (ppx_js_style
    (and
+    :dev
     (>= v0.16)
     (< v0.17)))
   (ppx_let
@@ -179,6 +181,7 @@
     (< v0.17)))
   (ppx_js_style
    (and
+    :dev
     (>= v0.16)
     (< v0.17)))
   (ppx_let
@@ -236,6 +239,7 @@
     (< v0.17)))
   (ppx_js_style
    (and
+    :dev
     (>= v0.16)
     (< v0.17)))
   (ppx_let
@@ -297,6 +301,7 @@
     (< v0.17)))
   (ppx_js_style
    (and
+    :dev
     (>= v0.16)
     (< v0.17)))
   (ppx_let
@@ -354,6 +359,7 @@
     (< v0.17)))
   (ppx_js_style
    (and
+    :dev
     (>= v0.16)
     (< v0.17)))
   (ppx_let
