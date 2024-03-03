@@ -7,6 +7,7 @@
 
 ### Changed
 
+- Uses `expect-test-helpers` (reduce core dependencies)
 - Upgrade `eio` to `0.15`.
 - Run `ppx_js_style` as a linter & make it a `dev` dependency.
 - Upgrade GitHub workflows `actions/checkout` to v4.
