@@ -9,10 +9,8 @@
   -open
   Base
   -open
-  Stdio
-  -open
   Expect_test_helpers)
- (libraries base expect-test-helpers stdio vcs)
+ (libraries base expect-test-helpers vcs)
  (inline_tests)
  (lint
   (pps ppx_js_style -check-doc-comments))
