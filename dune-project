@@ -25,7 +25,7 @@
    (and
     (>= v0.16)
     (< v0.17)))
-  (expect_test_helpers_core
+  (expect-test-helpers
    (and
     :with-test
     (>= v0.16)
@@ -85,7 +85,7 @@
     (< v0.17)))
   (eio
    (>= 0.15))
-  (expect_test_helpers_core
+  (expect-test-helpers
    (and
     :with-test
     (>= v0.16)
@@ -153,7 +153,7 @@
    (>= 0.0.3))
   (eio_main
    (>= 0.15))
-  (expect_test_helpers_core
+  (expect-test-helpers
    (and
     :with-test
     (>= v0.16)
@@ -211,7 +211,7 @@
    (and
     (>= v0.16)
     (< v0.17)))
-  (expect_test_helpers_core
+  (expect-test-helpers
    (and
     :with-test
     (>= v0.16)
@@ -271,7 +271,7 @@
    (>= 0.15))
   (eio-process
    (>= 0.0.1))
-  (expect_test_helpers_core
+  (expect-test-helpers
    (and
     :with-test
     (>= v0.16)
@@ -329,7 +329,7 @@
    (and
     (>= v0.16)
     (< v0.17)))
-  (expect_test_helpers_core
+  (expect-test-helpers
    (and
     :with-test
     (>= v0.16)

@@ -10,8 +10,8 @@
   -open
   Base
   -open
-  Expect_test_helpers_base)
- (libraries base expect_test_helpers_core.expect_test_helpers_base vcs_git)
+  Expect_test_helpers)
+ (libraries base expect-test-helpers vcs_git)
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess
