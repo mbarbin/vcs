@@ -18,4 +18,3 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
-
