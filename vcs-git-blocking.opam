@@ -12,6 +12,8 @@ depends: [
   "ocaml" {>= "5.1"}
   "base" {>= "v0.16" & < "v0.17"}
   "expect-test-helpers" {with-test & >= "v0.16" & < "v0.17"}
+  "fpath" {>= "0.7.3"}
+  "fpath-extended" {>= "0.0.7"}
   "git-cli" {= version}
   "ppx_compare" {>= "v0.16" & < "v0.17"}
   "ppx_enumerate" {>= "v0.16" & < "v0.17"}
@@ -22,6 +24,7 @@ depends: [
   "ppx_let" {>= "v0.16" & < "v0.17"}
   "ppx_sexp_conv" {>= "v0.16" & < "v0.17"}
   "ppx_sexp_value" {>= "v0.16" & < "v0.17"}
+  "provider" {>= "0.0.4"}
   "vcs" {= version}
   "odoc" {with-doc}
 ]

@@ -30,6 +30,10 @@
     :with-test
     (>= v0.16)
     (< v0.17)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-extended
+   (>= 0.0.7))
   (ppx_compare
    (and
     (>= v0.16)
@@ -67,7 +71,9 @@
   (ppx_sexp_value
    (and
     (>= v0.16)
-    (< v0.17)))))
+    (< v0.17)))
+  (provider
+   (>= 0.0.4))))
 
 (package
  (name vcs-param)
@@ -90,6 +96,10 @@
     :with-test
     (>= v0.16)
     (< v0.17)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-extended
+   (>= 0.0.7))
   (ppx_compare
    (and
     (>= v0.16)
@@ -158,6 +168,10 @@
     :with-test
     (>= v0.16)
     (< v0.17)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-extended
+   (>= 0.0.7))
   (ppx_compare
    (and
     (>= v0.16)
@@ -216,6 +230,10 @@
     :with-test
     (>= v0.16)
     (< v0.17)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-extended
+   (>= 0.0.7))
   (ppx_compare
    (and
     (>= v0.16)
@@ -276,6 +294,10 @@
     :with-test
     (>= v0.16)
     (< v0.17)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-extended
+   (>= 0.0.7))
   (git-cli
    (= :version))
   (ppx_compare
@@ -316,6 +338,8 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (provider
+   (>= 0.0.4))
   (vcs
    (= :version))))
 
@@ -334,6 +358,10 @@
     :with-test
     (>= v0.16)
     (< v0.17)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-extended
+   (>= 0.0.7))
   (git-cli
    (= :version))
   (ppx_compare
@@ -374,5 +402,7 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (provider
+   (>= 0.0.4))
   (vcs
    (= :version))))

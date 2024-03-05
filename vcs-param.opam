@@ -14,6 +14,8 @@ depends: [
   "core" {>= "v0.16" & < "v0.17"}
   "eio" {>= "0.15"}
   "expect-test-helpers" {with-test & >= "v0.16" & < "v0.17"}
+  "fpath" {>= "0.7.3"}
+  "fpath-extended" {>= "0.0.7"}
   "ppx_compare" {>= "v0.16" & < "v0.17"}
   "ppx_enumerate" {>= "v0.16" & < "v0.17"}
   "ppx_expect" {with-test & >= "v0.16" & < "v0.17"}

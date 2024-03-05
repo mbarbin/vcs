@@ -1,8 +1,17 @@
 (library
  (name vcs_git_blocking)
  (public_name vcs-git-blocking)
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
- (libraries base unix)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Base
+  -open
+  Fpath_extended)
+ (libraries base fpath fpath-extended provider unix vcs)
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess

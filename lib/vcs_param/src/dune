@@ -1,8 +1,17 @@
 (library
  (name vcs_param)
  (public_name vcs-param)
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
- (libraries base core.command)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Base
+  -open
+  Fpath_extended)
+ (libraries base core.command fpath fpath-extended vcs)
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess
