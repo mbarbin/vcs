@@ -1,5 +1,6 @@
 (library
  (name vcs_command)
+ (public_name vcs-command)
  (flags
   :standard
   -w
@@ -9,16 +10,19 @@
   -open
   Base
   -open
-  Fpath_extended)
+  Fpath_extended
+  -open
+  Or_error.Let_syntax)
  (libraries
   base
   core.command
   eio
-  eio-writer
   eio_main
+  eio-writer
   fpath
   fpath-extended
   vcs
+  vcs-git
   vcs-param)
  (instrumentation
   (backend bisect_ppx))
@@ -32,4 +36,5 @@
    ppx_here
    ppx_let
    ppx_sexp_conv
-   ppx_sexp_value)))
+   ppx_sexp_value
+   ppx-let-fun)))
