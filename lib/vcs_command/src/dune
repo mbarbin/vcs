@@ -17,8 +17,8 @@
   base
   core.command
   eio
-  eio_main
   eio-writer
+  eio_main
   fpath
   fpath-extended
   vcs
