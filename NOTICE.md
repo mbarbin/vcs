@@ -68,4 +68,6 @@ For example, in addition to the vcs project header, such file would carry the fo
 
 The exact list of modules that are partially derived from `Iron` is as follows:
 
-- ... To be replaced by the actual list of files, as we add them to the repo ...
+- lib/vcs/src/name_status
+- lib/vcs/src/path_in_repo
+- lib/vcs/src/repo_root
