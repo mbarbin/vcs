@@ -1,6 +1,5 @@
 (library
- (name vcs_git_test)
- (inline_tests)
+ (name vcs_for_test)
  (flags
   :standard
   -w
@@ -10,21 +9,10 @@
   -open
   Base
   -open
-  Expect_test_helpers
-  -open
   Fpath_extended
   -open
   Or_error.Let_syntax)
- (libraries
-  base
-  eio
-  eio_main
-  expect-test-helpers
-  fpath
-  fpath-extended
-  vcs
-  vcs_for_test
-  vcs_git)
+ (libraries base fpath fpath-extended vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint
@@ -33,11 +21,8 @@
   (pps
    ppx_compare
    ppx_enumerate
-   ppx_expect
    ppx_hash
    ppx_here
    ppx_let
    ppx_sexp_conv
-   ppx_sexp_value
-   ppx-let-fun
-   ppx-let-fun)))
+   ppx_sexp_value)))

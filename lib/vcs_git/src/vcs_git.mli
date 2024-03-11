@@ -18,3 +18,64 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
+
+(** Implementation of a git provider for the {!module:Vcs} library, based on
+    [Eio] and {!module:Git_cli}.
+
+    This implementation is based on the [git] command line tool. We run it as an
+    external program within an [Eio] environment, producing the right command line
+    invocation and parsing the output to produce a typed version of the expected
+    results with [Git_cli]. Note that [git] must be found in the PATH of the
+    running environment. *)
+
+type tag =
+  [ Vcs.Trait.add
+  | Vcs.Trait.branch
+  | Vcs.Trait.commit
+  | Vcs.Trait.config
+  | Vcs.Trait.file_system
+  | Vcs.Trait.git
+  | Vcs.Trait.init
+  | Vcs.Trait.log
+  | Vcs.Trait.ls_files
+  | Vcs.Trait.name_status
+  | Vcs.Trait.num_status
+  | Vcs.Trait.refs
+  | Vcs.Trait.rev_parse
+  | Vcs.Trait.show
+  ]
+
+type 'a t = ([> tag ] as 'a) Vcs.t
+
+(** This is a convenient wrapper tag that may be used to designate a provider
+    with the exact list of traits supported by this implementation. *)
+type t' = tag t
+
+(** [create ~env] creates a [vcs] value that can be used by the {!module:Vcs}
+    library. *)
+val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> _ t
+
+(** The implementation of the provider is exported for convenience. Casual
+    users should prefer using [Vcs] directly. *)
+module Impl : sig
+  type t
+
+  val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
+
+  (** {1 Provider interfaces} *)
+
+  module Add : Vcs.Trait.Add.S with type t := t
+  module Branch : Vcs.Trait.Branch.S with type t := t
+  module Commit : Vcs.Trait.Commit.S with type t := t
+  module Config : Vcs.Trait.Config.S with type t := t
+  module File_system : Vcs.Trait.File_system.S with type t := t
+  module Git : Vcs.Trait.Git.S with type t := t
+  module Init : Vcs.Trait.Init.S with type t := t
+  module Log : Vcs.Trait.Log.S with type t := t
+  module Ls_files : Vcs.Trait.Ls_files.S with type t := t
+  module Name_status : Vcs.Trait.Name_status.S with type t := t
+  module Num_status : Vcs.Trait.Num_status.S with type t := t
+  module Refs : Vcs.Trait.Refs.S with type t := t
+  module Rev_parse : Vcs.Trait.Rev_parse.S with type t := t
+  module Show : Vcs.Trait.Show.S with type t := t
+end
