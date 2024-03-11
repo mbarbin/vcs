@@ -73,7 +73,11 @@
     (>= v0.16)
     (< v0.17)))
   (provider
-   (>= 0.0.4))))
+   (>= 0.0.4))
+  (union-find
+   (and
+    (>= v0.16)
+    (< v0.17)))))
 
 (package
  (name vcs-param)

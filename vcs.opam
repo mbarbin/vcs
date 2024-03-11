@@ -24,6 +24,7 @@ depends: [
   "ppx_sexp_conv" {>= "v0.16" & < "v0.17"}
   "ppx_sexp_value" {>= "v0.16" & < "v0.17"}
   "provider" {>= "0.0.4"}
+  "union-find" {>= "v0.16" & < "v0.17"}
   "odoc" {with-doc}
 ]
 build: [
