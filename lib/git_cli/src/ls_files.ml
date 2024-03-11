@@ -19,20 +19,19 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+module Make (Runtime : Runtime.S) = struct
+  type t = Runtime.t
 
-module Private = struct
-  module Munged_path = Munged_path
+  let ls_files t ~repo_root ~below =
+    Runtime.git
+      t
+      ~cwd:(Vcs.Repo_root.append repo_root below)
+      ~args:[ "ls-files"; "--full-name" ]
+      ~f:(fun output ->
+        let%bind stdout = Vcs.Git.exit0_and_stdout output in
+        Or_error.try_with (fun () ->
+          String.split_lines stdout
+          |> List.map ~f:(fun path ->
+            path |> Vcs.Path_in_repo.of_string |> Or_error.ok_exn)))
+  ;;
 end

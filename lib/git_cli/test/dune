@@ -1,6 +1,11 @@
 (library
  (name git_cli_test)
- (inline_tests)
+ (inline_tests
+  (deps
+   (glob_files *.name-status)
+   (glob_files *.num-status)
+   (glob_files *.log)
+   (glob_files *.refs)))
  (flags
   :standard
   -w
@@ -11,7 +16,9 @@
   Base
   -open
   Expect_test_helpers)
- (libraries base expect-test-helpers git_cli)
+ (libraries base eio eio_main expect-test-helpers git_cli)
+ (instrumentation
+  (backend bisect_ppx))
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess

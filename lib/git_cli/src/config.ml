@@ -19,20 +19,22 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+module Make (Runtime : Runtime.S) = struct
+  type t = Runtime.t
 
-module Private = struct
-  module Munged_path = Munged_path
+  let set_user_name t ~repo_root ~user_name =
+    Runtime.git
+      t
+      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
+      ~args:[ "config"; "user.name"; user_name |> Vcs.User_name.to_string ]
+      ~f:Vcs.Git.exit0
+  ;;
+
+  let set_user_email t ~repo_root ~user_email =
+    Runtime.git
+      t
+      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
+      ~args:[ "config"; "user.email"; user_email |> Vcs.User_email.to_string ]
+      ~f:Vcs.Git.exit0
+  ;;
 end

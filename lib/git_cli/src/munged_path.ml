@@ -19,20 +19,32 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+type t = Vcs.Num_status.Key.t =
+  | One_file of Vcs.Path_in_repo.t
+  | Two_files of
+      { src : Vcs.Path_in_repo.t
+      ; dst : Vcs.Path_in_repo.t
+      }
+[@@deriving equal, sexp_of]
 
-module Private = struct
-  module Munged_path = Munged_path
-end
+let arrow = lazy (String.Search_pattern.create " => ")
+
+let parse_exn str =
+  try
+    match String.Search_pattern.split_on (force arrow) str with
+    | [ str ] -> One_file (Vcs.Path_in_repo.v str)
+    | [ left; right ] ->
+      let prefix, left_of_arrow = String.rsplit2_exn left ~on:'{' in
+      let right_of_arrow, suffix = String.lsplit2_exn right ~on:'}' in
+      Two_files
+        { src = Vcs.Path_in_repo.v (prefix ^ left_of_arrow ^ suffix)
+        ; dst = Vcs.Path_in_repo.v (prefix ^ right_of_arrow ^ suffix)
+        }
+    | _ :: _ :: _ -> raise_s [%sexp "Too many '=>'"]
+    | [] -> assert false
+  with
+  | exn ->
+    raise_s
+      [%sexp
+        "Git_cli.Munged_path.parse_exn", "invalid path", (str : string), (exn : Exn.t)]
+;;

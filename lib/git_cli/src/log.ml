@@ -19,20 +19,26 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
+  match String.split (String.strip str) ~on:' ' with
+  | [ rev ] -> Init { rev = Vcs.Rev.v rev }
+  | [ rev; parent ] -> Commit { rev = Vcs.Rev.v rev; parent = Vcs.Rev.v parent }
+  | [ rev; parent1; parent2 ] ->
+    Merge
+      { rev = Vcs.Rev.v rev; parent1 = Vcs.Rev.v parent1; parent2 = Vcs.Rev.v parent2 }
+  | _ -> raise_s [%sexp "Invalid log line", (str : string)]
+;;
 
-module Private = struct
-  module Munged_path = Munged_path
+module Make (Runtime : Runtime.S) = struct
+  type t = Runtime.t
+
+  let all t ~repo_root =
+    Runtime.git
+      t
+      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
+      ~args:[ "log"; "--all"; "--pretty=format:%H %P" ]
+      ~f:(fun output ->
+        let%map output = Vcs.Git.exit0_and_stdout output in
+        List.map (String.split_lines output) ~f:(fun line -> parse_log_line_exn ~line))
+  ;;
 end

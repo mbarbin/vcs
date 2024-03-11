@@ -19,20 +19,22 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+module Make (Runtime : Runtime.S) = struct
+  type t = Runtime.t
 
-module Private = struct
-  module Munged_path = Munged_path
+  let rev_parse t ~repo_root ~arg =
+    Runtime.git
+      t
+      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
+      ~args:
+        [ "rev-parse"
+        ; "--verify"
+        ; (match (arg : Vcs.Rev_parse.Arg.t) with
+           | Head -> "HEAD"
+           | Branch { branch_name } -> branch_name |> Vcs.Branch_name.to_string)
+        ]
+      ~f:(fun output ->
+        let%bind stdout = Vcs.Git.exit0_and_stdout output in
+        Vcs.Rev.of_string (String.strip stdout))
+  ;;
 end

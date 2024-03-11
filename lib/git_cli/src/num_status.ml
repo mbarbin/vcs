@@ -19,20 +19,34 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+let parse_line_exn ~line : Vcs.Num_status.Change.t =
+  match String.split line ~on:'\t' with
+  | [] | [ _ ] | [ _; _ ] | _ :: _ :: _ :: _ :: _ ->
+    raise_s [%sexp "Unexpected output from git diff", (line : string)]
+  | [ insertions; deletions; munged_path ] ->
+    { Vcs.Num_status.Change.key = Munged_path.parse_exn munged_path
+    ; num_lines_in_diff =
+        { insertions = Int.of_string insertions; deletions = Int.of_string deletions }
+    }
+;;
 
-module Private = struct
-  module Munged_path = Munged_path
+let parse_lines_exn ~lines = List.map lines ~f:(fun line -> parse_line_exn ~line)
+
+module Make (Runtime : Runtime.S) = struct
+  type t = Runtime.t
+
+  let diff t ~repo_root ~(changed : Vcs.Name_status.Changed.t) =
+    let changed_param =
+      match changed with
+      | Between { src; dst } ->
+        Printf.sprintf "%s..%s" (src |> Vcs.Rev.to_string) (dst |> Vcs.Rev.to_string)
+    in
+    Runtime.git
+      t
+      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
+      ~args:[ "diff"; "--numstat"; changed_param ]
+      ~f:(fun output ->
+        let%bind stdout = Vcs.Git.exit0_and_stdout output in
+        Or_error.try_with (fun () -> parse_lines_exn ~lines:(String.split_lines stdout)))
+  ;;
 end

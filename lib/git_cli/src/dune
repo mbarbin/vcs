@@ -10,10 +10,15 @@
   -open
   Base
   -open
-  Fpath_extended)
+  Fpath_extended
+  -open
+  Or_error.Let_syntax)
  (libraries base fpath fpath-extended vcs)
+ (instrumentation
+  (backend bisect_ppx))
  (lint
   (pps ppx_js_style -check-doc-comments))
+ (modules_without_implementation runtime)
  (preprocess
   (pps
    ppx_compare

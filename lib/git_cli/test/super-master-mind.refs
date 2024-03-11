@@ -1,0 +1,15 @@
+7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages
+2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/main
+2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/subrepo
+8e0e6821261f8baaff7bf4d6820c41417bab91eb refs/remotes/origin/0.0.3-preview
+7135b7f4790562e94d9122365478f0d39f5ffead refs/remotes/origin/gh-pages
+2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/remotes/origin/main
+a2cc521adbc8dcbd4855968698176e8af54f6550 refs/remotes/origin/progress-bar
+7500919364fb176946e7598051ca7247addc3d15 refs/remotes/origin/progress-bar.2
+1892d4980ee74945eb98f67be26b745f96c0f482 refs/tags/0.0.1
+f4875717f6cd5481f690c88baad1fb1eff4e1a22 refs/tags/0.0.2
+0d4750ff594236a4bd970e1c90b8bbad80fcadff refs/tags/0.0.2^{}
+d5d13aaed2bd0c2f4a37217a21d703c73b8f38d6 refs/tags/0.0.3
+fc8e67fbc47302b7da682e9a7da626790bb59eaa refs/tags/0.0.3^{}
+c4e469326be2fdd5f451bbf0c501ee342396416c refs/tags/0.0.3-preview.1
+1887c81ebf9b84c548bc35038f7af82a18eb77bf refs/tags/0.0.3-preview.1^{}

@@ -19,20 +19,24 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+module Make (Runtime : Runtime.S) = struct
+  type t = Runtime.t
 
-module Private = struct
-  module Munged_path = Munged_path
+  let show_file_at_rev t ~repo_root ~rev ~path =
+    Runtime.git
+      t
+      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
+      ~args:
+        [ "show"
+        ; Printf.sprintf
+            "%s:%s"
+            (rev |> Vcs.Rev.to_string)
+            (path |> Vcs.Path_in_repo.to_string)
+        ]
+      ~f:(fun { exit_code; stdout; stderr = _ } ->
+        match exit_code with
+        | 0 -> Ok (`Present (Vcs.File_contents.create stdout))
+        | 128 -> Ok `Absent
+        | _ -> Or_error.error_string "expected error code 0 or 128")
+  ;;
 end

@@ -19,20 +19,39 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Add
-module Branch = Branch
-module Commit = Commit
-module Config = Config
-module Init = Init
-module Log = Log
-module Ls_files = Ls_files
-module Name_status = Name_status
-module Num_status = Num_status
-module Refs = Refs
-module Rev_parse = Rev_parse
-module Runtime = Runtime
-module Show = Show
+(* [super-master-mind.refs] has been created by capturing the output of:
 
-module Private = struct
-  module Munged_path = Munged_path
-end
+   {v
+      $ git show-refs
+   v}
+
+   In this test we verify that we can parse this output, and compute a few things
+   from it.
+
+   For a more comprehensive test, see [test_vcs_tree.ml]. *)
+
+let%expect_test "parse_exn" =
+  Eio_main.run
+  @@ fun env ->
+  let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.refs") in
+  let contents = Eio.Path.load path in
+  let lines = String.split_lines contents in
+  let refs = Git_cli.Refs.parse_lines_exn ~lines in
+  print_s
+    [%sexp
+      { tags = (Vcs.Refs.tags refs : Set.M(Vcs.Tag_name).t)
+      ; local_branches = (Vcs.Refs.local_branches refs : Vcs.Branch_name.t list)
+      ; remote_branches = (Vcs.Refs.remote_branches refs : Vcs.Remote_branch_name.t list)
+      }];
+  [%expect
+    {|
+     ((tags (0.0.1 0.0.2 0.0.3 0.0.3-preview.1))
+      (local_branches (gh-pages main subrepo))
+      (remote_branches (
+        ((remote_name origin) (branch_name 0.0.3-preview))
+        ((remote_name origin) (branch_name gh-pages))
+        ((remote_name origin) (branch_name main))
+        ((remote_name origin) (branch_name progress-bar))
+        ((remote_name origin) (branch_name progress-bar.2))))) |}];
+  ()
+;;
