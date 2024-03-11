@@ -18,3 +18,18 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module T = struct
+  type t = Relative_path.t [@@deriving compare, equal, hash, sexp_of]
+end
+
+include T
+include Comparable.Make (T)
+
+let root = Relative_path.empty
+let to_fpath = Relative_path.to_fpath
+let of_relative_path t = t
+let to_relative_path t = t
+let to_string = Relative_path.to_string
+let of_string str = str |> Relative_path.of_string >>| of_relative_path
+let v s = Or_error.ok_exn (of_string s)

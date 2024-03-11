@@ -18,3 +18,20 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+type t =
+  { name : string
+  ; mutable counter : int
+  }
+[@@deriving sexp_of]
+
+let create ~name = { name; counter = 0 }
+
+let next (t : t) =
+  let i = t.counter in
+  t.counter <- i + 1;
+  let seed = Printf.sprintf "%d virtual-rev %s %d" i t.name i in
+  let hex = seed |> Stdlib.Digest.string |> Stdlib.Digest.to_hex in
+  let rev = String.init 40 ~f:(fun i -> hex.[i % String.length hex]) in
+  Rev.of_string rev |> Or_error.ok_exn
+;;

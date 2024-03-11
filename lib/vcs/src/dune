@@ -10,10 +10,30 @@
   -open
   Base
   -open
-  Fpath_extended)
- (libraries base fpath fpath-extended provider)
+  Fpath_extended
+  -open
+  Or_error.Let_syntax)
+ (libraries base fpath fpath-extended provider union-find)
+ (instrumentation
+  (backend bisect_ppx))
  (lint
   (pps ppx_js_style -check-doc-comments))
+ (modules_without_implementation
+  trait_add
+  trait_branch
+  trait_commit
+  trait_config
+  trait_file_system
+  trait_git
+  trait_init
+  trait_log
+  trait_ls_files
+  trait_name_status
+  trait_num_status
+  trait_refs
+  trait_rev_parse
+  trait_show
+  validated_string_intf)
  (preprocess
   (pps
    ppx_compare

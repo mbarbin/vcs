@@ -18,3 +18,33 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module T = struct
+  type t =
+    { remote_name : Remote_name.t
+    ; branch_name : Branch_name.t
+    }
+  [@@deriving compare, equal, hash, sexp_of]
+end
+
+include T
+include Comparable.Make (T)
+
+let to_string { remote_name; branch_name } =
+  Printf.sprintf
+    "%s/%s"
+    (Remote_name.to_string remote_name)
+    (Branch_name.to_string branch_name)
+;;
+
+let of_string str =
+  match String.lsplit2 str ~on:'/' with
+  | None ->
+    Or_error.error_s [%sexp "Remote_branch_name.of_string: invalid entry", (str : string)]
+  | Some (remote, branch) ->
+    let%bind remote_name = Remote_name.of_string remote in
+    let%map branch_name = Branch_name.of_string branch in
+    { remote_name; branch_name }
+;;
+
+let v t = t |> of_string |> Or_error.ok_exn

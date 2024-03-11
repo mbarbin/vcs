@@ -18,3 +18,20 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+type t = Absolute_path.t [@@deriving compare, equal, hash, sexp_of]
+
+let of_absolute_path t = t
+let to_absolute_path t = t
+let to_string t = t |> to_absolute_path |> Absolute_path.to_string
+let of_string str = str |> Absolute_path.of_string >>| of_absolute_path
+let v str = str |> of_string |> Or_error.ok_exn
+
+let relativize t absolute_path =
+  Absolute_path.chop_prefix ~prefix:(to_absolute_path t) absolute_path
+  >>| Path_in_repo.of_relative_path
+;;
+
+let append t path_in_repo =
+  Absolute_path.append t (Path_in_repo.to_relative_path path_in_repo)
+;;

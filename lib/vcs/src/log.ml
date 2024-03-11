@@ -18,3 +18,32 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module Line = struct
+  type t =
+    | Init of { rev : Rev.t }
+    | Commit of
+        { rev : Rev.t
+        ; parent : Rev.t
+        }
+    | Merge of
+        { rev : Rev.t
+        ; parent1 : Rev.t
+        ; parent2 : Rev.t
+        }
+  [@@deriving equal, sexp_of]
+
+  let rev = function
+    | Commit { rev; _ } | Merge { rev; _ } | Init { rev } -> rev
+  ;;
+end
+
+type t = Line.t list [@@deriving equal, sexp_of]
+
+let roots (t : t) =
+  let queue = Queue.create () in
+  List.iter t ~f:(function
+    | Init { rev } -> Queue.enqueue queue rev
+    | Commit _ | Merge _ -> ());
+  Queue.to_list queue
+;;

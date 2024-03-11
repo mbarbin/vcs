@@ -18,3 +18,21 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module T = struct
+  type t = string [@@deriving compare, equal, hash, sexp_of]
+end
+
+include T
+include Comparable.Make (T)
+
+let invariant t =
+  (not (String.is_empty t))
+  && String.for_all t ~f:(fun c ->
+    Char.is_alphanum c || Char.equal c '-' || Char.equal c '_')
+;;
+
+include Validated_string.Make (struct
+    let module_name = "User_handle"
+    let invariant = invariant
+  end)

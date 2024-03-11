@@ -18,3 +18,10 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module Arg = struct
+  type t =
+    | Head
+    | Branch of { branch_name : Branch_name.t }
+  [@@deriving sexp_of]
+end

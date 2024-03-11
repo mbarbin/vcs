@@ -18,3 +18,31 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module Key = struct
+  type t =
+    | One_file of Path_in_repo.t
+    | Two_files of
+        { src : Path_in_repo.t
+        ; dst : Path_in_repo.t
+        }
+  [@@deriving compare, equal, hash, sexp_of]
+end
+
+module Change = struct
+  type t =
+    { key : Key.t
+    ; num_lines_in_diff : Num_lines_in_diff.t
+    }
+  [@@deriving sexp_of]
+end
+
+type t = Change.t list [@@deriving sexp_of]
+
+module Changed = struct
+  type t = Name_status.Changed.t =
+    | Between of
+        { src : Rev.t
+        ; dst : Rev.t
+        }
+end

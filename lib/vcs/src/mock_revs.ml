@@ -18,3 +18,35 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+type t =
+  { of_mock : Rev.t Hashtbl.M(Rev).t
+  ; to_mock : Rev.t Hashtbl.M(Rev).t
+  ; mock_rev_gen : Mock_rev_gen.t
+  }
+
+let create () =
+  let mock_rev_gen = Mock_rev_gen.create ~name:"mock-revs" in
+  { of_mock = Hashtbl.create (module Rev)
+  ; to_mock = Hashtbl.create (module Rev)
+  ; mock_rev_gen
+  }
+;;
+
+let next t = Mock_rev_gen.next t.mock_rev_gen
+
+let add_exn t ~rev ~mock_rev =
+  Hashtbl.add_exn t.to_mock ~key:rev ~data:mock_rev;
+  Hashtbl.add_exn t.of_mock ~key:mock_rev ~data:rev
+;;
+
+let to_mock t ~rev =
+  match Hashtbl.find t.to_mock rev with
+  | Some rev -> rev
+  | None ->
+    let mock_rev = next t in
+    add_exn t ~rev ~mock_rev;
+    mock_rev
+;;
+
+let of_mock t ~mock_rev = Hashtbl.find t.of_mock mock_rev

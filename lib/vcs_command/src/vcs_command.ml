@@ -23,7 +23,8 @@ let print_cmd =
   Command.basic
     ~summary:"print hello world"
     (let%map_open.Command () = return () in
-     fun () -> Eio_main.run @@ fun env -> Eio_writer.print_sexp ~env Vcs.hello_world)
+     fun () ->
+       Eio_main.run @@ fun env -> Eio_writer.print_sexp ~env [%sexp "Hello, World!"])
 ;;
 
 let main = Command.group ~summary:"" [ "print", print_cmd ]

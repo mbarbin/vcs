@@ -18,3 +18,22 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module type S = Validated_string_intf.S
+module type X = Validated_string_intf.X
+
+module Make (X : X) = struct
+  let to_string t = t
+
+  let of_string s =
+    if X.invariant s
+    then Ok s
+    else
+      Or_error.error_s
+        [%sexp
+          (Printf.sprintf "%s.of_string: invalid entry" X.module_name : string)
+          , (s : string)]
+  ;;
+
+  let v s = Or_error.ok_exn (of_string s)
+end

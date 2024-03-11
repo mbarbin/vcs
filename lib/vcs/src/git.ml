@@ -18,3 +18,22 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module Output = struct
+  type t =
+    { exit_code : int
+    ; stdout : string
+    ; stderr : string
+    }
+  [@@deriving sexp_of]
+end
+
+let exit0 { Output.exit_code; stdout = _; stderr = _ } =
+  if Int.equal exit_code 0 then Ok () else Or_error.error_string "expected exit code 0"
+;;
+
+let exit0_and_stdout { Output.exit_code; stdout; stderr = _ } =
+  if Int.equal exit_code 0
+  then Ok stdout
+  else Or_error.error_string "expected exit code 0"
+;;

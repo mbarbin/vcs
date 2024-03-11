@@ -18,3 +18,23 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module T = struct
+  type t =
+    | Local_branch of { branch_name : Branch_name.t }
+    | Remote_branch of { remote_branch_name : Remote_branch_name.t }
+    | Tag of { tag_name : Tag_name.t }
+    | Other of { name : string }
+  [@@deriving compare, equal, hash, sexp_of]
+end
+
+include T
+include Comparable.Make (T)
+
+let to_string = function
+  | Local_branch { branch_name } -> "refs/heads/" ^ Branch_name.to_string branch_name
+  | Remote_branch { remote_branch_name } ->
+    "refs/remotes/" ^ Remote_branch_name.to_string remote_branch_name
+  | Tag { tag_name } -> "refs/tags/" ^ Tag_name.to_string tag_name
+  | Other { name } -> "refs/" ^ name
+;;

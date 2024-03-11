@@ -18,3 +18,14 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module T = struct
+  type t = GitHub [@@deriving compare, equal, enumerate, hash, sexp_of]
+end
+
+include T
+include Comparable.Make (T)
+
+let to_string_hum = function
+  | GitHub -> "GitHub"
+;;

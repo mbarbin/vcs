@@ -18,3 +18,68 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module Change = struct
+  type t =
+    | Added of Path_in_repo.t
+    | Removed of Path_in_repo.t
+    | Modified of Path_in_repo.t
+    | Copied of
+        { src : Path_in_repo.t
+        ; dst : Path_in_repo.t
+        ; similarity : int
+        }
+    | Renamed of
+        { src : Path_in_repo.t
+        ; dst : Path_in_repo.t
+        ; similarity : int
+        }
+  [@@deriving sexp_of]
+end
+
+type t = Change.t list [@@deriving sexp_of]
+
+let files_at_src (t : t) =
+  List.fold
+    t
+    ~init:(Set.empty (module Path_in_repo))
+    ~f:(fun set change ->
+      match change with
+      | Added _ -> set
+      | Removed path
+      | Modified path
+      | Copied { src = path; dst = _; similarity = _ }
+      | Renamed { src = path; dst = _; similarity = _ } -> Set.add set path)
+;;
+
+let files_at_dst (t : t) =
+  List.fold
+    t
+    ~init:(Set.empty (module Path_in_repo))
+    ~f:(fun set change ->
+      match change with
+      | Removed _ -> set
+      | Added path
+      | Modified path
+      | Copied { src = _; dst = path; similarity = _ }
+      | Renamed { src = _; dst = path; similarity = _ } -> Set.add set path)
+;;
+
+let files (t : t) =
+  List.fold
+    t
+    ~init:(Set.empty (module Path_in_repo))
+    ~f:(fun set change ->
+      match change with
+      | Removed path | Added path | Modified path -> Set.add set path
+      | Copied { src; dst; similarity = _ } | Renamed { src; dst; similarity = _ } ->
+        Set.add (Set.add set src) dst)
+;;
+
+module Changed = struct
+  type t =
+    | Between of
+        { src : Rev.t
+        ; dst : Rev.t
+        }
+end

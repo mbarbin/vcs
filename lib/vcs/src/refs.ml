@@ -18,3 +18,33 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+module Line = struct
+  type t =
+    { rev : Rev.t
+    ; ref_kind : Ref_kind.t
+    }
+  [@@deriving equal, sexp_of]
+end
+
+type t = Line.t list [@@deriving equal, sexp_of]
+
+let tags (t : t) =
+  List.filter_map t ~f:(function
+    | { rev = _; ref_kind = Tag { tag_name } } -> Some tag_name
+    | _ -> None)
+  |> Set.of_list (module Tag_name)
+;;
+
+let local_branches (t : t) =
+  List.filter_map t ~f:(function
+    | { rev = _; ref_kind = Local_branch { branch_name } } -> Some branch_name
+    | _ -> None)
+;;
+
+let remote_branches (t : t) =
+  List.filter_map t ~f:(function
+    | { rev = _; ref_kind = Remote_branch { remote_branch_name } } ->
+      Some remote_branch_name
+    | _ -> None)
+;;
