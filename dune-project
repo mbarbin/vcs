@@ -25,6 +25,10 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
   (expect-test-helpers
    (and
     :with-test
@@ -89,6 +93,10 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
   (core
    (and
     (>= v0.16)
@@ -155,6 +163,10 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
   (command-unix-for-opam
    (>= 0.0.2))
   (core
@@ -229,6 +241,10 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
   (expect-test-helpers
    (and
     :with-test
@@ -289,6 +305,10 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
   (eio
    (>= 0.15))
   (eio-process
@@ -357,6 +377,10 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
   (expect-test-helpers
    (and
     :with-test
