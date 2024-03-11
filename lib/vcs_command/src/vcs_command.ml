@@ -101,34 +101,15 @@ let ls_files_cmd =
        return ())
 ;;
 
-let rev_parse_cmd =
+let log_cmd =
   eio_command
-    ~summary:"revision of a branch or HEAD"
-    (let%map_open.Command config = Vcs_param.config
-     and branch_name = Vcs_param.anon_branch_name_opt in
+    ~summary:"show the log of current repo"
+    (let%map_open.Command config = Vcs_param.config in
      fun env ->
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind arg =
-         match branch_name with
-         | None -> return Vcs.Rev_parse.Arg.Head
-         | Some branch_name ->
-           let%map branch_name = branch_name in
-           Vcs.Rev_parse.Arg.Branch { branch_name }
-       in
-       let%bind rev = Vcs.rev_parse vcs ~repo_root ~arg in
-       Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
+       let%bind log = Vcs.log vcs ~repo_root in
+       Eio_writer.print_sexp ~env [%sexp (log : Vcs.Log.t)];
        return ())
-;;
-
-let rename_current_branch_cmd =
-  eio_command
-    ~summary:"move/rename a branch to a new name"
-    (let%map_open.Command config = Vcs_param.config
-     and branch_name = Vcs_param.anon_branch_name in
-     fun env ->
-       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind branch_name = branch_name in
-       Vcs.rename_current_branch vcs ~repo_root ~to_:branch_name)
 ;;
 
 let name_status_cmd =
@@ -163,6 +144,65 @@ let num_status_cmd =
        in
        Eio_writer.print_sexp ~env [%sexp (num_status : Vcs.Num_status.t)];
        return ())
+;;
+
+let rename_current_branch_cmd =
+  eio_command
+    ~summary:"move/rename a branch to a new name"
+    (let%map_open.Command config = Vcs_param.config
+     and branch_name = Vcs_param.anon_branch_name in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind branch_name = branch_name in
+       Vcs.rename_current_branch vcs ~repo_root ~to_:branch_name)
+;;
+
+let refs_cmd =
+  eio_command
+    ~summary:"show the refs of current repo"
+    (let%map_open.Command config = Vcs_param.config in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind refs = Vcs.refs vcs ~repo_root in
+       Eio_writer.print_sexp ~env [%sexp (refs : Vcs.Refs.t)];
+       return ())
+;;
+
+let rev_parse_cmd =
+  eio_command
+    ~summary:"revision of a branch or HEAD"
+    (let%map_open.Command config = Vcs_param.config
+     and branch_name = Vcs_param.anon_branch_name_opt in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind arg =
+         match branch_name with
+         | None -> return Vcs.Rev_parse.Arg.Head
+         | Some branch_name ->
+           let%map branch_name = branch_name in
+           Vcs.Rev_parse.Arg.Branch { branch_name }
+       in
+       let%bind rev = Vcs.rev_parse vcs ~repo_root ~arg in
+       Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
+       return ())
+;;
+
+let save_file_cmd =
+  eio_command
+    ~summary:"save stdin to a file from the filesystem (aka tee)"
+    (let%map_open.Command config = Vcs_param.config
+     and path = Vcs_param.anon_path in
+     fun env ->
+       let%bind { vcs; repo_root = _; context } = Vcs_param.initialize ~env ~config in
+       let%bind path = Vcs_param.resolve path ~context in
+       let file_contents =
+         Eio.Buf_read.parse_exn
+           Eio.Buf_read.take_all
+           (Eio.Stdenv.stdin env)
+           ~max_size:Int.max_value
+         |> Vcs.File_contents.create
+       in
+       Vcs.save_file vcs ~path ~file_contents)
 ;;
 
 let set_user_config_cmd =
@@ -202,9 +242,9 @@ let show_file_at_rev_cmd =
        return ())
 ;;
 
-let compute_tree_cmd =
+let tree_cmd =
   eio_command
-    ~summary:"compute_tree in current repo"
+    ~summary:"compute tree of current repo"
     (let%map_open.Command config = Vcs_param.config in
      fun env ->
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
@@ -225,15 +265,18 @@ sub commands exposed here.
 |})
     [ "add-cmd", add_cmd
     ; "commit", commit_cmd
-    ; "compute-tree", compute_tree_cmd
     ; "init-cmd", init_cmd
     ; "load-file", load_file_cmd
+    ; "log", log_cmd
     ; "ls-files", ls_files_cmd
     ; "name-status", name_status_cmd
     ; "num-status", num_status_cmd
+    ; "refs", refs_cmd
     ; "rename-current-branch", rename_current_branch_cmd
     ; "rev-parse", rev_parse_cmd
+    ; "save-file", save_file_cmd
     ; "set-user-config", set_user_config_cmd
     ; "show-file-at-rev", show_file_at_rev_cmd
+    ; "tree", tree_cmd
     ]
 ;;
