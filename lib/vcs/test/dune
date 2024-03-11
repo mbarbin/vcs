@@ -1,5 +1,6 @@
 (library
  (name vcs_test)
+ (inline_tests)
  (flags
   :standard
   -w
@@ -9,9 +10,16 @@
   -open
   Base
   -open
-  Expect_test_helpers)
- (libraries base expect-test-helpers vcs)
- (inline_tests)
+  Expect_test_helpers
+  -open
+  Fpath_extended
+  -open
+  Or_error.Let_syntax
+  -open
+  Vcs)
+ (libraries base expect-test-helpers fpath fpath-extended vcs)
+ (instrumentation
+  (backend bisect_ppx))
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess
