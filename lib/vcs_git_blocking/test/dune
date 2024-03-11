@@ -12,6 +12,8 @@
   -open
   Expect_test_helpers)
  (libraries base expect-test-helpers vcs_git_blocking)
+ (instrumentation
+  (backend bisect_ppx))
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess

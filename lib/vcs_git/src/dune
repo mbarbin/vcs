@@ -12,6 +12,8 @@
   -open
   Fpath_extended)
  (libraries base eio fpath fpath-extended provider vcs)
+ (instrumentation
+  (backend bisect_ppx))
  (lint
   (pps ppx_js_style -check-doc-comments))
  (preprocess
