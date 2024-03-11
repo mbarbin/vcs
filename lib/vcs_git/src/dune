@@ -13,15 +13,7 @@
   Fpath_extended
   -open
   Or_error.Let_syntax)
- (libraries
-  base
-  eio
-  eio-extended
-  eio-process
-  fpath
-  fpath-extended
-  git-cli
-  vcs)
+ (libraries base eio eio-process fpath fpath-extended git-cli vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

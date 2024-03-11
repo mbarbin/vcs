@@ -21,15 +21,16 @@
 
 module Runtime = struct
   type t =
-    { fs : Eio_extended.Path.t'
-    ; process_mgr : Eio_extended.Process.mgr'
+    { fs : Eio.Fs.dir_ty Eio.Path.t
+    ; process_mgr : [ `Generic ] Eio.Process.mgr_ty Eio.Process.mgr
     }
 
   let name _ = "git"
 
   let create ~env =
-    { fs = (Eio.Stdenv.fs env :> Eio_extended.Path.t')
-    ; process_mgr = (Eio.Stdenv.process_mgr env :> Eio_extended.Process.mgr')
+    { fs = (Eio.Stdenv.fs env :> Eio.Fs.dir_ty Eio.Path.t)
+    ; process_mgr =
+        (Eio.Stdenv.process_mgr env :> [ `Generic ] Eio.Process.mgr_ty Eio.Process.mgr)
     }
   ;;
 
