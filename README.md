@@ -80,8 +80,35 @@ We would like to thank Vincent Simonet and contributors for
 [headache](https://github.com/Frama-C/headache), which we use to manage the
 copyright headers at the beginning of our files.
 
+## Code documentation
+
+The code documentation of the latest release is built with `odoc` and published
+to `GitHub` pages [here](https://mbarbin.github.io/vcs).
+
+## Build
+
+This repo depends on unreleased packages that are published to a custom
+[opam-repository](https://github.com/mbarbin/opam-repository.git), which must be
+added to the opam switch used to build the project.
+
+For example, if you use a local opam switch, this would look like this:
+
+```sh
+git clone https://github.com/mbarbin/vcs.git
+cd vcs
+opam switch create . 5.1.1 --no-install
+eval $(opam env)
+opam repo add mbarbin https://github.com/mbarbin/opam-repository.git
+opam install . --deps-only --with-test --with-doc
+```
+
+Once this is setup, you can build with dune:
+
+```sh
+dune build @all @runtest
+```
+
 ## Current Status
 
-The project is currently in the draft stage in a private repository. We're in
-the process of seeking preliminary feedback, and gradually writing and
-publishing the code.
+The project is currently in the draft stage. We're in the process of seeking
+preliminary feedback, and gradually writing and publishing the code.
