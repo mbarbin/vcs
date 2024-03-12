@@ -18,3 +18,6 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+(* Tests for [vcs-command] are done as cram tests running the [ocaml-vcs]
+   executable. They're located in [ROOT/test/run.t]. *)

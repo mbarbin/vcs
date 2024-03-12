@@ -19,32 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t =
-  { mock_revs : Vcs.Mock_revs.t
-  ; mutable has_committed : bool
-  }
-
-let mock_revs t = t.mock_revs
-
-let create () =
-  let mock_revs = Vcs.Mock_revs.create () in
-  { mock_revs; has_committed = false }
-;;
-
-let commit t ~vcs ~repo_root ~commit_message =
-  let%bind rev = Vcs.commit vcs ~repo_root ~commit_message in
-  let rev = Vcs.Mock_revs.to_mock t.mock_revs ~rev in
-  let%bind () =
-    if not t.has_committed
-    then (
-      t.has_committed <- true;
-      Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main)
-    else return ()
-  in
-  return rev
-;;
-
-let init _ ~vcs ~path =
+let init ~vcs ~path =
   let%bind repo_root = Vcs.init vcs ~path in
   let%bind () =
     Vcs.set_user_name vcs ~repo_root ~user_name:(Vcs.User_name.v "Test User")
@@ -53,18 +28,4 @@ let init _ ~vcs ~path =
     Vcs.set_user_email vcs ~repo_root ~user_email:(Vcs.User_email.v "test@example.com")
   in
   return repo_root
-;;
-
-let rev_parse t ~vcs ~repo_root ~arg =
-  let%map rev = Vcs.rev_parse vcs ~repo_root ~arg in
-  Vcs.Mock_revs.to_mock t.mock_revs ~rev
-;;
-
-let show_file_at_rev t ~vcs ~repo_root ~rev ~path =
-  let%bind rev =
-    match Vcs.Mock_revs.of_mock t.mock_revs ~mock_rev:rev with
-    | Some rev -> return rev
-    | None -> Or_error.error_s [%sexp "No such mock revision", { rev : Vcs.Rev.t }]
-  in
-  Vcs.show_file_at_rev vcs ~repo_root ~rev ~path
 ;;

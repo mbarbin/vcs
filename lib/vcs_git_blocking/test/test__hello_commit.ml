@@ -19,16 +19,43 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "init" =
-  let%fun env = Eio_main.run in
-  let vcs = Vcs_git.create ~env in
+(* This is a simple test to make sure we can initialize a repo and commit a
+   file, and verify the mock rev mapping, in a purely blocking fashion. *)
+
+let%expect_test "hello commit" =
+  let vcs = Vcs_git_blocking.create () in
+  let mock_revs = Vcs.Mock_revs.create () in
   let cwd = Unix.getcwd () |> Absolute_path.v in
   let repo_root = Vcs_for_test.init ~vcs ~path:cwd |> Or_error.ok_exn in
-  require_equal
-    [%here]
-    (module Absolute_path)
-    cwd
-    (Vcs.Repo_root.to_absolute_path repo_root);
-  [%expect {||}];
+  let hello_file = Vcs.Path_in_repo.v "hello.txt" in
+  let () =
+    Vcs.save_file
+      vcs
+      ~path:(Vcs.Repo_root.append repo_root hello_file)
+      ~file_contents:(Vcs.File_contents.create "Hello World!")
+    |> Or_error.ok_exn
+  in
+  let () = Vcs.add vcs ~repo_root ~path:hello_file |> Or_error.ok_exn in
+  let rev =
+    Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
+    |> Or_error.ok_exn
+  in
+  let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
+  print_s [%sexp (mock_rev : Vcs.Rev.t)];
+  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_s
+    [%sexp
+      (Vcs.show_file_at_rev
+         vcs
+         ~repo_root
+         ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.value_exn ~here:[%here])
+         ~path:hello_file
+       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+  [%expect {| (Ok (Present "Hello World!")) |}];
+  print_s
+    [%sexp
+      (Vcs.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
+       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+  [%expect {| (Ok (Present "Hello World!")) |}];
   ()
 ;;

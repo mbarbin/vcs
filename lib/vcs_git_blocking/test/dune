@@ -10,8 +10,17 @@
   -open
   Base
   -open
+  Fpath_extended
+  -open
   Expect_test_helpers)
- (libraries base expect-test-helpers vcs_git_blocking)
+ (libraries
+  base
+  expect-test-helpers
+  fpath
+  fpath-extended
+  vcs
+  vcs_for_test
+  vcs_git_blocking)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -32,7 +32,7 @@ module type S = sig
   val load_file : t -> path:Absolute_path.t -> File_contents.t Or_error.t
 
   val save_file
-    :  ?perms:int (** defaults to [0o600]. *)
+    :  ?perms:int (** defaults to [0o666]. *)
     -> t
     -> path:Absolute_path.t
     -> file_contents:File_contents.t

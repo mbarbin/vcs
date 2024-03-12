@@ -28,11 +28,19 @@ module Make (X : X) = struct
   let of_string s =
     if X.invariant s
     then Ok s
-    else
+    else (
+      let shown_s =
+        if String.length s > 40
+        then
+          String.sub s ~pos:0 ~len:40
+          ^ "..."
+          ^ Printf.sprintf " (%d characters total)" (String.length s)
+        else s
+      in
       Or_error.error_s
         [%sexp
           (Printf.sprintf "%s.of_string: invalid entry" X.module_name : string)
-          , (s : string)]
+          , (shown_s : string)])
   ;;
 
   let v s = Or_error.ok_exn (of_string s)

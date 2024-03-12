@@ -29,7 +29,7 @@ let%expect_test "of_string" =
   [%expect {| John Doe |}];
   test "jdoe";
   [%expect {| jdoe |}];
-  (* We accept '<,>' chars, this may change later. *)
+  (* We currently accept '<,>' chars. *)
   test "John Doe <john.doe@mail.com>";
   [%expect {| John Doe <john.doe@mail.com> |}];
   print_endline
@@ -38,5 +38,11 @@ let%expect_test "of_string" =
        ~user_email:("john.doe@mail.com" |> User_email.of_string |> Or_error.ok_exn)
      |> Author.to_string);
   [%expect {| John Doe <john.doe@mail.com> |}];
+  (* Some characters are currently not accepted. *)
+  test "\\";
+  [%expect {| (Error ("Author.of_string: invalid entry" \)) |}];
+  (* And we do not accept the empty string. *)
+  test "";
+  [%expect {| (Error ("Author.of_string: invalid entry" "")) |}];
   ()
 ;;

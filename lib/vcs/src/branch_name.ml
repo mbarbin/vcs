@@ -27,7 +27,8 @@ include T
 include Comparable.Make (T)
 
 let invariant t =
-  String.for_all t ~f:(fun c ->
+  (not (String.is_empty t))
+  && String.for_all t ~f:(fun c ->
     Char.is_alphanum c
     || Char.equal c '-'
     || Char.equal c '_'

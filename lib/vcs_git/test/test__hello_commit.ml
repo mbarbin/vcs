@@ -25,10 +25,10 @@
 let%expect_test "hello commit" =
   let%fun env = Eio_main.run in
   let vcs = Vcs_git.create ~env in
-  let vcs_for_test = Vcs_for_test.create () in
-  let cwd = Unix.getcwd () |> Absolute_path.of_string |> Or_error.ok_exn in
-  let repo_root = Vcs_for_test.init vcs_for_test ~vcs ~path:cwd |> Or_error.ok_exn in
-  let hello_file = Vcs.Path_in_repo.of_string "hello.txt" |> Or_error.ok_exn in
+  let mock_revs = Vcs.Mock_revs.create () in
+  let cwd = Unix.getcwd () |> Absolute_path.v in
+  let repo_root = Vcs_for_test.init ~vcs ~path:cwd |> Or_error.ok_exn in
+  let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   let () =
     Vcs.save_file
       vcs
@@ -38,18 +38,24 @@ let%expect_test "hello commit" =
   in
   let () = Vcs.add vcs ~repo_root ~path:hello_file |> Or_error.ok_exn in
   let rev =
-    Vcs_for_test.commit
-      vcs_for_test
-      ~vcs
-      ~repo_root
-      ~commit_message:(Vcs.Commit_message.v "hello commit")
+    Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
     |> Or_error.ok_exn
   in
-  print_s [%sexp (rev : Vcs.Rev.t)];
+  let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
+  print_s [%sexp (mock_rev : Vcs.Rev.t)];
   [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
   print_s
     [%sexp
-      (Vcs_for_test.show_file_at_rev vcs_for_test ~vcs ~repo_root ~rev ~path:hello_file
+      (Vcs.show_file_at_rev
+         vcs
+         ~repo_root
+         ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.value_exn ~here:[%here])
+         ~path:hello_file
+       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+  [%expect {| (Ok (Present "Hello World!")) |}];
+  print_s
+    [%sexp
+      (Vcs.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
        : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
   [%expect {| (Ok (Present "Hello World!")) |}];
   ()

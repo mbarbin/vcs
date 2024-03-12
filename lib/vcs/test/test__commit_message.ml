@@ -19,16 +19,26 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "init" =
-  let%fun env = Eio_main.run in
-  let vcs = Vcs_git.create ~env in
-  let cwd = Unix.getcwd () |> Absolute_path.v in
-  let repo_root = Vcs_for_test.init ~vcs ~path:cwd |> Or_error.ok_exn in
-  require_equal
-    [%here]
-    (module Absolute_path)
-    cwd
-    (Vcs.Repo_root.to_absolute_path repo_root);
-  [%expect {||}];
+let%expect_test "of_string" =
+  let test str =
+    match Commit_message.of_string str with
+    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Ok a -> print_endline (Commit_message.to_string a)
+  in
+  (* We do not accept the empty string. *)
+  test "";
+  [%expect {| (Error ("Commit_message.of_string: invalid entry" "")) |}];
+  (* Currently all characters are currently accepted. *)
+  test "\\ including _ spaces and \n newlines";
+  [%expect {|
+    \ including _ spaces and
+     newlines |}];
+  (* However we reject entries that are too long. The limit may change later, TBD. *)
+  test (String.make 10000 'a');
+  [%expect
+    {|
+    (Error (
+      "Commit_message.of_string: invalid entry"
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa... (10000 characters total)")) |}];
   ()
 ;;

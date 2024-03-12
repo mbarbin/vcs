@@ -19,16 +19,14 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "init" =
-  let%fun env = Eio_main.run in
-  let vcs = Vcs_git.create ~env in
-  let cwd = Unix.getcwd () |> Absolute_path.v in
-  let repo_root = Vcs_for_test.init ~vcs ~path:cwd |> Or_error.ok_exn in
-  require_equal
-    [%here]
-    (module Absolute_path)
-    cwd
-    (Vcs.Repo_root.to_absolute_path repo_root);
+let%expect_test "create" =
+  (* There's nothing particular to test, file contents is simply a wrapper. *)
+  let c = File_contents.create "raw contents\nof file\n" in
+  require_equal [%here] (module String) (File_contents.to_string c) (c :> string);
   [%expect {||}];
+  print_string (c :> string);
+  [%expect {|
+    raw contents
+    of file |}];
   ()
 ;;

@@ -18,12 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-(** Making it easier to use a vcs backend in tests. *)
-
-(** This takes care of setting the user config with dummy values, so that
-    running [commit] doesn't fail. *)
-val init
-  :  vcs:[> Vcs.Trait.config | Vcs.Trait.init ] Vcs.t
-  -> path:Absolute_path.t
-  -> Vcs.Repo_root.t Or_error.t

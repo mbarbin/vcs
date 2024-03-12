@@ -18,3 +18,25 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+let%expect_test "exit0" =
+  let test output = print_s [%sexp (Git.exit0 output : unit Or_error.t)] in
+  test { exit_code = 0; stdout = ""; stderr = "" };
+  [%expect {| (Ok ()) |}];
+  (* The error does not contain the stdout or stderr, as this is already handled
+     by the code that interprets the result of the user function supplied to
+     [Vcs.git]. *)
+  test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
+  [%expect {| (Error "expected exit code 0") |}];
+  ()
+;;
+
+let%expect_test "exit0_and_stdout" =
+  let test output = print_s [%sexp (Git.exit0_and_stdout output : string Or_error.t)] in
+  test { exit_code = 0; stdout = "stdout"; stderr = "" };
+  [%expect {| (Ok stdout) |}];
+  (* Same remark as in [exit0] regarding the error trace. *)
+  test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
+  [%expect {| (Error "expected exit code 0") |}];
+  ()
+;;
