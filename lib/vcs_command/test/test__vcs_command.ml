@@ -20,4 +20,4 @@
 (*******************************************************************************)
 
 (* Tests for [vcs-command] are done as cram tests running the [ocaml-vcs]
-   executable. They're located in [ROOT/test/run.t]. *)
+   executable. They're located in ["%{project_root}/test/cram/run.t"]. *)

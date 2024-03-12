@@ -43,12 +43,58 @@
 
 module Runtime = Runtime
 
-(** {1 Implementation of Vcs Traits}
+(** {1 Providers of Vcs Traits} *)
+
+module Trait : sig
+  (** The list of traits that are implemented in [Git_cli]. *)
+  type t =
+    [ Vcs.Trait.add
+    | Vcs.Trait.branch
+    | Vcs.Trait.commit
+    | Vcs.Trait.config
+    | Vcs.Trait.file_system
+    | Vcs.Trait.git
+    | Vcs.Trait.init
+    | Vcs.Trait.log
+    | Vcs.Trait.ls_files
+    | Vcs.Trait.name_status
+    | Vcs.Trait.num_status
+    | Vcs.Trait.refs
+    | Vcs.Trait.rev_parse
+    | Vcs.Trait.show
+    ]
+end
+
+(** Create a provider based on a runtime. *)
+module Make (Runtime : Runtime.S) : sig
+  type t = Runtime.t
+
+  val interface : unit -> (t, [> Trait.t ]) Provider.Interface.t
+
+  (** {1 Individual implementations} *)
+
+  module Add : Vcs.Trait.Add.S with type t = t
+  module Branch : Vcs.Trait.Branch.S with type t = t
+  module Commit : Vcs.Trait.Commit.S with type t = t
+  module Config : Vcs.Trait.Config.S with type t = t
+  module File_system : Vcs.Trait.File_system.S with type t = t
+  module Git : Vcs.Trait.Git.S with type t = t
+  module Init : Vcs.Trait.Init.S with type t = t
+  module Log : Vcs.Trait.Log.S with type t = t
+  module Ls_files : Vcs.Trait.Ls_files.S with type t = t
+  module Name_status : Vcs.Trait.Name_status.S with type t = t
+  module Num_status : Vcs.Trait.Num_status.S with type t = t
+  module Refs : Vcs.Trait.Refs.S with type t = t
+  module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
+  module Show : Vcs.Trait.Show.S with type t = t
+end
+
+(** {2 Individual Providers}
 
     The rest of the modules are functors that are parametrized by your
     [Runtime]. Given the ability to run a git command line, this modules return
     a provider implementation for each of the traits defined by the [Vcs]
-    library. *)
+    library. The individual functors are exposed for convenience. *)
 
 module Add = Add
 module Branch = Branch
@@ -63,7 +109,9 @@ module Refs = Refs
 module Rev_parse = Rev_parse
 module Show = Show
 
-(** Exported for tests. *)
+(** {1 Tests}
+
+    Exported for tests. *)
 module Private : sig
   module Munged_path = Munged_path
 end

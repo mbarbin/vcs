@@ -19,14 +19,42 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type 'a t = ([> Git_cli.Trait.t ] as 'a) Vcs.t
-type t' = Git_cli.Trait.t t
+type t =
+  { fs : Eio.Fs.dir_ty Eio.Path.t
+  ; process_mgr : [ `Generic ] Eio.Process.mgr_ty Eio.Process.mgr
+  }
 
-module Impl = struct
-  include Runtime
-  include Git_cli.Make (Runtime)
-end
+let name _ = "git"
 
-let create () =
-  Vcs.create (Provider.T { t = Impl.create (); interface = Impl.interface () })
+let create ~env =
+  { fs = (Eio.Stdenv.fs env :> Eio.Fs.dir_ty Eio.Path.t)
+  ; process_mgr =
+      (Eio.Stdenv.process_mgr env :> [ `Generic ] Eio.Process.mgr_ty Eio.Process.mgr)
+  }
+;;
+
+let load_file t ~path =
+  let path = Eio.Path.(t.fs / Absolute_path.to_string path) in
+  Or_error.try_with (fun () -> Vcs.File_contents.create (Eio.Path.load path))
+;;
+
+let save_file ?(perms = 0o666) t ~path ~(file_contents : Vcs.File_contents.t) =
+  let path = Eio.Path.(t.fs / Absolute_path.to_string path) in
+  Or_error.try_with (fun () ->
+    Eio.Path.save ~create:(`Or_truncate perms) path (file_contents :> string))
+;;
+
+let git ?env t ~cwd ~args ~f =
+  Eio_process.run
+    ~process_mgr:t.process_mgr
+    ~cwd:Eio.Path.(t.fs / Absolute_path.to_string cwd)
+    ?env
+    ~prog:"git"
+    ~args
+    ()
+    ~f:(fun { Eio_process.Output.stdout; stderr; exit_status } ->
+      match exit_status with
+      | `Exited exit_code -> f { Vcs.Git.Output.exit_code; stdout; stderr }
+      | `Signaled signal ->
+        Or_error.error_s [%sexp "process exited abnormally", { signal : int }])
 ;;

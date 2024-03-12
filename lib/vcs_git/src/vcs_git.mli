@@ -28,28 +28,11 @@
     results with [Git_cli]. Note that [git] must be found in the PATH of the
     running environment. *)
 
-type tag =
-  [ Vcs.Trait.add
-  | Vcs.Trait.branch
-  | Vcs.Trait.commit
-  | Vcs.Trait.config
-  | Vcs.Trait.file_system
-  | Vcs.Trait.git
-  | Vcs.Trait.init
-  | Vcs.Trait.log
-  | Vcs.Trait.ls_files
-  | Vcs.Trait.name_status
-  | Vcs.Trait.num_status
-  | Vcs.Trait.refs
-  | Vcs.Trait.rev_parse
-  | Vcs.Trait.show
-  ]
-
-type 'a t = ([> tag ] as 'a) Vcs.t
+type 'a t = ([> Git_cli.Trait.t ] as 'a) Vcs.t
 
 (** This is a convenient wrapper tag that may be used to designate a provider
     with the exact list of traits supported by this implementation. *)
-type t' = tag t
+type t' = Git_cli.Trait.t t
 
 (** [create ~env] creates a [vcs] value that can be used by the {!module:Vcs}
     library. *)

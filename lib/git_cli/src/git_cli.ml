@@ -36,3 +36,64 @@ module Show = Show
 module Private = struct
   module Munged_path = Munged_path
 end
+
+module Trait = struct
+  type t =
+    [ Vcs.Trait.add
+    | Vcs.Trait.branch
+    | Vcs.Trait.commit
+    | Vcs.Trait.config
+    | Vcs.Trait.file_system
+    | Vcs.Trait.git
+    | Vcs.Trait.init
+    | Vcs.Trait.log
+    | Vcs.Trait.ls_files
+    | Vcs.Trait.name_status
+    | Vcs.Trait.num_status
+    | Vcs.Trait.refs
+    | Vcs.Trait.rev_parse
+    | Vcs.Trait.show
+    ]
+end
+
+module Make (Runtime : Runtime.S) = struct
+  type t = Runtime.t
+
+  module Impl = struct
+    module Add = Add.Make (Runtime)
+    module Branch = Branch.Make (Runtime)
+    module Commit = Commit.Make (Runtime)
+    module Config = Config.Make (Runtime)
+    module File_system = Runtime
+    module Git = Runtime
+    module Init = Init.Make (Runtime)
+    module Log = Log.Make (Runtime)
+    module Ls_files = Ls_files.Make (Runtime)
+    module Name_status = Name_status.Make (Runtime)
+    module Num_status = Num_status.Make (Runtime)
+    module Refs = Refs.Make (Runtime)
+    module Rev_parse = Rev_parse.Make (Runtime)
+    module Show = Show.Make (Runtime)
+  end
+
+  let interface () : (t, [> Trait.t ]) Provider.Interface.t =
+    Provider.Interface.make
+      [ Provider.Trait.implement Vcs.Trait.Add ~impl:(module Impl.Add)
+      ; Provider.Trait.implement Vcs.Trait.Branch ~impl:(module Impl.Branch)
+      ; Provider.Trait.implement Vcs.Trait.Commit ~impl:(module Impl.Commit)
+      ; Provider.Trait.implement Vcs.Trait.Config ~impl:(module Impl.Config)
+      ; Provider.Trait.implement Vcs.Trait.File_system ~impl:(module Impl.File_system)
+      ; Provider.Trait.implement Vcs.Trait.Git ~impl:(module Impl.Git)
+      ; Provider.Trait.implement Vcs.Trait.Init ~impl:(module Impl.Init)
+      ; Provider.Trait.implement Vcs.Trait.Log ~impl:(module Impl.Log)
+      ; Provider.Trait.implement Vcs.Trait.Ls_files ~impl:(module Impl.Ls_files)
+      ; Provider.Trait.implement Vcs.Trait.Name_status ~impl:(module Impl.Name_status)
+      ; Provider.Trait.implement Vcs.Trait.Num_status ~impl:(module Impl.Num_status)
+      ; Provider.Trait.implement Vcs.Trait.Refs ~impl:(module Impl.Refs)
+      ; Provider.Trait.implement Vcs.Trait.Rev_parse ~impl:(module Impl.Rev_parse)
+      ; Provider.Trait.implement Vcs.Trait.Show ~impl:(module Impl.Show)
+      ]
+  ;;
+
+  include Impl
+end
