@@ -13,7 +13,7 @@ depends: [
   "base" {>= "v0.16" & < "v0.17"}
   "bisect_ppx" {dev & >= "2.8.3"}
   "core" {>= "v0.16" & < "v0.17"}
-  "eio" {>= "0.15"}
+  "eio" {>= "1.0"}
   "expect-test-helpers" {with-test & >= "v0.16" & < "v0.17"}
   "fpath" {>= "0.7.3"}
   "fpath-extended" {>= "0.0.7"}
