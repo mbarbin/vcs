@@ -2,6 +2,7 @@
 
 dirs=(
     "bin"
+    "example"
     "lib/git_cli/src"
     "lib/git_cli/test"
     "lib/vcs/src"
