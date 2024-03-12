@@ -1,6 +1,9 @@
 (library
  (name vcs_test)
- (inline_tests)
+ (inline_tests
+  (deps
+   (glob_files *.log)
+   (glob_files *.refs)))
  (flags
   :standard
   -w
@@ -17,7 +20,15 @@
   Or_error.Let_syntax
   -open
   Vcs)
- (libraries base expect-test-helpers fpath fpath-extended vcs)
+ (libraries
+  base
+  eio
+  eio_main
+  expect-test-helpers
+  fpath
+  fpath-extended
+  git_cli
+  vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint
@@ -32,3 +43,11 @@
    ppx_let
    ppx_sexp_conv
    ppx_sexp_value)))
+
+(rule
+ (copy
+  %{project_root}/test/data/super-master-mind.refs
+  super-master-mind.refs))
+
+(rule
+ (copy %{project_root}/test/data/super-master-mind.log super-master-mind.log))

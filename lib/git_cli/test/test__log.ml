@@ -25,10 +25,7 @@
       $ git log --all --pretty=format:'%H %P'
    v}
 
-   In this test we verify that we can parse this output, and compute a few things
-   from it.
-
-   For a more comprehensive test, see [test_vcs_tree.ml]. *)
+   In this test we verify that we can parse this output. *)
 
 let%expect_test "parse_exn" =
   Eio_main.run
