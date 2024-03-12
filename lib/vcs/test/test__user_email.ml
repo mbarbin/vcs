@@ -18,3 +18,32 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+(* The validation of user email is currently quite loose. We do not attempt to
+   validate it from a syntactic standpoint, rather we just verify the characters
+   that are contained within it. *)
+
+let%expect_test "of_string" =
+  let test str =
+    match User_email.of_string str with
+    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Ok a -> print_endline (User_email.to_string a)
+  in
+  test "no space";
+  [%expect {| (Error ("User_email.of_string: invalid entry" "no space")) |}];
+  test "jdoe";
+  [%expect {| jdoe |}];
+  test "john-doe";
+  [%expect {| john-doe |}];
+  test "john_doe";
+  [%expect {| john_doe |}];
+  test "john.doe@mail.com";
+  [%expect {| john.doe@mail.com |}];
+  (* Some characters are currently not accepted. *)
+  test "\\";
+  [%expect {| (Error ("User_email.of_string: invalid entry" \)) |}];
+  (* And we do not accept the empty string. *)
+  test "";
+  [%expect {| (Error ("User_email.of_string: invalid entry" "")) |}];
+  ()
+;;

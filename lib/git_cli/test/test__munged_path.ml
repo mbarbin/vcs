@@ -37,6 +37,13 @@ let%expect_test "parse" =
      "invalid path"
      "/tmp => /tmp"
      ("Relative_path.of_fpath: not a relative path" /tmp)) |}];
+  require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
+  [%expect
+    {|
+    (Git_cli.Munged_path.parse_exn
+     "invalid path"
+     "tmp => tmp2 => tmp3"
+     "Too many '=>'") |}];
   test "a/simple/path";
   [%expect {| (One_file a/simple/path) |}];
   test "a/simple/path => another/path";

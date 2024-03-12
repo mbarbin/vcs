@@ -18,21 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-(** A provider implementation for {!module:Vcs.Trait.Num_status}. *)
-
-module Make (Runtime : Runtime.S) : sig
-  type t = Runtime.t
-
-  include Vcs.Trait.Num_status.S with type t := t
-end
-
-(** {1 Git output parsing}
-
-    This is exposed for tests and low-level usage. *)
-
-(** Parsing the output of ["git diff --num-status REV..REV"]. *)
-val parse_lines_exn : lines:string list -> Vcs.Num_status.t
-
-(** Parse only one line. Exposed for tests. *)
-val parse_line_exn : line:string -> Vcs.Num_status.Change.t

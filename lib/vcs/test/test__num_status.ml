@@ -18,3 +18,15 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+let%expect_test "parse_exn" =
+  Eio_main.run
+  @@ fun env ->
+  let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.num-status") in
+  let contents = Eio.Path.load path in
+  let lines = String.split_lines contents in
+  let num_status = Git_cli.Num_status.parse_lines_exn ~lines in
+  ignore (num_status : Num_status.t);
+  [%expect {||}];
+  ()
+;;

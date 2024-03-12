@@ -19,11 +19,17 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t =
-  { name : string
-  ; mutable counter : int
-  }
-[@@deriving sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t =
+    { name : string
+    ; mutable counter : int
+    }
+  [@@deriving sexp_of]
+end
+
+include T
 
 let create ~name = { name; counter = 0 }
 

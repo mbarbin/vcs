@@ -20,12 +20,18 @@
 (*******************************************************************************)
 
 module Dereferenced = struct
-  type t =
-    { rev : Vcs.Rev.t
-    ; ref_kind : Vcs.Ref_kind.t
-    ; dereferenced : bool
-    }
-  [@@deriving equal, sexp_of]
+  module T = struct
+    [@@@coverage off]
+
+    type t =
+      { rev : Vcs.Rev.t
+      ; ref_kind : Vcs.Ref_kind.t
+      ; dereferenced : bool
+      }
+    [@@deriving equal, sexp_of]
+  end
+
+  include T
 
   let parse_ref_kind_exn str : Vcs.Ref_kind.t =
     let str = String.chop_prefix_exn str ~prefix:"refs/" in

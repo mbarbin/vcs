@@ -18,3 +18,9 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+let%expect_test "to_string_hum" =
+  List.iter Platform.all ~f:(fun t -> print_endline (Platform.to_string_hum t));
+  [%expect {| GitHub |}];
+  ()
+;;

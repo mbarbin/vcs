@@ -274,3 +274,52 @@ let%expect_test "parse_exn" =
         (deletions  5))))) |}];
   ()
 ;;
+
+let%expect_test "parse_lines_exn" =
+  let lines =
+    [ ""
+    ; "file"
+    ; "A\tB"
+    ; "A\tB\tC\tD"
+    ; "A\tB\tC"
+    ; "0\t1\tfile"
+    ; "1985\t0\tfile1 => file2"
+    ; "100\t5\ttmp/{dir1 => dir2}/file"
+    ]
+  in
+  List.iter lines ~f:(fun line ->
+    let result = Or_error.try_with (fun () -> Git_cli.Num_status.parse_line_exn ~line) in
+    print_s [%sexp (line : string), (result : Vcs.Num_status.Change.t Or_error.t)]);
+  [%expect
+    {|
+    ("" (Error ("Unexpected output from git diff" "")))
+    (file (Error ("Unexpected output from git diff" file)))
+    ("A\tB" (Error ("Unexpected output from git diff" "A\tB")))
+    ("A\tB\tC\tD" (Error ("Unexpected output from git diff" "A\tB\tC\tD")))
+    ("A\tB\tC" (Error (Failure "Int.of_string: \"B\"")))
+    ("0\t1\tfile" (
+      Ok (
+        (key (One_file file))
+        (num_lines_in_diff (
+          (insertions 0)
+          (deletions  1))))))
+    ("1985\t0\tfile1 => file2" (
+      Ok (
+        (key (
+          Two_files
+          (src file1)
+          (dst file2)))
+        (num_lines_in_diff (
+          (insertions 1985)
+          (deletions  0))))))
+    ("100\t5\ttmp/{dir1 => dir2}/file" (
+      Ok (
+        (key (
+          Two_files
+          (src tmp/dir1/file)
+          (dst tmp/dir2/file)))
+        (num_lines_in_diff (
+          (insertions 100)
+          (deletions  5)))))) |}];
+  ()
+;;

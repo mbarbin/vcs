@@ -46,4 +46,5 @@ module Changed : sig
         { src : Rev.t
         ; dst : Rev.t
         }
+  [@@deriving equal, sexp_of]
 end

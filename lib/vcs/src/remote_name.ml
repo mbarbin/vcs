@@ -20,6 +20,8 @@
 (*******************************************************************************)
 
 module T = struct
+  [@@@coverage off]
+
   type t = string [@@deriving compare, equal, hash, sexp_of]
 end
 
@@ -27,8 +29,9 @@ include T
 include Comparable.Make (T)
 
 let invariant t =
-  String.for_all t ~f:(fun c ->
-    Char.is_alphanum c || Char.equal c '-' || Char.equal c '_' || Char.is_whitespace c)
+  (not (String.is_empty t))
+  && String.for_all t ~f:(fun c ->
+    Char.is_alphanum c || Char.equal c '-' || Char.equal c '_' || Char.equal c '.')
 ;;
 
 include Validated_string.Make (struct

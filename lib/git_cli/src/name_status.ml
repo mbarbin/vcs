@@ -20,21 +20,27 @@
 (*******************************************************************************)
 
 module Diff_status = struct
-  type t =
-    [ `A
-    | `D
-    | `M
-    | `R
-    | `C
-    | `U
-    | `Q
-    | `I
-    | `Question_mark
-    | `Bang
-    | `X
-    | `Not_supported
-    ]
-  [@@deriving sexp_of]
+  module T = struct
+    [@@@coverage off]
+
+    type t =
+      [ `A
+      | `D
+      | `M
+      | `R
+      | `C
+      | `U
+      | `Q
+      | `I
+      | `Question_mark
+      | `Bang
+      | `X
+      | `Not_supported
+      ]
+    [@@deriving sexp_of]
+  end
+
+  include T
 
   let parse_exn str : t =
     if String.is_empty str then raise_s [%sexp "Unexpected empty diff status"];
@@ -56,7 +62,8 @@ end
 
 let parse_line_exn ~line : Vcs.Name_status.Change.t =
   match String.split line ~on:'\t' with
-  | [] | [ _ ] -> raise_s [%sexp "Unexpected output from git status", (line : string)]
+  | [] -> assert false
+  | [ _ ] -> raise_s [%sexp "Unexpected output from git status", (line : string)]
   | status :: path :: rest ->
     (match Diff_status.parse_exn status with
      | `A -> Added (Vcs.Path_in_repo.v path)

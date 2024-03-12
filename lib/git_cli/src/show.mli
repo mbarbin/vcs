@@ -26,3 +26,11 @@ module Make (Runtime : Runtime.S) : sig
 
   include Vcs.Trait.Show.S with type t := t
 end
+
+(** {1 Git output parsing}
+
+    This is exposed for tests and low-level usage. *)
+
+val interpret_output
+  :  Vcs.Git.Output.t
+  -> [ `Absent | `Present of Vcs.File_contents.t ] Or_error.t

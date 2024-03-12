@@ -20,6 +20,8 @@
 (*******************************************************************************)
 
 module T = struct
+  [@@@coverage off]
+
   type t =
     | Local_branch of { branch_name : Branch_name.t }
     | Remote_branch of { remote_branch_name : Remote_branch_name.t }

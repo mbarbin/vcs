@@ -19,13 +19,19 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t = Vcs.Num_status.Key.t =
-  | One_file of Vcs.Path_in_repo.t
-  | Two_files of
-      { src : Vcs.Path_in_repo.t
-      ; dst : Vcs.Path_in_repo.t
-      }
-[@@deriving equal, sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t = Vcs.Num_status.Key.t =
+    | One_file of Vcs.Path_in_repo.t
+    | Two_files of
+        { src : Vcs.Path_in_repo.t
+        ; dst : Vcs.Path_in_repo.t
+        }
+  [@@deriving equal, sexp_of]
+end
+
+include T
 
 let arrow = lazy (String.Search_pattern.create " => ")
 

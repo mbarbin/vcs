@@ -44,6 +44,8 @@
  *)
 
 module Change = struct
+  [@@@coverage off]
+
   type t =
     | Added of Path_in_repo.t
     | Removed of Path_in_repo.t
@@ -61,7 +63,11 @@ module Change = struct
   [@@deriving sexp_of]
 end
 
-type t = Change.t list [@@deriving sexp_of]
+module T = struct
+  type t = Change.t list [@@deriving sexp_of]
+end
+
+include T
 
 let files_at_src (t : t) =
   List.fold
@@ -101,9 +107,12 @@ let files (t : t) =
 ;;
 
 module Changed = struct
+  [@@@coverage off]
+
   type t =
     | Between of
         { src : Rev.t
         ; dst : Rev.t
         }
+  [@@deriving equal, sexp_of]
 end

@@ -20,6 +20,8 @@
 (*******************************************************************************)
 
 module T = struct
+  [@@@coverage off]
+
   type t =
     { remote_name : Remote_name.t
     ; branch_name : Branch_name.t

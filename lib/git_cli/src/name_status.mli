@@ -53,3 +53,6 @@ end
 
 (** Parsing the output of ["git diff --name-status REV..REV"]. *)
 val parse_lines_exn : lines:string list -> Vcs.Name_status.t
+
+(** Parse only one line. Exposed for tests. *)
+val parse_line_exn : line:string -> Vcs.Name_status.Change.t

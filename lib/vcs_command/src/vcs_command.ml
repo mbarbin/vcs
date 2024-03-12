@@ -58,6 +58,24 @@ let commit_cmd =
        return ())
 ;;
 
+let git_cmd =
+  eio_command
+    ~summary:"run the git cli"
+    (let%map_open.Command config = Vcs_param.config
+     and args =
+       flag "--" escape ~doc:" pass the remaining args to git"
+       >>| Option.value ~default:[]
+     in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind { Vcs.Git.Output.exit_code; stdout; stderr } =
+         Vcs.git vcs ~repo_root ~args ~f:return
+       in
+       Eio_writer.print_string ~env stdout;
+       Eio_writer.prerr_string ~env stderr;
+       if exit_code = 0 then return () else Stdlib.exit exit_code)
+;;
+
 let init_cmd =
   eio_command
     ~summary:"initialize a new repository"
@@ -265,6 +283,7 @@ sub commands exposed here.
 |})
     [ "add-cmd", add_cmd
     ; "commit", commit_cmd
+    ; "git", git_cmd
     ; "init-cmd", init_cmd
     ; "load-file", load_file_cmd
     ; "log", log_cmd

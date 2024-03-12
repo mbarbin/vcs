@@ -21,7 +21,8 @@
 
 let parse_line_exn ~line : Vcs.Num_status.Change.t =
   match String.split line ~on:'\t' with
-  | [] | [ _ ] | [ _; _ ] | _ :: _ :: _ :: _ :: _ ->
+  | [] -> assert false
+  | [ _ ] | [ _; _ ] | _ :: _ :: _ :: _ :: _ ->
     raise_s [%sexp "Unexpected output from git diff", (line : string)]
   | [ insertions; deletions; munged_path ] ->
     { Vcs.Num_status.Change.key = Munged_path.parse_exn munged_path

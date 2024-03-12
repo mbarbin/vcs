@@ -19,7 +19,13 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t = string [@@deriving compare, equal, hash, sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t = string [@@deriving compare, equal, hash, sexp_of]
+end
+
+include T
 
 let invariant t =
   (not (String.is_empty t))
@@ -27,7 +33,6 @@ let invariant t =
     Char.is_alphanum c
     || Char.equal c '-'
     || Char.equal c '_'
-    || Char.is_whitespace c
     || Char.equal '@' c
     || Char.equal '.' c)
 ;;

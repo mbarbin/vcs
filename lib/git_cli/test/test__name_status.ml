@@ -165,3 +165,86 @@ let%expect_test "parse_exn" =
      test/maker.t) |}];
   ()
 ;;
+
+let%expect_test "Diff_status" =
+  let entries = "ADMUQI?!XRCZ" in
+  String.iter entries ~f:(fun char ->
+    let diff_status =
+      Git_cli.Name_status.Diff_status.parse_exn (Printf.sprintf "%c something" char)
+    in
+    print_s [%sexp (char : Char.t), (diff_status : Git_cli.Name_status.Diff_status.t)]);
+  [%expect
+    {|
+    (A A)
+    (D D)
+    (M M)
+    (U U)
+    (Q Q)
+    (I I)
+    (? Question_mark)
+    (! Bang)
+    (X X)
+    (R R)
+    (C C)
+    (Z Not_supported) |}];
+  require_does_raise [%here] (fun () -> Git_cli.Name_status.Diff_status.parse_exn "");
+  [%expect {|
+    "Unexpected empty diff status" |}];
+  ()
+;;
+
+let%expect_test "parse_lines_exn" =
+  let lines =
+    [ ""
+    ; "file"
+    ; "A\tfile1"
+    ; "D\tfile2"
+    ; "M\tfile3"
+    ; "U\tfile4"
+    ; "Q\tfile5"
+    ; "I\tfile6"
+    ; "?\tfile7"
+    ; "!\tfile8"
+    ; "X\tfile9"
+    ; "R\tfile10"
+    ; "R35\tfile10"
+    ; "R35\tfile1\tfile2"
+    ; "C\tfile11"
+    ; "C75\tfile1\tfile2"
+    ; "Z\tfile12"
+    ]
+  in
+  List.iter lines ~f:(fun line ->
+    let result = Or_error.try_with (fun () -> Git_cli.Name_status.parse_line_exn ~line) in
+    print_s [%sexp (line : string), (result : Vcs.Name_status.Change.t Or_error.t)]);
+  [%expect
+    {|
+    ("" (Error ("Unexpected output from git status" "")))
+    (file (Error ("Unexpected output from git status" file)))
+    ("A\tfile1" (Ok (Added file1)))
+    ("D\tfile2" (Ok (Removed file2)))
+    ("M\tfile3" (Ok (Modified file3)))
+    ("U\tfile4" (Error ("Unexpected status" U U)))
+    ("Q\tfile5" (Error ("Unexpected status" Q Q)))
+    ("I\tfile6" (Error ("Unexpected status" I I)))
+    ("?\tfile7" (Error ("Unexpected status" ? Question_mark)))
+    ("!\tfile8" (Error ("Unexpected status" ! Bang)))
+    ("X\tfile9" (Error ("Unexpected status" X X)))
+    ("R\tfile10" (Error (Failure "Int.of_string: \"\"")))
+    ("R35\tfile10" (Error ("Unexpected output from git status" "R35\tfile10")))
+    ("R35\tfile1\tfile2" (
+      Ok (
+        Renamed
+        (src        file1)
+        (dst        file2)
+        (similarity 35))))
+    ("C\tfile11" (Error (Failure "Int.of_string: \"\"")))
+    ("C75\tfile1\tfile2" (
+      Ok (
+        Copied
+        (src        file1)
+        (dst        file2)
+        (similarity 75))))
+    ("Z\tfile12" (Error ("Unexpected status" Z Not_supported))) |}];
+  ()
+;;

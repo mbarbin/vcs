@@ -20,6 +20,8 @@
 (*******************************************************************************)
 
 module Line = struct
+  [@@@coverage off]
+
   type t =
     { rev : Rev.t
     ; ref_kind : Ref_kind.t
@@ -27,7 +29,13 @@ module Line = struct
   [@@deriving equal, sexp_of]
 end
 
-type t = Line.t list [@@deriving equal, sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t = Line.t list [@@deriving equal, sexp_of]
+end
+
+include T
 
 let tags (t : t) =
   List.filter_map t ~f:(function

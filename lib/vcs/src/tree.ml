@@ -20,18 +20,24 @@
 (*******************************************************************************)
 
 module Node_kind = struct
-  type 'index t =
-    | Init of { rev : Rev.t }
-    | Commit of
-        { rev : Rev.t
-        ; parent : 'index
-        }
-    | Merge of
-        { rev : Rev.t
-        ; parent1 : 'index
-        ; parent2 : 'index
-        }
-  [@@deriving equal, sexp_of]
+  module T = struct
+    [@@@coverage off]
+
+    type 'index t =
+      | Init of { rev : Rev.t }
+      | Commit of
+          { rev : Rev.t
+          ; parent : 'index
+          }
+      | Merge of
+          { rev : Rev.t
+          ; parent1 : 'index
+          ; parent2 : 'index
+          }
+    [@@deriving equal, sexp_of]
+  end
+
+  include T
 
   let rev = function
     | Init { rev } -> rev
@@ -56,13 +62,19 @@ module Node_kind = struct
   ;;
 end
 
-type t =
-  { mutable nodes : int Node_kind.t array
-  ; revs : int Hashtbl.M(Rev).t
-  ; refs : int Hashtbl.M(Ref_kind).t
-  ; reverse_refs : Ref_kind.t list Hashtbl.M(Int).t
-  }
-[@@deriving sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t =
+    { mutable nodes : int Node_kind.t array
+    ; revs : int Hashtbl.M(Rev).t
+    ; refs : int Hashtbl.M(Ref_kind).t
+    ; reverse_refs : Ref_kind.t list Hashtbl.M(Int).t
+    }
+  [@@deriving sexp_of]
+end
+
+include T
 
 let create () =
   { nodes = [||]
@@ -202,6 +214,8 @@ module Node = struct
   include Node0
 
   module Descendance = struct
+    [@@@coverage off]
+
     type t =
       | Same
       | Strict_ancestor
@@ -242,11 +256,17 @@ let log t =
 ;;
 
 module Subtree = struct
-  type t =
-    { log : Log.t
-    ; refs : Refs.t
-    }
-  [@@deriving sexp_of]
+  module T = struct
+    [@@@coverage off]
+
+    type t =
+      { log : Log.t
+      ; refs : Refs.t
+      }
+    [@@deriving sexp_of]
+  end
+
+  include T
 
   let is_empty { log; refs } = List.is_empty log && List.is_empty refs
 end
@@ -291,6 +311,8 @@ let subtrees t =
 ;;
 
 module Summary = struct
+  [@@@coverage off]
+
   type t =
     { refs : (Rev.t * string) list
     ; roots : Rev.t list

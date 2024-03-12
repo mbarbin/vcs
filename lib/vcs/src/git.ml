@@ -20,6 +20,8 @@
 (*******************************************************************************)
 
 module Output = struct
+  [@@@coverage off]
+
   type t =
     { exit_code : int
     ; stdout : string

@@ -48,6 +48,9 @@ Save / Load files.
   $ ocaml-vcs load-file untracked/hello
   New untracked file
 
+  $ rm untracked/hello
+  $ rmdir untracked
+
 Adding a new file under a directory.
 
   $ mkdir dir
@@ -112,3 +115,11 @@ Tree.
   ((refs (($REV2 refs/heads/main)))
    (roots ($REV0))
    (tips (($REV2 (refs/heads/main)))))
+
+Vcs allows to run the git command line directly if the provider supports it.
+
+  $ ocaml-vcs git -- rev-parse HEAD | stabilize_output
+  $REV2
+
+  $ ocaml-vcs git -- invalid-command 2> /dev/null
+  [1]

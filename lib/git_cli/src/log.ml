@@ -26,7 +26,8 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
   | [ rev; parent1; parent2 ] ->
     Merge
       { rev = Vcs.Rev.v rev; parent1 = Vcs.Rev.v parent1; parent2 = Vcs.Rev.v parent2 }
-  | _ -> raise_s [%sexp "Invalid log line", (str : string)]
+  | [] -> assert false
+  | _ :: _ :: _ :: _ -> raise_s [%sexp "Invalid log line", (str : string)]
 ;;
 
 module Make (Runtime : Runtime.S) = struct

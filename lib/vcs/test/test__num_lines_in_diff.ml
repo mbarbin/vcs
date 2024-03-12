@@ -18,3 +18,63 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+let%expect_test "zero" =
+  print_s [%sexp (Num_lines_in_diff.zero : Num_lines_in_diff.t)];
+  [%expect {|
+    ((insertions 0)
+     (deletions  0)) |}];
+  require [%here] (Num_lines_in_diff.is_zero Num_lines_in_diff.zero);
+  [%expect {||}];
+  require_equal [%here] (module Int) (Num_lines_in_diff.total Num_lines_in_diff.zero) 0;
+  [%expect {||}];
+  require_equal
+    [%here]
+    (module Num_lines_in_diff)
+    Num_lines_in_diff.zero
+    Num_lines_in_diff.(zero + zero);
+  [%expect {||}];
+  print_endline (Num_lines_in_diff.to_string_hum Num_lines_in_diff.zero);
+  [%expect {| 0 |}];
+  ()
+;;
+
+let%expect_test "add" =
+  let t1 = { Num_lines_in_diff.insertions = 1; deletions = 2 } in
+  let t2 = { Num_lines_in_diff.insertions = 3; deletions = 4 } in
+  print_s [%sexp (Num_lines_in_diff.(t1 + t2) : Num_lines_in_diff.t)];
+  [%expect {|
+    ((insertions 4)
+     (deletions  6)) |}];
+  require_equal
+    [%here]
+    (module Num_lines_in_diff)
+    { Num_lines_in_diff.insertions = 4; deletions = 6 }
+    Num_lines_in_diff.(t1 + t2);
+  [%expect {||}];
+  print_s [%sexp (Num_lines_in_diff.sum [ t1; t2 ] : Num_lines_in_diff.t)];
+  [%expect {|
+    ((insertions 4)
+     (deletions  6)) |}];
+  ()
+;;
+
+let%expect_test "total" =
+  let t1 = { Num_lines_in_diff.insertions = 1; deletions = 2 } in
+  print_s [%sexp (Num_lines_in_diff.total t1 : int)];
+  [%expect {| 3 |}];
+  ()
+;;
+
+let%expect_test "to_string_hum" =
+  let test t = print_endline (Num_lines_in_diff.to_string_hum t) in
+  test { insertions = 0; deletions = 0 };
+  [%expect {| 0 |}];
+  test { insertions = 100; deletions = 0 };
+  [%expect {| +100 |}];
+  test { insertions = 0; deletions = 15 };
+  [%expect {| -15 |}];
+  test { insertions = 1999; deletions = 13898 };
+  [%expect {| +1,999, -13,898 |}];
+  ()
+;;

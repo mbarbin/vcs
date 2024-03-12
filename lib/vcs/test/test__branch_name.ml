@@ -29,6 +29,8 @@ let%expect_test "of_string" =
   [%expect {| (Error ("Branch_name.of_string: invalid entry" "no space")) |}];
   test "slashes/are/allowed";
   [%expect {| slashes/are/allowed |}];
+  test "dashes-and_underscores";
+  [%expect {| dashes-and_underscores |}];
   (* Some characters are currently not accepted. *)
   test "\\";
   [%expect {| (Error ("Branch_name.of_string: invalid entry" \)) |}];

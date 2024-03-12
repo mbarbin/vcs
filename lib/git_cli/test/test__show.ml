@@ -18,3 +18,19 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
+
+let%expect_test "show" =
+  let test output =
+    print_s
+      [%sexp
+        (Git_cli.Show.interpret_output output
+         : [ `Absent | `Present of Vcs.File_contents.t ] Or_error.t)]
+  in
+  test { exit_code = 0; stdout = "contents"; stderr = "" };
+  [%expect {| (Ok (Present contents)) |}];
+  test { exit_code = 128; stdout = "contents"; stderr = "" };
+  [%expect {| (Ok Absent) |}];
+  test { exit_code = 1; stdout = "contents"; stderr = "" };
+  [%expect {| (Error "expected error code 0 or 128") |}];
+  ()
+;;

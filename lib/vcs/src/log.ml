@@ -20,6 +20,8 @@
 (*******************************************************************************)
 
 module Line = struct
+  [@@@coverage off]
+
   type t =
     | Init of { rev : Rev.t }
     | Commit of
@@ -38,7 +40,13 @@ module Line = struct
   ;;
 end
 
-type t = Line.t list [@@deriving equal, sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t = Line.t list [@@deriving equal, sexp_of]
+end
+
+include T
 
 let roots (t : t) =
   let queue = Queue.create () in

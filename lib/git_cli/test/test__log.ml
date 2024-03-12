@@ -49,3 +49,41 @@ let%expect_test "parse_exn" =
   [%expect {| ((merge_count 2)) |}];
   ()
 ;;
+
+let%expect_test "invalid lines" =
+  let test line =
+    print_s [%sexp (Git_cli.Log.parse_log_line_exn ~line : Vcs.Log.Line.t)]
+  in
+  test "35760b109070be51b9deb61c8fdc79c0b2d9065d";
+  [%expect {| (Init (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  test "35760b109070be51b9deb61c8fdc79c0b2d9065d ";
+  [%expect {| (Init (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  test "35760b109070be51b9deb61c8fdc79c0b2d9065d  ";
+  [%expect {| (Init (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  test "b6951031b698697eb05f414d1f34000bb171a694 3dd9b4627aaa36f76c3097f9f31172f481b9229f";
+  [%expect
+    {|
+    (Commit
+      (rev    b6951031b698697eb05f414d1f34000bb171a694)
+      (parent 3dd9b4627aaa36f76c3097f9f31172f481b9229f)) |}];
+  test
+    "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f \
+     d3a24cbfad0a681280ecfe021d40b69fb0b9c589";
+  [%expect
+    {|
+    (Merge
+      (rev     3bf5092cc55bff4c3ba546c771e17ab8d29cce65)
+      (parent1 aff8c9c8601e68a41a3bb695ea4a276e2446061f)
+      (parent2 d3a24cbfad0a681280ecfe021d40b69fb0b9c589)) |}];
+  require_does_raise [%here] (fun () -> test "");
+  [%expect {| ("Rev.of_string: invalid entry" "") |}];
+  require_does_raise [%here] (fun () ->
+    test
+      "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f \
+       d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b");
+  [%expect
+    {|
+    ("Invalid log line"
+     "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b") |}];
+  ()
+;;

@@ -19,6 +19,13 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+let interpret_output { Vcs.Git.Output.exit_code; stdout; stderr = _ } =
+  match exit_code with
+  | 0 -> Ok (`Present (Vcs.File_contents.create stdout))
+  | 128 -> Ok `Absent
+  | _ -> Or_error.error_string "expected error code 0 or 128"
+;;
+
 module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
@@ -33,10 +40,6 @@ module Make (Runtime : Runtime.S) = struct
             (rev |> Vcs.Rev.to_string)
             (path |> Vcs.Path_in_repo.to_string)
         ]
-      ~f:(fun { exit_code; stdout; stderr = _ } ->
-        match exit_code with
-        | 0 -> Ok (`Present (Vcs.File_contents.create stdout))
-        | 128 -> Ok `Absent
-        | _ -> Or_error.error_string "expected error code 0 or 128")
+      ~f:interpret_output
   ;;
 end

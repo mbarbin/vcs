@@ -20,8 +20,10 @@
 (*******************************************************************************)
 
 module Arg = struct
+  [@@@coverage off]
+
   type t =
     | Head
     | Branch of { branch_name : Branch_name.t }
-  [@@deriving sexp_of]
+  [@@deriving equal, sexp_of]
 end

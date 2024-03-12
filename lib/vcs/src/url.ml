@@ -20,10 +20,16 @@
 (*******************************************************************************)
 
 module Protocol = struct
-  type t =
-    | Ssh
-    | Https
-  [@@deriving compare, equal, enumerate, hash, sexp_of]
+  module T = struct
+    [@@@coverage off]
+
+    type t =
+      | Ssh
+      | Https
+    [@@deriving compare, equal, enumerate, hash, sexp_of]
+  end
+
+  include T
 
   let to_string t ~(platform : Platform.t) =
     match platform, t with

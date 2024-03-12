@@ -20,6 +20,8 @@
 (*******************************************************************************)
 
 module Key = struct
+  [@@@coverage off]
+
   type t =
     | One_file of Path_in_repo.t
     | Two_files of
@@ -30,6 +32,8 @@ module Key = struct
 end
 
 module Change = struct
+  [@@@coverage off]
+
   type t =
     { key : Key.t
     ; num_lines_in_diff : Num_lines_in_diff.t
@@ -37,12 +41,19 @@ module Change = struct
   [@@deriving sexp_of]
 end
 
-type t = Change.t list [@@deriving sexp_of]
+module T = struct
+  type t = Change.t list [@@deriving sexp_of]
+end
+
+include T
 
 module Changed = struct
+  [@@@coverage off]
+
   type t = Name_status.Changed.t =
     | Between of
         { src : Rev.t
         ; dst : Rev.t
         }
+  [@@deriving equal, sexp_of]
 end

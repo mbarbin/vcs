@@ -19,25 +19,27 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module T = struct
-  [@@@coverage off]
-
-  type t = string [@@deriving compare, equal, hash, sexp_of]
-end
-
-include T
-
-let invariant t =
-  (not (String.is_empty t))
-  && String.for_all t ~f:(fun c ->
-    Char.is_alphanum c
-    || Char.equal c '-'
-    || Char.equal c '_'
-    || Char.equal c '.'
-    || Char.is_whitespace c)
+let%expect_test "of_string" =
+  let test str =
+    match Remote_branch_name.of_string str with
+    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Ok a -> print_endline (Remote_branch_name.to_string a)
+  in
+  test "no space";
+  [%expect {| (Error ("Remote_branch_name.of_string: invalid entry" "no space")) |}];
+  test "slashes/are/allowed";
+  [%expect {| slashes/are/allowed |}];
+  test "origin/main";
+  [%expect {| origin/main |}];
+  test "origin/dashes-and_underscores";
+  [%expect {| origin/dashes-and_underscores |}];
+  test "local-branch";
+  [%expect {| (Error ("Remote_branch_name.of_string: invalid entry" local-branch)) |}];
+  (* Some characters are currently not accepted. *)
+  test "\\";
+  [%expect {| (Error ("Remote_branch_name.of_string: invalid entry" \)) |}];
+  (* And we do not accept the empty string. *)
+  test "";
+  [%expect {| (Error ("Remote_branch_name.of_string: invalid entry" "")) |}];
+  ()
 ;;
-
-include Validated_string.Make (struct
-    let module_name = "User_name"
-    let invariant = invariant
-  end)

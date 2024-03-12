@@ -29,6 +29,10 @@ let%expect_test "of_string" =
   [%expect {| John Doe |}];
   test "jdoe";
   [%expect {| jdoe |}];
+  test "john-doe";
+  [%expect {| john-doe |}];
+  test "john_doe";
+  [%expect {| john_doe |}];
   (* We currently accept '<,>' chars. *)
   test "John Doe <john.doe@mail.com>";
   [%expect {| John Doe <john.doe@mail.com> |}];
