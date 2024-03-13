@@ -7,6 +7,7 @@
 
 ### Changed
 
+- Upgrade `fpath-base` to `0.0.9` (was renamed from `fpath-extended`).
 - Upgrade `eio` to `1.0` (no change required).
 - Uses `expect-test-helpers` (reduce core dependencies)
 - Upgrade `eio` to `0.15`.
