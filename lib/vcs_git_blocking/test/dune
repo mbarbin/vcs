@@ -12,12 +12,12 @@
   -open
   Expect_test_helpers
   -open
-  Fpath_extended)
+  Fpath_base)
  (libraries
   base
   expect-test-helpers
   fpath
-  fpath-extended
+  fpath-base
   vcs
   vcs_for_test
   vcs_git_blocking)

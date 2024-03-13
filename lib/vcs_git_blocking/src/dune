@@ -10,8 +10,8 @@
   -open
   Base
   -open
-  Fpath_extended)
- (libraries base fpath fpath-extended git-cli provider unix vcs)
+  Fpath_base)
+ (libraries base fpath fpath-base git-cli provider unix vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -10,7 +10,7 @@
   -open
   Base
   -open
-  Fpath_extended
+  Fpath_base
   -open
   Or_error.Let_syntax)
  (libraries
@@ -20,7 +20,7 @@
   eio-writer
   eio_main
   fpath
-  fpath-extended
+  fpath-base
   vcs
   vcs-git
   vcs-param)

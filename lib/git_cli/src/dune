@@ -10,10 +10,10 @@
   -open
   Base
   -open
-  Fpath_extended
+  Fpath_base
   -open
   Or_error.Let_syntax)
- (libraries base fpath fpath-extended vcs)
+ (libraries base fpath fpath-base vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

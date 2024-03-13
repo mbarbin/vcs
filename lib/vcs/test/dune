@@ -17,7 +17,7 @@
   -open
   Expect_test_helpers
   -open
-  Fpath_extended
+  Fpath_base
   -open
   Or_error.Let_syntax
   -open
@@ -28,7 +28,7 @@
   eio_main
   expect-test-helpers
   fpath
-  fpath-extended
+  fpath-base
   git_cli
   vcs)
  (instrumentation
