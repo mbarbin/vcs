@@ -37,7 +37,7 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.8))
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.16)
@@ -111,7 +111,7 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.8))
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.16)
@@ -187,7 +187,7 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.8))
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.16)
@@ -253,7 +253,7 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.8))
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.16)
@@ -321,7 +321,7 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.8))
+   (>= 0.0.9))
   (git-cli
    (= :version))
   (ppx_compare
@@ -389,7 +389,7 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.8))
+   (>= 0.0.9))
   (git-cli
    (= :version))
   (ppx_compare
