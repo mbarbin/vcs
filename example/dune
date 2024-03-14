@@ -20,7 +20,7 @@
   base
   eio
   eio_main
-  expect-test-helpers
+  expect_test_helpers
   fpath
   fpath-base
   vcs

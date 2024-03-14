@@ -403,10 +403,6 @@
    (>= 0.0.3))
   (eio_main
    (>= 1.0))
-  (expect-test-helpers
-   (and
-    (>= v0.16)
-    (< v0.17)))
   (fpath
    (>= 0.7.3))
   (fpath-base
