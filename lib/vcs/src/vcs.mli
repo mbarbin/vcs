@@ -219,3 +219,16 @@ val git
   -> args:string list
   -> f:(Git.Output.t -> 'a Or_error.t)
   -> 'a Or_error.t
+
+(** {1 Test utils}
+
+    This part of Vcs provides utilities for testing. *)
+
+module For_test : sig
+  (** This takes care of setting the user config with dummy values, so that
+      running [commit] doesn't fail. *)
+  val init
+    :  [> Trait.config | Trait.init ] t
+    -> path:Absolute_path.t
+    -> Repo_root.t Or_error.t
+end

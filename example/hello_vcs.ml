@@ -24,7 +24,10 @@
 
 let%expect_test "hello commit" =
   (* We're inside a [Eio] main, that's our chosen runtime for the examples. *)
-  let%fun env = Eio_main.run in
+  Eio_main.run
+  @@ fun env ->
+  Eio.Switch.run
+  @@ fun sw ->
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
      provider. We're using [Vcs_git] for this here. It is a provider based on
      [Eio] and running the [git] command line as an external process. *)
@@ -34,8 +37,12 @@ let%expect_test "hello commit" =
      to worry about your user config on your machine. This isolates the test
      from your local settings, and also makes things work when running in the
      GitHub Actions environment, where no default user config exists. *)
-  let cwd = Unix.getcwd () |> Absolute_path.v in
-  let repo_root = Vcs_for_test.init ~vcs ~path:cwd |> Or_error.ok_exn in
+  let repo_root =
+    let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
+    Eio.Switch.on_release sw (fun () ->
+      Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
+    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
+  in
   (* Ok, we are all set, we are now inside a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it
      to the repository, and query it from the store afterwards. *)

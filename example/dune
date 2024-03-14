@@ -23,7 +23,6 @@
   fpath
   fpath-base
   vcs
-  vcs_for_test
   vcs_git)
  (instrumentation
   (backend bisect_ppx))

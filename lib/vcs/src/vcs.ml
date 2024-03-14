@@ -148,3 +148,14 @@ let git
   let module M = (val Provider.Interface.lookup interface ~trait:Trait.Git) in
   M.git ?env t ~cwd:(Repo_root.append repo_root run_in_subdir) ~args ~f
 ;;
+
+module For_test = struct
+  let init vcs ~path =
+    let%bind repo_root = init vcs ~path in
+    let%bind () = set_user_name vcs ~repo_root ~user_name:(User_name.v "Test User") in
+    let%bind () =
+      set_user_email vcs ~repo_root ~user_email:(User_email.v "test@example.com")
+    in
+    return repo_root
+  ;;
+end
