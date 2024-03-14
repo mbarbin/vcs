@@ -423,7 +423,6 @@
     (< v0.17)))
   (ppx_expect
    (and
-    :with-test
     (>= v0.16)
     (< v0.17)))
   (ppx_hash
@@ -444,6 +443,10 @@
     (>= v0.16)
     (< v0.17)))
   (ppx_sexp_conv
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_message
    (and
     (>= v0.16)
     (< v0.17)))
