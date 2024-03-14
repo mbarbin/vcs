@@ -27,6 +27,7 @@ depends: [
   "ppx_sexp_value" {>= "v0.16" & < "v0.17"}
   "provider" {>= "0.0.4"}
   "vcs" {= version}
+  "vcs-private-libs-eio" {= version}
   "odoc" {with-doc}
 ]
 build: [

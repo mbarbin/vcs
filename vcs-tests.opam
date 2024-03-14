@@ -41,6 +41,8 @@ depends: [
   "vcs-git" {= version}
   "vcs-git-blocking" {= version}
   "vcs-param" {= version}
+  "vcs-private-libs-base" {= version}
+  "vcs-private-libs-eio" {= version}
   "odoc" {with-doc}
 ]
 build: [
