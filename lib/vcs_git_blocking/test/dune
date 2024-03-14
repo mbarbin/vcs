@@ -1,5 +1,6 @@
 (library
  (name vcs_git_blocking_test)
+ (public_name vcs-tests.vcs_git_blocking_test)
  (inline_tests)
  (flags
   :standard

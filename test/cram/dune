@@ -1,4 +1,5 @@
 (cram
+ (package vcs-tests)
  (deps
   %{bin:ocaml-vcs}
   (glob_files *.sexp)))

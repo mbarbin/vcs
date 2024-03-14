@@ -1,5 +1,6 @@
 (library
  (name vcs_param_test)
+ (public_name vcs-tests.vcs_param_test)
  (inline_tests)
  (flags
   :standard

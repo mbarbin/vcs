@@ -12,12 +12,10 @@ depends: [
   "ocaml" {>= "5.1"}
   "base" {>= "v0.16" & < "v0.17"}
   "bisect_ppx" {dev & >= "2.8.3"}
-  "expect-test-helpers" {with-test & >= "v0.16" & < "v0.17"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.0.9"}
   "ppx_compare" {>= "v0.16" & < "v0.17"}
   "ppx_enumerate" {>= "v0.16" & < "v0.17"}
-  "ppx_expect" {with-test & >= "v0.16" & < "v0.17"}
   "ppx_hash" {>= "v0.16" & < "v0.17"}
   "ppx_here" {>= "v0.16" & < "v0.17"}
   "ppx_js_style" {dev & >= "v0.16" & < "v0.17"}
