@@ -385,6 +385,10 @@
    (and
     (>= v0.16)
     (< v0.17)))
+  (base_quickcheck
+   (and
+    (>= v0.16)
+    (< v0.17)))
   (bisect_ppx
    (and
     :dev
@@ -449,6 +453,14 @@
     (< v0.17)))
   (provider
    (>= 0.0.4))
+  (sexp_pretty
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (stdio
+   (and
+    (>= v0.16)
+    (< v0.17)))
   (union-find
    (and
     (>= v0.16)
