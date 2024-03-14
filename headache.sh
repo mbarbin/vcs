@@ -9,8 +9,6 @@ dirs=(
     "lib/vcs/test"
     "lib/vcs_command/src"
     "lib/vcs_command/test"
-    "lib/vcs_for_test/src"
-    "lib/vcs_for_test/test"
     "lib/vcs_git/src"
     "lib/vcs_git/test"
     "lib/vcs_git_blocking/src"
