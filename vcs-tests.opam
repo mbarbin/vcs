@@ -35,7 +35,6 @@ depends: [
   "provider" {>= "0.0.4"}
   "sexp_pretty" {>= "v0.16" & < "v0.17"}
   "stdio" {>= "v0.16" & < "v0.17"}
-  "union-find" {>= "v0.16" & < "v0.17"}
   "vcs" {= version}
   "vcs-command" {= version}
   "vcs-git" {= version}

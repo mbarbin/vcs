@@ -68,10 +68,6 @@
     (< v0.17)))
   (provider
    (>= 0.0.4))
-  (union-find
-   (and
-    (>= v0.16)
-    (< v0.17)))
   (vcs-private-libs-base
    (= :version))))
 
@@ -467,10 +463,6 @@
     (>= v0.16)
     (< v0.17)))
   (stdio
-   (and
-    (>= v0.16)
-    (< v0.17)))
-  (union-find
    (and
     (>= v0.16)
     (< v0.17)))
