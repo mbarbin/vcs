@@ -21,18 +21,18 @@
 
 let%expect_test "next" =
   let next t =
-    let rev = Mock_rev_gen.next t in
+    let rev = Vcs.Mock_rev_gen.next t in
     print_s [%sexp (rev : Vcs.Rev.t)];
     rev
   in
-  let t1 = Mock_rev_gen.create ~name:"test-01" in
+  let t1 = Vcs.Mock_rev_gen.create ~name:"test-01" in
   let r1_1 = next t1 in
   [%expect {| 3a17020189a3e2f321812d06dcd18f173a170201 |}];
   let r1_2 = next t1 in
   [%expect {| 5311cc2b07a9429689e0cdfaf03638d65311cc2b |}];
   let r1_3 = next t1 in
   [%expect {| 37b01b20ef41eafea0aedad8a6dcde1837b01b20 |}];
-  let t2 = Mock_rev_gen.create ~name:"test-02" in
+  let t2 = Vcs.Mock_rev_gen.create ~name:"test-02" in
   let r2_1 = next t2 in
   [%expect {| e0feef2049128bdce931034505a364afe0feef20 |}];
   let r2_2 = next t2 in
@@ -44,7 +44,7 @@ let%expect_test "next" =
   in
   require_equal [%here] (module Int) (List.length all) 6;
   (* The same rev can be recreated from the same state. *)
-  let t3 = Mock_rev_gen.create ~name:"test-01" in
+  let t3 = Vcs.Mock_rev_gen.create ~name:"test-01" in
   let r3_1 = next t3 in
   [%expect {| 3a17020189a3e2f321812d06dcd18f173a170201 |}];
   let r3_2 = next t3 in

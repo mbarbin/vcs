@@ -20,7 +20,9 @@
 (*******************************************************************************)
 
 let%expect_test "of_string" =
-  let test s = print_s [%sexp (Path_in_repo.of_string s : Path_in_repo.t Or_error.t)] in
+  let test s =
+    print_s [%sexp (Vcs.Path_in_repo.of_string s : Vcs.Path_in_repo.t Or_error.t)]
+  in
   test "";
   [%expect {| (Error (Relative_path.of_string "\"\": invalid path")) |}];
   test ".";

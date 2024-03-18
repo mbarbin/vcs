@@ -21,8 +21,8 @@
 
 let%expect_test "create" =
   (* There's nothing particular to test, file contents is simply a wrapper. *)
-  let c = File_contents.create "raw contents\nof file\n" in
-  require_equal [%here] (module String) (File_contents.to_string c) (c :> string);
+  let c = Vcs.File_contents.create "raw contents\nof file\n" in
+  require_equal [%here] (module String) (Vcs.File_contents.to_string c) (c :> string);
   [%expect {||}];
   print_string (c :> string);
   [%expect {|

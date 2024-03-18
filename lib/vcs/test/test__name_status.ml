@@ -26,9 +26,9 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let name_status = Git_cli.Name_status.parse_lines_exn ~lines in
-  let files_at_src = Name_status.files_at_src name_status in
-  let files_at_dst = Name_status.files_at_dst name_status in
-  print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Path_in_repo).t)];
+  let files_at_src = Vcs.Name_status.files_at_src name_status in
+  let files_at_dst = Vcs.Name_status.files_at_dst name_status in
+  print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Vcs.Path_in_repo).t)];
   [%expect
     {|
     (CHANGES.md
@@ -48,7 +48,7 @@ let%expect_test "files" =
     ]
   in
   let name_status = Git_cli.Name_status.parse_lines_exn ~lines in
-  print_s [%sexp (name_status : Name_status.t)];
+  print_s [%sexp (name_status : Vcs.Name_status.t)];
   [%expect
     {|
     ((Added    added_file)
@@ -62,8 +62,8 @@ let%expect_test "files" =
        (src        original_renamed_file)
        (dst        new_renamed_file)
        (similarity 100))) |}];
-  let files = Name_status.files name_status in
-  print_s [%sexp (files : Set.M(Path_in_repo).t)];
+  let files = Vcs.Name_status.files name_status in
+  print_s [%sexp (files : Set.M(Vcs.Path_in_repo).t)];
   [%expect
     {|
     (added_file
@@ -73,19 +73,19 @@ let%expect_test "files" =
      original_copied_file
      original_renamed_file
      removed_file) |}];
-  let files_at_src = Name_status.files_at_src name_status in
-  print_s [%sexp (files_at_src : Set.M(Path_in_repo).t)];
+  let files_at_src = Vcs.Name_status.files_at_src name_status in
+  print_s [%sexp (files_at_src : Set.M(Vcs.Path_in_repo).t)];
   [%expect
     {|
   (modified_file original_copied_file original_renamed_file removed_file) |}];
-  let files_at_dst = Name_status.files_at_dst name_status in
-  print_s [%sexp (files_at_dst : Set.M(Path_in_repo).t)];
+  let files_at_dst = Vcs.Name_status.files_at_dst name_status in
+  print_s [%sexp (files_at_dst : Set.M(Vcs.Path_in_repo).t)];
   [%expect {|
   (added_file modified_file new_copied_file new_renamed_file) |}];
-  print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Path_in_repo).t)];
+  print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Vcs.Path_in_repo).t)];
   [%expect {|
   (added_file new_copied_file new_renamed_file) |}];
-  print_s [%sexp (Set.diff files_at_src files_at_dst : Set.M(Path_in_repo).t)];
+  print_s [%sexp (Set.diff files_at_src files_at_dst : Set.M(Vcs.Path_in_repo).t)];
   [%expect {|
    (original_copied_file original_renamed_file removed_file) |}];
   ()

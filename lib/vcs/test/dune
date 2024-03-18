@@ -20,9 +20,7 @@
   -open
   Fpath_base
   -open
-  Or_error.Let_syntax
-  -open
-  Vcs)
+  Or_error.Let_syntax)
  (libraries
   base
   eio

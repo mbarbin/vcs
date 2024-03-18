@@ -34,18 +34,21 @@ let%expect_test "tree" =
     let lines = String.split_lines contents in
     Git_cli.Refs.parse_lines_exn ~lines
   in
-  let tree = Tree.create () in
-  Tree.add_nodes tree ~log;
-  List.iter refs ~f:(fun { rev; ref_kind } -> Tree.set_ref tree ~rev ~ref_kind);
-  let refs = Tree.refs tree in
+  let tree = Vcs.Tree.create () in
+  Vcs.Tree.add_nodes tree ~log;
+  List.iter refs ~f:(fun { rev; ref_kind } -> Vcs.Tree.set_ref tree ~rev ~ref_kind);
+  let refs = Vcs.Tree.refs tree in
   List.iter refs ~f:(fun { rev; ref_kind } ->
-    let node = Tree.find_ref tree ~ref_kind |> Option.value_exn ~here:[%here] in
-    let rev' = Tree.Node.rev tree node in
-    require_equal [%here] (module Rev) rev rev';
-    let node' = Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
-    require_equal [%here] (module Tree.Node) node node';
-    let parents = Tree.Node.parents tree node |> List.map ~f:(Tree.Node.rev tree) in
-    print_s [%sexp { ref_kind : Ref_kind.t; rev : Rev.t; parents : Rev.t list }]);
+    let node = Vcs.Tree.find_ref tree ~ref_kind |> Option.value_exn ~here:[%here] in
+    let rev' = Vcs.Tree.Node.rev tree node in
+    require_equal [%here] (module Vcs.Rev) rev rev';
+    let node' = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
+    require_equal [%here] (module Vcs.Tree.Node) node node';
+    let parents =
+      Vcs.Tree.Node.parents tree node |> List.map ~f:(Vcs.Tree.Node.rev tree)
+    in
+    print_s
+      [%sexp { ref_kind : Vcs.Ref_kind.t; rev : Vcs.Rev.t; parents : Vcs.Rev.t list }]);
   [%expect
     {|
     ((ref_kind (Local_branch (branch_name gh-pages)))
@@ -104,7 +107,7 @@ let%expect_test "tree" =
     ((ref_kind (Tag (tag_name 0.0.3-preview.1)))
      (rev 1887c81ebf9b84c548bc35038f7af82a18eb77bf)
      (parents (b258b0cde128083c4f05bcf276bcc1322f1d36a2))) |}];
-  print_s [%sexp (Tree.summary tree : Tree.Summary.t)];
+  print_s [%sexp (Vcs.Tree.summary tree : Vcs.Tree.Summary.t)];
   [%expect
     {|
     ((refs (
@@ -169,38 +172,42 @@ let%expect_test "tree" =
           7135b7f4790562e94d9122365478f0d39f5ffead (
             refs/heads/gh-pages refs/remotes/origin/gh-pages)))))))) |}];
   let main =
-    Tree.find_ref tree ~ref_kind:(Local_branch { branch_name = Branch_name.v "main" })
+    Vcs.Tree.find_ref
+      tree
+      ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "main" })
     |> Option.value_exn ~here:[%here]
   in
   let subrepo =
-    Tree.find_ref tree ~ref_kind:(Local_branch { branch_name = Branch_name.v "subrepo" })
+    Vcs.Tree.find_ref
+      tree
+      ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "subrepo" })
     |> Option.value_exn ~here:[%here]
   in
   let progress_bar =
-    Tree.find_ref
+    Vcs.Tree.find_ref
       tree
       ~ref_kind:
         (Remote_branch
            { remote_branch_name =
-               { remote_name = Remote_name.v "origin"
-               ; branch_name = Branch_name.v "progress-bar"
+               { remote_name = Vcs.Remote_name.v "origin"
+               ; branch_name = Vcs.Branch_name.v "progress-bar"
                }
            })
     |> Option.value_exn ~here:[%here]
   in
   let tag_0_0_1 =
-    Tree.find_ref tree ~ref_kind:(Tag { tag_name = Tag_name.v "0.0.1" })
+    Vcs.Tree.find_ref tree ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.1" })
     |> Option.value_exn ~here:[%here]
   in
   let tag_0_0_2 =
-    Tree.find_ref tree ~ref_kind:(Tag { tag_name = Tag_name.v "0.0.2" })
+    Vcs.Tree.find_ref tree ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.2" })
     |> Option.value_exn ~here:[%here]
   in
   List.iter [ main; subrepo; progress_bar; tag_0_0_1; tag_0_0_2 ] ~f:(fun node ->
     print_s
       [%sexp
-        { node = (Tree.Node.rev tree node : Rev.t)
-        ; refs = (Tree.Node.refs tree node : Ref_kind.t list)
+        { node = (Vcs.Tree.Node.rev tree node : Vcs.Rev.t)
+        ; refs = (Vcs.Tree.Node.refs tree node : Vcs.Ref_kind.t list)
         }]);
   [%expect
     {|
@@ -234,8 +241,9 @@ let%expect_test "tree" =
     print_s
       [%sexp
         { is_ancestor_or_equal =
-            (Tree.is_ancestor_or_equal tree ~ancestor ~descendant : bool)
-        ; is_strict_ancestor = (Tree.is_strict_ancestor tree ~ancestor ~descendant : bool)
+            (Vcs.Tree.is_ancestor_or_equal tree ~ancestor ~descendant : bool)
+        ; is_strict_ancestor =
+            (Vcs.Tree.is_strict_ancestor tree ~ancestor ~descendant : bool)
         }]
   in
   is_ancestor tag_0_0_1 tag_0_0_2;

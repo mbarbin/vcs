@@ -40,7 +40,7 @@ let add_cmd =
      fun env ->
        let%bind { vcs; repo_root; context } = Vcs_param.initialize ~env ~config in
        let%bind path = Vcs_param.resolve ~context path in
-       let%bind () = Vcs.add vcs ~repo_root ~path in
+       let%bind () = Vcs.Or_error.add vcs ~repo_root ~path in
        return ())
 ;;
 
@@ -53,7 +53,7 @@ let commit_cmd =
      fun env ->
        let%bind commit_message = commit_message in
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind rev = Vcs.commit vcs ~repo_root ~commit_message in
+       let%bind rev = Vcs.Or_error.commit vcs ~repo_root ~commit_message in
        if not quiet then Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
        return ())
 ;;
@@ -85,7 +85,7 @@ let init_cmd =
      fun env ->
        let%bind { vcs; repo_root = _; context } = Vcs_param.initialize ~env ~config in
        let%bind path = Vcs_param.resolve path ~context in
-       let%bind repo_root = Vcs.init vcs ~path in
+       let%bind repo_root = Vcs.Or_error.init vcs ~path in
        if not quiet then Eio_writer.print_sexp ~env [%sexp (repo_root : Vcs.Repo_root.t)];
        return ())
 ;;
@@ -98,7 +98,7 @@ let load_file_cmd =
      fun env ->
        let%bind { vcs; repo_root = _; context } = Vcs_param.initialize ~env ~config in
        let%bind path = Vcs_param.resolve path ~context in
-       let%bind contents = Vcs.load_file vcs ~path in
+       let%bind contents = Vcs.Or_error.load_file vcs ~path in
        Eio_writer.print_string ~env (contents :> string);
        return ())
 ;;
@@ -112,7 +112,7 @@ let ls_files_cmd =
        let%bind { vcs; repo_root; context } = Vcs_param.initialize ~env ~config in
        let%bind below = Vcs_param.resolve below ~context in
        let below = Option.value below ~default:Vcs.Path_in_repo.root in
-       let%bind files = Vcs.ls_files vcs ~repo_root ~below in
+       let%bind files = Vcs.Or_error.ls_files vcs ~repo_root ~below in
        Eio_writer.with_flow (Eio.Stdenv.stdout env) (fun w ->
          List.iter files ~f:(fun file ->
            Eio_writer.write_line w (Vcs.Path_in_repo.to_string file)));
@@ -125,7 +125,7 @@ let log_cmd =
     (let%map_open.Command config = Vcs_param.config in
      fun env ->
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind log = Vcs.log vcs ~repo_root in
+       let%bind log = Vcs.Or_error.log vcs ~repo_root in
        Eio_writer.print_sexp ~env [%sexp (log : Vcs.Log.t)];
        return ())
 ;;
@@ -141,7 +141,7 @@ let name_status_cmd =
        let%bind src = src
        and dst = dst in
        let%bind name_status =
-         Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst })
+         Vcs.Or_error.name_status vcs ~repo_root ~changed:(Between { src; dst })
        in
        Eio_writer.print_sexp ~env [%sexp (name_status : Vcs.Name_status.t)];
        return ())
@@ -158,7 +158,7 @@ let num_status_cmd =
        let%bind src = src
        and dst = dst in
        let%bind num_status =
-         Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst })
+         Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src; dst })
        in
        Eio_writer.print_sexp ~env [%sexp (num_status : Vcs.Num_status.t)];
        return ())
@@ -172,7 +172,7 @@ let rename_current_branch_cmd =
      fun env ->
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
        let%bind branch_name = branch_name in
-       Vcs.rename_current_branch vcs ~repo_root ~to_:branch_name)
+       Vcs.Or_error.rename_current_branch vcs ~repo_root ~to_:branch_name)
 ;;
 
 let refs_cmd =
@@ -181,7 +181,7 @@ let refs_cmd =
     (let%map_open.Command config = Vcs_param.config in
      fun env ->
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind refs = Vcs.refs vcs ~repo_root in
+       let%bind refs = Vcs.Or_error.refs vcs ~repo_root in
        Eio_writer.print_sexp ~env [%sexp (refs : Vcs.Refs.t)];
        return ())
 ;;
@@ -200,7 +200,7 @@ let rev_parse_cmd =
            let%map branch_name = branch_name in
            Vcs.Rev_parse.Arg.Branch { branch_name }
        in
-       let%bind rev = Vcs.rev_parse vcs ~repo_root ~arg in
+       let%bind rev = Vcs.Or_error.rev_parse vcs ~repo_root ~arg in
        Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
        return ())
 ;;
@@ -220,7 +220,7 @@ let save_file_cmd =
            ~max_size:Int.max_value
          |> Vcs.File_contents.create
        in
-       Vcs.save_file vcs ~path ~file_contents)
+       Vcs.Or_error.save_file vcs ~path ~file_contents)
 ;;
 
 let set_user_config_cmd =
@@ -233,8 +233,8 @@ let set_user_config_cmd =
        let%bind user_name = user_name
        and user_email = user_email in
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind () = Vcs.set_user_name vcs ~repo_root ~user_name in
-       let%bind () = Vcs.set_user_email vcs ~repo_root ~user_email in
+       let%bind () = Vcs.Or_error.set_user_name vcs ~repo_root ~user_name in
+       let%bind () = Vcs.Or_error.set_user_email vcs ~repo_root ~user_email in
        return ())
 ;;
 
@@ -248,7 +248,7 @@ let show_file_at_rev_cmd =
        let%bind { vcs; repo_root; context } = Vcs_param.initialize ~env ~config in
        let%bind rev = rev in
        let%bind path = Vcs_param.resolve path ~context in
-       let%bind result = Vcs.show_file_at_rev vcs ~repo_root ~rev ~path in
+       let%bind result = Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path in
        (match result with
         | `Present contents -> Eio_writer.print_string ~env (contents :> string)
         | `Absent ->
@@ -266,7 +266,7 @@ let tree_cmd =
     (let%map_open.Command config = Vcs_param.config in
      fun env ->
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind tree = Vcs.tree vcs ~repo_root in
+       let%bind tree = Vcs.Or_error.tree vcs ~repo_root in
        Eio_writer.print_sexp ~env [%sexp (Vcs.Tree.summary tree : Vcs.Tree.Summary.t)];
        return ())
 ;;

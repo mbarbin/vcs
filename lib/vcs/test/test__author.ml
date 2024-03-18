@@ -21,9 +21,9 @@
 
 let%expect_test "of_string" =
   let test str =
-    match Author.of_string str with
+    match Vcs.Author.of_string str with
     | Error e -> print_s [%sexp Error (e : Error.t)]
-    | Ok a -> print_endline (Author.to_string a)
+    | Ok a -> print_endline (Vcs.Author.to_string a)
   in
   test "John Doe";
   [%expect {| John Doe |}];
@@ -37,10 +37,10 @@ let%expect_test "of_string" =
   test "John Doe <john.doe@mail.com>";
   [%expect {| John Doe <john.doe@mail.com> |}];
   print_endline
-    (Author.of_user_config
-       ~user_name:("John Doe" |> User_name.of_string |> Or_error.ok_exn)
-       ~user_email:("john.doe@mail.com" |> User_email.of_string |> Or_error.ok_exn)
-     |> Author.to_string);
+    (Vcs.Author.of_user_config
+       ~user_name:("John Doe" |> Vcs.User_name.of_string |> Or_error.ok_exn)
+       ~user_email:("john.doe@mail.com" |> Vcs.User_email.of_string |> Or_error.ok_exn)
+     |> Vcs.Author.to_string);
   [%expect {| John Doe <john.doe@mail.com> |}];
   (* Some characters are currently not accepted. *)
   test "\\";

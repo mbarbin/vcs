@@ -19,25 +19,20 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "of_string" =
-  let test str =
-    match Vcs.User_name.of_string str with
-    | Error e -> print_s [%sexp Error (e : Error.t)]
-    | Ok a -> print_endline (Vcs.User_name.to_string a)
-  in
-  test "John Doe";
-  [%expect {| John Doe |}];
-  test "jdoe";
-  [%expect {| jdoe |}];
-  test "john-doe";
-  [%expect {| john-doe |}];
-  test "john_doe";
-  [%expect {| john_doe |}];
-  (* Some characters are currently not accepted. *)
-  test "\\";
-  [%expect {| (Error ("User_name.of_string: invalid entry" \)) |}];
-  (* And we do not accept the empty string. *)
-  test "";
-  [%expect {| (Error ("User_name.of_string: invalid entry" "")) |}];
-  ()
+type t =
+  { steps : Info.t list
+  ; error : Error.t
+  }
+[@@deriving sexp_of]
+
+let to_string_hum t = t |> sexp_of_t |> Sexp.to_string_hum
+let create_s sexp = { steps = []; error = Error.create_s sexp }
+
+let to_error t =
+  match t.steps with
+  | [] -> t.error
+  | _ :: _ -> Error.create_s (sexp_of_t t)
 ;;
+
+let add_context t ~step = { steps = Info.create_s step :: t.steps; error = t.error }
+let init error ~step = { steps = [ Info.create_s step ]; error }

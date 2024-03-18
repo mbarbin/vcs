@@ -47,26 +47,22 @@ let%expect_test "hello commit" =
      [Vcs]. What we do in this example is simply create a new file and commit it
      to the repository, and query it from the store afterwards. *)
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
-  let () =
-    (* Just a quick word about [Vcs.save_file]. This is only a part of Vcs that
-       is included for convenience. Indeed, this allows a library that uses Vcs
-       to perform some basic IO while maintaining compatibility with [Eio] and
-       [Blocking] clients. This dispatches to the actual Vcs provider
-       implementation, which here uses [Eio.Path.save_file] under the hood. *)
-    Vcs.save_file
-      vcs
-      ~path:(Vcs.Repo_root.append repo_root hello_file)
-      ~file_contents:(Vcs.File_contents.create "Hello World!\n")
-    |> Or_error.ok_exn
-  in
-  let () = Vcs.add vcs ~repo_root ~path:hello_file |> Or_error.ok_exn in
+  (* Just a quick word about [Vcs.save_file]. This is only a part of Vcs that is
+     included for convenience. Indeed, this allows a library that uses Vcs to
+     perform some basic IO while maintaining compatibility with [Eio] and
+     [Blocking] clients. This dispatches to the actual Vcs provider
+     implementation, which here uses [Eio.Path.save_file] under the hood. *)
+  Vcs.save_file
+    vcs
+    ~path:(Vcs.Repo_root.append repo_root hello_file)
+    ~file_contents:(Vcs.File_contents.create "Hello World!\n");
+  Vcs.add vcs ~repo_root ~path:hello_file;
   let rev =
     Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
-    |> Or_error.ok_exn
   in
   print_s
     [%sexp
-      (Vcs.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
+      (Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
        : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
   [%expect {| (Ok (Present "Hello World!\n")) |}];
   ()

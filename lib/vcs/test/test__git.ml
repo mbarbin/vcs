@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 let%expect_test "exit0" =
-  let test output = print_s [%sexp (Git.exit0 output : unit Or_error.t)] in
+  let test output = print_s [%sexp (Vcs.Git.exit0 output : unit Or_error.t)] in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ()) |}];
   (* The error does not contain the stdout or stderr, as this is already handled
@@ -32,7 +32,9 @@ let%expect_test "exit0" =
 ;;
 
 let%expect_test "exit0_and_stdout" =
-  let test output = print_s [%sexp (Git.exit0_and_stdout output : string Or_error.t)] in
+  let test output =
+    print_s [%sexp (Vcs.Git.exit0_and_stdout output : string Or_error.t)]
+  in
   test { exit_code = 0; stdout = "stdout"; stderr = "" };
   [%expect {| (Ok stdout) |}];
   (* Same remark as in [exit0] regarding the error trace. *)

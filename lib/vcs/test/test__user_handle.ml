@@ -21,9 +21,9 @@
 
 let%expect_test "of_string" =
   let test str =
-    match User_handle.of_string str with
+    match Vcs.User_handle.of_string str with
     | Error e -> print_s [%sexp Error (e : Error.t)]
-    | Ok a -> print_endline (User_handle.to_string a)
+    | Ok a -> print_endline (Vcs.User_handle.to_string a)
   in
   test "no space";
   [%expect {| (Error ("User_handle.of_string: invalid entry" "no space")) |}];

@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 let%expect_test "of_string" =
-  let test s = print_s [%sexp (Repo_root.of_string s : Repo_root.t Or_error.t)] in
+  let test s = print_s [%sexp (Vcs.Repo_root.of_string s : Vcs.Repo_root.t Or_error.t)] in
   test "";
   [%expect {| (Error (Absolute_path.of_string "\"\": invalid path")) |}];
   test "/";
@@ -37,10 +37,10 @@ let%expect_test "of_string" =
 ;;
 
 let%expect_test "relativize_exn" =
-  let repo_root = Repo_root.v "/tmp/my-repo" in
+  let repo_root = Vcs.Repo_root.v "/tmp/my-repo" in
   let test abs =
-    match Repo_root.relativize repo_root (Absolute_path.v abs) with
-    | Ok p -> print_endline (Path_in_repo.to_string p)
+    match Vcs.Repo_root.relativize repo_root (Absolute_path.v abs) with
+    | Ok p -> print_endline (Vcs.Path_in_repo.to_string p)
     | Error e -> print_s [%sexp Error (e : Error.t)]
   in
   test "/not/in/the/repo";
@@ -66,10 +66,10 @@ let%expect_test "relativize_exn" =
 ;;
 
 let%expect_test "append" =
-  let repo_root = Repo_root.v "/tmp/my-repo" in
+  let repo_root = Vcs.Repo_root.v "/tmp/my-repo" in
   let test abs =
     print_endline
-      (Absolute_path.to_string (Repo_root.append repo_root (Path_in_repo.v abs)))
+      (Absolute_path.to_string (Vcs.Repo_root.append repo_root (Vcs.Path_in_repo.v abs)))
   in
   test ".";
   [%expect {| /tmp/my-repo/ |}];

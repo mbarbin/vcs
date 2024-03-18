@@ -21,9 +21,9 @@
 
 let%expect_test "of_string" =
   let test str =
-    match Remote_name.of_string str with
+    match Vcs.Remote_name.of_string str with
     | Error e -> print_s [%sexp Error (e : Error.t)]
-    | Ok a -> print_endline (Remote_name.to_string a)
+    | Ok a -> print_endline (Vcs.Remote_name.to_string a)
   in
   test "no space";
   [%expect {| (Error ("Remote_name.of_string: invalid entry" "no space")) |}];

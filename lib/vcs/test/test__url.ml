@@ -21,30 +21,30 @@
 
 let%expect_test "to_string" =
   let test t =
-    let str = Url.to_string t in
+    let str = Vcs.Url.to_string t in
     print_endline str;
-    let t' = Url.of_string str |> Or_error.ok_exn in
-    require_equal [%here] (module Url) t t'
+    let t' = Vcs.Url.of_string str |> Or_error.ok_exn in
+    require_equal [%here] (module Vcs.Url) t t'
   in
   test
     { platform = GitHub
     ; protocol = Https
-    ; user_handle = User_handle.v "ahrefs"
-    ; repo_name = Repo_name.v "atd"
+    ; user_handle = Vcs.User_handle.v "ahrefs"
+    ; repo_name = Vcs.Repo_name.v "atd"
     };
   [%expect {| https://github.com/ahrefs/atd.git |}];
   test
     { platform = GitHub
     ; protocol = Ssh
-    ; user_handle = User_handle.v "mbarbin"
-    ; repo_name = Repo_name.v "ocaml-grpc"
+    ; user_handle = Vcs.User_handle.v "mbarbin"
+    ; repo_name = Vcs.Repo_name.v "ocaml-grpc"
     };
   [%expect {| git@github.com:mbarbin/ocaml-grpc.git |}];
   ()
 ;;
 
 let%expect_test "of_string" =
-  let test str = print_s [%sexp (Url.of_string str : Url.t Or_error.t)] in
+  let test str = print_s [%sexp (Vcs.Url.of_string str : Vcs.Url.t Or_error.t)] in
   test "";
   [%expect {| (Error ("Invalid url" ((url "")))) |}];
   test "mbarbin/myrepo";

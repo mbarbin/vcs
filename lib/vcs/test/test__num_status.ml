@@ -26,7 +26,7 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let num_status = Git_cli.Num_status.parse_lines_exn ~lines in
-  ignore (num_status : Num_status.t);
+  ignore (num_status : Vcs.Num_status.t);
   [%expect {||}];
   ()
 ;;

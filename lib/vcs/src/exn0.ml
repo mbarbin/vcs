@@ -19,25 +19,20 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "of_string" =
-  let test str =
-    match Vcs.User_name.of_string str with
-    | Error e -> print_s [%sexp Error (e : Error.t)]
-    | Ok a -> print_endline (Vcs.User_name.to_string a)
-  in
-  test "John Doe";
-  [%expect {| John Doe |}];
-  test "jdoe";
-  [%expect {| jdoe |}];
-  test "john-doe";
-  [%expect {| john-doe |}];
-  test "john_doe";
-  [%expect {| john_doe |}];
-  (* Some characters are currently not accepted. *)
-  test "\\";
-  [%expect {| (Error ("User_name.of_string: invalid entry" \)) |}];
-  (* And we do not accept the empty string. *)
-  test "";
-  [%expect {| (Error ("User_name.of_string: invalid entry" "")) |}];
-  ()
+exception E of Err.t [@@deriving sexp_of]
+
+let reraise_with_context err bt ~step =
+  Stdlib.Printexc.raise_with_backtrace (E (Err.add_context err ~step)) bt
+;;
+
+let try_with f =
+  match f () with
+  | r -> Ok r
+  | exception E err -> Error (Err.to_error err)
+;;
+
+let try_with_poly f =
+  match f () with
+  | r -> Ok r
+  | exception E err -> Error (`Vcs err)
 ;;

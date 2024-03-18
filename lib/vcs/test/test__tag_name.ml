@@ -21,9 +21,9 @@
 
 let%expect_test "of_string" =
   let test str =
-    match Tag_name.of_string str with
+    match Vcs.Tag_name.of_string str with
     | Error e -> print_s [%sexp Error (e : Error.t)]
-    | Ok a -> print_endline (Tag_name.to_string a)
+    | Ok a -> print_endline (Vcs.Tag_name.to_string a)
   in
   test "no space";
   [%expect {| (Error ("Tag_name.of_string: invalid entry" "no space")) |}];

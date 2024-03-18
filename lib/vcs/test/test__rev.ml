@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 let%expect_test "of_string" =
-  let test str = print_s [%sexp (Rev.of_string str : Rev.t Or_error.t)] in
+  let test str = print_s [%sexp (Vcs.Rev.of_string str : Vcs.Rev.t Or_error.t)] in
   test "";
   [%expect {| (Error ("Rev.of_string: invalid entry" "")) |}];
   test "too-short";

@@ -21,9 +21,9 @@
 
 let%expect_test "of_string" =
   let test str =
-    match Commit_message.of_string str with
+    match Vcs.Commit_message.of_string str with
     | Error e -> print_s [%sexp Error (e : Error.t)]
-    | Ok a -> print_endline (Commit_message.to_string a)
+    | Ok a -> print_endline (Vcs.Commit_message.to_string a)
   in
   (* We do not accept the empty string. *)
   test "";

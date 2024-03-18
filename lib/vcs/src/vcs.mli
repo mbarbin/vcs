@@ -48,6 +48,35 @@ type -'a t
     actual provider. See for example [Vcs_git.create]. *)
 val create : 'a Provider.t -> 'a t
 
+(** {1 Error handling}
+
+    The default API of [Vcs] is one that exposes functions that may raise a
+    single exception, named {!exception:E}, which carries an abstract payload
+    containing printable information, that is not meant for pattern matching
+    (thus targeting only a non-specialized error recovery).
+
+    A general design principle that we follow here is that if an error result is
+    of interest for pattern matching, we want to incorporate it into the
+    successful branch of the function's result, rather than in its error part -
+    either by making the result a variant type, or otherwise adding more
+    functions to the API with finer granularity for particular use cases.
+    Consider opening an issue on [GitHub] if what you'd like to match on isn't
+    available.
+
+    As library authors we realize that manipulating [Result.t] is a popular
+    choice too: we also export the [Vcs]'s functionality via
+    {{!non_raising_apis} non-raising APIs} if you prefer. *)
+
+(** Payload of the exception raised by [Vcs] functions. *)
+module Err = Err
+
+(** [E] is meant to be the only exception ever raised by functions from the
+    [Vcs] interface. [Err.t] doesn't carry the raw backtrace, so you'll need
+    to manipulate the backtrace yourself if you care about it (like you would
+    with any other exceptions). *)
+exception E of Err.t
+[@@deriving sexp_of]
+
 (** {1 Creating repositories} *)
 
 module Platform = Platform
@@ -57,7 +86,7 @@ module Url = Url
 
 (** Initialize a git repository at the given path. This errors out if a
     repository is already initialized there. *)
-val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t Or_error.t
+val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t
 
 (** {1 Revisions} *)
 
@@ -70,18 +99,14 @@ module Mock_revs = Mock_revs
 module Commit_message = Commit_message
 module Path_in_repo = Path_in_repo
 
-val add
-  :  [> Trait.add ] t
-  -> repo_root:Repo_root.t
-  -> path:Path_in_repo.t
-  -> unit Or_error.t
+val add : [> Trait.add ] t -> repo_root:Repo_root.t -> path:Path_in_repo.t -> unit
 
 (** When this succeeds, this returns the revision of the commit that was just created. *)
 val commit
   :  [> Trait.rev_parse | Trait.commit ] t
   -> repo_root:Repo_root.t
   -> commit_message:Commit_message.t
-  -> Rev.t Or_error.t
+  -> Rev.t
 
 (** {1 Files} *)
 
@@ -91,14 +116,14 @@ val ls_files
   :  [> Trait.ls_files ] t
   -> repo_root:Repo_root.t
   -> below:Path_in_repo.t
-  -> Path_in_repo.t list Or_error.t
+  -> Path_in_repo.t list
 
 val show_file_at_rev
   :  [> Trait.show ] t
   -> repo_root:Repo_root.t
   -> rev:Rev.t
   -> path:Path_in_repo.t
-  -> [ `Present of File_contents.t | `Absent ] Or_error.t
+  -> [ `Present of File_contents.t | `Absent ]
 
 (** {2 Files IO}
 
@@ -107,17 +132,14 @@ val show_file_at_rev
     without committing to a particular implementation. If the [Vcs] provider used at
     runtime is based on [Eio], these functions will use [Eio.Path] underneath. *)
 
-val load_file
-  :  [> Trait.file_system ] t
-  -> path:Absolute_path.t
-  -> File_contents.t Or_error.t
+val load_file : [> Trait.file_system ] t -> path:Absolute_path.t -> File_contents.t
 
 val save_file
   :  ?perms:int (** defaults to [0o600]. *)
   -> [> Trait.file_system ] t
   -> path:Absolute_path.t
   -> file_contents:File_contents.t
-  -> unit Or_error.t
+  -> unit
 
 (** {1 Branches & Tags} *)
 
@@ -133,7 +155,7 @@ val rename_current_branch
   :  [> Trait.branch ] t
   -> repo_root:Repo_root.t
   -> to_:Branch_name.t
-  -> unit Or_error.t
+  -> unit
 
 (** {1 Computing diffs} *)
 
@@ -145,13 +167,13 @@ val name_status
   :  [> Trait.name_status ] t
   -> repo_root:Repo_root.t
   -> changed:Name_status.Changed.t
-  -> Name_status.t Or_error.t
+  -> Name_status.t
 
 val num_status
   :  [> Trait.num_status ] t
   -> repo_root:Repo_root.t
   -> changed:Num_status.Changed.t
-  -> Num_status.t Or_error.t
+  -> Num_status.t
 
 (** {1 Manipulating the tree in memory} *)
 
@@ -160,9 +182,9 @@ module Ref_kind = Ref_kind
 module Refs = Refs
 module Tree = Tree
 
-val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t Or_error.t
-val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t Or_error.t
-val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t Or_error.t
+val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t
+val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t
+val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t
 
 (** {1 Rev parse utils} *)
 
@@ -172,7 +194,7 @@ val rev_parse
   :  [> Trait.rev_parse ] t
   -> repo_root:Repo_root.t
   -> arg:Rev_parse.Arg.t
-  -> Rev.t Or_error.t
+  -> Rev.t
 
 (** {1 User config} *)
 
@@ -190,13 +212,13 @@ val set_user_name
   :  [> Trait.config ] t
   -> repo_root:Repo_root.t
   -> user_name:User_name.t
-  -> unit Or_error.t
+  -> unit
 
 val set_user_email
   :  [> Trait.config ] t
   -> repo_root:Repo_root.t
   -> user_email:User_email.t
-  -> unit Or_error.t
+  -> unit
 
 (** {1 Low level Git cli}
 
@@ -217,8 +239,8 @@ val git
   -> [> Trait.git ] t
   -> repo_root:Repo_root.t
   -> args:string list
-  -> f:(Git.Output.t -> 'a Or_error.t)
-  -> 'a Or_error.t
+  -> f:(Git.Output.t -> 'a)
+  -> 'a
 
 (** {1 Test utils}
 
@@ -231,4 +253,126 @@ module For_test : sig
     :  [> Trait.config | Trait.init ] t
     -> path:Absolute_path.t
     -> Repo_root.t Or_error.t
+end
+
+(** {1:non_raising_apis Non-raising APIs}
+
+    For convenience and to allow experimenting with different error handling
+    strategies, [Vcs] exports non-raising APIs. The functions there return
+    [Result.t]s instead of raising. *)
+
+module Non_raising : sig
+  module type S = sig
+    type err
+    type 'a result := ('a, err) Result.t
+
+    val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t result
+
+    val add
+      :  [> Trait.add ] t
+      -> repo_root:Repo_root.t
+      -> path:Path_in_repo.t
+      -> unit result
+
+    val commit
+      :  [> Trait.rev_parse | Trait.commit ] t
+      -> repo_root:Repo_root.t
+      -> commit_message:Commit_message.t
+      -> Rev.t result
+
+    val ls_files
+      :  [> Trait.ls_files ] t
+      -> repo_root:Repo_root.t
+      -> below:Path_in_repo.t
+      -> Path_in_repo.t list result
+
+    val show_file_at_rev
+      :  [> Trait.show ] t
+      -> repo_root:Repo_root.t
+      -> rev:Rev.t
+      -> path:Path_in_repo.t
+      -> [ `Present of File_contents.t | `Absent ] result
+
+    val load_file
+      :  [> Trait.file_system ] t
+      -> path:Absolute_path.t
+      -> File_contents.t result
+
+    val save_file
+      :  ?perms:int
+      -> [> Trait.file_system ] t
+      -> path:Absolute_path.t
+      -> file_contents:File_contents.t
+      -> unit result
+
+    val rename_current_branch
+      :  [> Trait.branch ] t
+      -> repo_root:Repo_root.t
+      -> to_:Branch_name.t
+      -> unit result
+
+    val name_status
+      :  [> Trait.name_status ] t
+      -> repo_root:Repo_root.t
+      -> changed:Name_status.Changed.t
+      -> Name_status.t result
+
+    val num_status
+      :  [> Trait.num_status ] t
+      -> repo_root:Repo_root.t
+      -> changed:Num_status.Changed.t
+      -> Num_status.t result
+
+    val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t result
+    val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t result
+    val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t result
+
+    val rev_parse
+      :  [> Trait.rev_parse ] t
+      -> repo_root:Repo_root.t
+      -> arg:Rev_parse.Arg.t
+      -> Rev.t result
+
+    val set_user_name
+      :  [> Trait.config ] t
+      -> repo_root:Repo_root.t
+      -> user_name:User_name.t
+      -> unit result
+
+    val set_user_email
+      :  [> Trait.config ] t
+      -> repo_root:Repo_root.t
+      -> user_email:User_email.t
+      -> unit result
+
+    val git
+      :  ?env:string array
+      -> ?run_in_subdir:Path_in_repo.t
+      -> [> Trait.git ] t
+      -> repo_root:Repo_root.t
+      -> args:string list
+      -> f:(Git.Output.t -> 'a result)
+      -> 'a result
+  end
+end
+
+(** An API based on [Base.Or_error]. *)
+module Or_error : sig
+  type err = Error.t
+  type 'a result = 'a Or_error.t
+
+  include Non_raising.S with type err := Error.t
+end
+
+(** An API in the style of
+    {{:https://erratique.ch/software/rresult/doc/Rresult/index.html#usage} Rresult}. *)
+module Result : sig
+  type err = [ `Vcs of Err.t ]
+  type 'a result = ('a, err) Result.t
+
+  include Non_raising.S with type err := err
+
+  val pp_error : Stdlib.Format.formatter -> [ `Vcs of Err.t ] -> unit
+  val open_error : 'a result -> ('a, [> `Vcs of Err.t ]) Result.t
+  val error_to_msg : 'a result -> ('a, [ `Msg of string ]) Result.t
 end

@@ -36,24 +36,20 @@ let%expect_test "hello commit" =
     Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
   in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
-  let () =
-    Vcs.save_file
-      vcs
-      ~path:(Vcs.Repo_root.append repo_root hello_file)
-      ~file_contents:(Vcs.File_contents.create "Hello World!")
-    |> Or_error.ok_exn
-  in
-  let () = Vcs.add vcs ~repo_root ~path:hello_file |> Or_error.ok_exn in
+  Vcs.save_file
+    vcs
+    ~path:(Vcs.Repo_root.append repo_root hello_file)
+    ~file_contents:(Vcs.File_contents.create "Hello World!");
+  Vcs.add vcs ~repo_root ~path:hello_file;
   let rev =
     Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
-    |> Or_error.ok_exn
   in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
   print_s [%sexp (mock_rev : Vcs.Rev.t)];
   [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
   print_s
     [%sexp
-      (Vcs.show_file_at_rev
+      (Vcs.Or_error.show_file_at_rev
          vcs
          ~repo_root
          ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.value_exn ~here:[%here])
@@ -62,7 +58,7 @@ let%expect_test "hello commit" =
   [%expect {| (Ok (Present "Hello World!")) |}];
   print_s
     [%sexp
-      (Vcs.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
+      (Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
        : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
   [%expect {| (Ok (Present "Hello World!")) |}];
   ()
