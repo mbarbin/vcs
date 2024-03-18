@@ -18,20 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-(** Defining the interface of a compatible runtime.
-
-    The other modules defined by [Git_cli] are all functors that are
-    parametrized by this interface. *)
-
-module type S = sig
-  type t
-
-  (** {1 I/O} *)
-
-  include Vcs.Trait.File_system.S with type t := t
-
-  (** {1 Running the git command line} *)
-
-  include Vcs.Trait.Git.S with type t := t
-end

@@ -43,7 +43,8 @@ module Diff_status = struct
   include T
 
   let parse_exn str : t =
-    if String.is_empty str then raise_s [%sexp "Unexpected empty diff status"];
+    if String.is_empty str
+    then raise_s [%sexp "Unexpected empty diff status"] [@coverage off];
     match str.[0] with
     | 'A' -> `A
     | 'D' -> `D
@@ -76,7 +77,9 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
        let path2 =
          match List.hd rest with
          | Some hd -> Vcs.Path_in_repo.v hd
-         | None -> raise_s [%sexp "Unexpected output from git status", (line : string)]
+         | None ->
+           raise_s
+             [%sexp "Unexpected output from git status", (line : string)] [@coverage off]
        in
        (match diff_status with
         | `R -> Renamed { src = Vcs.Path_in_repo.v path; dst = path2; similarity }

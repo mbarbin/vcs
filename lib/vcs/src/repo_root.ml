@@ -42,7 +42,14 @@
  * removed the logic pertaining to the repo root in which the program started.
  *)
 
-type t = Absolute_path.t [@@deriving compare, equal, hash, sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t = Absolute_path.t [@@deriving compare, equal, hash, sexp_of]
+end
+
+include T
+include Comparable.Make (T)
 
 let of_absolute_path t = t
 let to_absolute_path t = t

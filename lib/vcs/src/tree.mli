@@ -53,6 +53,7 @@ module Node_kind : sig
   [@@deriving equal, sexp_of]
 
   val rev : _ t -> Rev.t
+  val map_index : 'a t -> f:('a -> 'b) -> 'b t
 end
 
 module Node : sig
@@ -130,6 +131,8 @@ module Subtree : sig
     ; refs : Refs.t
     }
   [@@deriving sexp_of]
+
+  val is_empty : t -> bool
 end
 
 val subtrees : t -> Subtree.t list

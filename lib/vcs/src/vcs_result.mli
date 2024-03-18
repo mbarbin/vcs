@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** An A [Vcs] API in the style of
+(** An [Vcs] API in the style of
     {{:https://erratique.ch/software/rresult/doc/Rresult/index.html#usage} Rresult}. *)
 
 type err = [ `Vcs of Err.t ]

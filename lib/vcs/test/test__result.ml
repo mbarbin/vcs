@@ -19,41 +19,51 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module T = struct
-  [@@@coverage off]
+let%expect_test "pp_error" =
+  Vcs.Result.pp_error Stdlib.Format.std_formatter (`Vcs (Vcs.Err.create_s [%sexp Hello]));
+  [%expect {| ((steps ()) (error Hello)) |}];
+  ()
+;;
 
-  type t = Vcs.Num_status.Key.t =
-    | One_file of Vcs.Path_in_repo.t
-    | Two_files of
-        { src : Vcs.Path_in_repo.t
-        ; dst : Vcs.Path_in_repo.t
-        }
-  [@@deriving equal, sexp_of]
-end
+let%expect_test "error_to_msg" =
+  let test r =
+    print_s [%sexp (Vcs.Result.error_to_msg r : (unit, [ `Msg of string ]) Result.t)]
+  in
+  test (Ok ());
+  [%expect {| (Ok ()) |}];
+  test (Error (`Vcs (Vcs.Err.create_s [%sexp Hello])));
+  [%expect {| (Error (Msg "((steps ()) (error Hello))")) |}];
+  ()
+;;
 
-include T
-
-let arrow = lazy (String.Search_pattern.create " => ")
-
-let parse_exn str =
-  try
-    match String.Search_pattern.split_on (force arrow) str with
-    | [ str ] -> One_file (Vcs.Path_in_repo.v str)
-    | [ left; right ] ->
-      (match String.rsplit2 left ~on:'{' with
-       | None ->
-         Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }
-       | Some (prefix, left_of_arrow) ->
-         let right_of_arrow, suffix = String.lsplit2_exn right ~on:'}' in
-         Two_files
-           { src = Vcs.Path_in_repo.v (prefix ^ left_of_arrow ^ suffix)
-           ; dst = Vcs.Path_in_repo.v (prefix ^ right_of_arrow ^ suffix)
-           })
-    | _ :: _ :: _ -> raise_s [%sexp "Too many '=>'"] [@coverage off]
-    | [] -> assert false
-  with
-  | exn ->
-    raise_s
-      [%sexp
-        "Git_cli.Munged_path.parse_exn", "invalid path", (str : string), (exn : Exn.t)]
+let%expect_test "open_error" =
+  (* Here we simulate a program where the type for errors changes as we go. *)
+  let result =
+    let%bind.Result () = Result.return () in
+    Result.return ()
+  in
+  print_s [%sexp (result : (unit, unit) Result.t)];
+  [%expect {| (Ok ()) |}];
+  let result =
+    let%bind.Result () = result in
+    let%bind.Result () = (Result.return () : (unit, [ `My_int_error of int ]) Result.t) in
+    Result.return ()
+  in
+  print_s [%sexp (result : (unit, [ `My_int_error of int ]) Result.t)];
+  [%expect {| (Ok ()) |}];
+  let result =
+    let%bind.Result () =
+      match result with
+      | Ok _ as r -> r
+      | Error (`My_int_error _) as r -> r [@coverage off]
+    in
+    let ok = (Ok () : unit Vcs.Result.result) in
+    let%bind.Result () = Vcs.Result.open_error ok in
+    let error = Error (`Vcs (Vcs.Err.create_s [%sexp Vcs_error])) in
+    let%bind.Result () = Vcs.Result.open_error error in
+    (Result.return () [@coverage off])
+  in
+  print_s [%sexp (result : (unit, [ `My_int_error of int | `Vcs of Vcs.Err.t ]) Result.t)];
+  [%expect {| (Error (Vcs ((steps ()) (error Vcs_error)))) |}];
+  ()
 ;;

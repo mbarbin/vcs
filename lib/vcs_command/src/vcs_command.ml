@@ -86,7 +86,9 @@ let init_cmd =
        let%bind { vcs; repo_root = _; context } = Vcs_param.initialize ~env ~config in
        let%bind path = Vcs_param.resolve path ~context in
        let%bind repo_root = Vcs.Or_error.init vcs ~path in
-       if not quiet then Eio_writer.print_sexp ~env [%sexp (repo_root : Vcs.Repo_root.t)];
+       if not quiet
+       then
+         Eio_writer.print_sexp ~env [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
        return ())
 ;;
 

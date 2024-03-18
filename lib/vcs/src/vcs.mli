@@ -262,3 +262,9 @@ module For_test = For_test
 module Or_error = Vcs_or_error
 module Result = Vcs_result
 module Non_raising = Non_raising
+
+module Private : sig
+  (** Module exposed for testing of Vcs only. *)
+
+  module Exn0 = Exn0
+end

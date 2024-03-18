@@ -21,7 +21,6 @@
 
 type t = unit
 
-let name _ = "git-blocking"
 let create () = ()
 
 let load_file () ~path =
@@ -56,13 +55,17 @@ let with_cwd ~cwd ~f =
 
 exception User_error of Error.t
 
-type exit_status =
-  [ `Exited of int
-  | `Signaled of int
-  | `Stopped of int
-  | `Unknown
-  ]
-[@@deriving sexp_of]
+module Exit_status = struct
+  [@@@coverage off]
+
+  type t =
+    [ `Exited of int
+    | `Signaled of int
+    | `Stopped of int
+    | `Unknown
+    ]
+  [@@deriving sexp_of]
+end
 
 module Lines = struct
   type t = Lines of string list
@@ -81,9 +84,9 @@ let git ?env () ~cwd ~args ~f =
   let env =
     match env with
     | None -> Unix.environment ()
-    | Some env -> env
+    | Some env -> env [@coverage off]
   in
-  let exit_status_r : exit_status ref = ref `Unknown in
+  let exit_status_r : Exit_status.t ref = ref `Unknown in
   let stdout_r = ref "" in
   let stderr_r = ref "" in
   try
@@ -102,8 +105,8 @@ let git ?env () ~cwd ~args ~f =
     let exit_status =
       match process_status with
       | Unix.WEXITED n -> `Exited n
-      | Unix.WSIGNALED n -> `Signaled n
-      | Unix.WSTOPPED n -> `Stopped n
+      | Unix.WSIGNALED n -> `Signaled n [@coverage off]
+      | Unix.WSTOPPED n -> `Stopped n [@coverage off]
     in
     exit_status_r := exit_status;
     let exit_code =
@@ -116,6 +119,7 @@ let git ?env () ~cwd ~args ~f =
                 [%sexp
                   "git process terminated abnormally"
                   , { exit_status : [ `Signaled of int | `Stopped of int ] }]))
+        [@coverage off]
     in
     match f { Vcs.Git.Output.exit_code; stdout; stderr } with
     | Ok _ as ok -> ok
@@ -131,7 +135,7 @@ let git ?env () ~cwd ~args ~f =
       [%sexp
         { prog : string
         ; args : string list
-        ; exit_status = (!exit_status_r : exit_status)
+        ; exit_status = (!exit_status_r : Exit_status.t)
         ; cwd : Absolute_path.t
         ; stdout = (Lines.create !stdout_r : Lines.t)
         ; stderr = (Lines.create !stderr_r : Lines.t)

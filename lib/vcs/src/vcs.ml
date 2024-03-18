@@ -54,3 +54,7 @@ module User_handle = User_handle
 module User_name = User_name
 include Exn0
 include Vcs0
+
+module Private = struct
+  module Exn0 = Exn0
+end

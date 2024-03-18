@@ -38,13 +38,19 @@ module Protocol = struct
   ;;
 end
 
-type t =
-  { platform : Platform.t
-  ; protocol : Protocol.t
-  ; user_handle : User_handle.t
-  ; repo_name : Repo_name.t
-  }
-[@@deriving compare, equal, hash, sexp_of]
+module T = struct
+  [@@@coverage off]
+
+  type t =
+    { platform : Platform.t
+    ; protocol : Protocol.t
+    ; user_handle : User_handle.t
+    ; repo_name : Repo_name.t
+    }
+  [@@deriving compare, equal, hash, sexp_of]
+end
+
+include T
 
 let to_string t =
   let { platform; protocol; user_handle; repo_name } = t in

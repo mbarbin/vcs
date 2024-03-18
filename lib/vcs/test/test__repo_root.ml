@@ -36,6 +36,13 @@ let%expect_test "of_string" =
   ()
 ;;
 
+let%expect_test "to_string" =
+  let test s = print_endline (Vcs.Repo_root.to_string (Vcs.Repo_root.v s)) in
+  test "/path/to/repo";
+  [%expect {| /path/to/repo |}];
+  ()
+;;
+
 let%expect_test "relativize_exn" =
   let repo_root = Vcs.Repo_root.v "/tmp/my-repo" in
   let test abs =

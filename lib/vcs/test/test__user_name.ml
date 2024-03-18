@@ -33,6 +33,8 @@ let%expect_test "of_string" =
   [%expect {| john-doe |}];
   test "john_doe";
   [%expect {| john_doe |}];
+  test "john.doe";
+  [%expect {| john.doe |}];
   (* Some characters are currently not accepted. *)
   test "\\";
   [%expect {| (Error ("User_name.of_string: invalid entry" \)) |}];

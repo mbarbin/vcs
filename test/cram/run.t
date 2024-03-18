@@ -123,3 +123,39 @@ Vcs allows to run the git command line directly if the provider supports it.
 
   $ ocaml-vcs git -- invalid-command 2> /dev/null
   [1]
+
+Vcs's help for review.
+
+  $ ocaml-vcs --help
+  call a command from the vcs interface
+  
+    ocaml-vcs SUBCOMMAND
+  
+  This is an executable to test the Version Control System (vcs) library.
+  
+  We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the
+  sub commands exposed here.
+  
+  === subcommands ===
+  
+    add-cmd                    . add a file to the index
+    commit                     . commit a file
+    git                        . run the git cli
+    init-cmd                   . initialize a new repository
+    load-file                  . print a file from the filesystem (aka cat)
+    log                        . show the log of current repo
+    ls-files                   . list file
+    name-status                . show a summary of the diff between 2 revs
+    num-status                 . show a summary of the number of lines of diff
+                                 between 2 revs
+    refs                       . show the refs of current repo
+    rename-current-branch      . move/rename a branch to a new name
+    rev-parse                  . revision of a branch or HEAD
+    save-file                  . save stdin to a file from the filesystem (aka
+                                 tee)
+    set-user-config            . set the user config
+    show-file-at-rev           . show the contents of file at a given revision
+    tree                       . compute tree of current repo
+    version                    . print version information
+    help                       . explain a given subcommand (perhaps recursively)
+  

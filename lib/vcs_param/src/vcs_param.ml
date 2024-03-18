@@ -24,14 +24,18 @@ module Config = struct
      as several backends, or backend modifiers. *)
   type t = { unit : unit }
 
-  let _silence_w69_unused_field t =
+  let silence_w69_unused_field t =
     ignore (t.unit : unit);
     ()
   ;;
 
+  let default = { unit = () }
+
   let param =
     let%map_open.Command () = return () in
-    { unit = () }
+    let t = { unit = () } in
+    silence_w69_unused_field t;
+    t
   ;;
 end
 
@@ -82,26 +86,33 @@ module Context = struct
     ; repo_root : Vcs.Repo_root.t
     }
 
-  let _silence_w69_unused_field t =
+  let silence_w69_unused_field t =
     ignore (t.config : Config.t);
     ignore (t.fs : Eio.Fs.dir_ty Eio.Path.t);
     ()
   ;;
 
-  let create ~env ~config =
-    let cwd = Unix.getcwd () |> Absolute_path.v in
+  let create ?cwd ~env ~config () =
+    let cwd =
+      match cwd with
+      | Some cwd -> cwd
+      | None -> Unix.getcwd () |> Absolute_path.v
+    in
     let%bind vcs, repo_root =
       match Create_vcs_backend.from_cwd ~env ~cwd ~config with
       | Some x -> Ok x
       | None -> Or_error.error_string "Not in a supported version control repo"
     in
-    return
+    let t =
       { config
       ; fs = (Eio.Stdenv.fs env :> Eio.Fs.dir_ty Eio.Path.t)
       ; cwd
       ; vcs
       ; repo_root
       }
+    in
+    silence_w69_unused_field t;
+    return t
   ;;
 end
 
@@ -114,18 +125,13 @@ module Initialized = struct
 end
 
 let initialize ~env ~config =
-  let%bind c = Context.create ~env ~config in
+  let%bind c = Context.create ~env ~config () in
   return { Initialized.vcs = c.vcs; repo_root = c.repo_root; context = c }
 ;;
 
 type 'a t = Context.t -> 'a Or_error.t
 
 let resolve t ~context = t context
-
-let anon_absolute_path =
-  let%map_open.Command path = anon ("file" %: string) in
-  Absolute_path.of_string path
-;;
 
 let anon_branch_name =
   let%map_open.Command branch_name = anon ("branch" %: string) in

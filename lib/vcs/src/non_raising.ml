@@ -24,100 +24,59 @@ module type S = Vcs_interface.S
 
 module Make (M : M) :
   S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.err) Result.t = struct
-  let init vcs ~path =
-    match Vcs0.init vcs ~path with
+  let try_with f =
+    match f () with
     | r -> Ok r
     | exception Exn0.E err -> Error (M.map_error err)
   ;;
 
-  let add vcs ~repo_root ~path =
-    match Vcs0.add vcs ~repo_root ~path with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
-  ;;
+  let init vcs ~path = try_with (fun () -> Vcs0.init vcs ~path)
+  let add vcs ~repo_root ~path = try_with (fun () -> Vcs0.add vcs ~repo_root ~path)
 
   let commit vcs ~repo_root ~commit_message =
-    match Vcs0.commit vcs ~repo_root ~commit_message with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.commit vcs ~repo_root ~commit_message)
   ;;
 
   let ls_files vcs ~repo_root ~below =
-    match Vcs0.ls_files vcs ~repo_root ~below with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.ls_files vcs ~repo_root ~below)
   ;;
 
   let show_file_at_rev vcs ~repo_root ~rev ~path =
-    match Vcs0.show_file_at_rev vcs ~repo_root ~rev ~path with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.show_file_at_rev vcs ~repo_root ~rev ~path)
   ;;
 
-  let load_file vcs ~path =
-    match Vcs0.load_file vcs ~path with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
-  ;;
+  let load_file vcs ~path = try_with (fun () -> Vcs0.load_file vcs ~path)
 
   let save_file ?perms vcs ~path ~file_contents =
-    match Vcs0.save_file ?perms vcs ~path ~file_contents with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.save_file ?perms vcs ~path ~file_contents)
   ;;
 
   let rename_current_branch vcs ~repo_root ~to_ =
-    match Vcs0.rename_current_branch vcs ~repo_root ~to_ with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.rename_current_branch vcs ~repo_root ~to_)
   ;;
 
   let name_status vcs ~repo_root ~changed =
-    match Vcs0.name_status vcs ~repo_root ~changed with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.name_status vcs ~repo_root ~changed)
   ;;
 
   let num_status vcs ~repo_root ~changed =
-    match Vcs0.num_status vcs ~repo_root ~changed with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.num_status vcs ~repo_root ~changed)
   ;;
 
-  let log vcs ~repo_root =
-    match Vcs0.log vcs ~repo_root with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
-  ;;
-
-  let refs vcs ~repo_root =
-    match Vcs0.refs vcs ~repo_root with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
-  ;;
-
-  let tree vcs ~repo_root =
-    match Vcs0.tree vcs ~repo_root with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
-  ;;
+  let log vcs ~repo_root = try_with (fun () -> Vcs0.log vcs ~repo_root)
+  let refs vcs ~repo_root = try_with (fun () -> Vcs0.refs vcs ~repo_root)
+  let tree vcs ~repo_root = try_with (fun () -> Vcs0.tree vcs ~repo_root)
 
   let rev_parse vcs ~repo_root ~arg =
-    match Vcs0.rev_parse vcs ~repo_root ~arg with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.rev_parse vcs ~repo_root ~arg)
   ;;
 
   let set_user_name vcs ~repo_root ~user_name =
-    match Vcs0.set_user_name vcs ~repo_root ~user_name with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.set_user_name vcs ~repo_root ~user_name)
   ;;
 
   let set_user_email vcs ~repo_root ~user_email =
-    match Vcs0.set_user_email vcs ~repo_root ~user_email with
-    | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    try_with (fun () -> Vcs0.set_user_email vcs ~repo_root ~user_email)
   ;;
 
   let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =

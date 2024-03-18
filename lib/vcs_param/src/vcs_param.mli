@@ -25,12 +25,22 @@
 
 module Config : sig
   type t
+
+  val default : t
+  val param : t Command.Param.t
 end
 
 val config : Config.t Command.Param.t
 
 module Context : sig
   type t
+
+  val create
+    :  ?cwd:Absolute_path.t
+    -> env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. >
+    -> config:Config.t
+    -> unit
+    -> t Or_error.t
 end
 
 module Initialized : sig
@@ -63,9 +73,6 @@ type 'a t
 
 (** To be called in the body of the command, after initialization. *)
 val resolve : 'a t -> context:Context.t -> 'a Or_error.t
-
-(** An anonymous parameter for an absolute path. *)
-val anon_absolute_path : Absolute_path.t Or_error.t Command.Param.t
 
 (** A required anon [BRANCH]. *)
 val anon_branch_name : Vcs.Branch_name.t Or_error.t Command.Param.t

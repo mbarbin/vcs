@@ -24,8 +24,6 @@ type t =
   ; process_mgr : [ `Generic ] Eio.Process.mgr_ty Eio.Process.mgr
   }
 
-let name _ = "git"
-
 let create ~env =
   { fs = (Eio.Stdenv.fs env :> Eio.Fs.dir_ty Eio.Path.t)
   ; process_mgr =
@@ -56,5 +54,6 @@ let git ?env t ~cwd ~args ~f =
       match exit_status with
       | `Exited exit_code -> f { Vcs.Git.Output.exit_code; stdout; stderr }
       | `Signaled signal ->
-        Or_error.error_s [%sexp "process exited abnormally", { signal : int }])
+        Or_error.error_s
+          [%sexp "process exited abnormally", { signal : int }] [@coverage off])
 ;;

@@ -52,3 +52,51 @@ let%expect_test "parse_exn" =
         ((remote_name origin) (branch_name progress-bar.2))))) |}];
   ()
 ;;
+
+let%expect_test "parse_ref_kind_exn" =
+  let test_ref_kind str =
+    print_s [%sexp (Git_cli.Refs.Dereferenced.parse_ref_kind_exn str : Vcs.Ref_kind.t)]
+  in
+  require_does_raise [%here] (fun () -> test_ref_kind "blah");
+  [%expect {| (Invalid_argument "String.chop_prefix_exn \"blah\" \"refs/\"") |}];
+  test_ref_kind "refs/blah";
+  [%expect {| (Other (name blah)) |}];
+  test_ref_kind "refs/blah/blah";
+  [%expect {| (Other (name blah/blah)) |}];
+  test_ref_kind "refs/heads/blah";
+  [%expect {| (Local_branch (branch_name blah)) |}];
+  require_does_raise [%here] (fun () -> test_ref_kind "refs/remotes/blah");
+  [%expect {| ("Remote_branch_name.of_string: invalid entry" blah) |}];
+  test_ref_kind "refs/remotes/origin/main";
+  [%expect
+    {|
+    (Remote_branch (
+      remote_branch_name (
+        (remote_name origin)
+        (branch_name main)))) |}];
+  test_ref_kind "refs/tags/0.0.1";
+  [%expect {| (Tag (tag_name 0.0.1)) |}];
+  ()
+;;
+
+let%expect_test "dereferenced" =
+  let test line =
+    print_s
+      [%sexp (Git_cli.Refs.Dereferenced.parse_exn ~line : Git_cli.Refs.Dereferenced.t)]
+  in
+  require_does_raise [%here] (fun () -> test "");
+  [%expect {| ("Invalid ref line" "") |}];
+  test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main";
+  [%expect
+    {|
+    ((rev 1185512b92d612b25613f2e5b473e5231185512b)
+     (ref_kind (Local_branch (branch_name main)))
+     (dereferenced false)) |}];
+  test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main^{}";
+  [%expect
+    {|
+    ((rev 1185512b92d612b25613f2e5b473e5231185512b)
+     (ref_kind (Local_branch (branch_name main)))
+     (dereferenced true)) |}];
+  ()
+;;
