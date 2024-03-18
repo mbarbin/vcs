@@ -39,7 +39,7 @@ module Trait = Trait
     implemented by a set of traits, represented by the ['a] parameter. It is a
     phantom type used to provide compiler guidance on which functions from the
     API you can use with such a [vcs]. The type is contravariant by its
-    parameter : indeed, if you need a set of traits, having more makes is
+    parameter : indeed, if you need a set of traits, having more makes it
     compatible. *)
 type -'a t = 'a Vcs0.t
 
@@ -52,8 +52,8 @@ val create : 'a Provider.t -> 'a t
 
     The default API of [Vcs] is one that exposes functions that may raise a
     single exception, named {!exception:E}, which carries an abstract payload
-    containing printable information, that is not meant for pattern matching
-    (thus targeting only a non-specialized error recovery).
+    [err] containing printable information. [err] is not meant for pattern
+    matching - we're only targeting a non-specialized error recovery.
 
     A general design principle that we follow here is that if an error result is
     of interest for pattern matching, we want to incorporate it into the

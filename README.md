@@ -31,15 +31,15 @@ The `vcs` repository contains several components:
 
 `Vcs` is designed to be backend-agnostic and concurrency-runtime independent. It's compatible with both `Eio` and OCaml `Stdlib` runtimes. We plan to explore the feasibility of supporting [luv](https://github.com/aantron/luv) and [miou](https://github.com/robur-coop/miou) runtimes as separate future work.
 
-The concurrency runtime must be compatible with program written in direct style. Runtime based on monadic concurrent models such as `Async` and `Lwt` are purposely left outside of the scope of this project.
+The concurrency runtime must be compatible with programs written in a direct style. Runtime based on monadic concurrent models such as `Async` and `Lwt` are purposely left outside of the scope of this project.
 
 ## How It Works
 
-`Vcs` is an interface composed of [Traits](doc/traits.md), each providing different functionalities associated with Git interaction. The dynamic dispatch implementation uses the [provider](https://github.com/mbarbin/provider) library.
+`Vcs` is an interface composed of [Traits](doc/traits.md), each providing different functionalities associated with Git interaction. The dynamic dispatch implementation of Vcs is powered by the [provider](https://github.com/mbarbin/provider) library.
 
 ## Motivation
 
-We aim to create a highly compatible library that can serve various use cases and foster community engagement. We also hope to gain practical experience with the use of provider-based parametric libraries.
+Our goal is to create a versatile and highly compatible library that can cater to a wide range of use cases, while also fostering community engagement. We also hope to gain practical experience with the use of provider-based parametric libraries.
 
 ## Relation to ocaml-git
 
@@ -49,7 +49,7 @@ We aim to create a highly compatible library that can serve various use cases an
 
 ## Acknowledgements
 
-We would like to extend our gratitude to and acknowledge the following individuals and teams for their contributions, which have been helpful sources of inspiration for the development of the `Vcs` project:
+We extend our gratitude to the following individuals and teams, whose contributions have been great sources of inspiration for the `Vcs` project:
 
 - The `Eio` developers for their work on the [Eio](https://github.com/ocaml-multicore/eio) project. The development of `Eio` has sparked a great deal of enthusiasm for us in our work on the `Vcs` project. We've also referred to Eio's [Exn](https://ocaml-multicore.github.io/eio/eio/Eio/Exn/index.html) module in the design of `Vcs`'s error handling.
 
@@ -65,9 +65,13 @@ We look forward to continuing to learn from and collaborate with the broader ope
 
 The code documentation of the latest release is built with `odoc` and published to `GitHub` pages [here](https://mbarbin.github.io/vcs).
 
+## Examples
+
+Explore the [example](example/) directory to get a firsthand look at how Vcs works in practice.
+
 ## Build
 
-This repo depends on unreleased packages that are published to a custom [opam-repository](https://github.com/mbarbin/opam-repository.git), which must be added to the opam switch used to build the project.
+This repository depends on unreleased packages found in a custom [opam-repository](https://github.com/mbarbin/opam-repository.git). You'll need to add this to your opam switch when building the project.
 
 For example, if you use a local opam switch, this would look like this:
 
@@ -88,4 +92,4 @@ dune build @all @runtest
 
 ## Current Status
 
-We're in the process of seeking feedback, and gradually writing and publishing the code and its dependencies into the opam repository. Please do not hesitate to open issues on GitHub with general feedback, requests, or simply start a discussion.
+We're currently seeking feedback as we write and publish the code and its dependencies to the opam repository. Please do not hesitate to open issues on GitHub with general feedback, requests, or simply start a discussion.

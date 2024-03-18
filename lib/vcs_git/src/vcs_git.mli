@@ -30,7 +30,7 @@
 
 type 'a t = ([> Git_cli.Trait.t ] as 'a) Vcs.t
 
-(** This is a convenient wrapper tag that may be used to designate a provider
+(** This is a convenient type alias that may be used to designate a provider
     with the exact list of traits supported by this implementation. *)
 type t' = Git_cli.Trait.t t
 
