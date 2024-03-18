@@ -19,30 +19,24 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Handling of errors in [Vcs].
+(** An A [Vcs] API in the style of
+    {{:https://erratique.ch/software/rresult/doc/Rresult/index.html#usage} Rresult}. *)
 
-    This module is used to handle errors that can occur when using the Vcs API. *)
+type err = [ `Vcs of Err.t ]
+type 'a result = ('a, err) Result.t
 
-exception E of Err.t [@@deriving sexp_of]
+(** {1 Utils}
 
-(** [reraise_with_context err bt ~step] raises the original error in the form of
-    an exception [E], with [step] added to [err]'s context. This is simply a
-    convenient wrapper that combines [Printexc.raise_with_backtrace] and
-    {!val:Err.add_context} under the hood.
+    This part exposes the functions prescribed by the
+    {{:https://erratique.ch/software/rresult/doc/Rresult/index.html#usage} Rresult}
+    usage design guidelines. *)
 
-    See the documentation of [Printexc.print_backtrace] for information about
-    how to obtain an uncorrupted backtrace.
+val pp_error : Stdlib.Format.formatter -> [ `Vcs of Err.t ] -> unit
+val open_error : 'a result -> ('a, [> `Vcs of Err.t ]) Result.t
+val error_to_msg : 'a result -> ('a, [ `Msg of string ]) Result.t
 
-    Example:
-    {[
-      let doing_something_with_arg vcs ~arg =
-        try Vcs.something vcs ~arg with
-        | Vcs.Exn.E err ->
-          let bt = Printexc.get_raw_backtrace () in
-          Vcs.Exn.reraise_with_context
-            err
-            bt
-            ~step:[%sexp "doing_something_with_arg", { arg : Arg.t }]
-      ;;
-    ]} *)
-val reraise_with_context : Err.t -> Stdlib.Printexc.raw_backtrace -> step:Sexp.t -> _
+(** {1 Non raising API}
+
+    The individual functions are documented the {!module:Vcs} module. *)
+
+include Non_raising.S with type 'a t := 'a Vcs0.t and type 'a result := 'a result

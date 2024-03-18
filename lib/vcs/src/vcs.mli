@@ -41,7 +41,7 @@ module Trait = Trait
     API you can use with such a [vcs]. The type is contravariant by its
     parameter : indeed, if you need a set of traits, having more makes is
     compatible. *)
-type -'a t
+type -'a t = 'a Vcs0.t
 
 (** [create provider] returns a [vcs] that implements a given set of traits.
     Typical users do not use [create] directly, but rather will rely on an
@@ -233,6 +233,13 @@ val set_user_email
 
 module Git = Git
 
+(** Note a non trivial behavior nuance depending on whether you are using this
+    function using the raising or non-raising API. In the raising API, [f] is
+    allowed to raise, and [git] will catch any exception raised by [f], and
+    rewrap it under a proper [E err] exception with added context. In the
+    non-raising APIs, if [f] raises instead of returning an [Error], that
+    exception would escape the function [git] and be raised by [git] as an
+    uncaught exception. This would be considered a programming error. *)
 val git
   :  ?env:string array
   -> ?run_in_subdir:Path_in_repo.t
@@ -242,18 +249,9 @@ val git
   -> f:(Git.Output.t -> 'a)
   -> 'a
 
-(** {1 Test utils}
+(** {1 Test utils} *)
 
-    This part of Vcs provides utilities for testing. *)
-
-module For_test : sig
-  (** This takes care of setting the user config with dummy values, so that
-      running [commit] doesn't fail. *)
-  val init
-    :  [> Trait.config | Trait.init ] t
-    -> path:Absolute_path.t
-    -> Repo_root.t Or_error.t
-end
+module For_test = For_test
 
 (** {1:non_raising_apis Non-raising APIs}
 
@@ -261,118 +259,6 @@ end
     strategies, [Vcs] exports non-raising APIs. The functions there return
     [Result.t]s instead of raising. *)
 
-module Non_raising : sig
-  module type S = sig
-    type err
-    type 'a result := ('a, err) Result.t
-
-    val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t result
-
-    val add
-      :  [> Trait.add ] t
-      -> repo_root:Repo_root.t
-      -> path:Path_in_repo.t
-      -> unit result
-
-    val commit
-      :  [> Trait.rev_parse | Trait.commit ] t
-      -> repo_root:Repo_root.t
-      -> commit_message:Commit_message.t
-      -> Rev.t result
-
-    val ls_files
-      :  [> Trait.ls_files ] t
-      -> repo_root:Repo_root.t
-      -> below:Path_in_repo.t
-      -> Path_in_repo.t list result
-
-    val show_file_at_rev
-      :  [> Trait.show ] t
-      -> repo_root:Repo_root.t
-      -> rev:Rev.t
-      -> path:Path_in_repo.t
-      -> [ `Present of File_contents.t | `Absent ] result
-
-    val load_file
-      :  [> Trait.file_system ] t
-      -> path:Absolute_path.t
-      -> File_contents.t result
-
-    val save_file
-      :  ?perms:int
-      -> [> Trait.file_system ] t
-      -> path:Absolute_path.t
-      -> file_contents:File_contents.t
-      -> unit result
-
-    val rename_current_branch
-      :  [> Trait.branch ] t
-      -> repo_root:Repo_root.t
-      -> to_:Branch_name.t
-      -> unit result
-
-    val name_status
-      :  [> Trait.name_status ] t
-      -> repo_root:Repo_root.t
-      -> changed:Name_status.Changed.t
-      -> Name_status.t result
-
-    val num_status
-      :  [> Trait.num_status ] t
-      -> repo_root:Repo_root.t
-      -> changed:Num_status.Changed.t
-      -> Num_status.t result
-
-    val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t result
-    val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t result
-    val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t result
-
-    val rev_parse
-      :  [> Trait.rev_parse ] t
-      -> repo_root:Repo_root.t
-      -> arg:Rev_parse.Arg.t
-      -> Rev.t result
-
-    val set_user_name
-      :  [> Trait.config ] t
-      -> repo_root:Repo_root.t
-      -> user_name:User_name.t
-      -> unit result
-
-    val set_user_email
-      :  [> Trait.config ] t
-      -> repo_root:Repo_root.t
-      -> user_email:User_email.t
-      -> unit result
-
-    val git
-      :  ?env:string array
-      -> ?run_in_subdir:Path_in_repo.t
-      -> [> Trait.git ] t
-      -> repo_root:Repo_root.t
-      -> args:string list
-      -> f:(Git.Output.t -> 'a result)
-      -> 'a result
-  end
-end
-
-(** An API based on [Base.Or_error]. *)
-module Or_error : sig
-  type err = Error.t
-  type 'a result = 'a Or_error.t
-
-  include Non_raising.S with type err := Error.t
-end
-
-(** An API in the style of
-    {{:https://erratique.ch/software/rresult/doc/Rresult/index.html#usage} Rresult}. *)
-module Result : sig
-  type err = [ `Vcs of Err.t ]
-  type 'a result = ('a, err) Result.t
-
-  include Non_raising.S with type err := err
-
-  val pp_error : Stdlib.Format.formatter -> [ `Vcs of Err.t ] -> unit
-  val open_error : 'a result -> ('a, [> `Vcs of Err.t ]) Result.t
-  val error_to_msg : 'a result -> ('a, [ `Msg of string ]) Result.t
-end
+module Or_error = Vcs_or_error
+module Result = Vcs_result
+module Non_raising = Non_raising

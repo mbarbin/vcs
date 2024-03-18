@@ -33,7 +33,8 @@
   trait_refs
   trait_rev_parse
   trait_show
-  validated_string_intf)
+  validated_string_intf
+  vcs_interface)
  (preprocess
   (pps
    ppx_compare

@@ -19,8 +19,23 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-exception E of Err.t [@@deriving sexp_of]
+type err = [ `Vcs of Err.t ]
+type 'a result = ('a, err) Result.t
 
-let reraise_with_context err bt ~step =
-  Stdlib.Printexc.raise_with_backtrace (E (Err.add_context err ~step)) bt
+include Non_raising.Make (struct
+    type nonrec err = err
+
+    let map_error err = `Vcs err
+    let to_error (`Vcs err) = Err.to_error err
+  end)
+
+let pp_error fmt (`Vcs err) = Stdlib.Format.pp_print_string fmt (Err.to_string_hum err)
+
+let open_error = function
+  | Ok _ as r -> r
+  | Error (`Vcs _) as r -> r
+;;
+
+let error_to_msg (r : 'a result) =
+  Result.map_error r ~f:(fun (`Vcs err) -> `Msg (Err.to_string_hum err))
 ;;

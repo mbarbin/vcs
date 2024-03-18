@@ -7,10 +7,7 @@ A versatile OCaml library for Git interaction
 
 ## Overview
 
-`Vcs` is an OCaml library providing a direct-style API for interacting with Git
-repositories. It's designed as an "interface", or "virtual" library with the
-actual implementation dynamically dispatched at runtime. This design allows for
-high flexibility and adaptability to different use cases.
+`Vcs` is an OCaml library providing a direct-style API for interacting with Git repositories. It's designed as an "interface", or "virtual" library with the actual implementation dynamically dispatched at runtime. This design allows for high flexibility and adaptability to different use cases.
 
 ## Architecture
 
@@ -32,64 +29,45 @@ The `vcs` repository contains several components:
 
 ## Design principles
 
-`Vcs` is designed to be backend-agnostic and concurrency-runtime independent.
-It's compatible with both `Eio` and OCaml `Stdlib` runtimes. We plan to explore
-the feasibility of supporting [luv](https://github.com/aantron/luv) and
-[miou](https://github.com/robur-coop/miou) runtimes as separate future work.
+`Vcs` is designed to be backend-agnostic and concurrency-runtime independent. It's compatible with both `Eio` and OCaml `Stdlib` runtimes. We plan to explore the feasibility of supporting [luv](https://github.com/aantron/luv) and [miou](https://github.com/robur-coop/miou) runtimes as separate future work.
 
-The concurrency runtime must be compatible with program written in direct style.
-Runtime based on monadic concurrent models such as `Async` and `Lwt` are
-purposely left outside of the scope of this project.
+The concurrency runtime must be compatible with program written in direct style. Runtime based on monadic concurrent models such as `Async` and `Lwt` are purposely left outside of the scope of this project.
 
 ## How It Works
 
-`Vcs` is an interface composed of [Traits](doc/traits.md), each providing
-different functionalities associated with Git interaction. The dynamic dispatch
-implementation uses the [provider](https://github.com/mbarbin/provider) library.
+`Vcs` is an interface composed of [Traits](doc/traits.md), each providing different functionalities associated with Git interaction. The dynamic dispatch implementation uses the [provider](https://github.com/mbarbin/provider) library.
 
 ## Motivation
 
-We aim to create a highly compatible library that can serve various use cases
-and foster community engagement. We also hope to gain practical experience with
-the use of provider-based parametric libraries.
+We aim to create a highly compatible library that can serve various use cases and foster community engagement. We also hope to gain practical experience with the use of provider-based parametric libraries.
 
 ## Relation to ocaml-git
 
-[ocaml-git](https://github.com/mirage/ocaml-git) is a pure OCaml implementation
-of the Git format and protocol. In the `Vcs` framework, an Eio compatible
-`ocaml-git` is a potential `provider` for the interface. We plan to create a
-`Vcs` provider based on `ocaml-git` in the future.
+[ocaml-git](https://github.com/mirage/ocaml-git) is a pure OCaml implementation of the Git format and protocol. In the `Vcs` framework, an Eio compatible `ocaml-git` is a potential `provider` for the interface. We plan to create a `Vcs` provider based on `ocaml-git` in the future.
 
 ![Ocaml-git diagram](doc/diagram/ocaml-git.png)
 
 ## Acknowledgements
 
-We would like to express our gratitude to the `Eio` developers for their work on
-the [Eio](https://github.com/ocaml-multicore/eio) project. The development of
-`Eio` has sparked a great deal of enthusiasm for us in our work on the `Vcs`
-project.
+We would like to extend our gratitude to and acknowledge the following individuals and teams for their contributions, which have been helpful sources of inspiration for the development of the `Vcs` project:
 
-We would like to express our appreciation for the work done by the Jane Street
-developers and their significant contributions to the open source community. In
-particular, this project has drawn inspiration from the `Mercurial` backend of
-`Iron`, Jane Street's code review tool. For more details about how `Iron` has
-influenced this project and the licensing implications, please refer to the
-`NOTICE.md` file.
+- The `Eio` developers for their work on the [Eio](https://github.com/ocaml-multicore/eio) project. The development of `Eio` has sparked a great deal of enthusiasm for us in our work on the `Vcs` project. We've also referred to Eio's [Exn](https://ocaml-multicore.github.io/eio/eio/Eio/Exn/index.html) module in the design of `Vcs`'s error handling.
 
-We would like to thank Vincent Simonet and contributors for
-[headache](https://github.com/Frama-C/headache), which we use to manage the
-copyright headers at the beginning of our files.
+- The Jane Street developers for their significant contributions to the open source community. In particular, this project has drawn inspiration from the `Mercurial` backend of `Iron`, Jane Street's code review tool. For more details about how `Iron` has influenced this project and the licensing implications, please refer to the `NOTICE.md` file.
+
+- Vincent Simonet and contributors for [headache](https://github.com/Frama-C/headache), which we use to manage the copyright headers at the beginning of our files.
+
+- The [Rresult](https://erratique.ch/software/rresult/doc/Rresult/index.html#usage) developers: Their usage design guidelines have been a reference in the design of `Vcs`'s error handling, the `Vcs.Result` module in particular.
+
+We look forward to continuing to learn from and collaborate with the broader open source community.
 
 ## Code documentation
 
-The code documentation of the latest release is built with `odoc` and published
-to `GitHub` pages [here](https://mbarbin.github.io/vcs).
+The code documentation of the latest release is built with `odoc` and published to `GitHub` pages [here](https://mbarbin.github.io/vcs).
 
 ## Build
 
-This repo depends on unreleased packages that are published to a custom
-[opam-repository](https://github.com/mbarbin/opam-repository.git), which must be
-added to the opam switch used to build the project.
+This repo depends on unreleased packages that are published to a custom [opam-repository](https://github.com/mbarbin/opam-repository.git), which must be added to the opam switch used to build the project.
 
 For example, if you use a local opam switch, this would look like this:
 
@@ -110,5 +88,4 @@ dune build @all @runtest
 
 ## Current Status
 
-The project is currently in the draft stage. We're in the process of seeking
-preliminary feedback, and gradually writing and publishing the code.
+We're in the process of seeking feedback, and gradually writing and publishing the code and its dependencies into the opam repository. Please do not hesitate to open issues on GitHub with general feedback, requests, or simply start a discussion.

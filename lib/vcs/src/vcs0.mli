@@ -19,30 +19,21 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Handling of errors in [Vcs].
+type -'a t
 
-    This module is used to handle errors that can occur when using the Vcs API. *)
+val create : 'a Provider.t -> 'a t
 
-exception E of Err.t [@@deriving sexp_of]
+include Vcs_interface.S with type 'a t := 'a t and type 'a result := 'a
 
-(** [reraise_with_context err bt ~step] raises the original error in the form of
-    an exception [E], with [step] added to [err]'s context. This is simply a
-    convenient wrapper that combines [Printexc.raise_with_backtrace] and
-    {!val:Err.add_context} under the hood.
-
-    See the documentation of [Printexc.print_backtrace] for information about
-    how to obtain an uncorrupted backtrace.
-
-    Example:
-    {[
-      let doing_something_with_arg vcs ~arg =
-        try Vcs.something vcs ~arg with
-        | Vcs.Exn.E err ->
-          let bt = Printexc.get_raw_backtrace () in
-          Vcs.Exn.reraise_with_context
-            err
-            bt
-            ~step:[%sexp "doing_something_with_arg", { arg : Arg.t }]
-      ;;
-    ]} *)
-val reraise_with_context : Err.t -> Stdlib.Printexc.raw_backtrace -> step:Sexp.t -> _
+module Private : sig
+  (** This function is exposed to simplify the implementation of the [git]
+      function in the non-raising APIs of Vcs. *)
+  val git
+    :  ?env:string array
+    -> ?run_in_subdir:Path_in_repo.t
+    -> [> Trait.git ] t
+    -> repo_root:Repo_root.t
+    -> args:string list
+    -> f:(Git.Output.t -> 'a Or_error.t)
+    -> 'a Or_error.t
+end

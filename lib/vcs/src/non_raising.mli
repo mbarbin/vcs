@@ -19,30 +19,14 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Handling of errors in [Vcs].
+(** A functor to build non raising interfaces for [Vcs] based on a custom result
+    type.
 
-    This module is used to handle errors that can occur when using the Vcs API. *)
+    In addition to [Or_error] and [Result], we provide this functor to create a
+    [Vcs] interface based on a custom result type of your choice. *)
 
-exception E of Err.t [@@deriving sexp_of]
+module type M = Vcs_interface.Error_S
+module type S = Vcs_interface.S
 
-(** [reraise_with_context err bt ~step] raises the original error in the form of
-    an exception [E], with [step] added to [err]'s context. This is simply a
-    convenient wrapper that combines [Printexc.raise_with_backtrace] and
-    {!val:Err.add_context} under the hood.
-
-    See the documentation of [Printexc.print_backtrace] for information about
-    how to obtain an uncorrupted backtrace.
-
-    Example:
-    {[
-      let doing_something_with_arg vcs ~arg =
-        try Vcs.something vcs ~arg with
-        | Vcs.Exn.E err ->
-          let bt = Printexc.get_raw_backtrace () in
-          Vcs.Exn.reraise_with_context
-            err
-            bt
-            ~step:[%sexp "doing_something_with_arg", { arg : Arg.t }]
-      ;;
-    ]} *)
-val reraise_with_context : Err.t -> Stdlib.Printexc.raw_backtrace -> step:Sexp.t -> _
+module Make (M : M) :
+  S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.err) Result.t

@@ -19,8 +19,16 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-exception E of Err.t [@@deriving sexp_of]
-
-let reraise_with_context err bt ~step =
-  Stdlib.Printexc.raise_with_backtrace (E (Err.add_context err ~step)) bt
+let init vcs ~path =
+  let%bind repo_root = Vcs_or_error.init vcs ~path in
+  let%bind () =
+    Vcs_or_error.set_user_name vcs ~repo_root ~user_name:(User_name.v "Test User")
+  in
+  let%bind () =
+    Vcs_or_error.set_user_email
+      vcs
+      ~repo_root
+      ~user_email:(User_email.v "test@example.com")
+  in
+  return repo_root
 ;;
