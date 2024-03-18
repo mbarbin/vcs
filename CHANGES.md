@@ -2,6 +2,7 @@
 
 ### Added
 
+- Exposes 1 raising and 2 non-raising APIs. Improve error handling.
 - Add license and notices.
 - Add libraries skeletons with their opam files.
 
