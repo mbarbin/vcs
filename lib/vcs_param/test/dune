@@ -11,9 +11,9 @@
   -open
   Base
   -open
-  Fpath_base
+  Expect_test_helpers
   -open
-  Expect_test_helpers)
+  Fpath_base)
  (libraries base eio eio_main expect_test_helpers fpath fpath-base vcs_param)
  (instrumentation
   (backend bisect_ppx))
