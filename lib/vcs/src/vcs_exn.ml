@@ -19,4 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-exception E of Err.t [@@deriving sexp_of]
+let reraise_with_context err bt ~step =
+  Stdlib.Printexc.raise_with_backtrace (Exn0.E (Err.add_context err ~step)) bt
+;;

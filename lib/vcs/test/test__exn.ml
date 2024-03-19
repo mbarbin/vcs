@@ -27,7 +27,7 @@ let%expect_test "reraise_with_context" =
       | _ -> assert false
       | exception Vcs.E err ->
         let bt = Stdlib.Printexc.get_raw_backtrace () in
-        (Vcs.Private.Exn0.reraise_with_context err bt ~step:[%sexp Step] [@coverage off])
+        (Vcs.Exn.reraise_with_context err bt ~step:[%sexp Step] [@coverage off])
     with
     | _ -> assert false
     | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]

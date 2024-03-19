@@ -77,6 +77,8 @@ module Err = Err
 exception E of Err.t
 [@@deriving sexp_of]
 
+module Exn = Vcs_exn
+
 (** {1 Creating repositories} *)
 
 module Platform = Platform
@@ -265,6 +267,4 @@ module Non_raising = Non_raising
 
 module Private : sig
   (** Module exposed for testing of Vcs only. *)
-
-  module Exn0 = Exn0
 end

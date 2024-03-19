@@ -19,9 +19,28 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Exception raised by [Vcs].
+(** Handling of exceptions in [Vcs].
 
-    This module is used to break what's otherwise a dependency cycle between
-    [Vcs], and [Vcs.Exn]. *)
+    This module is used to handle exceptions that can occur when using the Vcs API. *)
 
-exception E of Err.t [@@deriving sexp_of]
+(** [reraise_with_context err bt ~step] raises the original error in the form of
+    an exception [E], with [step] added to [err]'s context. This is simply a
+    convenient wrapper that combines [Printexc.raise_with_backtrace] and
+    {!val:Err.add_context} under the hood.
+
+    See the documentation of [Printexc.print_backtrace] for information about
+    how to obtain an uncorrupted backtrace.
+
+    Example:
+    {[
+      let doing_something_with_arg vcs ~arg =
+        try Vcs.something vcs ~arg with
+        | Vcs.E err ->
+          let bt = Printexc.get_raw_backtrace () in
+          Vcs.Exn.reraise_with_context
+            err
+            bt
+            ~step:[%sexp "doing_something_with_arg", { arg : Arg.t }]
+      ;;
+    ]} *)
+val reraise_with_context : Err.t -> Stdlib.Printexc.raw_backtrace -> step:Sexp.t -> _

@@ -23,6 +23,7 @@ module Author = Author
 module Branch_name = Branch_name
 module Commit_message = Commit_message
 module Err = Err
+module Exn = Vcs_exn
 module File_contents = File_contents
 module For_test = For_test
 module Git = Git
@@ -54,7 +55,4 @@ module User_handle = User_handle
 module User_name = User_name
 include Exn0
 include Vcs0
-
-module Private = struct
-  module Exn0 = Exn0
-end
+module Private = struct end
