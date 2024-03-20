@@ -12,18 +12,20 @@
   -open
   Fpath_base
   -open
-  Or_error.Let_syntax)
+  Or_error.Let_syntax
+  -open
+  Vcs_eio_writer)
  (libraries
   base
   core.command
   eio
-  eio-writer
   eio_main
   fpath
   fpath-base
   vcs
   vcs-git
-  vcs-param)
+  vcs-param
+  vcs-private-libs-eio.eio-writer)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -153,8 +153,6 @@
     (< v0.17)))
   (eio
    (>= 1.0))
-  (eio-writer
-   (>= 0.0.3))
   (eio_main
    (>= 1.0))
   (fpath
@@ -405,8 +403,6 @@
    (>= 1.0))
   (eio-process
    (>= 0.0.1))
-  (eio-writer
-   (>= 0.0.3))
   (eio_main
    (>= 1.0))
   (fpath
