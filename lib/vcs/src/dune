@@ -12,7 +12,9 @@
   -open
   Fpath_base
   -open
-  Or_error.Let_syntax)
+  Or_error.Let_syntax
+  -open
+  Vcs_union_find)
  (libraries base fpath fpath-base provider vcs-private-libs-base.union-find)
  (instrumentation
   (backend bisect_ppx))

@@ -23,4 +23,5 @@ cp -v $SRC/LICENSE{,.janestreet} $SRC/MLton-LICENSE union-find/
 cp -v -R $SRC/src union-find/
 
 git checkout union-find/src/dune
+git checkout union-find/src/vcs_union_find.ml
 git add -A .
