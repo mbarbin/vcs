@@ -13,7 +13,6 @@ depends: [
   "base" {>= "v0.16" & < "v0.17"}
   "bisect_ppx" {dev & >= "2.8.3"}
   "eio" {>= "1.0"}
-  "eio-process" {>= "0.0.1"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.0.9"}
   "git-cli" {= version}
