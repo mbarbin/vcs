@@ -68,10 +68,8 @@
     (< v0.17)))
   (provider
    (>= 0.0.4))
-  (union-find
-   (and
-    (>= v0.16)
-    (< v0.17)))))
+  (vcs-private-libs-base
+   (= :version))))
 
 (package
  (name vcs-param)
@@ -155,8 +153,6 @@
     (< v0.17)))
   (eio
    (>= 1.0))
-  (eio-writer
-   (>= 0.0.3))
   (eio_main
    (>= 1.0))
   (fpath
@@ -199,6 +195,8 @@
   (vcs
    (= :version))
   (vcs-param
+   (= :version))
+  (vcs-private-libs-eio
    (= :version))))
 
 (package
@@ -271,8 +269,6 @@
     (>= 2.8.3)))
   (eio
    (>= 1.0))
-  (eio-process
-   (>= 0.0.1))
   (fpath
    (>= 0.7.3))
   (fpath-base
@@ -315,6 +311,8 @@
   (provider
    (>= 0.0.4))
   (vcs
+   (= :version))
+  (vcs-private-libs-eio
    (= :version))))
 
 (package
@@ -401,10 +399,6 @@
     (< v0.17)))
   (eio
    (>= 1.0))
-  (eio-process
-   (>= 0.0.1))
-  (eio-writer
-   (>= 0.0.3))
   (eio_main
    (>= 1.0))
   (fpath
@@ -464,10 +458,6 @@
    (and
     (>= v0.16)
     (< v0.17)))
-  (union-find
-   (and
-    (>= v0.16)
-    (< v0.17)))
   (vcs
    (= :version))
   (vcs-command
@@ -477,4 +467,112 @@
   (vcs-git-blocking
    (= :version))
   (vcs-param
+   (= :version))
+  (vcs-private-libs-base
+   (= :version))
+  (vcs-private-libs-eio
    (= :version))))
+
+(package
+ (name vcs-private-libs-base)
+ (synopsis "Private libraries used by vcs -- do not use!")
+ (allow_empty)
+ (depends
+  (ocaml
+   (>= 5.1))
+  (base
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
+  (ppx_compare
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_enumerate
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_hash
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_here
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_js_style
+   (and
+    :dev
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_let
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_value
+   (and
+    (>= v0.16)
+    (< v0.17)))))
+
+(package
+ (name vcs-private-libs-eio)
+ (synopsis "Private eio libraries used by vcs -- do not use!")
+ (allow_empty)
+ (depends
+  (ocaml
+   (>= 5.1))
+  (base
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
+  (eio
+   (>= 1.0))
+  (parsexp
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_compare
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_enumerate
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_hash
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_here
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_js_style
+   (and
+    :dev
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_let
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.16)
+    (< v0.17)))
+  (ppx_sexp_value
+   (and
+    (>= v0.16)
+    (< v0.17)))))

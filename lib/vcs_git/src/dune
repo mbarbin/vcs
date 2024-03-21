@@ -12,8 +12,17 @@
   -open
   Fpath_base
   -open
-  Or_error.Let_syntax)
- (libraries base eio eio-process fpath fpath-base git-cli vcs)
+  Or_error.Let_syntax
+  -open
+  Vcs_eio_process)
+ (libraries
+  base
+  eio
+  fpath
+  fpath-base
+  git-cli
+  vcs
+  vcs-private-libs-eio.eio-process)
  (instrumentation
   (backend bisect_ppx))
  (lint

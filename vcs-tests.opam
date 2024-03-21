@@ -16,8 +16,6 @@ depends: [
   "command-unix-for-opam" {>= "0.0.2"}
   "core" {>= "v0.16" & < "v0.17"}
   "eio" {>= "1.0"}
-  "eio-process" {>= "0.0.1"}
-  "eio-writer" {>= "0.0.3"}
   "eio_main" {>= "1.0"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.0.9"}
@@ -35,12 +33,13 @@ depends: [
   "provider" {>= "0.0.4"}
   "sexp_pretty" {>= "v0.16" & < "v0.17"}
   "stdio" {>= "v0.16" & < "v0.17"}
-  "union-find" {>= "v0.16" & < "v0.17"}
   "vcs" {= version}
   "vcs-command" {= version}
   "vcs-git" {= version}
   "vcs-git-blocking" {= version}
   "vcs-param" {= version}
+  "vcs-private-libs-base" {= version}
+  "vcs-private-libs-eio" {= version}
   "odoc" {with-doc}
 ]
 build: [
