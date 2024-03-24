@@ -1,3 +1,17 @@
+## 0.0.2 (unreleased)
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Fixed
+
+- Allow more characters when parsing branch names.
+
+### Removed
+
 ## 0.0.1 (2024-03-19)
 
 ### Added
