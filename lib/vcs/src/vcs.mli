@@ -266,5 +266,11 @@ module Result = Vcs_result
 module Non_raising = Non_raising
 
 module Private : sig
-  (** Module exposed for testing of Vcs only. *)
+  (** This part of the interface is not stable. Things may break without notice
+      when upgrading to a new version of [Vcs]. This is used e.g. by tests
+      or libraries with strong ties to [Vcs].
+
+      Use at your own risk/convenience! *)
+
+  module Validated_string = Validated_string
 end

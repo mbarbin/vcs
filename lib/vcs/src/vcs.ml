@@ -55,4 +55,7 @@ module User_handle = User_handle
 module User_name = User_name
 include Exn0
 include Vcs0
-module Private = struct end
+
+module Private = struct
+  module Validated_string = Validated_string
+end
