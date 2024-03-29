@@ -19,43 +19,13 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-module Key : sig
-  type t =
-    | One_file of Path_in_repo.t
-    | Two_files of
-        { src : Path_in_repo.t
-        ; dst : Path_in_repo.t
-        }
-  [@@deriving compare, equal, hash, sexp_of]
-end
+(** Util to create temporary repos in tests. *)
 
-module Change : sig
-  module Num_stat : sig
-    (** The number of lines in diff is not always given by git - indeed
-        sometimes the line of output for this file contains dash '-'
-        characters in lieu of the number of insertions or deletions. According
-        to [man git diff] this happens for binary files. *)
-    type t =
-      | Num_lines_in_diff of Num_lines_in_diff.t
-      | Binary_file
-    [@@deriving sexp_of]
-  end
+type 'a env = 'a
+  constraint
+    'a =
+    < fs : [> Eio.Fs.dir_ty ] Eio.Path.t
+    ; process_mgr : [> [> `Generic ] Eio.Process.mgr_ty ] Eio.Resource.t
+    ; .. >
 
-  type t =
-    { key : Key.t
-    ; num_stat : Num_stat.t
-    }
-  [@@deriving sexp_of]
-end
-
-type t = Change.t list [@@deriving sexp_of]
-
-module Changed : sig
-  (** Specifies which {!type:Num_status.t} we want to compute. *)
-  type t = Name_status.Changed.t =
-    | Between of
-        { src : Rev.t
-        ; dst : Rev.t
-        }
-  [@@deriving equal, sexp_of]
-end
+val run : env:_ env -> (vcs:Vcs_git.t' -> repo_root:Vcs.Repo_root.t -> unit) -> unit

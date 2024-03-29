@@ -19,48 +19,30 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Key = struct
-  [@@@coverage off]
+type 'a env = 'a
+  constraint
+    'a =
+    < fs : [> Eio.Fs.dir_ty ] Eio.Path.t
+    ; process_mgr : [> [> `Generic ] Eio.Process.mgr_ty ] Eio.Resource.t
+    ; .. >
 
-  type t =
-    | One_file of Path_in_repo.t
-    | Two_files of
-        { src : Path_in_repo.t
-        ; dst : Path_in_repo.t
-        }
-  [@@deriving compare, equal, hash, sexp_of]
-end
-
-module Change = struct
-  [@@@coverage off]
-
-  module Num_stat = struct
-    type t =
-      | Num_lines_in_diff of Num_lines_in_diff.t
-      | Binary_file
-    [@@deriving sexp_of]
-  end
-
-  type t =
-    { key : Key.t
-    ; num_stat : Num_stat.t
-    }
-  [@@deriving sexp_of]
-end
-
-module T = struct
-  type t = Change.t list [@@deriving sexp_of]
-end
-
-include T
-
-module Changed = struct
-  [@@@coverage off]
-
-  type t = Name_status.Changed.t =
-    | Between of
-        { src : Rev.t
-        ; dst : Rev.t
-        }
-  [@@deriving equal, sexp_of]
-end
+let run ~env f =
+  Eio.Switch.run
+  @@ fun sw ->
+  (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
+     provider. We're using [Vcs_git] for this here. It is a provider based on
+     [Eio] and running the [git] command line as an external process. *)
+  let vcs = Vcs_git.create ~env in
+  (* The next step takes care of creating a repository and initializing the git
+     users's config with some dummy values so we can use [commit] without having
+     to worry about your user config on your machine. This isolates the test
+     from your local settings, and also makes things work when running in the
+     GitHub Actions environment, where no default user config exists. *)
+  let repo_root =
+    let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
+    Eio.Switch.on_release sw (fun () ->
+      Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
+    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
+  in
+  f ~vcs ~repo_root
+;;

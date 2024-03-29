@@ -15,6 +15,7 @@ dirs=(
     "lib/vcs_git_blocking/test"
     "lib/vcs_param/src"
     "lib/vcs_param/test"
+    "test/expect"
     # add more directories here
 )
 

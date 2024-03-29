@@ -26,8 +26,14 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
     raise_s [%sexp "Unexpected output from git diff", (line : string)]
   | [ insertions; deletions; munged_path ] ->
     { Vcs.Num_status.Change.key = Munged_path.parse_exn munged_path
-    ; num_lines_in_diff =
-        { insertions = Int.of_string insertions; deletions = Int.of_string deletions }
+    ; num_stat =
+        (match insertions, deletions with
+         | "-", _ | _, "-" -> Binary_file
+         | insertions, deletions ->
+           Num_lines_in_diff
+             { insertions = Int.of_string insertions
+             ; deletions = Int.of_string deletions
+             })
     }
 ;;
 

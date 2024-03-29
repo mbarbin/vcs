@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- Handle binary files in `Vcs.num_status` instead of failing.
 - Allow more characters when parsing branch names.
 
 ### Removed

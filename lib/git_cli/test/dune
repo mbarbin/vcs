@@ -50,3 +50,6 @@
 
 (rule
  (copy %{project_root}/test/data/super-master-mind.log super-master-mind.log))
+
+(rule
+ (copy %{project_root}/test/data/eio.num-status eio.num-status))

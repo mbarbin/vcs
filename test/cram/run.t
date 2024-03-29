@@ -85,8 +85,9 @@ Num status.
 
   $ ocaml-vcs num-status $rev0 $rev2
   (((key (One_file dir/hello))
-    (num_lines_in_diff ((insertions 1) (deletions 0))))
-   ((key (One_file hello)) (num_lines_in_diff ((insertions 0) (deletions 1)))))
+    (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0)))))
+   ((key (One_file hello))
+    (num_stat (Num_lines_in_diff ((insertions 0) (deletions 1))))))
 
 Stabilize output.
 
