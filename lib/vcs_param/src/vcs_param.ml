@@ -56,9 +56,13 @@ module Create_vcs_backend = struct
       With_return.with_return_option (fun { return } ->
         let rec visit dir =
           List.iter (Eio.Path.read_dir dir) ~f:(fun entry ->
-            let path = Eio.Path.(dir / entry) in
             match entry with
-            | ".git" -> if Eio.Path.is_directory path then return (`Git, dir)
+            | ".git" ->
+              (* We don't check whether [".git"] is a directory, because this
+                 breaks for git worktrees. Indeed, the file [".git"] at the root
+                 of a repository created with [git worktree add] is a regular
+                 file. *)
+              return (`Git, dir)
             | _ -> ());
           match Eio.Path.split dir with
           | None -> ()

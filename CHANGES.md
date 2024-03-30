@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- Fix computation of `repo_root` when inside a git worktree.
 - Handle binary files in `Vcs.num_status` instead of failing.
 - Allow more characters when parsing branch names.
 
