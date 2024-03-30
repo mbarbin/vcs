@@ -126,8 +126,8 @@ Vcs allows to run the git command line directly if the provider supports it.
   [1]
 
 Worktrees. We check against a regression where the repo root of worktrees was
-not properly computed. Below we create a worktree at a specific revision and
-check that the list of files properly reflects the state of tree at this
+not correctly computed. Below we create a worktree at a specific revision and
+verify that the list of files accurately reflects the state of the tree at that
 revision.
 
   $ mkdir .worktree
