@@ -125,6 +125,23 @@ Vcs allows to run the git command line directly if the provider supports it.
   $ ocaml-vcs git -- invalid-command 2> /dev/null
   [1]
 
+Worktrees. We check against a regression where the repo root of worktrees was
+not properly computed. Below we create a worktree at a specific revision and
+check that the list of files properly reflects the state of tree at this
+revision.
+
+  $ mkdir .worktree
+  $ ocaml-vcs git -- worktree add .worktree/rev1 $rev1 > /dev/null
+
+  $ (cd .worktree/rev1 ; ocaml-vcs ls-files)
+  dir/hello
+  hello
+
+  $ ocaml-vcs ls-files
+  dir/hello
+
+  $ ocaml-vcs git -- worktree remove .worktree/rev1
+
 Vcs's help for review.
 
   $ ocaml-vcs --help
