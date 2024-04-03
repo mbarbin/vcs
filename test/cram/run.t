@@ -131,7 +131,7 @@ verify that the list of files accurately reflects the state of the tree at that
 revision.
 
   $ mkdir .worktree
-  $ ocaml-vcs git -- worktree add .worktree/rev1 $rev1 > /dev/null
+  $ ocaml-vcs git -- worktree add .worktree/rev1 $rev1 > /dev/null 2> /dev/null
 
   $ (cd .worktree/rev1 ; ocaml-vcs ls-files)
   dir/hello
