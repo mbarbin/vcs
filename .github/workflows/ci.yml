@@ -52,6 +52,9 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_NUMBER: ${{ github.event.number }}
 
+      - name: Check for uncommitted changes
+        run: git diff --exit-code
+
       - name: Lint opam
         uses: ocaml/setup-ocaml/lint-opam@v2
 
