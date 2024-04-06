@@ -26,9 +26,7 @@
     remote branches heads and tags.
 
     It is worth noting that the location of the remote branches is the state of
-    the remote branches as they are currently known locally. To connect to the
-    remote repository and retrieves information about the remote references, see
-    [Fetch_remote]. *)
+    the remote branches as they are currently known locally. *)
 
 module Line : sig
   type t =

@@ -137,7 +137,7 @@ val show_file_at_rev
 val load_file : [> Trait.file_system ] t -> path:Absolute_path.t -> File_contents.t
 
 val save_file
-  :  ?perms:int (** defaults to [0o600]. *)
+  :  ?perms:int (** defaults to [0o666]. *)
   -> [> Trait.file_system ] t
   -> path:Absolute_path.t
   -> file_contents:File_contents.t
