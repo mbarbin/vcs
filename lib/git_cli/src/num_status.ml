@@ -19,6 +19,22 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+module Status_code = struct
+  type t =
+    | Dash
+    | Num of int
+    | Other of string
+  [@@deriving sexp_of]
+
+  let parse = function
+    | "-" -> Dash
+    | status ->
+      (match Int.of_string_opt status with
+       | Some n when n >= 0 -> Num n
+       | Some _ | None -> Other status)
+  ;;
+end
+
 let parse_line_exn ~line : Vcs.Num_status.Change.t =
   match String.split line ~on:'\t' with
   | [] -> assert false
@@ -27,13 +43,10 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
   | [ insertions; deletions; munged_path ] ->
     { Vcs.Num_status.Change.key = Munged_path.parse_exn munged_path
     ; num_stat =
-        (match insertions, deletions with
-         | "-", _ | _, "-" -> Binary_file
-         | insertions, deletions ->
-           Num_lines_in_diff
-             { insertions = Int.of_string insertions
-             ; deletions = Int.of_string deletions
-             })
+        (match Status_code.parse insertions, Status_code.parse deletions with
+         | Dash, Dash -> Binary_file
+         | Num insertions, Num deletions -> Num_lines_in_diff { insertions; deletions }
+         | _, _ -> raise_s [%sexp "Unexpected output from git diff", (line : string)])
     }
 ;;
 

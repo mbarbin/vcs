@@ -465,6 +465,9 @@ let%expect_test "parse_lines_exn" =
     ; "1985\t0\tfile1 => file2"
     ; "100\t5\ttmp/{dir1 => dir2}/file"
     ; "-\t-\tfile"
+    ; "-\t10\tfile"
+    ; "7\t-\tfile"
+    ; "-2\t-10\tfile"
     ]
   in
   List.iter lines ~f:(fun line ->
@@ -476,7 +479,7 @@ let%expect_test "parse_lines_exn" =
     (file (Error ("Unexpected output from git diff" file)))
     ("A\tB" (Error ("Unexpected output from git diff" "A\tB")))
     ("A\tB\tC\tD" (Error ("Unexpected output from git diff" "A\tB\tC\tD")))
-    ("A\tB\tC" (Error (Failure "Int.of_string: \"B\"")))
+    ("A\tB\tC" (Error ("Unexpected output from git diff" "A\tB\tC")))
     ("0\t1\tfile" (
       Ok (
         (key (One_file file))
@@ -504,6 +507,9 @@ let%expect_test "parse_lines_exn" =
           Num_lines_in_diff (
             (insertions 100)
             (deletions  5)))))))
-    ("-\t-\tfile" (Ok ((key (One_file file)) (num_stat Binary_file)))) |}];
+    ("-\t-\tfile" (Ok ((key (One_file file)) (num_stat Binary_file))))
+    ("-\t10\tfile" (Error ("Unexpected output from git diff" "-\t10\tfile")))
+    ("7\t-\tfile" (Error ("Unexpected output from git diff" "7\t-\tfile")))
+    ("-2\t-10\tfile" (Error ("Unexpected output from git diff" "-2\t-10\tfile"))) |}];
   ()
 ;;
