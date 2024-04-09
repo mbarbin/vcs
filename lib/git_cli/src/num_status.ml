@@ -20,11 +20,17 @@
 (*******************************************************************************)
 
 module Status_code = struct
-  type t =
-    | Dash
-    | Num of int
-    | Other of string
-  [@@deriving sexp_of]
+  module T = struct
+    [@@@coverage off]
+
+    type t =
+      | Dash
+      | Num of int
+      | Other of string
+    [@@deriving sexp_of]
+  end
+
+  include T
 
   let parse = function
     | "-" -> Dash
@@ -46,7 +52,9 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
         (match Status_code.parse insertions, Status_code.parse deletions with
          | Dash, Dash -> Binary_file
          | Num insertions, Num deletions -> Num_lines_in_diff { insertions; deletions }
-         | _, _ -> raise_s [%sexp "Unexpected output from git diff", (line : string)])
+         | _, _ ->
+           raise_s
+             [%sexp "Unexpected output from git diff", (line : string)] [@coverage off])
     }
 ;;
 
