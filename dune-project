@@ -20,7 +20,7 @@
  (synopsis "A versatile OCaml library for Git interaction")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -76,7 +76,7 @@
  (synopsis "[Command.Param] helpers for the Vcs library")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -136,7 +136,7 @@
  (synopsis "A command line tool for the Vcs library")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -204,7 +204,7 @@
  (synopsis "An IO-free library that parses the output of Git commands")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -258,7 +258,7 @@
  (synopsis "A Git provider for Vcs based on Git_cli for Eio programs")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -320,7 +320,7 @@
  (synopsis "A Git provider for Vcs based on Git_cli for blocking programs")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -378,7 +378,7 @@
  (synopsis "Tests & Examples for [Vcs]")
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -481,7 +481,7 @@
  (allow_empty)
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
@@ -530,7 +530,7 @@
  (allow_empty)
  (depends
   (ocaml
-   (>= 5.1))
+   (>= 5.2))
   (base
    (and
     (>= v0.17)
