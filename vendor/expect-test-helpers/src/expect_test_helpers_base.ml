@@ -122,12 +122,11 @@ let rec replace_s (sexp : Sexp.t) ~pattern ~with_ : Sexp.t =
   | List list -> List (List.map list ~f:(replace_s ~pattern ~with_))
 ;;
 
-let expect_test_output here =
-  Expect_test_collector.save_and_return_output
-    (Expect_test_common.File.Location.of_source_code_position here)
+let expect_test_output (here : Lexing.position) =
+  Ppx_expect_runtime.For_external.read_current_test_output_exn ~here
 ;;
 
-let am_running_expect_test = Expect_test_collector.am_running_expect_test
+let am_running_expect_test = Ppx_expect_runtime.For_external.am_running_expect_test
 
 let assert_am_running_expect_test here =
   if am_running_expect_test ()
@@ -153,8 +152,16 @@ let rec smash_sexp sexp ~f =
 
 let remove_backtraces =
   let prefixes =
-    (* taken from [printexc.ml] in ocaml runtime *)
-    [ "Raised at "; "Re-raised at "; "Raised by primitive operation at "; "Called from " ]
+    List.concat
+      [ (* taken from [printexc.ml] in ocaml runtime *)
+        [ "Raised at "
+        ; "Re-raised at "
+        ; "Raised by primitive operation at "
+        ; "Called from "
+        ]
+        (* based on [monitor.ml] in async_kernel *)
+      ; [ "Caught by monitor " ]
+      ]
   in
   smash_sexp ~f:(function
     | Sexp.(List (Atom hd :: _))
@@ -174,6 +181,7 @@ let print_cr_with_optional_message
   here
   optional_message
   =
+  assert_am_running_expect_test here;
   match cr with
   | Suppress -> ()
   | _ ->
@@ -363,10 +371,10 @@ let require_does_not_raise ?cr ?hide_positions ?show_backtrace here f =
   | Raised message -> print_cr ?cr ?hide_positions here message
 ;;
 
-let require_does_raise ?cr ?hide_positions ?show_backtrace here f =
+let require_does_raise ?cr ?(hide_positions = false) ?show_backtrace here f =
   match try_with f ?show_backtrace with
-  | Raised message -> print_s ?hide_positions message
-  | Did_not_raise -> print_cr ?cr ?hide_positions here [%message "did not raise"]
+  | Raised message -> print_s ~hide_positions message
+  | Did_not_raise -> print_cr ?cr ~hide_positions here [%message "did not raise"]
 ;;
 
 let require_first_gen
@@ -622,4 +630,182 @@ let quickcheck
       let quickcheck_shrinker = shrinker
     end)
     ~f
+;;
+
+module Tuple2 (M : Quickcheck.Test.S) : Quickcheck.Test.S with type t = M.t * M.t = struct
+  type t = M.t * M.t [@@deriving sexp_of]
+
+  let quickcheck_generator = [%quickcheck.generator: M.t * M.t]
+  let quickcheck_shrinker = [%quickcheck.shrinker: M.t * M.t]
+end
+
+module Tuple3 (M : Quickcheck.Test.S) : Quickcheck.Test.S with type t = M.t * M.t * M.t =
+struct
+  type t = M.t * M.t * M.t [@@deriving sexp_of]
+
+  let quickcheck_generator = [%quickcheck.generator: M.t * M.t * M.t]
+  let quickcheck_shrinker = [%quickcheck.shrinker: M.t * M.t * M.t]
+end
+
+let test_compare here ?config ?cr ?hide_positions (module M : With_quickcheck_and_compare)
+  =
+  let check bool msg = require here ?cr ?hide_positions bool ~if_false_then_print_s:msg in
+  let check_reflexive x =
+    let compare_x_x = M.compare x x in
+    check
+      (compare_x_x = 0)
+      [%lazy_message "[compare] is not reflexive" (x : M.t) (compare_x_x : int)]
+  in
+  let check_asymmetric x y =
+    let compare_x_y = M.compare x y in
+    let compare_y_x = M.compare y x in
+    check
+      (Sign.equal (Sign.of_int compare_x_y) (Sign.flip (Sign.of_int compare_y_x)))
+      [%lazy_message
+        "[compare] is not asymmetric"
+          (x : M.t)
+          (y : M.t)
+          (compare_x_y : int)
+          (compare_y_x : int)]
+  in
+  let check_transitive x y z =
+    let compare_x_y = M.compare x y in
+    let compare_y_z = M.compare y z in
+    let compare_x_z = M.compare x z in
+    let expected : Ordering.t option =
+      match Ordering.of_int compare_x_y, Ordering.of_int compare_y_z with
+      | Equal, Equal -> Some Equal
+      | Less, Less | Less, Equal | Equal, Less -> Some Less
+      | Greater, Greater | Greater, Equal | Equal, Greater -> Some Greater
+      | Less, Greater | Greater, Less -> None
+    in
+    Option.iter expected ~f:(fun expected ->
+      check
+        (Ordering.equal expected (Ordering.of_int compare_x_z))
+        [%lazy_message
+          "[compare] is not transitive"
+            (x : M.t)
+            (y : M.t)
+            (z : M.t)
+            (compare_x_y : int)
+            (compare_y_z : int)
+            (compare_x_z : int)])
+  in
+  let test m ~f = quickcheck_m here ?config ?cr ?hide_positions m ~f in
+  test
+    (module M)
+    ~f:(fun x ->
+      check_reflexive x;
+      check_asymmetric x x;
+      check_transitive x x x);
+  test
+    (module Tuple2 (M))
+    ~f:(fun (x, y) ->
+      check_asymmetric x y;
+      check_transitive x x y;
+      check_transitive x y x;
+      check_transitive y x x);
+  test
+    (module Tuple3 (M))
+    ~f:(fun (x, y, z) ->
+      check_transitive x y z;
+      check_transitive x z y;
+      check_transitive y x z)
+;;
+
+let test_equal here ?config ?cr ?hide_positions (module M : With_quickcheck_and_equal) =
+  let check bool msg = require here ?cr ?hide_positions bool ~if_false_then_print_s:msg in
+  let check_reflexive x =
+    let equal_x_x = M.equal x x in
+    check
+      equal_x_x
+      [%lazy_message "[equal] is not reflexive" (x : M.t) (equal_x_x : bool)]
+  in
+  let check_symmetric x y =
+    let equal_x_y = M.equal x y in
+    let equal_y_x = M.equal y x in
+    check
+      (Bool.equal equal_x_y equal_y_x)
+      [%lazy_message
+        "[equal] is not symmetric"
+          (x : M.t)
+          (y : M.t)
+          (equal_x_y : bool)
+          (equal_y_x : bool)]
+  in
+  let check_transitive x y z =
+    let equal_x_y = M.equal x y in
+    let equal_y_z = M.equal y z in
+    let equal_x_z = M.equal x z in
+    let msg =
+      [%lazy_message
+        "[equal] is not transitive"
+          (x : M.t)
+          (y : M.t)
+          (z : M.t)
+          (equal_x_y : bool)
+          (equal_y_z : bool)
+          (equal_x_z : bool)]
+    in
+    match equal_x_y, equal_y_z with
+    | true, true -> check equal_x_z msg
+    | true, false | false, true -> check (not equal_x_z) msg
+    | false, false -> ()
+  in
+  let test m ~f = quickcheck_m here ?config ?cr ?hide_positions m ~f in
+  test
+    (module M)
+    ~f:(fun x ->
+      check_reflexive x;
+      check_symmetric x x;
+      check_transitive x x x);
+  test
+    (module Tuple2 (M))
+    ~f:(fun (x, y) ->
+      check_symmetric x y;
+      check_transitive x x y;
+      check_transitive x y x;
+      check_transitive y x x);
+  test
+    (module Tuple3 (M))
+    ~f:(fun (x, y, z) ->
+      check_transitive x y z;
+      check_transitive x z y;
+      check_transitive y x z)
+;;
+
+let test_compare_and_equal
+  here
+  ?config
+  ?cr
+  ?hide_positions
+  (module M : With_quickcheck_and_compare_and_equal)
+  =
+  test_compare here ?config ?cr ?hide_positions (module M);
+  test_equal here ?config ?cr ?hide_positions (module M);
+  let check_agreement x y =
+    let compare_x_y = M.compare x y in
+    let equal_x_y = M.equal x y in
+    require
+      here
+      ?cr
+      ?hide_positions
+      (Bool.equal equal_x_y (compare_x_y = 0))
+      ~if_false_then_print_s:
+        [%lazy_message
+          "[compare] and [equal] do not agree"
+            (x : M.t)
+            (y : M.t)
+            (compare_x_y : int)
+            (equal_x_y : bool)]
+  in
+  quickcheck_m
+    here
+    ?config
+    ?cr
+    ?hide_positions
+    (module Tuple2 (M))
+    ~f:(fun (x, y) ->
+      check_agreement x y;
+      check_agreement y x)
 ;;

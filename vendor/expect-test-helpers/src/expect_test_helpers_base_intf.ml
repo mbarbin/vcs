@@ -43,6 +43,24 @@ module type With_stringable = sig
   include Stringable.S with type t := t
 end
 
+module type With_quickcheck_and_compare = sig
+  type t [@@deriving compare]
+
+  include Base_quickcheck.Test.S with type t := t
+end
+
+module type With_quickcheck_and_equal = sig
+  type t [@@deriving equal]
+
+  include Base_quickcheck.Test.S with type t := t
+end
+
+module type With_quickcheck_and_compare_and_equal = sig
+  type t [@@deriving compare, equal]
+
+  include Base_quickcheck.Test.S with type t := t
+end
+
 module Quickcheck = Base_quickcheck
 
 module type Expect_test_helpers_base = sig
@@ -54,6 +72,11 @@ module type Expect_test_helpers_base = sig
   module type With_round_trip = With_round_trip
   module type With_sexpable = With_sexpable
   module type With_stringable = With_stringable
+  module type With_quickcheck_and_compare = With_quickcheck_and_compare
+  module type With_quickcheck_and_equal = With_quickcheck_and_equal
+
+  module type With_quickcheck_and_compare_and_equal =
+    With_quickcheck_and_compare_and_equal
 
   module CR : sig
     include module type of struct
@@ -245,17 +268,17 @@ module type Expect_test_helpers_base = sig
     -> ?hide_positions:bool (** default is [false] when [cr=CR], [true] otherwise *)
     -> ?show_backtrace:bool (** default is [false] *)
     -> Source_code_position.t
-    -> ((unit -> unit)[@local])
+    -> (unit -> unit)
     -> unit
 
   (** [require_does_raise] is like [show_raise], but additionally prints a CR if the
       function does not raise. *)
   val require_does_raise
     :  ?cr:CR.t (** default is [CR] *)
-    -> ?hide_positions:bool (** default is [false] when [cr=CR], [true] otherwise *)
+    -> ?hide_positions:bool (** default is [false] *)
     -> ?show_backtrace:bool (** default is [false] *)
     -> Source_code_position.t
-    -> ((unit -> _)[@local])
+    -> (unit -> _)
     -> unit
 
   (** [require_some here option] is like [require here (is_some option)], with improved
@@ -420,6 +443,40 @@ module type Expect_test_helpers_base = sig
     -> ?hide_positions:bool (** default is [false] when [cr=CR], [true] otherwise *)
     -> (module Base_quickcheck.Test.S with type t = 'a)
     -> f:('a -> unit)
+    -> unit
+
+  (** [test_compare] uses quickcheck to test that a compare function is reflexive,
+      asymmetric, and transitive. *)
+  val test_compare
+    :  Source_code_position.t
+    -> ?config:Base_quickcheck.Test.Config.t
+         (** default is [Base_quickcheck.Test.default_config] *)
+    -> ?cr:CR.t (** default is [CR] *)
+    -> ?hide_positions:bool (** default is [false] when [cr=CR], [true] otherwise *)
+    -> (module With_quickcheck_and_compare)
+    -> unit
+
+  (** [test_equal] uses quickcheck to test that an equal function is reflexive, symmetric,
+      and transitive. *)
+  val test_equal
+    :  Source_code_position.t
+    -> ?config:Base_quickcheck.Test.Config.t
+         (** default is [Base_quickcheck.Test.default_config] *)
+    -> ?cr:CR.t (** default is [CR] *)
+    -> ?hide_positions:bool (** default is [false] when [cr=CR], [true] otherwise *)
+    -> (module With_quickcheck_and_equal)
+    -> unit
+
+  (** [test_compare_and_equal] uses quickcheck to test that compare and equal functions
+      satisfy [test_compare] and [test_equal], and that their results are consistent with
+      each other. *)
+  val test_compare_and_equal
+    :  Source_code_position.t
+    -> ?config:Base_quickcheck.Test.Config.t
+         (** default is [Base_quickcheck.Test.default_config] *)
+    -> ?cr:CR.t (** default is [CR] *)
+    -> ?hide_positions:bool (** default is [false] when [cr=CR], [true] otherwise *)
+    -> (module With_quickcheck_and_compare_and_equal)
     -> unit
 
   (** [sexp_style] determines the sexp format used by [sexp_to_string], [print_s], and

@@ -13,7 +13,13 @@
   Stdio
   -w
   -70)
- (libraries base base_quickcheck sexp_pretty stdio)
+ (libraries base base_quickcheck re sexp_pretty stdio)
  (inline_tests)
  (preprocess
-  (pps ppx_compare ppx_expect ppx_sexp_conv ppx_sexp_message ppx_sexp_value)))
+  (pps
+   ppx_compare
+   ppx_expect
+   base_quickcheck.ppx_quickcheck
+   ppx_sexp_conv
+   ppx_sexp_message
+   ppx_sexp_value)))
