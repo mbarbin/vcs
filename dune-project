@@ -450,6 +450,10 @@
     (< v0.18)))
   (provider
    (>= 0.0.4))
+  (re
+   (and
+    :with-test
+    (>= 1.8.0)))
   (sexp_pretty
    (and
     (>= v0.17)
