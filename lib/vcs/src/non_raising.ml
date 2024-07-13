@@ -67,8 +67,12 @@ module Make (M : M) :
   let refs vcs ~repo_root = try_with (fun () -> Vcs0.refs vcs ~repo_root)
   let tree vcs ~repo_root = try_with (fun () -> Vcs0.tree vcs ~repo_root)
 
-  let rev_parse vcs ~repo_root ~arg =
-    try_with (fun () -> Vcs0.rev_parse vcs ~repo_root ~arg)
+  let current_branch vcs ~repo_root =
+    try_with (fun () -> Vcs0.current_branch vcs ~repo_root)
+  ;;
+
+  let current_revision vcs ~repo_root =
+    try_with (fun () -> Vcs0.current_revision vcs ~repo_root)
   ;;
 
   let set_user_name vcs ~repo_root ~user_name =

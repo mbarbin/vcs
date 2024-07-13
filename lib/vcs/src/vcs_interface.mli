@@ -50,6 +50,13 @@ module type S = sig
     -> commit_message:Commit_message.t
     -> Rev.t result
 
+  val current_branch
+    :  [> Trait.rev_parse ] t
+    -> repo_root:Repo_root.t
+    -> Branch_name.t result
+
+  val current_revision : [> Trait.rev_parse ] t -> repo_root:Repo_root.t -> Rev.t result
+
   val ls_files
     :  [> Trait.ls_files ] t
     -> repo_root:Repo_root.t
@@ -96,12 +103,6 @@ module type S = sig
   val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t result
   val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t result
   val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t result
-
-  val rev_parse
-    :  [> Trait.rev_parse ] t
-    -> repo_root:Repo_root.t
-    -> arg:Rev_parse.Arg.t
-    -> Rev.t result
 
   val set_user_name
     :  [> Trait.config ] t

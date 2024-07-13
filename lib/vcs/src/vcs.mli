@@ -190,13 +190,8 @@ val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t
 
 (** {1 Rev parse utils} *)
 
-module Rev_parse = Rev_parse
-
-val rev_parse
-  :  [> Trait.rev_parse ] t
-  -> repo_root:Repo_root.t
-  -> arg:Rev_parse.Arg.t
-  -> Rev.t
+val current_branch : [> Trait.rev_parse ] t -> repo_root:Repo_root.t -> Branch_name.t
+val current_revision : [> Trait.rev_parse ] t -> repo_root:Repo_root.t -> Rev.t
 
 (** {1 User config} *)
 

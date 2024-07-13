@@ -56,3 +56,10 @@ let remote_branches (t : t) =
       Some remote_branch_name
     | _ -> None)
 ;;
+
+let to_map (t : t) =
+  List.fold
+    t
+    ~init:(Map.empty (module Ref_kind))
+    ~f:(fun acc { rev; ref_kind } -> Map.set acc ~key:ref_kind ~data:rev)
+;;

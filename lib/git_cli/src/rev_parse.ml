@@ -22,19 +22,23 @@
 module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
-  let rev_parse t ~repo_root ~arg =
+  let current_revision t ~repo_root =
     Runtime.git
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
-      ~args:
-        [ "rev-parse"
-        ; "--verify"
-        ; (match (arg : Vcs.Rev_parse.Arg.t) with
-           | Head -> "HEAD"
-           | Branch { branch_name } -> branch_name |> Vcs.Branch_name.to_string)
-        ]
+      ~args:[ "rev-parse"; "--verify"; "HEAD^{commit}" ]
       ~f:(fun output ->
         let%bind stdout = Vcs.Git.exit0_and_stdout output in
         Vcs.Rev.of_string (String.strip stdout))
+  ;;
+
+  let current_branch t ~repo_root =
+    Runtime.git
+      t
+      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
+      ~args:[ "rev-parse"; "--abbrev-ref"; "HEAD" ]
+      ~f:(fun output ->
+        let%bind stdout = Vcs.Git.exit0_and_stdout output in
+        Vcs.Branch_name.of_string (String.strip stdout))
   ;;
 end

@@ -58,6 +58,28 @@ let commit_cmd =
        return ())
 ;;
 
+let current_branch_cmd =
+  eio_command
+    ~summary:"current branch"
+    (let%map_open.Command config = Vcs_param.config in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind branch = Vcs.Or_error.current_branch vcs ~repo_root in
+       Eio_writer.print_sexp ~env [%sexp (branch : Vcs.Branch_name.t)];
+       return ())
+;;
+
+let current_revision_cmd =
+  eio_command
+    ~summary:"revision of HEAD"
+    (let%map_open.Command config = Vcs_param.config in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind rev = Vcs.Or_error.current_revision vcs ~repo_root in
+       Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
+       return ())
+;;
+
 let git_cmd =
   eio_command
     ~summary:"run the git cli"
@@ -188,25 +210,6 @@ let refs_cmd =
        return ())
 ;;
 
-let rev_parse_cmd =
-  eio_command
-    ~summary:"revision of a branch or HEAD"
-    (let%map_open.Command config = Vcs_param.config
-     and branch_name = Vcs_param.anon_branch_name_opt in
-     fun env ->
-       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
-       let%bind arg =
-         match branch_name with
-         | None -> return Vcs.Rev_parse.Arg.Head
-         | Some branch_name ->
-           let%map branch_name = branch_name in
-           Vcs.Rev_parse.Arg.Branch { branch_name }
-       in
-       let%bind rev = Vcs.Or_error.rev_parse vcs ~repo_root ~arg in
-       Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
-       return ())
-;;
-
 let save_file_cmd =
   eio_command
     ~summary:"save stdin to a file from the filesystem (aka tee)"
@@ -285,6 +288,8 @@ sub commands exposed here.
 |})
     [ "add-cmd", add_cmd
     ; "commit", commit_cmd
+    ; "current-branch", current_branch_cmd
+    ; "current-revision", current_revision_cmd
     ; "git", git_cmd
     ; "init-cmd", init_cmd
     ; "load-file", load_file_cmd
@@ -294,7 +299,6 @@ sub commands exposed here.
     ; "num-status", num_status_cmd
     ; "refs", refs_cmd
     ; "rename-current-branch", rename_current_branch_cmd
-    ; "rev-parse", rev_parse_cmd
     ; "save-file", save_file_cmd
     ; "set-user-config", set_user_config_cmd
     ; "show-file-at-rev", show_file_at_rev_cmd

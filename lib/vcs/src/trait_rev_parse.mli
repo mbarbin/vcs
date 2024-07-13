@@ -22,5 +22,6 @@
 module type S = sig
   type t
 
-  val rev_parse : t -> repo_root:Repo_root.t -> arg:Rev_parse.Arg.t -> Rev.t Or_error.t
+  val current_branch : t -> repo_root:Repo_root.t -> Branch_name.t Or_error.t
+  val current_revision : t -> repo_root:Repo_root.t -> Rev.t Or_error.t
 end

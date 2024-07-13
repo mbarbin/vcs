@@ -45,7 +45,6 @@ module Repo_name = Repo_name
 module Repo_root = Repo_root
 module Result = Vcs_result
 module Rev = Rev
-module Rev_parse = Rev_parse
 module Tag_name = Tag_name
 module Trait = Trait
 module Tree = Tree

@@ -54,20 +54,23 @@ let init (Provider.T { t; interface }) ~path =
   M.init t ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
 ;;
 
-let rev_parse (Provider.T { t; interface }) ~repo_root ~arg =
+let current_branch (Provider.T { t; interface }) ~repo_root =
   let module M = (val Provider.Interface.lookup interface ~trait:Trait.Rev_parse) in
-  M.rev_parse t ~repo_root ~arg
-  |> of_result
-       ~step:
-         (lazy
-           [%sexp "Vcs.rev_parse", { repo_root : Repo_root.t; arg : Rev_parse.Arg.t }])
+  M.current_branch t ~repo_root
+  |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
+;;
+
+let current_revision (Provider.T { t; interface }) ~repo_root =
+  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Rev_parse) in
+  M.current_revision t ~repo_root
+  |> of_result ~step:(lazy [%sexp "Vcs.current_revision", { repo_root : Repo_root.t }])
 ;;
 
 let commit (Provider.T { t; interface }) ~repo_root ~commit_message =
   let module R = (val Provider.Interface.lookup interface ~trait:Trait.Rev_parse) in
   let module C = (val Provider.Interface.lookup interface ~trait:Trait.Commit) in
   (let%bind () = C.commit t ~repo_root ~commit_message in
-   R.rev_parse t ~repo_root ~arg:Head)
+   R.current_revision t ~repo_root)
   |> of_result ~step:(lazy [%sexp "Vcs.commit", { repo_root : Repo_root.t }])
 ;;
 

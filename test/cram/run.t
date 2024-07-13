@@ -23,14 +23,11 @@ Rev-parse.
   $ git rev-parse HEAD | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ git rev-parse main | sed -e "s/$rev0/rev0/g"
+  $ ocaml-vcs current-revision | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs rev-parse | sed -e "s/$rev0/rev0/g"
-  rev0
-
-  $ ocaml-vcs rev-parse main | sed -e "s/$rev0/rev0/g"
-  rev0
+  $ ocaml-vcs current-branch
+  main
 
 Testing a successful file show with git and via vcs.
 
@@ -158,6 +155,8 @@ Vcs's help for review.
   
     add-cmd                    . add a file to the index
     commit                     . commit a file
+    current-branch             . current branch
+    current-revision           . revision of HEAD
     git                        . run the git cli
     init-cmd                   . initialize a new repository
     load-file                  . print a file from the filesystem (aka cat)
@@ -168,7 +167,6 @@ Vcs's help for review.
                                  between 2 revs
     refs                       . show the refs of current repo
     rename-current-branch      . move/rename a branch to a new name
-    rev-parse                  . revision of a branch or HEAD
     save-file                  . save stdin to a file from the filesystem (aka
                                  tee)
     set-user-config            . set the user config
