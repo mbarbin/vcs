@@ -26,6 +26,12 @@
    happening when its input is ambiguous, and document why we ended up removing
    [Vcs.rev_parse] from the API. *)
 
+let commit_file vcs ~repo_root ~path ~file_contents ~commit_message =
+  Vcs.save_file vcs ~path:(Vcs.Repo_root.append repo_root path) ~file_contents;
+  Vcs.add vcs ~repo_root ~path;
+  Vcs.commit vcs ~repo_root ~commit_message
+;;
+
 let%expect_test "find ref" =
   Eio_main.run
   @@ fun env ->
@@ -33,13 +39,13 @@ let%expect_test "find ref" =
   @@ fun ~vcs ~repo_root ->
   let mock_revs = Vcs.Mock_revs.create () in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
-  Vcs.save_file
-    vcs
-    ~path:(Vcs.Repo_root.append repo_root hello_file)
-    ~file_contents:(Vcs.File_contents.create "Hello World!");
-  Vcs.add vcs ~repo_root ~path:hello_file;
   let rev =
-    Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
+    commit_file
+      vcs
+      ~repo_root
+      ~path:hello_file
+      ~file_contents:(Vcs.File_contents.create "Hello World!")
+      ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
   print_s [%sexp (mock_rev : Vcs.Rev.t)];
@@ -57,28 +63,23 @@ let%expect_test "find ref" =
   print_s [%sexp (current_branch : Vcs.Branch_name.t)];
   [%expect {| main |}];
   (* We'll now create 2 diverging branches. *)
-  Vcs.git vcs ~repo_root ~args:[ "branch"; "branch1" ] ~f:Vcs.Git.exit0 |> Or_error.ok_exn;
-  Vcs.git vcs ~repo_root ~args:[ "branch"; "branch2" ] ~f:Vcs.Git.exit0 |> Or_error.ok_exn;
-  Vcs.git vcs ~repo_root ~args:[ "checkout"; "branch1" ] ~f:Vcs.Git.exit0
-  |> Or_error.ok_exn;
-  let branch1_head =
-    Vcs.save_file
-      vcs
-      ~path:(Vcs.Repo_root.append repo_root hello_file)
-      ~file_contents:(Vcs.File_contents.create "Hello World @ branch1");
-    Vcs.add vcs ~repo_root ~path:hello_file;
-    Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello branch1")
+  let create_branch branch_name =
+    Vcs.git vcs ~repo_root ~args:[ "branch"; branch_name ] ~f:Vcs.Git.exit0
+    |> Or_error.ok_exn
   in
-  Vcs.git vcs ~repo_root ~args:[ "checkout"; "branch2" ] ~f:Vcs.Git.exit0
-  |> Or_error.ok_exn;
-  let branch2_head =
-    Vcs.save_file
+  List.iter [ "branch1"; "branch2" ] ~f:create_branch;
+  let commit_change branch =
+    Vcs.git vcs ~repo_root ~args:[ "checkout"; branch ] ~f:Vcs.Git.exit0
+    |> Or_error.ok_exn;
+    commit_file
       vcs
-      ~path:(Vcs.Repo_root.append repo_root hello_file)
-      ~file_contents:(Vcs.File_contents.create "Hello World @ branch2");
-    Vcs.add vcs ~repo_root ~path:hello_file;
-    Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello branch2")
+      ~repo_root
+      ~path:hello_file
+      ~file_contents:(Vcs.File_contents.create (Printf.sprintf "Hello World @ %s" branch))
+      ~commit_message:(Vcs.Commit_message.v ("hello " ^ branch))
   in
+  let branch1_head = commit_change "branch1" in
+  let branch2_head = commit_change "branch2" in
   print_s
     [%sexp
       { branch1 = (Vcs.Mock_revs.to_mock mock_revs ~rev:branch1_head : Vcs.Rev.t)
@@ -93,18 +94,15 @@ let%expect_test "find ref" =
      duplicates the name of a branch with a distinct head. This allows
      monitoring that the vcs api allows for finding the correct revisions based
      on references provided by the user. *)
-  Vcs.git
-    vcs
-    ~repo_root
-    ~args:[ "tag"; "tag1"; Vcs.Rev.to_string branch1_head ]
-    ~f:Vcs.Git.exit0
-  |> Or_error.ok_exn;
-  Vcs.git
-    vcs
-    ~repo_root
-    ~args:[ "tag"; "branch1"; Vcs.Rev.to_string branch2_head ]
-    ~f:Vcs.Git.exit0
-  |> Or_error.ok_exn;
+  let create_tag tag rev =
+    Vcs.git vcs ~repo_root ~args:[ "tag"; tag; Vcs.Rev.to_string rev ] ~f:Vcs.Git.exit0
+    |> Or_error.ok_exn
+  in
+  create_tag "tag1" branch1_head;
+  (* Tag "branch1" points to [branch2_head]. This isn't a typo, we purposely
+     create an ambiguity regarding what the rev-parse argument "branch1" means.
+     Is it the tag, or the branch? *)
+  create_tag "branch1" branch2_head;
   (* We show first how to do reference lookup using [Vcs.refs]. *)
   let refs = Vcs.refs vcs ~repo_root |> Vcs.Refs.to_map in
   let lookup ~(find_exn : Vcs.Ref_kind.t -> 'a) =
@@ -134,8 +132,8 @@ let%expect_test "find ref" =
      (tag1    dd5aabd331a75b90cd61725223964e47dd5aabd3)
      (tag2    f452a6f91ee8f448bd58bbd0f3330675f452a6f9))
     |}];
-  (* Next we show the same, using [Vcs.Tree.find_ref], and verify that we find
-     the same result. *)
+  (* Next we do the same lookups, this time using [Vcs.Tree.find_ref], and
+     verify that we find the same results. *)
   let tree = Vcs.tree vcs ~repo_root in
   let sexp2 =
     let find_exn ref_kind =
