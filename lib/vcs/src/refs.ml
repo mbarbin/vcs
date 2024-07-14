@@ -61,5 +61,5 @@ let to_map (t : t) =
   List.fold
     t
     ~init:(Map.empty (module Ref_kind))
-    ~f:(fun acc { rev; ref_kind } -> Map.set acc ~key:ref_kind ~data:rev)
+    ~f:(fun acc { rev; ref_kind } -> Map.add_exn acc ~key:ref_kind ~data:rev)
 ;;
