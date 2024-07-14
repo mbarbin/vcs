@@ -176,6 +176,6 @@ let%expect_test "find ref" =
   let tag_rev = Map.find_exn refs (Tag { tag_name = Vcs.Tag_name.v "branch1" }) in
   require
     [%here]
-    (Vcs.Rev.equal ambiguous_rev branch1_rev || Vcs.Rev.equal ambiguous_rev tag_rev);
+    (List.exists [ branch1_rev; tag_rev ] ~f:(fun rev -> Vcs.Rev.equal ambiguous_rev rev));
   ()
 ;;

@@ -29,6 +29,16 @@ Rev-parse.
   $ ocaml-vcs current-branch
   main
 
+  $ ocaml-vcs more-tests branch-revision | sed -e "s/$rev0/rev0/g"
+  rev0
+
+  $ ocaml-vcs more-tests branch-revision main | sed -e "s/$rev0/rev0/g"
+  rev0
+
+  $ ocaml-vcs more-tests branch-revision unknown-branch
+  ("Branch not found" ((branch_name unknown-branch)))
+  [1]
+
 Testing a successful file show with git and via vcs.
 
   $ git show HEAD:hello
@@ -149,7 +159,7 @@ Vcs's help for review.
   This is an executable to test the Version Control System (vcs) library.
   
   We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the
-  sub commands exposed here.
+  sub commands exposed here, plus additional functionality in [more-tests].
   
   === subcommands ===
   
@@ -162,6 +172,7 @@ Vcs's help for review.
     load-file                  . print a file from the filesystem (aka cat)
     log                        . show the log of current repo
     ls-files                   . list file
+    more-tests                 . more tests combining vcs functions
     name-status                . show a summary of the diff between 2 revs
     num-status                 . show a summary of the number of lines of diff
                                  between 2 revs

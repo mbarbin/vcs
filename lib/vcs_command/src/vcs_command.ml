@@ -276,6 +276,38 @@ let tree_cmd =
        return ())
 ;;
 
+(* The following section expands the cli to help with test coverage. *)
+
+let branch_revision_cmd =
+  eio_command
+    ~summary:"revision of a branch"
+    (let%map_open.Command config = Vcs_param.config
+     and branch_name = Vcs_param.anon_branch_name_opt in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind branch_name =
+         match branch_name with
+         | Some branch_name -> branch_name
+         | None -> Vcs.Or_error.current_branch vcs ~repo_root
+       in
+       let%bind rev =
+         let%bind refs = Vcs.Or_error.refs vcs ~repo_root >>| Vcs.Refs.to_map in
+         match Map.find refs (Local_branch { branch_name }) with
+         | Some rev -> return rev
+         | None ->
+           Or_error.error_s
+             [%sexp "Branch not found", { branch_name : Vcs.Branch_name.t }]
+       in
+       Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
+       return ())
+;;
+
+let more_tests_cmd =
+  Command.group
+    ~summary:"more tests combining vcs functions"
+    [ "branch-revision", branch_revision_cmd ]
+;;
+
 let main =
   Command.group
     ~summary:"call a command from the vcs interface"
@@ -284,7 +316,7 @@ let main =
 This is an executable to test the Version Control System (vcs) library.
 
 We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the
-sub commands exposed here.
+sub commands exposed here, plus additional functionality in [more-tests].
 |})
     [ "add-cmd", add_cmd
     ; "commit", commit_cmd
@@ -303,5 +335,6 @@ sub commands exposed here.
     ; "set-user-config", set_user_config_cmd
     ; "show-file-at-rev", show_file_at_rev_cmd
     ; "tree", tree_cmd
+    ; "more-tests", more_tests_cmd
     ]
 ;;
