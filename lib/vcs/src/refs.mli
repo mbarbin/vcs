@@ -44,9 +44,10 @@ val tags : t -> Set.M(Tag_name).t
 val local_branches : t -> Branch_name.t list
 val remote_branches : t -> Remote_branch_name.t list
 
-(** When searching the rev of a ref_kind, it's usually quite cheap to get all
-    refs using [Vcs.refs] and then turning the result into a map with this
-    function, rather than trying to run one git command per lookup. You may
-    also use [Vcs.Tree.find_ref] if you can afford to build the complete tree
-    with [Vcs.tree]. *)
+(** To lookup the revision of references (branch, tag, etc.), it is usually
+    quite cheap to get all refs using {!val:Vcs.refs}, turn the result into a
+    map with this function, and use the map for the lookups rather than trying
+    to run one git command per lookup. You may also use
+    {!val:Vcs.Tree.find_ref} if you build the complete tree with
+    {!val:Vcs.tree}. *)
 val to_map : t -> Rev.t Map.M(Ref_kind).t
