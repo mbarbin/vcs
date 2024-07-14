@@ -2,6 +2,8 @@
 
 ### Added
 
+- Add test showing how to do revision lookup from references using `Vcs.refs` and `Vcs.tree`.
+
 ### Changed
 
 ### Deprecated
@@ -13,6 +15,8 @@
 - Allow more characters when parsing branch names.
 
 ### Removed
+
+- Removed `Vcs.rev_parse`, replaced by other dedicated function `Vcs.current_{branch,revision}`.
 
 ## 0.0.1 (2024-03-19)
 
