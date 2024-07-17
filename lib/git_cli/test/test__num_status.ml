@@ -479,7 +479,12 @@ let%expect_test "parse_lines_exn" =
     (file (Error ("Unexpected output from git diff" file)))
     ("A\tB" (Error ("Unexpected output from git diff" "A\tB")))
     ("A\tB\tC\tD" (Error ("Unexpected output from git diff" "A\tB\tC\tD")))
-    ("A\tB\tC" (Error ("Unexpected output from git diff" "A\tB\tC")))
+    ("A\tB\tC" (
+      Error (
+        "Unexpected output from git diff" (
+          (line "A\tB\tC")
+          (insertions (Other A))
+          (deletions  (Other B))))))
     ("0\t1\tfile" (
       Ok (
         (key (One_file file))
@@ -508,8 +513,22 @@ let%expect_test "parse_lines_exn" =
             (insertions 100)
             (deletions  5)))))))
     ("-\t-\tfile" (Ok ((key (One_file file)) (num_stat Binary_file))))
-    ("-\t10\tfile" (Error ("Unexpected output from git diff" "-\t10\tfile")))
-    ("7\t-\tfile" (Error ("Unexpected output from git diff" "7\t-\tfile")))
-    ("-2\t-10\tfile" (Error ("Unexpected output from git diff" "-2\t-10\tfile"))) |}];
+    ("-\t10\tfile" (
+      Error (
+        "Unexpected output from git diff" (
+          (line       "-\t10\tfile")
+          (insertions Dash)
+          (deletions (Num 10))))))
+    ("7\t-\tfile" (
+      Error (
+        "Unexpected output from git diff" (
+          (line "7\t-\tfile") (insertions (Num 7)) (deletions Dash)))))
+    ("-2\t-10\tfile" (
+      Error (
+        "Unexpected output from git diff" (
+          (line "-2\t-10\tfile")
+          (insertions (Other -2))
+          (deletions  (Other -10))))))
+    |}];
   ()
 ;;

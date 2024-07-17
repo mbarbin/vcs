@@ -22,7 +22,7 @@
 module T = struct
   [@@@coverage off]
 
-  type t = GitHub [@@deriving compare, equal, enumerate, hash, sexp_of]
+  type t = GitHub [@@deriving compare, enumerate, hash, sexp_of]
 end
 
 include T

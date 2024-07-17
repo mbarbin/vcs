@@ -52,9 +52,12 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
         (match Status_code.parse insertions, Status_code.parse deletions with
          | Dash, Dash -> Binary_file
          | Num insertions, Num deletions -> Num_lines_in_diff { insertions; deletions }
-         | _, _ ->
+         | insertions, deletions ->
            raise_s
-             [%sexp "Unexpected output from git diff", (line : string)] [@coverage off])
+             [%sexp
+               "Unexpected output from git diff"
+               , { line : string; insertions : Status_code.t; deletions : Status_code.t }]
+           [@coverage off])
     }
 ;;
 

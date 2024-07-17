@@ -21,6 +21,7 @@
   (pps ppx_js_style -check-doc-comments))
  (preprocess
   (pps
+   -unused-code-warnings=force
    ppx_compare
    ppx_enumerate
    ppx_expect

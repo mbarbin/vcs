@@ -46,7 +46,7 @@
 module T = struct
   [@@@coverage off]
 
-  type t = Relative_path.t [@@deriving compare, equal, hash, sexp_of]
+  type t = Relative_path.t [@@deriving compare, hash, sexp_of]
 end
 
 include T

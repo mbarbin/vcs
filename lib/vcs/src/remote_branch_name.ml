@@ -26,7 +26,7 @@ module T = struct
     { remote_name : Remote_name.t
     ; branch_name : Branch_name.t
     }
-  [@@deriving compare, equal, hash, sexp_of]
+  [@@deriving compare, hash, sexp_of]
 end
 
 include T

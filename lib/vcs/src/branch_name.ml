@@ -22,7 +22,7 @@
 module T = struct
   [@@@coverage off]
 
-  type t = string [@@deriving compare, equal, hash, sexp_of]
+  type t = string [@@deriving compare, hash, sexp_of]
 end
 
 include T

@@ -27,7 +27,7 @@ module T = struct
     | Remote_branch of { remote_branch_name : Remote_branch_name.t }
     | Tag of { tag_name : Tag_name.t }
     | Other of { name : string }
-  [@@deriving compare, equal, hash, sexp_of]
+  [@@deriving compare, hash, sexp_of]
 end
 
 include T

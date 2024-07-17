@@ -87,6 +87,7 @@ let create () =
 module Node0 = struct
   type t = int [@@deriving compare, equal, hash, sexp_of]
 
+  let _ = hash_fold_t
   let rev t node = Node_kind.rev t.nodes.(node)
 
   let parents t node =

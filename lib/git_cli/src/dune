@@ -21,6 +21,7 @@
  (modules_without_implementation runtime)
  (preprocess
   (pps
+   -unused-code-warnings=force
    ppx_compare
    ppx_enumerate
    ppx_hash
