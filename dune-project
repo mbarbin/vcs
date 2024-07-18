@@ -66,6 +66,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (provider
    (>= 0.0.4))
   (vcs-private-libs-base
@@ -128,6 +130,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (vcs
    (= :version))))
 
@@ -192,6 +196,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (vcs
    (= :version))
   (vcs-param
@@ -250,6 +256,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (vcs
    (= :version))))
 
@@ -308,6 +316,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (provider
    (>= 0.0.4))
   (vcs
@@ -368,6 +378,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (provider
    (>= 0.0.4))
   (vcs
@@ -448,6 +460,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (ppxlib
+   (>= 0.32))
   (provider
    (>= 0.0.4))
   (re
@@ -522,7 +536,9 @@
   (ppx_sexp_value
    (and
     (>= v0.17)
-    (< v0.18)))))
+    (< v0.18)))
+  (ppxlib
+   (>= 0.32))))
 
 (package
  (name vcs-private-libs-eio)
@@ -577,4 +593,6 @@
   (ppx_sexp_value
    (and
     (>= v0.17)
-    (< v0.18)))))
+    (< v0.18)))
+  (ppxlib
+   (>= 0.32))))
