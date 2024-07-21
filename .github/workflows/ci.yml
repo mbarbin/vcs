@@ -55,10 +55,10 @@ jobs:
         run: git diff --exit-code
 
       - name: Lint opam
-        uses: ocaml/setup-ocaml/lint-opam@v2
+        uses: ocaml/setup-ocaml/lint-opam@v3
 
       - name: Lint fmt
-        uses: ocaml/setup-ocaml/lint-fmt@v2
+        uses: ocaml/setup-ocaml/lint-fmt@v3
 
       - name: Lint doc
-        uses: ocaml/setup-ocaml/lint-doc@v2
+        uses: ocaml/setup-ocaml/lint-doc@v3
