@@ -60,3 +60,45 @@ let%expect_test "init_temp_repo" =
     --------------- |}];
   ()
 ;;
+
+let%expect_test "redact_sexp" =
+  Eio_main.run
+  @@ fun env ->
+  let vcs = Vcs_git.create ~env in
+  let invalid_path = Absolute_path.v "/invalid/path" in
+  let error =
+    match Vcs.init vcs ~path:invalid_path with
+    | _ -> assert false
+    | exception Vcs.E err -> [%sexp (err : Vcs.Err.t)]
+  in
+  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error" ]);
+  [%expect {| ((steps ((Vcs.init ((path /invalid/path))))) (error <REDACTED>)) |}];
+  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error/error" ]);
+  [%expect
+    {|
+    ((steps ((Vcs.init ((path /invalid/path)))))
+     (error (
+       (prog git)
+       (args (init .))
+       (exit_status Unknown)
+       (cwd         /invalid/path)
+       (stdout      "")
+       (stderr      "")
+       (error       <REDACTED>))))
+    |}];
+  print_s
+    (Vcs_test_helpers.redact_sexp error ~fields:[ "error/error"; "error/stderr"; "cwd" ]);
+  [%expect
+    {|
+    ((steps ((Vcs.init ((path /invalid/path)))))
+     (error (
+       (prog git)
+       (args (init .))
+       (exit_status Unknown)
+       (cwd         <REDACTED>)
+       (stdout      "")
+       (stderr      <REDACTED>)
+       (error       <REDACTED>))))
+    |}];
+  ()
+;;

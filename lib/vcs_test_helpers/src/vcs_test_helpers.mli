@@ -36,3 +36,44 @@ val init_temp_repo
   -> sw:Eio.Switch.t
   -> vcs:[> Vcs.Trait.config | Vcs.Trait.init ] Vcs.t
   -> Vcs.Repo_root.t
+
+(** This helper allows to filter out unstable and brittle parts of errors before
+    printing them in an expect test trace. The [fields] parameter specifies
+    which field-paths to redact.
+
+    In its most simple form, a [field] may simply be a field name that will end
+    up being redacted. For example, if the error is:
+
+    {[
+      ((field_a ...)
+       (field_b <UNSTABLE>))
+    ]}
+
+    then the [fields] parameter should be [["field_b"]], and in this case,
+    [redact_sexp error ~fields:["field_b"]] will result in:
+
+    {[
+      ((field_a ...)
+       (field_b <REDACTED>))
+    ]}
+
+    Some form of nesting is supported for convenience: in case you only want to
+    redact a field if it is nested deep into another field. In this case, the
+    syntax is to use a ["/"] separator in the field. For example, if the error
+    is:
+
+    {[
+      ((steps ((Vcs.init ((path /invalid/path)))))
+       (error (
+         (prog git)
+         (args (init .))
+         (exit_status Unknown)
+         (cwd         /invalid/path)
+         (stdout      "")
+         (stderr      "")
+         (error       <UNSTABLE>))))
+    ]}
+
+    then the [fields] parameter should be [["error/error"]]. You may mix nested
+    and non-nested fields in the same [fields] list. *)
+val redact_sexp : Sexp.t -> fields:string list -> Sexp.t
