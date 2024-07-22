@@ -35,8 +35,10 @@ let commit_file vcs ~repo_root ~path ~file_contents ~commit_message =
 let%expect_test "find ref" =
   Eio_main.run
   @@ fun env ->
-  With_temp_repo.run ~env
-  @@ fun ~vcs ~repo_root ->
+  Eio.Switch.run
+  @@ fun sw ->
+  let vcs = Vcs_git.create ~env in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let mock_revs = Vcs.Mock_revs.create () in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   let rev =

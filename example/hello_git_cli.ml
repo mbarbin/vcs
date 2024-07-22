@@ -29,12 +29,7 @@ let%expect_test "hello cli" =
   Eio.Switch.run
   @@ fun sw ->
   let vcs = Vcs_git.create ~env in
-  let repo_root =
-    let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
-    Eio.Switch.on_release sw (fun () ->
-      Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
-    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
-  in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   Vcs.save_file
     vcs

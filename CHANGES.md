@@ -2,6 +2,7 @@
 
 ### Added
 
+- Initiate a library `vcs-test-helpers` to help writing tests.
 - Add test showing how to do revision lookup from references using `Vcs.refs` and `Vcs.tree`.
 
 ### Changed

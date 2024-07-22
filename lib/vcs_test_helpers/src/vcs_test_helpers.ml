@@ -26,23 +26,8 @@ type 'a env = 'a
     ; process_mgr : [> [> `Generic ] Eio.Process.mgr_ty ] Eio.Resource.t
     ; .. >
 
-let run ~env f =
-  Eio.Switch.run
-  @@ fun sw ->
-  (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
-     provider. We're using [Vcs_git] for this here. It is a provider based on
-     [Eio] and running the [git] command line as an external process. *)
-  let vcs = Vcs_git.create ~env in
-  (* The next step takes care of creating a repository and initializing the git
-     users's config with some dummy values so we can use [commit] without having
-     to worry about your user config on your machine. This isolates the test
-     from your local settings, and also makes things work when running in the
-     GitHub Actions environment, where no default user config exists. *)
-  let repo_root =
-    let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
-    Eio.Switch.on_release sw (fun () ->
-      Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
-    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
-  in
-  f ~vcs ~repo_root
+let init_temp_repo ~env ~sw ~vcs =
+  let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
+  Eio.Switch.on_release sw (fun () -> Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
+  Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
 ;;
