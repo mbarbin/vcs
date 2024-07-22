@@ -100,5 +100,24 @@ let%expect_test "redact_sexp" =
        (stderr      <REDACTED>)
        (error       <REDACTED>))))
     |}];
+  (* Adding corner cases, such as empty nested fields. *)
+  let sexp =
+    Sexp.(
+      List
+        [ List [ Atom ""; Atom "empty" ]
+        ; List [ Atom ""; List [ Atom ""; Atom "empty" ] ]
+        ; List [ Atom "error"; Atom "error" ]
+        ])
+  in
+  print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[]);
+  [%expect {| (("" empty) ("" ("" empty)) (error error)) |}];
+  print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[ "" ]);
+  [%expect {|
+    ((""    <REDACTED>)
+     (""    <REDACTED>)
+     (error error))
+    |}];
+  print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[ "/" ]);
+  [%expect {| (("" empty) ("" ("" <REDACTED>)) (error error)) |}];
   ()
 ;;

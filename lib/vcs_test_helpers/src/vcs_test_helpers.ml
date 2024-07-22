@@ -33,30 +33,32 @@ let init_temp_repo ~env ~sw ~vcs =
 ;;
 
 let redact_sexp err ~fields =
-  let fields = List.map fields ~f:(fun fields -> String.split fields ~on:'/') in
+  let fields =
+    List.map fields ~f:(fun fields ->
+      match String.split fields ~on:'/' with
+      | [] -> assert false [@coverage off]
+      | hd :: tl ->
+        (* [Nonempty_list] is not in the dependencies of the project at this
+           time, so we're using a tuple instead. *)
+        hd, tl)
+  in
   let rec map sexp ~fields =
     match (sexp : Sexp.t) with
     | Atom _ -> sexp
     | List (Atom atom :: sexps) ->
       let redact = ref false in
       let fields =
-        if List.exists fields ~f:(fun fields ->
-             match fields with
-             | hd :: _ -> String.equal hd atom
-             | [] -> false)
+        if List.exists fields ~f:(fun (hd, _) -> String.equal hd atom)
         then
-          List.filter_map fields ~f:(fun fields ->
-            match fields with
-            | [] -> None
-            | hd :: tl ->
-              if String.equal hd atom
-              then
-                if List.is_empty tl
-                then (
-                  redact := true;
-                  None)
-                else Some tl
-              else Some fields)
+          List.filter_map fields ~f:(fun ((hd, tl) as fields) ->
+            if String.equal hd atom
+            then (
+              match tl with
+              | [] ->
+                redact := true;
+                None
+              | tl_hd :: tl_tl -> Some (tl_hd, tl_tl))
+            else Some fields)
         else fields
       in
       if !redact
