@@ -25,8 +25,10 @@
 let%expect_test "num stat without lines" =
   Eio_main.run
   @@ fun env ->
-  With_temp_repo.run ~env
-  @@ fun ~vcs ~repo_root ->
+  Eio.Switch.run
+  @@ fun sw ->
+  let vcs = Vcs_git.create ~env in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let commit_file ~path ~file_contents =
     Vcs.save_file
       vcs

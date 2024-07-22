@@ -487,6 +487,8 @@
   (vcs-private-libs-base
    (= :version))
   (vcs-private-libs-eio
+   (= :version))
+  (vcs-test-helpers
    (= :version))))
 
 (package
@@ -596,3 +598,63 @@
     (< v0.18)))
   (ppxlib
    (>= 0.32))))
+
+(package
+ (name vcs-test-helpers)
+ (synopsis "Helper library to write tests using vcs")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (base
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (bisect_ppx
+   (and
+    :dev
+    (>= 2.8.3)))
+  (eio
+   (>= 1.0))
+  (fpath
+   (>= 0.7.3))
+  (fpath-base
+   (>= 0.0.9))
+  (ppx_compare
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_enumerate
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_hash
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_here
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_js_style
+   (and
+    :dev
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_let
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_value
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppxlib
+   (>= 0.32))
+  (provider
+   (>= 0.0.4))
+  (vcs-private-libs-base
+   (= :version))))

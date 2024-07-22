@@ -21,8 +21,11 @@
 
 (** This part of Vcs provides utilities for testing. *)
 
-(** This takes care of setting the user config with dummy values, so that
-    running [commit] doesn't fail. *)
+(** This takes care of setting the user config with dummy values, so that you
+    can use [Vcs.commit] without having to worry about your user config on
+    your machine. This isolates the test from your local settings, and also
+    makes things work when running in the GitHub Actions environment, where no
+    default user config exists. *)
 val init
   :  [> Trait.config | Trait.init ] Vcs0.t
   -> path:Absolute_path.t

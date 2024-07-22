@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Util to create temporary repos in tests. *)
+(** Helper library to write tests using vcs. *)
 
 type 'a env = 'a
   constraint
@@ -28,4 +28,11 @@ type 'a env = 'a
     ; process_mgr : [> [> `Generic ] Eio.Process.mgr_ty ] Eio.Resource.t
     ; .. >
 
-val run : env:_ env -> (vcs:Vcs_git.t' -> repo_root:Vcs.Repo_root.t -> unit) -> unit
+(** Create a fresh temporary directory and initiate a repo in it. The switch
+    provided is used to attach a task that will discard the repo when the
+    switch is released. *)
+val init_temp_repo
+  :  env:_ env
+  -> sw:Eio.Switch.t
+  -> vcs:[> Vcs.Trait.config | Vcs.Trait.init ] Vcs.t
+  -> Vcs.Repo_root.t

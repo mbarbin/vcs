@@ -32,18 +32,10 @@ let%expect_test "hello commit" =
      provider. We're using [Vcs_git] for this here. It is a provider based on
      [Eio] and running the [git] command line as an external process. *)
   let vcs = Vcs_git.create ~env in
-  (* The next step takes care of creating a repository and initializing the git
-     users's config with some dummy values so we can use [commit] without having
-     to worry about your user config on your machine. This isolates the test
-     from your local settings, and also makes things work when running in the
-     GitHub Actions environment, where no default user config exists. *)
-  let repo_root =
-    let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
-    Eio.Switch.on_release sw (fun () ->
-      Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
-    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
-  in
-  (* Ok, we are all set, we are now inside a Git repo and we can start using
+  (* The next step takes care of creating a fresh repository. We make use of a
+     helper library to encapsulate the required steps. *)
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  (* Ok, we are all set, [repo_root] points to a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it
      to the repository, and query it from the store afterwards. *)
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
