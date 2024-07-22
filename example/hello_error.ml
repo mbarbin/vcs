@@ -28,10 +28,15 @@ let%expect_test "hello error" =
   @@ fun env ->
   let vcs = Vcs_git.create ~env in
   let invalid_path = Absolute_path.v "/invalid/path" in
+  let redact_sexp sexp =
+    (* Because the actual error may become too brittle overtime, we actually
+       redact it. *)
+    Vcs_test_helpers.redact_sexp sexp ~fields:[ "error/error" ]
+  in
   let () =
     match Vcs.init vcs ~path:invalid_path with
     | _ -> assert false
-    | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]
+    | exception Vcs.E err -> print_s (redact_sexp [%sexp (err : Vcs.Err.t)])
   in
   [%expect
     {|
@@ -43,13 +48,13 @@ let%expect_test "hello error" =
        (cwd         /invalid/path)
        (stdout      "")
        (stderr      "")
-       (error (
-         "Eio.Io Fs Not_found Unix_error (No such file or directory, \"openat2\", \"\")"))))) |}];
+       (error       <REDACTED>))))
+    |}];
   (* Let's do the same with the non-raising interfaces. *)
   let () =
     match Vcs.Or_error.init vcs ~path:invalid_path with
     | Ok _ -> assert false
-    | Error err -> print_s [%sexp (err : Error.t)]
+    | Error err -> print_s (redact_sexp [%sexp (err : Error.t)])
   in
   [%expect
     {|
@@ -61,12 +66,12 @@ let%expect_test "hello error" =
        (cwd         /invalid/path)
        (stdout      "")
        (stderr      "")
-       (error (
-         "Eio.Io Fs Not_found Unix_error (No such file or directory, \"openat2\", \"\")"))))) |}];
+       (error       <REDACTED>))))
+    |}];
   let () =
     match Vcs.Result.init vcs ~path:invalid_path with
     | Ok _ -> assert false
-    | Error (`Vcs err) -> print_s [%sexp (err : Vcs.Err.t)]
+    | Error (`Vcs err) -> print_s (redact_sexp [%sexp (err : Vcs.Err.t)])
   in
   [%expect
     {|
@@ -78,7 +83,7 @@ let%expect_test "hello error" =
        (cwd         /invalid/path)
        (stdout      "")
        (stderr      "")
-       (error (
-         "Eio.Io Fs Not_found Unix_error (No such file or directory, \"openat2\", \"\")"))))) |}];
+       (error       <REDACTED>))))
+    |}];
   ()
 ;;
