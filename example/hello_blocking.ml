@@ -96,20 +96,28 @@ let%expect_test "hello commit" =
     with
     | Ok _ -> assert false
     | Error (`Vcs err) ->
-      (* Here we do not show the entire sexp because it is too unstable. Indeed,
-         it contains the whole context of the failure, including stderr, steps,
-         etc. For the purpose of the test here, we only verify that the error
-         message that the user provided is included. *)
-      let rec visit : Sexp.t -> bool = function
-        | List [ Atom "error"; Atom user_error ] ->
-          print_endline user_error;
-          true
-        | Atom _ -> false
-        | List sexps -> List.exists sexps ~f:visit
-      in
-      assert (visit (Vcs.Err.sexp_of_t err))
+      print_s
+        (Vcs_test_helpers.redact_sexp
+           (Vcs.Err.sexp_of_t err)
+           ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
-  [%expect {| Hello invalid exit code |}];
+  [%expect
+    {|
+    ((steps ((
+       Vcs.git (
+         (repo_root <REDACTED>)
+         (run_in_subdir ())
+         (env           ())
+         (args (rev-parse INVALID-REF))))))
+     (error (
+       (prog git)
+       (args        (rev-parse INVALID-REF))
+       (exit_status (Exited    128))
+       (cwd <REDACTED>)
+       (stdout (INVALID-REF))
+       (stderr <REDACTED>)
+       (error  "Hello invalid exit code"))))
+    |}];
   (* Here we only use [Eio] to clean up the temporary repo, because [rmtree] is
      a convenient function to use in this test. But the point is that the rest
      of the test used a blocking API. *)

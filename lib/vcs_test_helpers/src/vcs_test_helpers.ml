@@ -31,3 +31,40 @@ let init_temp_repo ~env ~sw ~vcs =
   Eio.Switch.on_release sw (fun () -> Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
   Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
 ;;
+
+let redact_sexp err ~fields =
+  let fields =
+    List.map fields ~f:(fun fields ->
+      match String.split fields ~on:'/' with
+      | [] -> assert false [@coverage off]
+      | hd :: tl ->
+        (* [Nonempty_list] is not in the dependencies of the project at this
+           time, so we're using a tuple instead. *)
+        hd, tl)
+  in
+  let rec map sexp ~fields =
+    match (sexp : Sexp.t) with
+    | Atom _ -> sexp
+    | List (Atom atom :: sexps) ->
+      let redact = ref false in
+      let fields =
+        if List.exists fields ~f:(fun (hd, _) -> String.equal hd atom)
+        then
+          List.filter_map fields ~f:(fun ((hd, tl) as fields) ->
+            if String.equal hd atom
+            then (
+              match tl with
+              | [] ->
+                redact := true;
+                None
+              | tl_hd :: tl_tl -> Some (tl_hd, tl_tl))
+            else Some fields)
+        else fields
+      in
+      if !redact
+      then List [ Atom atom; Atom "<REDACTED>" ]
+      else List (Atom atom :: List.map sexps ~f:(fun sexp -> map sexp ~fields))
+    | List sexps -> List (List.map sexps ~f:(fun sexp -> map sexp ~fields))
+  in
+  map err ~fields
+;;
