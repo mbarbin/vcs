@@ -63,7 +63,7 @@ let%expect_test "hello cli" =
     Hello World!
     --------------- |}];
   (* Let's show also how to use the git cli in a case where we'd like to parse
-     its output, and how to do this with the non-parsing API of Vcs. *)
+     its output, and how to do this with the non-raising API of Vcs. *)
   let head_rev =
     Vcs.Or_error.git vcs ~repo_root ~args:[ "rev-parse"; "HEAD" ] ~f:(fun output ->
       let%bind stdout = Vcs.Git.exit0_and_stdout output in
