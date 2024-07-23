@@ -91,7 +91,7 @@ let git_cmd =
      fun env ->
        let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
        let%bind { Vcs.Git.Output.exit_code; stdout; stderr } =
-         Vcs.git vcs ~repo_root ~args ~f:return
+         Vcs.Or_error.git vcs ~repo_root ~args ~f:return
        in
        Eio_writer.print_string ~env stdout;
        Eio_writer.prerr_string ~env stderr;
