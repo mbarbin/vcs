@@ -21,7 +21,7 @@
 
 let%expect_test "pp_error" =
   Vcs.Result.pp_error Stdlib.Format.std_formatter (`Vcs (Vcs.Err.create_s [%sexp Hello]));
-  [%expect {| ((steps ()) (error Hello)) |}];
+  [%expect {| Hello |}];
   ()
 ;;
 
@@ -32,7 +32,7 @@ let%expect_test "error_to_msg" =
   test (Ok ());
   [%expect {| (Ok ()) |}];
   test (Error (`Vcs (Vcs.Err.create_s [%sexp Hello])));
-  [%expect {| (Error (Msg "((steps ()) (error Hello))")) |}];
+  [%expect {| (Error (Msg Hello)) |}];
   ()
 ;;
 
@@ -64,6 +64,6 @@ let%expect_test "open_error" =
     (Result.return () [@coverage off])
   in
   print_s [%sexp (result : (unit, [ `My_int_error of int | `Vcs of Vcs.Err.t ]) Result.t)];
-  [%expect {| (Error (Vcs ((steps ()) (error Vcs_error)))) |}];
+  [%expect {| (Error (Vcs Vcs_error)) |}];
   ()
 ;;

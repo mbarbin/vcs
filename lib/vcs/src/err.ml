@@ -25,6 +25,10 @@ type t =
   }
 [@@deriving sexp_of]
 
+let sexp_of_t ({ steps; error } as t) =
+  if List.is_empty steps then Error.sexp_of_t error else sexp_of_t t
+;;
+
 let to_string_hum t = t |> sexp_of_t |> Sexp.to_string_hum
 let create_s sexp = { steps = []; error = Error.create_s sexp }
 
