@@ -36,4 +36,13 @@ module Private : sig
     -> args:string list
     -> f:(Git.Output.t -> 'a Or_error.t)
     -> 'a Or_error.t
+
+  (** Build the context for errors happening during [git]. *)
+  val make_git_err_step
+    :  ?env:string array
+    -> ?run_in_subdir:Path_in_repo.t
+    -> repo_root:Repo_root.t
+    -> args:string list
+    -> unit
+    -> Sexp.t
 end
