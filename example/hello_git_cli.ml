@@ -103,12 +103,7 @@ let%expect_test "hello cli" =
   in
   [%expect
     {|
-    ((steps ((
-       Vcs.git (
-         (repo_root <REDACTED>)
-         (run_in_subdir ())
-         (env           ())
-         (args (rev-parse INVALID-REF))))))
+    ((steps ((Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))))
      (error (
        (prog git)
        (args        (rev-parse INVALID-REF))

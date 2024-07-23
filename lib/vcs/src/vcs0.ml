@@ -169,19 +169,23 @@ let show_file_at_rev (Provider.T { t; interface }) ~repo_root ~rev ~path =
              , { repo_root : Repo_root.t; rev : Rev.t; path : Path_in_repo.t }])
 ;;
 
-let git
-  ?env
-  ?(run_in_subdir = Path_in_repo.root)
-  (Provider.T { t; interface })
-  ~repo_root
-  ~args
-  ~f
-  =
+let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
+  [%sexp
+    "Vcs.git"
+    , { repo_root : Repo_root.t
+      ; run_in_subdir : (Path_in_repo.t option[@sexp.option])
+      ; env : (string array option[@sexp.option])
+      ; args : string list
+      }]
+;;
+
+let git ?env ?run_in_subdir (Provider.T { t; interface }) ~repo_root ~args ~f =
   let module M = (val Provider.Interface.lookup interface ~trait:Trait.Git) in
-  let cwd = Repo_root.append repo_root run_in_subdir in
+  let cwd =
+    Repo_root.append repo_root (Option.value run_in_subdir ~default:Path_in_repo.root)
+  in
   M.git ?env t ~cwd ~args ~f:(fun output -> Or_error.try_with (fun () -> f output))
-  |> of_result
-       ~step:(lazy [%sexp "Vcs.git", { cwd : Absolute_path.t; args : string list }])
+  |> of_result ~step:(lazy (make_git_err_step ?env ?run_in_subdir ~repo_root ~args ()))
 ;;
 
 module Private = struct
@@ -197,4 +201,6 @@ module Private = struct
     let cwd = Repo_root.append repo_root run_in_subdir in
     M.git ?env t ~cwd ~args ~f
   ;;
+
+  let make_git_err_step = make_git_err_step
 end

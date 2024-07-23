@@ -34,5 +34,6 @@ let to_error t =
   | _ :: _ -> Error.create_s (sexp_of_t t)
 ;;
 
+let of_error error = { steps = []; error }
 let add_context t ~step = { steps = Info.create_s step :: t.steps; error = t.error }
 let init error ~step = { steps = [ Info.create_s step ]; error }

@@ -72,12 +72,7 @@ let%expect_test "hello commit" =
   in
   [%expect
     {|
-    ((steps ((
-       Vcs.git (
-         (repo_root /invalid/path)
-         (run_in_subdir ())
-         (env           ())
-         (args          ())))))
+    ((steps ((Vcs.git ((repo_root /invalid/path) (args ())))))
      (error (
        (prog git)
        (args ())
@@ -85,7 +80,8 @@ let%expect_test "hello commit" =
        (cwd         /invalid/path/)
        (stdout      "")
        (stderr      "")
-       (error ("Unix.Unix_error(Unix.ENOENT, \"chdir\", \"/invalid/path/\")"))))) |}];
+       (error ("Unix.Unix_error(Unix.ENOENT, \"chdir\", \"/invalid/path/\")")))))
+    |}];
   (* Let's also show a case where the command fails due to a user error. *)
   let () =
     match
@@ -103,12 +99,7 @@ let%expect_test "hello commit" =
   in
   [%expect
     {|
-    ((steps ((
-       Vcs.git (
-         (repo_root <REDACTED>)
-         (run_in_subdir ())
-         (env           ())
-         (args (rev-parse INVALID-REF))))))
+    ((steps ((Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))))
      (error (
        (prog git)
        (args        (rev-parse INVALID-REF))

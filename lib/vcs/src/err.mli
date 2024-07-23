@@ -42,8 +42,12 @@ val create_s : Sexp.t -> t
     inside the [Or_error] monad. *)
 val to_error : t -> Error.t
 
+(** Create an error with no initial step. *)
+val of_error : Error.t -> t
+
 (** Add a step of context into the stack trace contained by the error. *)
 val add_context : t -> step:Sexp.t -> t
 
-(** This is useful if you are starting from an [Error.t] initially. *)
+(** This is useful if you are starting from an [Error.t] initially with an
+    initial step. *)
 val init : Error.t -> step:Sexp.t -> t

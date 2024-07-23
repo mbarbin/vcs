@@ -95,12 +95,6 @@ module Make (M : M) :
            (Err.init
               error
               ~step:
-                [%sexp
-                  "Vcs.git"
-                  , { repo_root : Repo_root.t
-                    ; run_in_subdir : Path_in_repo.t option
-                    ; env : string array option
-                    ; args : string list
-                    }]))
+                (Vcs0.Private.make_git_err_step ?env ?run_in_subdir ~repo_root ~args ())))
   ;;
 end
