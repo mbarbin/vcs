@@ -163,12 +163,12 @@ Vcs's help for review.
   
   === subcommands ===
   
-    add-cmd                    . add a file to the index
+    add                        . add a file to the index
     commit                     . commit a file
     current-branch             . current branch
     current-revision           . revision of HEAD
     git                        . run the git cli
-    init-cmd                   . initialize a new repository
+    init                       . initialize a new repository
     load-file                  . print a file from the filesystem (aka cat)
     log                        . show the log of current repo
     ls-files                   . list file

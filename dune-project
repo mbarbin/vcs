@@ -15,6 +15,8 @@
 
 (documentation "https://mbarbin.github.io/vcs/")
 
+(using mdx 0.4)
+
 (package
  (name vcs)
  (synopsis "A versatile OCaml library for Git interaction")
@@ -419,6 +421,10 @@
    (>= 0.0.9))
   (git-cli
    (= :version))
+  (mdx
+   (and
+    :with-doc
+    (>= 2.4)))
   (ppx_compare
    (and
     (>= v0.17)
@@ -470,6 +476,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (sherlodoc
+   (and
+    :with-doc
+    (>= 0.2)))
   (stdio
    (and
     (>= v0.17)
