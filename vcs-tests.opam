@@ -20,6 +20,7 @@ depends: [
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.0.9"}
   "git-cli" {= version}
+  "mdx" {with-doc & >= "2.4"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}
   "ppx_expect" {>= "v0.17" & < "v0.18"}
@@ -34,6 +35,7 @@ depends: [
   "provider" {>= "0.0.4"}
   "re" {>= "1.8.0"}
   "sexp_pretty" {>= "v0.17" & < "v0.18"}
+  "sherlodoc" {with-doc & >= "0.2"}
   "stdio" {>= "v0.17" & < "v0.18"}
   "vcs" {= version}
   "vcs-command" {= version}
