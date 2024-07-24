@@ -115,7 +115,7 @@ const config: Config = {
             },
             {
               label: 'Design',
-              to: '/docs/design/traits/',
+              to: '/docs/design/introduction/',
             },
             {
               label: 'Tests',
