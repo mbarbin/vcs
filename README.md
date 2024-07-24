@@ -7,7 +7,17 @@ A versatile OCaml library for Git interaction
 
 ## Overview
 
-`Vcs` is an OCaml library providing a direct-style API for interacting with Git repositories. It's designed as an "interface", or "virtual" library with the actual implementation dynamically dispatched at runtime. This design allows for high flexibility and adaptability to different use cases.
+Vcs is an OCaml library for interacting with Git repositories. It provides a type-safe and direct-style API to programmatically perform Git operations - ranging from creating commits and branches, to loading and navigating commit trees in memory, computing diffs between revisions, and more.
+
+Designed as an "interface", or "virtual" library, Vcs dynamically dispatches its implementation at runtime. It is currently distributed with two distinct backends: a non-blocking version built atop Eio, and a blocking variant based on OCaml's standard library. Both backends operate by executing git as an external process.
+
+## Documentation
+
+Vcs's documentation is published [here](https://mbarbin.github.io/vcs).
+
+## Examples
+
+Explore the [example](example/) directory to get a firsthand look at how Vcs works in practice.
 
 ## Architecture
 
@@ -60,14 +70,6 @@ We extend our gratitude to the following individuals and teams, whose contributi
 - The [Rresult](https://erratique.ch/software/rresult/doc/Rresult/index.html#usage) developers: Their usage design guidelines have been a reference in the design of `Vcs`'s error handling, the `Vcs.Result` module in particular.
 
 We look forward to continuing to learn from and collaborate with the broader open source community.
-
-## Code documentation
-
-The code documentation of the latest release is built with `odoc` and published to `GitHub` pages [here](https://mbarbin.github.io/vcs).
-
-## Examples
-
-Explore the [example](example/) directory to get a firsthand look at how Vcs works in practice.
 
 ## Build
 
