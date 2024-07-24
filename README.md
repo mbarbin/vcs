@@ -38,8 +38,6 @@ stateDiagram-v2
   provider --> executable
 ```
 
-![Git-cli diagram](doc/diagram/gitcli.png)
-
 - **vcs**: The main entry point of the library. Marked with a * to indicate no
   runtime dependencies.
 - **user-lib**: A placeholder in the diagram for any library that uses `Vcs`.
@@ -64,8 +62,6 @@ stateDiagram-v2
   runtime --> provider
   provider --> executable
 ```
-
-![Stdlib diagram](doc/diagram/stdlib.png)
 
 ## Design principles
 
@@ -99,8 +95,6 @@ stateDiagram-v2
   runtime --> provider
   provider --> executable
 ```
-
-![Ocaml-git diagram](doc/diagram/ocaml-git.png)
 
 ## Acknowledgements
 

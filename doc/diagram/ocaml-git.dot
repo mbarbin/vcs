@@ -1,7 +1,0 @@
-digraph G {
-    "vcs *" -> "user-lib *";
-    "user-lib *" -> "executable (eio)";
-    "ocaml-git-eio" -> "ocaml-git-provider";
-    eio -> "ocaml-git-provider";
-    "ocaml-git-provider" -> "executable (eio)";
-}

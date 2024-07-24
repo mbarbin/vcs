@@ -1,7 +1,0 @@
-digraph G {
-    "vcs *" -> "user-lib *";
-    "user-lib *" -> "executable (blocking)";
-    "git-cli" -> "vcs-git-blocking";
-    stdlib -> "vcs-git-blocking";
-    "vcs-git-blocking" -> "executable (blocking)";
-}
