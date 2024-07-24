@@ -164,10 +164,9 @@ let%expect_test "find ref" =
       vcs
       ~repo_root
       ~args:[ "rev-parse"; "--verify"; "branch1^{commit}" ]
-      ~f:(fun ({ Vcs.Git.Output.stdout = _; stderr; exit_code = _ } as output) ->
+      ~f:(fun ({ stdout = _; stderr; exit_code = _ } as output) ->
         print_endline stderr;
-        Vcs.Git.exit0_and_stdout output)
-    |> Or_error.ok_exn
+        Vcs.Git.exit0_and_stdout output |> Or_error.ok_exn)
     |> String.strip
     |> Vcs.Rev.v
   in
