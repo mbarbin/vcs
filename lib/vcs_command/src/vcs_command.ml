@@ -318,12 +318,12 @@ This is an executable to test the Version Control System (vcs) library.
 We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the
 sub commands exposed here, plus additional functionality in [more-tests].
 |})
-    [ "add-cmd", add_cmd
+    [ "add", add_cmd
     ; "commit", commit_cmd
     ; "current-branch", current_branch_cmd
     ; "current-revision", current_revision_cmd
     ; "git", git_cmd
-    ; "init-cmd", init_cmd
+    ; "init", init_cmd
     ; "load-file", load_file_cmd
     ; "log", log_cmd
     ; "ls-files", ls_files_cmd
