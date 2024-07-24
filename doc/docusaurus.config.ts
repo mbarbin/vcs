@@ -73,6 +73,12 @@ const config: Config = {
         },
         {
           type: 'docSidebar',
+          sidebarId: 'designSidebar',
+          position: 'left',
+          label: 'Design',
+        },
+        {
+          type: 'docSidebar',
           sidebarId: 'testsSidebar',
           position: 'left',
           label: 'Tests',
@@ -94,6 +100,10 @@ const config: Config = {
             {
               label: 'OCaml Packages',
               to: '/docs/odoc/',
+            },
+            {
+              label: 'Design',
+              to: '/docs/design/traits/',
             },
             {
               label: 'Tests',

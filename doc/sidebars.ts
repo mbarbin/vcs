@@ -16,6 +16,16 @@ const sidebars: SidebarsConfig = {
     { type: 'doc', id: 'odoc/odoc', label: 'OCaml Packages' },
   ],
 
+  designSidebar: [
+    {
+      type: 'category',
+      label: 'Design',
+      items: [
+        { type: 'doc', id: 'design/traits', label: 'Traits' },
+      ],
+    },
+  ],
+
   testsSidebar: [
     {
       type: 'category',
