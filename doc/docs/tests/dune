@@ -1,0 +1,5 @@
+(mdx
+ (deps
+  (package vcs)
+  (package vcs-command))
+ (preludes prelude.txt))
