@@ -21,6 +21,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Design',
       items: [
+        { type: 'doc', id: 'design/introduction', label: 'Introduction' },
         { type: 'doc', id: 'design/traits', label: 'Traits' },
       ],
     },

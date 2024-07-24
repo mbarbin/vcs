@@ -54,6 +54,12 @@ const config: Config = {
     ],
   ],
 
+  markdown: {
+    mermaid: true,
+  },
+
+  themes: ['@docusaurus/theme-mermaid'],
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/ocaml-vcs.png',
@@ -91,6 +97,12 @@ const config: Config = {
         },
       ],
     },
+    docs: {
+      sidebar: {
+        hideable: true,
+        autoCollapseCategories: true,
+      },
+    },
     footer: {
       style: 'dark',
       links: [
@@ -103,7 +115,7 @@ const config: Config = {
             },
             {
               label: 'Design',
-              to: '/docs/design/traits/',
+              to: '/docs/design/introduction/',
             },
             {
               label: 'Tests',
