@@ -23,6 +23,21 @@ Explore the [example](example/) directory to get a firsthand look at how Vcs wor
 
 The `vcs` repository contains several components:
 
+```mermaid
+stateDiagram-v2
+  vcs : vcs *
+  user : user-lib *
+  git_cli : git-cli
+  executable : executable (eio)
+  provider : vcs-git
+  runtime : eio
+  vcs --> user
+  user --> executable
+  git_cli --> provider
+  runtime --> provider
+  provider --> executable
+```
+
 ![Git-cli diagram](doc/diagram/gitcli.png)
 
 - **vcs**: The main entry point of the library. Marked with a * to indicate no
@@ -34,6 +49,21 @@ The `vcs` repository contains several components:
 - **git-cli**: A IO-free library that parses the output of a `git` cli process.
 - **vcs-git**: An instantiation of `Git_cli` based on an `Eio` runtime.
 - **vcs-git-blocking**: An instantiation of `Git_cli` based on the OCaml `Stdlib`.
+
+```mermaid
+stateDiagram-v2
+  vcs : vcs *
+  user : user-lib *
+  git_cli : git-cli
+  executable : executable (blocking)
+  provider : vcs-git-blocking
+  runtime : stdlib
+  vcs --> user
+  user --> executable
+  git_cli --> provider
+  runtime --> provider
+  provider --> executable
+```
 
 ![Stdlib diagram](doc/diagram/stdlib.png)
 
@@ -54,6 +84,21 @@ Our goal is to create a versatile and highly compatible library that can cater t
 ## Relation to ocaml-git
 
 [ocaml-git](https://github.com/mirage/ocaml-git) is a pure OCaml implementation of the Git format and protocol. In the `Vcs` framework, an Eio compatible `ocaml-git` is a potential `provider` for the interface. We plan to create a `Vcs` provider based on `ocaml-git` in the future.
+
+```mermaid
+stateDiagram-v2
+  vcs : vcs *
+  user : user-lib *
+  executable : executable (eio)
+  ocaml_git : ocaml_git_eio
+  provider : ocaml-git-provider
+  runtime : eio
+  vcs --> user
+  user --> executable
+  ocaml_git --> provider
+  runtime --> provider
+  provider --> executable
+```
 
 ![Ocaml-git diagram](doc/diagram/ocaml-git.png)
 
