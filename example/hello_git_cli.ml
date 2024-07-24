@@ -95,24 +95,23 @@ let%expect_test "hello cli" =
         else failwith "Hello invalid exit code")
     with
     | _ -> assert false [@coverage off]
-    | exception exn ->
+    | exception Vcs.E err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (exn : Exn.t)]
+           [%sexp (err : Vcs.Err.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
     {|
-    (lib/vcs/src/exn0.ml.E (
-      (steps ((Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))))
-      (error (
-        (prog git)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)
-        (error (Failure "Hello invalid exit code"))))))
+    ((steps ((Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))))
+     (error (
+       (prog git)
+       (args        (rev-parse INVALID-REF))
+       (exit_status (Exited    128))
+       (cwd    <REDACTED>)
+       (stdout INVALID-REF)
+       (stderr <REDACTED>)
+       (error (Failure "Hello invalid exit code")))))
     |}];
   let () =
     match
