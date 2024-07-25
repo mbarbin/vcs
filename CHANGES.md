@@ -2,11 +2,13 @@
 
 ### Added
 
-- Initiate a library `vcs-test-helpers` to help writing tests.
+- Add documentation website powered by Docusaurus. (#7, @mbarbin)
+- Initiate a library `vcs-test-helpers` to help writing tests. (#4, @mbarbin)
 - Add test showing how to do revision lookup from references using `Vcs.refs` and `Vcs.tree`.
 
 ### Changed
 
+- Refactor `Vcs.Git` to clarify raising/non-raising APIs (breaking change). (#9, @mbarbin)
 - Upgrade `ocaml` to `5.2`.
 - Upgrade `dune` to `3.16`.
 
@@ -20,7 +22,7 @@
 
 ### Removed
 
-- Removed `Vcs.rev_parse`, replaced by other dedicated function `Vcs.current_{branch,revision}`.
+- Removed `Vcs.rev_parse`, replaced by other dedicated function `Vcs.current_{branch,revision}`. (#3, @mbarbin)
 
 ## 0.0.1 (2024-03-19)
 
