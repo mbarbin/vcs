@@ -28,7 +28,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "rev-parse"; "--abbrev-ref"; "HEAD" ]
       ~f:(fun output ->
-        let%bind stdout = Vcs.Git.exit0_and_stdout output in
+        let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
         Vcs.Branch_name.of_string (String.strip stdout))
   ;;
 
@@ -38,7 +38,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "rev-parse"; "--verify"; "HEAD^{commit}" ]
       ~f:(fun output ->
-        let%bind stdout = Vcs.Git.exit0_and_stdout output in
+        let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
         Vcs.Rev.of_string (String.strip stdout))
   ;;
 end

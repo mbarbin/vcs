@@ -19,14 +19,4 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-module type S = sig
-  type t
-
-  val git
-    :  ?env:string Export.array
-    -> t
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git_output0.t -> 'a Or_error.t)
-    -> 'a Or_error.t
-end
+include Vcs_interface.Error_S with type err = Error.t

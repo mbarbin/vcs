@@ -31,6 +31,6 @@ let%expect_test "show" =
   test { exit_code = 128; stdout = "contents"; stderr = "" };
   [%expect {| (Ok Absent) |}];
   test { exit_code = 1; stdout = "contents"; stderr = "" };
-  [%expect {| (Error "expected error code 0 or 128") |}];
+  [%expect {| (Error ("unexpected exit code" ((accepted_codes (0 128))))) |}];
   ()
 ;;

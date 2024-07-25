@@ -19,26 +19,15 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let interpret_output output =
-  match%map Vcs.Git.Or_error.exit_code output ~accept:[ 0, `Present; 128, `Absent ] with
-  | `Present -> `Present (Vcs.File_contents.create output.stdout)
-  | `Absent -> `Absent
-;;
+module T = struct
+  [@@@coverage off]
 
-module Make (Runtime : Runtime.S) = struct
-  type t = Runtime.t
-
-  let show_file_at_rev t ~repo_root ~rev ~path =
-    Runtime.git
-      t
-      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
-      ~args:
-        [ "show"
-        ; Printf.sprintf
-            "%s:%s"
-            (rev |> Vcs.Rev.to_string)
-            (path |> Vcs.Path_in_repo.to_string)
-        ]
-      ~f:interpret_output
-  ;;
+  type t =
+    { exit_code : int
+    ; stdout : string
+    ; stderr : string
+    }
+  [@@deriving sexp_of]
 end
+
+include T
