@@ -232,11 +232,39 @@ module Git = Git
 
 (** Note a non trivial behavior nuance depending on whether you are using this
     function using the raising or non-raising API. In the raising API, [f] is
-    allowed to raise, and [git] will catch any exception raised by [f], and
-    rewrap it under a proper [E err] exception with added context. In the
-    non-raising APIs, if [f] raises instead of returning an [Error], that
-    exception would escape the function [git] and be raised by [git] as an
-    uncaught exception. This would be considered a programming error. *)
+    allowed to raise: [git] will catch any exception raised by [f], and rewrap
+    it under a proper [E err] exception with added context. In the non-raising
+    APIs, if [f] raises instead of returning an [Error], that exception would
+    escape the function [git] and be raised by [git] as an uncaught exception.
+    This would be considered a programming error.
+
+    Some helpers are provided by the module {!module:Git} to help you build the
+    [f] parameter. Non-raising modules are also included in the [Git] module
+    dedicated to their respective result type (see for example
+    {!module:Vcs.Git.Or_error}).
+
+    The expectation is that you should be using the [Git] module of the API you
+    are using to access the [git] function, and not mix and match.
+
+    For example:
+
+    {[
+      let git_status () : string =
+        Vcs.git vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Git.exit0_and_stdout
+      ;;
+    ]}
+
+    Or:
+
+    {[
+      let git_status () : string Or_error.t =
+        Vcs.Or_error.git
+          vcs
+          ~repo_root
+          ~args:[ "status" ]
+          ~f:Vcs.Git.Or_error.exit0_and_stdout
+      ;;
+    ]} *)
 val git
   :  ?env:string array
   -> ?run_in_subdir:Path_in_repo.t

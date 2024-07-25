@@ -24,6 +24,24 @@
     This file is configured in [dune] as an interface only file, so we don't need to
     duplicate the interfaces it contains into an [ml] file. *)
 
+module type Process_S0 = sig
+  (** Helpers to wrap process outputs. *)
+
+  type process_output
+  type 'a result
+
+  val exit0 : process_output -> unit result
+  val exit0_and_stdout : process_output -> string result
+
+  (** A convenient wrapper to write exhaustive match on a result conditioned by
+      a list of accepted exit codes. If the exit code is not part of the
+      accepted list, the function takes care of returning an error of the
+      expected result type. *)
+  val exit_code : process_output -> accept:(int * 'a) list -> 'a result
+end
+
+module type Process_S = Process_S0 with type process_output := Git_output0.t
+
 module type S = sig
   (** The interface exported by [Vcs].
 
@@ -116,14 +134,19 @@ module type S = sig
     -> user_email:User_email.t
     -> unit result
 
-  (** See the note in {!val:Vcs.git} about error handling with respect to exceptions raised by [f]. *)
+  (** See the note in {!val:Vcs.git} about error handling with respect to
+      exceptions raised by [f].
+
+      Some helpers dedicated to the corresponding result type are provided by
+      the module {!module:Vcs.Git}. They are convenient to use to build the [f]
+      parameter. *)
   val git
     :  ?env:string array
     -> ?run_in_subdir:Path_in_repo.t
     -> [> Trait.git ] t
     -> repo_root:Repo_root.t
     -> args:string list
-    -> f:(Git.Output.t -> 'a result)
+    -> f:(Git_output0.t -> 'a result)
     -> 'a result
 end
 

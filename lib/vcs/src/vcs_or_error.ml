@@ -19,12 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = Error.t
+type err = Vcs_or_error0.err
 type 'a result = ('a, err) Result.t
 
-include Non_raising.Make (struct
-    type nonrec err = err
-
-    let map_error = Err.to_error
-    let to_error = Fn.id
-  end)
+include Non_raising.Make (Vcs_or_error0)

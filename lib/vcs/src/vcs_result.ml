@@ -19,15 +19,10 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = [ `Vcs of Err.t ]
+type err = Vcs_result0.err
 type 'a result = ('a, err) Result.t
 
-include Non_raising.Make (struct
-    type nonrec err = err
-
-    let map_error err = `Vcs err
-    let to_error (`Vcs err) = Err.to_error err
-  end)
+include Non_raising.Make (Vcs_result0)
 
 let pp_error fmt (`Vcs err) = Stdlib.Format.pp_print_string fmt (Err.to_string_hum err)
 

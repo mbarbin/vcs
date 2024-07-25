@@ -22,7 +22,7 @@
 module Output = struct
   [@@@coverage off]
 
-  type t =
+  type t = Git_output0.t =
     { exit_code : int
     ; stdout : string
     ; stderr : string
@@ -30,12 +30,51 @@ module Output = struct
   [@@deriving sexp_of]
 end
 
-let exit0 { Output.exit_code; stdout = _; stderr = _ } =
-  if Int.equal exit_code 0 then Ok () else Or_error.error_string "expected exit code 0"
+module type S = Vcs_interface.Process_S
+
+module Or_error = struct
+  let exit0 { Output.exit_code; stdout = _; stderr = _ } =
+    if Int.equal exit_code 0 then Ok () else Or_error.error_string "expected exit code 0"
+  ;;
+
+  let exit0_and_stdout { Output.exit_code; stdout; stderr = _ } =
+    if Int.equal exit_code 0
+    then Ok stdout
+    else Or_error.error_string "expected exit code 0"
+  ;;
+
+  let exit_code { Output.exit_code; stdout = _; stderr = _ } ~accept =
+    match List.find accept ~f:(fun (code, _) -> Int.equal exit_code code) with
+    | Some (_, result) -> Ok result
+    | None ->
+      Or_error.error_s
+        [%sexp
+          "unexpected exit code", { accepted_codes : int list = List.map accept ~f:fst }]
+  ;;
+end
+
+module Non_raising = struct
+  module type M = Vcs_interface.Error_S
+
+  module Make (M : M) : S with type 'a result := ('a, M.err) Result.t = struct
+    let map_result = function
+      | Ok x -> Ok x
+      | Error error -> Error (M.map_error (Err.of_error error))
+    ;;
+
+    let exit0 output = Or_error.exit0 output |> map_result
+    let exit0_and_stdout output = Or_error.exit0_and_stdout output |> map_result
+    let exit_code output ~accept = Or_error.exit_code output ~accept |> map_result
+  end
+end
+
+let err_exn = function
+  | Ok x -> x
+  | Error err -> raise (Exn0.E (Err.of_error err))
 ;;
 
-let exit0_and_stdout { Output.exit_code; stdout; stderr = _ } =
-  if Int.equal exit_code 0
-  then Ok stdout
-  else Or_error.error_string "expected exit code 0"
-;;
+let exit0 output = Or_error.exit0 output |> err_exn
+let exit0_and_stdout output = Or_error.exit0_and_stdout output |> err_exn
+let exit_code output ~accept = Or_error.exit_code output ~accept |> err_exn
+
+module Result = Non_raising.Make (Vcs_result0)

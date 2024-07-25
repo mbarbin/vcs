@@ -39,7 +39,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "log"; "--all"; "--pretty=format:%H %P" ]
       ~f:(fun output ->
-        let%bind output = Vcs.Git.exit0_and_stdout output in
+        let%bind output = Vcs.Git.Or_error.exit0_and_stdout output in
         Or_error.try_with (fun () ->
           List.map (String.split_lines output) ~f:(fun line -> parse_log_line_exn ~line)))
   ;;

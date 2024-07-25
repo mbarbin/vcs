@@ -19,14 +19,14 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-module type S = sig
-  type t
+(** Manipulating the output of process run by vcs and providers.
 
-  val git
-    :  ?env:string Export.array
-    -> t
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git_output0.t -> 'a Or_error.t)
-    -> 'a Or_error.t
-end
+    This module is used to break a dependency cycle. It is exported as
+    [Vcs.Git.Output]. *)
+
+type t =
+  { exit_code : int
+  ; stdout : string
+  ; stderr : string
+  }
+[@@deriving sexp_of]

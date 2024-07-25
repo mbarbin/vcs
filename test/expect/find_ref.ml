@@ -67,12 +67,10 @@ let%expect_test "find ref" =
   (* We'll now create 2 diverging branches. *)
   let create_branch branch_name =
     Vcs.git vcs ~repo_root ~args:[ "branch"; branch_name ] ~f:Vcs.Git.exit0
-    |> Or_error.ok_exn
   in
   List.iter [ "branch1"; "branch2" ] ~f:create_branch;
   let commit_change branch =
-    Vcs.git vcs ~repo_root ~args:[ "checkout"; branch ] ~f:Vcs.Git.exit0
-    |> Or_error.ok_exn;
+    Vcs.git vcs ~repo_root ~args:[ "checkout"; branch ] ~f:Vcs.Git.exit0;
     commit_file
       vcs
       ~repo_root
@@ -98,7 +96,6 @@ let%expect_test "find ref" =
      on references provided by the user. *)
   let create_tag tag rev =
     Vcs.git vcs ~repo_root ~args:[ "tag"; tag; Vcs.Rev.to_string rev ] ~f:Vcs.Git.exit0
-    |> Or_error.ok_exn
   in
   create_tag "tag1" branch1_head;
   (* Tag "branch1" points to [branch2_head]. This isn't a typo, we purposely
@@ -164,10 +161,9 @@ let%expect_test "find ref" =
       vcs
       ~repo_root
       ~args:[ "rev-parse"; "--verify"; "branch1^{commit}" ]
-      ~f:(fun ({ Vcs.Git.Output.stdout = _; stderr; exit_code = _ } as output) ->
+      ~f:(fun ({ exit_code = _; stdout = _; stderr } as output) ->
         print_endline stderr;
         Vcs.Git.exit0_and_stdout output)
-    |> Or_error.ok_exn
     |> String.strip
     |> Vcs.Rev.v
   in

@@ -27,6 +27,6 @@ module Make (Runtime : Runtime.S) = struct
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "commit"; "-m"; commit_message |> Vcs.Commit_message.to_string ]
-      ~f:Vcs.Git.exit0
+      ~f:Vcs.Git.Or_error.exit0
   ;;
 end
