@@ -65,13 +65,48 @@ end
 module T = struct
   [@@@coverage off]
 
+  module Nodes = struct
+    type t = Node_kind.t array
+
+    let sexp_of_t t =
+      Array.mapi t ~f:(fun i node -> i, node)
+      |> Array.rev
+      |> [%sexp_of: (Node_T.t * Node_kind.t) array]
+    ;;
+  end
+
+  module Revs = struct
+    type t = int Hashtbl.M(Rev).t
+
+    let sexp_of_t (t : t) =
+      let revs = Hashtbl.to_alist t |> Array.of_list in
+      Array.sort revs ~compare:(fun (_, n1) (_, n2) -> Int.compare n2 n1);
+      revs
+      |> Array.map ~f:(fun (rev, index) -> index, rev)
+      |> [%sexp_of: (Node_T.t * Rev.t) array]
+    ;;
+  end
+
+  module Reverse_refs = struct
+    type t = Ref_kind.t list Hashtbl.M(Int).t
+
+    let sexp_of_t (t : t) =
+      let revs = Hashtbl.to_alist t |> Array.of_list in
+      Array.sort revs ~compare:(fun (n1, _) (n2, _) -> Int.compare n2 n1);
+      revs |> [%sexp_of: (Node_T.t * Ref_kind.t list) array]
+    ;;
+  end
+
   type t =
-    { mutable nodes : Node_kind.t array
+    { mutable nodes : Nodes.t
     ; revs : int Hashtbl.M(Rev).t
     ; refs : int Hashtbl.M(Ref_kind).t
     ; reverse_refs : Ref_kind.t list Hashtbl.M(Int).t
     }
-  [@@deriving sexp_of]
+
+  let sexp_of_t { nodes; revs; refs = _; reverse_refs } =
+    [%sexp { nodes : Nodes.t; revs : Revs.t; refs = (reverse_refs : Reverse_refs.t) }]
+  ;;
 end
 
 include T

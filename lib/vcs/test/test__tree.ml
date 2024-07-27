@@ -529,3 +529,109 @@ let%expect_test "greatest_common_ancestors" =
   [%expect {| ((gcas (refs/tags/alice refs/tags/bob))) |}];
   ()
 ;;
+
+let%expect_test "debug tree" =
+  (* If needed, sexp_of_t should show helpful indices for nodes. *)
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
+  let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
+  let tree = Vcs.Tree.create () in
+  let node ~rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
+  let root () =
+    let rev = rev () in
+    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Root { rev } ];
+    rev
+  in
+  let commit ~parent =
+    let rev = rev () in
+    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+    rev
+  in
+  let merge ~parent1 ~parent2 =
+    let rev = rev () in
+    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+    rev
+  in
+  let r1 = root () in
+  let r2 = commit ~parent:r1 in
+  let r3 = commit ~parent:r1 in
+  let m1 = merge ~parent1:r2 ~parent2:r3 in
+  let r4 = commit ~parent:m1 in
+  Vcs.Tree.set_refs
+    tree
+    ~refs:
+      [ { rev = r2
+        ; ref_kind =
+            Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v "origin/main" }
+        }
+      ; { rev = r4; ref_kind = Tag { tag_name = Vcs.Tag_name.v "0.1.0" } }
+      ; { rev = r4; ref_kind = Local_branch { branch_name = Vcs.Branch_name.main } }
+      ];
+  print_s [%sexp (tree : Vcs.Tree.t)];
+  [%expect
+    {|
+    ((nodes (
+       (#4 (
+         Commit
+         (rev    f610a31854ad58032204ab00120776e4f610a318)
+         (parent #3)))
+       (#3 (
+         Merge
+         (rev     08eb34026333c8825254e31ce2921cba08eb3402)
+         (parent1 #1)
+         (parent2 #2)))
+       (#2 (
+         Commit
+         (rev    463eed936ec17915e6a76d135aecc4e0463eed93)
+         (parent #0)))
+       (#1 (
+         Commit
+         (rev    356b5838cce64758f4fa99b48c4a4552356b5838)
+         (parent #0)))
+       (#0 (Root (rev b4009f9c14eab4c931474f7647481517b4009f9c)))))
+     (revs (
+       (#4 f610a31854ad58032204ab00120776e4f610a318)
+       (#3 08eb34026333c8825254e31ce2921cba08eb3402)
+       (#2 463eed936ec17915e6a76d135aecc4e0463eed93)
+       (#1 356b5838cce64758f4fa99b48c4a4552356b5838)
+       (#0 b4009f9c14eab4c931474f7647481517b4009f9c)))
+     (refs (
+       (#4 (
+         (Local_branch (branch_name main))
+         (Tag          (tag_name    0.1.0))))
+       (#1 ((
+         Remote_branch (
+           remote_branch_name (
+             (remote_name origin)
+             (branch_name main)))))))))
+    |}];
+  (* node_kind *)
+  let node_kind rev =
+    let node = node ~rev in
+    print_s [%sexp (Vcs.Tree.Node.node_kind tree node : Vcs.Tree.Node_kind.t)]
+  in
+  node_kind r1;
+  [%expect {| (Root (rev b4009f9c14eab4c931474f7647481517b4009f9c)) |}];
+  node_kind r2;
+  [%expect
+    {|
+    (Commit
+      (rev    356b5838cce64758f4fa99b48c4a4552356b5838)
+      (parent #0))
+    |}];
+  node_kind m1;
+  [%expect
+    {|
+    (Merge
+      (rev     08eb34026333c8825254e31ce2921cba08eb3402)
+      (parent1 #1)
+      (parent2 #2))
+    |}];
+  node_kind r4;
+  [%expect
+    {|
+    (Commit
+      (rev    f610a31854ad58032204ab00120776e4f610a318)
+      (parent #3))
+    |}];
+  ()
+;;
