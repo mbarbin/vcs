@@ -106,6 +106,51 @@ module Node0 = struct
   ;;
 end
 
+(* Helper function to iter over all ancestors of a given node, itself included.
+   [visited] is taken as an input so we can re-use the same array multiple
+   times, rather than re-allocating it. *)
+let iter_ancestors t ~visited node ~f =
+  Array.fill visited ~pos:0 ~len:(Array.length visited) false;
+  let rec loop to_visit =
+    match to_visit with
+    | [] -> ()
+    | node :: to_visit ->
+      if not visited.(node)
+      then (
+        visited.(node) <- true;
+        f node;
+        match t.nodes.(node) with
+        | Root _ -> loop to_visit
+        | Commit { parent; _ } -> loop (parent :: to_visit)
+        | Merge { parent1; parent2; _ } -> loop (parent1 :: parent2 :: to_visit))
+  in
+  loop [ node ]
+;;
+
+let greatest_common_ancestors t nodes =
+  match nodes with
+  | [] -> []
+  | [ node ] -> [ node ]
+  | node1 :: nodes ->
+    let visited = Array.map t.nodes ~f:(Fn.const false) in
+    let common_ancestors =
+      iter_ancestors t ~visited node1 ~f:(fun _ -> ());
+      Array.copy visited
+    in
+    List.iter nodes ~f:(fun node ->
+      iter_ancestors t ~visited node ~f:(fun _ -> ());
+      Array.iteri common_ancestors ~f:(fun i b ->
+        common_ancestors.(i) <- b && visited.(i)));
+    for i = Array.length common_ancestors - 1 downto 0 do
+      if common_ancestors.(i)
+      then
+        iter_ancestors t ~visited i ~f:(fun j ->
+          if j <> i then common_ancestors.(j) <- false)
+    done;
+    Array.filter_mapi common_ancestors ~f:(fun i b -> if b then Some i else None)
+    |> Array.to_list
+;;
+
 let refs t =
   Hashtbl.to_alist t.refs
   |> List.sort ~compare:(fun (r1, _) (r2, _) -> Ref_kind.compare r1 r2)

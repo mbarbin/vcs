@@ -445,3 +445,90 @@ let%expect_test "set invalid rev" =
       (ref_kind (Local_branch (branch_name main))))) |}];
   ()
 ;;
+
+let%expect_test "greatest_common_ancestors" =
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
+  let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
+  let tree = Vcs.Tree.create () in
+  let node ~rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
+  let tag ~rev tag_name =
+    Vcs.Tree.set_ref tree ~rev ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v tag_name })
+  in
+  let root () =
+    let rev = rev () in
+    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Root { rev } ];
+    rev
+  in
+  let commit ~parent =
+    let rev = rev () in
+    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+    rev
+  in
+  let merge ~parent1 ~parent2 =
+    let rev = rev () in
+    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+    rev
+  in
+  let gcas revs =
+    let gcas =
+      Vcs.Tree.greatest_common_ancestors tree (List.map revs ~f:(fun rev -> node ~rev))
+      |> List.map ~f:(fun node ->
+        match Vcs.Tree.Node.refs tree node with
+        | ref :: _ -> Vcs.Ref_kind.to_string ref
+        | [] ->
+          (* This branch is kept for debug if it is executed by mistake but we
+             shouldn't exercise this case since this makes the tests results
+             harder to understand. *)
+          (Vcs.Tree.Node.rev tree node |> Vcs.Rev.to_string) [@coverage off])
+    in
+    print_s [%sexp { gcas : string list }]
+  in
+  gcas [];
+  [%expect {| ((gcas ())) |}];
+  let root1 = root () in
+  tag ~rev:root1 "root1";
+  gcas [ root1 ];
+  [%expect {| ((gcas (refs/tags/root1))) |}];
+  let r1 = commit ~parent:root1 in
+  tag ~rev:r1 "r1";
+  gcas [ r1 ];
+  [%expect {| ((gcas (refs/tags/r1))) |}];
+  gcas [ root1; r1 ];
+  [%expect {| ((gcas (refs/tags/root1))) |}];
+  let m1 = merge ~parent1:root1 ~parent2:r1 in
+  tag ~rev:m1 "m1";
+  gcas [ m1 ];
+  [%expect {| ((gcas (refs/tags/m1))) |}];
+  gcas [ root1; m1 ];
+  [%expect {| ((gcas (refs/tags/root1))) |}];
+  gcas [ r1; m1 ];
+  [%expect {| ((gcas (refs/tags/r1))) |}];
+  gcas [ root1; r1; m1 ];
+  [%expect {| ((gcas (refs/tags/root1))) |}];
+  let root2 = root () in
+  tag ~rev:root2 "root2";
+  gcas [ root1; root2 ];
+  [%expect {| ((gcas ())) |}];
+  gcas [ r1; root2 ];
+  [%expect {| ((gcas ())) |}];
+  let r2 =
+    List.fold (List.init 10 ~f:ignore) ~init:r1 ~f:(fun parent () -> commit ~parent)
+  in
+  let r3 =
+    List.fold (List.init 10 ~f:ignore) ~init:m1 ~f:(fun parent () -> commit ~parent)
+  in
+  gcas [ r2; r3 ];
+  [%expect {| ((gcas (refs/tags/r1))) |}];
+  (* A criss-cross merge. *)
+  let alice = commit ~parent:r1 in
+  tag ~rev:alice "alice";
+  let bob = commit ~parent:r1 in
+  tag ~rev:bob "bob";
+  let alice_merge = merge ~parent1:alice ~parent2:bob in
+  let bob_merge = merge ~parent1:bob ~parent2:alice in
+  let alice_continue = commit ~parent:alice_merge in
+  let bob_continue = commit ~parent:bob_merge in
+  gcas [ alice_continue; bob_continue ];
+  [%expect {| ((gcas (refs/tags/alice refs/tags/bob))) |}];
+  ()
+;;

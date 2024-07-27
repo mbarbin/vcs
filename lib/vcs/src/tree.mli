@@ -118,6 +118,21 @@ val is_strict_ancestor : t -> ancestor:Node.t -> descendant:Node.t -> bool
     [a] is a strict ancestor of [b] or if [a] is equal to [b]. *)
 val is_ancestor_or_equal : t -> ancestor:Node.t -> descendant:Node.t -> bool
 
+(** [greatest_common_ancestors t nodes] returns the list of nodes that are the
+    greatest common ancestors of the nodes in the list [nodes] in the tree [t].
+
+    A greatest common ancestor of a set of nodes is a node that is an ancestor
+    of all the nodes in the set and is not a strict ancestor of any other common
+    ancestor of the nodes.
+
+    If the nodes in [nodes] are unrelated, the function returns an empty list. If
+    there are multiple greatest common ancestors, all of them are included in
+    the returned list.
+
+    Multiple nodes may have multiple greatest common ancestors, especially in
+    cases of complex merge histories, hence the list return type. *)
+val greatest_common_ancestors : t -> Node.t list -> Node.t list
+
 (** {1 Log} *)
 
 val log : t -> Log.t
