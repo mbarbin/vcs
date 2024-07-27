@@ -193,18 +193,21 @@ let roots t =
 
 let is_strict_ancestor t ~ancestor ~descendant =
   let visited = Hash_set.create (module Int) in
-  let rec visit node =
-    match Int.compare ancestor node |> Ordering.of_int with
-    | Equal -> true
-    | Greater -> false
-    | Less ->
-      if Hash_set.mem visited node
-      then false
-      else (
-        Hash_set.add visited node;
-        List.exists (Node0.parents t node) ~f:visit)
+  let rec loop to_visit =
+    match to_visit with
+    | [] -> false
+    | node :: to_visit ->
+      (match Int.compare ancestor node |> Ordering.of_int with
+       | Equal -> true
+       | Greater -> loop to_visit
+       | Less ->
+         if Hash_set.mem visited node
+         then loop to_visit
+         else (
+           Hash_set.add visited node;
+           loop (Node0.parents t node @ to_visit)))
   in
-  ancestor < descendant && visit descendant
+  ancestor < descendant && loop [ descendant ]
 ;;
 
 let is_ancestor_or_equal t ~ancestor ~descendant =
