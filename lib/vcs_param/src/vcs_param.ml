@@ -168,6 +168,11 @@ let anon_rev =
   Vcs.Rev.of_string rev
 ;;
 
+let anon_revs =
+  let%map_open.Command revs = anon (sequence ("rev" %: string)) in
+  Or_error.all (List.map revs ~f:Vcs.Rev.of_string)
+;;
+
 let below_path_in_repo =
   let%map_open.Command path =
     flag "--below" (optional string) ~doc:"PATH only below path"

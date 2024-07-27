@@ -37,6 +37,7 @@ sub commands exposed here, plus additional functionality in [more-tests].
   ls-files [--below PATH]    . only below path
   more-tests                 . more tests combining vcs functions
   more-tests branch-revision . revision of a branch
+  more-tests gca             . print greatest common ancestors of revisions
   name-status                . show a summary of the diff between 2 revs
   num-status                 . show a summary of the number of lines of diff
                                between 2 revs

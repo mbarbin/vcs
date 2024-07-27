@@ -2,6 +2,7 @@
 
 ### Added
 
+- Expose gca function in the `ocaml-vcs` command line.
 - Add function and tests to compute GCAs in `Vcs.Tree`.
 
 ### Changed

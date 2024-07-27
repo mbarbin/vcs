@@ -124,6 +124,21 @@ Tree.
    (roots ($REV0))
    (tips (($REV2 (refs/heads/main)))))
 
+Greatest common ancestors.
+
+  $ ocaml-vcs more-tests gca
+  ()
+
+  $ ocaml-vcs more-tests gca $rev1 | stabilize_output
+  ($REV1)
+
+  $ ocaml-vcs more-tests gca $rev1 $rev2 | stabilize_output
+  ($REV1)
+
+  $ ocaml-vcs more-tests gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
+  ("Rev not found" ((rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)))
+  [1]
+
 Vcs allows to run the git command line directly if the provider supports it.
 
   $ ocaml-vcs git -- rev-parse HEAD | stabilize_output

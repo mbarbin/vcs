@@ -91,6 +91,9 @@ val anon_path_in_repo : Vcs.Path_in_repo.t t Command.Param.t
 (** A required anon [REV]. *)
 val anon_rev : Vcs.Rev.t Or_error.t Command.Param.t
 
+(** A required list of anon [REVs]. *)
+val anon_revs : Vcs.Rev.t list Or_error.t Command.Param.t
+
 (** A flag to restrict the repo to a subdirectory below a certain path. *)
 val below_path_in_repo : Vcs.Path_in_repo.t option t Command.Param.t
 

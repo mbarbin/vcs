@@ -302,10 +302,34 @@ let branch_revision_cmd =
        return ())
 ;;
 
+let greatest_common_ancestors_cmd =
+  eio_command
+    ~summary:"print greatest common ancestors of revisions"
+    (let%map_open.Command config = Vcs_param.config
+     and revs = Vcs_param.anon_revs in
+     fun env ->
+       let%bind { vcs; repo_root; context = _ } = Vcs_param.initialize ~env ~config in
+       let%bind tree = Vcs.Or_error.tree vcs ~repo_root in
+       let%bind revs = revs in
+       let%bind nodes =
+         List.map revs ~f:(fun rev ->
+           match Vcs.Tree.find_rev tree ~rev with
+           | Some node -> return node
+           | None -> Or_error.error_s [%sexp "Rev not found", { rev : Vcs.Rev.t }])
+         |> Or_error.all
+       in
+       let gca =
+         Vcs.Tree.greatest_common_ancestors tree nodes
+         |> List.map ~f:(fun node -> Vcs.Tree.Node.rev tree node)
+       in
+       Eio_writer.print_sexp ~env [%sexp (gca : Vcs.Rev.t list)];
+       return ())
+;;
+
 let more_tests_cmd =
   Command.group
     ~summary:"more tests combining vcs functions"
-    [ "branch-revision", branch_revision_cmd ]
+    [ "branch-revision", branch_revision_cmd; "gca", greatest_common_ancestors_cmd ]
 ;;
 
 let main =
