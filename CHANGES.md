@@ -6,6 +6,7 @@
 
 ### Changed
 
+- Rename `git_cli` library to `vcs_git_cli` for consistency.
 - Remove type parameter for `Vcs.Tree.Node_kind` (simplify interface).
 - Renamed constructors for root nodes in vcs trees (`Init` => `Root`).
 
