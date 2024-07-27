@@ -39,9 +39,32 @@ type t [@@deriving sexp_of]
 (** create an empty tree that has no nodes. *)
 val create : unit -> t
 
-(** [add t log] add to [t] all the nodes from the tree log. This is idempotent if
-    [t] already knows all of the nodes. *)
+(** {1 Initializing the tree}
+
+    This part of the interface is the only part that mutates the tree. The tree
+    manipulated in memory needs to know about the nodes and refs that are present in
+    the git log.
+
+    The calls to the functions [add_nodes] and [set_refs] are typically handled
+    for you by the function [Vcs.tree], however they are exposed if you want to
+    manually build trees in more advanced ways (such as incrementally), or for
+    testing purposes.
+
+    Adding nodes or refs to a tree does not affect the git repository. These are
+    simply operations that needs to be called to feed to [t] the information
+    that already exists in the git log. *)
+
+(** [add t ~log] add to [t] all the nodes from the tree log. This is idempotent
+    this doesn't add the nodes that if [t] already knows.*)
 val add_nodes : t -> log:Log.t -> unit
+
+(** [set_refs t ~refs] add to [t] all the refs from the tree log. *)
+val set_refs : t -> refs:Refs.t -> unit
+
+(** Same as [set_refs], but one ref at a time. *)
+val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
+
+(** {1 Nodes} *)
 
 module Node_kind : sig
   type t = private
@@ -71,6 +94,9 @@ module Node : sig
   type t = node [@@deriving equal, sexp_of]
 
   val rev : tree -> t -> Rev.t
+
+  (** Return 0 parents for root nodes, 1 parent for commits, and 2 parents for
+      merge nodes. *)
   val parents : tree -> t -> t list
 
   val node_kind : tree -> t -> Node_kind.t
@@ -103,9 +129,6 @@ end
 
 (** List known refs. *)
 val refs : t -> Refs.t
-
-val set_refs : t -> refs:Refs.t -> unit
-val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
 
 (** Find a ref if it is present. *)
 val find_ref : t -> ref_kind:Ref_kind.t -> Node.t option
