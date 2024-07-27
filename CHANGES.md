@@ -6,6 +6,7 @@
 
 ### Changed
 
+- Remove type parameter for `Vcs.Tree.Node_kind` (simplify interface).
 - Renamed constructors for root nodes in vcs trees (`Init` => `Root`).
 
 ### Deprecated
