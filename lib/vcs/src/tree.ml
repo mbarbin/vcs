@@ -158,14 +158,17 @@ let add_nodes t ~log =
       if not (is_visited rev)
       then (
         Hash_set.add visited rev;
-        visit (Hashtbl.find_exn nodes_table parent);
+        if not (Hashtbl.mem t.revs parent)
+        then visit (Hashtbl.find_exn nodes_table parent);
         Queue.enqueue new_nodes (Node_kind.Commit { rev; parent }))
     | Merge { rev; parent1; parent2 } ->
       if not (is_visited rev)
       then (
         Hash_set.add visited rev;
-        visit (Hashtbl.find_exn nodes_table parent1);
-        visit (Hashtbl.find_exn nodes_table parent2);
+        if not (Hashtbl.mem t.revs parent1)
+        then visit (Hashtbl.find_exn nodes_table parent1);
+        if not (Hashtbl.mem t.revs parent2)
+        then visit (Hashtbl.find_exn nodes_table parent2);
         Queue.enqueue new_nodes (Node_kind.Merge { rev; parent1; parent2 }))
   in
   (* We iter in reverse order to makes the depth of visited path shorter. *)
