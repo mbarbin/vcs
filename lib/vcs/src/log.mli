@@ -25,7 +25,7 @@
 
 module Line : sig
   type t =
-    | Init of { rev : Rev.t }
+    | Root of { rev : Rev.t }
     | Commit of
         { rev : Rev.t
         ; parent : Rev.t

@@ -43,7 +43,7 @@ let%expect_test "parse_exn" =
   let merge_count =
     List.count log ~f:(function
       | Merge _ -> true
-      | Init _ | Commit _ -> false)
+      | Root _ | Commit _ -> false)
   in
   print_s [%sexp { merge_count : int }];
   [%expect {| ((merge_count 2)) |}];
@@ -55,11 +55,11 @@ let%expect_test "invalid lines" =
     print_s [%sexp (Git_cli.Log.parse_log_line_exn ~line : Vcs.Log.Line.t)]
   in
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d";
-  [%expect {| (Init (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d ";
-  [%expect {| (Init (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d  ";
-  [%expect {| (Init (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
   test "b6951031b698697eb05f414d1f34000bb171a694 3dd9b4627aaa36f76c3097f9f31172f481b9229f";
   [%expect
     {|

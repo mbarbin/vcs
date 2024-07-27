@@ -21,7 +21,7 @@
 
 let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
   match String.split (String.strip str) ~on:' ' with
-  | [ rev ] -> Init { rev = Vcs.Rev.v rev }
+  | [ rev ] -> Root { rev = Vcs.Rev.v rev }
   | [ rev; parent ] -> Commit { rev = Vcs.Rev.v rev; parent = Vcs.Rev.v parent }
   | [ rev; parent1; parent2 ] ->
     Merge

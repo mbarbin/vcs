@@ -40,7 +40,7 @@ val add_nodes : t -> log:Log.t -> unit
 
 module Node_kind : sig
   type 'index t = private
-    | Init of { rev : Rev.t }
+    | Root of { rev : Rev.t }
     | Commit of
         { rev : Rev.t
         ; parent : 'index
@@ -99,9 +99,13 @@ val find_rev : t -> rev:Rev.t -> Node.t option
 (** Tell if a revision points to a valid node of the tree. *)
 val mem_rev : t -> rev:Rev.t -> bool
 
-(** {1 Roots} *)
+(** {1 Roots & Tips} *)
 
+(** Return the list of nodes that do not have any parents. *)
 val roots : t -> Node.t list
+
+(** Return the list of nodes that do not have any children. *)
+val tips : t -> Node.t list
 
 (** {1 Ancestors} *)
 
@@ -113,11 +117,6 @@ val is_strict_ancestor : t -> ancestor:Node.t -> descendant:Node.t -> bool
 (** [is_ancestor_or_equal t ~ancestor:a ~descendant:b] returns [true] iif there
     [a] is a strict ancestor of [b] or if [a] is equal to [b]. *)
 val is_ancestor_or_equal : t -> ancestor:Node.t -> descendant:Node.t -> bool
-
-(** {1 Tips} *)
-
-(** Return the list of nodes that do not have any children. *)
-val tips : t -> Node.t list
 
 (** {1 Log} *)
 

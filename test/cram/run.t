@@ -115,7 +115,7 @@ Log.
     (parent $REV1))
    (Commit (rev $REV1)
     (parent $REV0))
-   (Init (rev $REV0)))
+   (Root (rev $REV0)))
 
 Tree.
 

@@ -24,7 +24,7 @@ module Node_kind = struct
     [@@@coverage off]
 
     type 'index t =
-      | Init of { rev : Rev.t }
+      | Root of { rev : Rev.t }
       | Commit of
           { rev : Rev.t
           ; parent : 'index
@@ -40,14 +40,14 @@ module Node_kind = struct
   include T
 
   let rev = function
-    | Init { rev } -> rev
+    | Root { rev } -> rev
     | Commit { rev; _ } -> rev
     | Merge { rev; _ } -> rev
   ;;
 
   let map_index t ~f =
     match t with
-    | Init { rev } -> Init { rev }
+    | Root { rev } -> Root { rev }
     | Commit { rev; parent } -> Commit { rev; parent = f parent }
     | Merge { rev; parent1; parent2 } ->
       Merge { rev; parent1 = f parent1; parent2 = f parent2 }
@@ -55,7 +55,7 @@ module Node_kind = struct
 
   let to_log_line t ~f =
     match t with
-    | Init { rev } -> Log.Line.Init { rev }
+    | Root { rev } -> Log.Line.Root { rev }
     | Commit { rev; parent } -> Log.Line.Commit { rev; parent = f parent }
     | Merge { rev; parent1; parent2 } ->
       Log.Line.Merge { rev; parent1 = f parent1; parent2 = f parent2 }
@@ -92,7 +92,7 @@ module Node0 = struct
 
   let parents t node =
     match t.nodes.(node) with
-    | Node_kind.Init _ -> []
+    | Node_kind.Root _ -> []
     | Commit { parent; _ } -> [ parent ]
     | Merge { parent1; parent2; _ } -> [ parent1; parent2 ]
   ;;
@@ -149,11 +149,11 @@ let add_nodes t ~log =
   in
   let rec visit (line : Log.Line.t) =
     match (line : Log.Line.t) with
-    | Init { rev } ->
+    | Root { rev } ->
       if not (is_visited rev)
       then (
         Hash_set.add visited rev;
-        Queue.enqueue new_nodes (Node_kind.Init { rev }))
+        Queue.enqueue new_nodes (Node_kind.Root { rev }))
     | Commit { rev; parent } ->
       if not (is_visited rev)
       then (
@@ -186,7 +186,7 @@ let add_nodes t ~log =
 let roots t =
   Array.filter_mapi t.nodes ~f:(fun i node ->
     match node with
-    | Init _ -> Some i
+    | Root _ -> Some i
     | Commit _ | Merge _ -> None)
   |> Array.to_list
 ;;
@@ -243,7 +243,7 @@ let tips t =
   let has_children = Hash_set.create (module Node) in
   Array.iter t.nodes ~f:(fun node ->
     match node with
-    | Init _ -> ()
+    | Root _ -> ()
     | Commit { parent; _ } -> Hash_set.add has_children parent
     | Merge { parent1; parent2; _ } ->
       Hash_set.add has_children parent1;
@@ -288,7 +288,7 @@ let subtrees t =
   let component_id = ref 0 in
   Array.iteri t.nodes ~f:(fun i node ->
     match node with
-    | Init { rev = _ } ->
+    | Root { rev = _ } ->
       let id = !component_id in
       Int.incr component_id;
       components.(i) <- Union_find.create id

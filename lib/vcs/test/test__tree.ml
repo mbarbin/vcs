@@ -289,7 +289,7 @@ let%expect_test "tree" =
       (parent1 735103d3d41b48b7425b5b5386f235c8940080af)
       (parent2 1eafed9e1737cd2ebbfe60ca787e622c7e0fc080)) |}];
   ref_kind root_node;
-  [%expect {| (Init (rev da46f0d60bfbb9dc9340e95f5625c10815c24af7)) |}];
+  [%expect {| (Root (rev da46f0d60bfbb9dc9340e95f5625c10815c24af7)) |}];
   (* parents. *)
   let parents rev =
     let node = node_exn rev in
@@ -345,7 +345,7 @@ let%expect_test "Subtree.is_empty" =
   [%expect {| true |}];
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
   let subtree =
-    { Vcs.Tree.Subtree.log = [ Init { rev = Vcs.Mock_rev_gen.next mock_rev_gen } ]
+    { Vcs.Tree.Subtree.log = [ Root { rev = Vcs.Mock_rev_gen.next mock_rev_gen } ]
     ; refs = []
     }
   in
@@ -362,7 +362,7 @@ let%expect_test "add_nodes" =
        find this easier to reason about. We end up reversing the log when we add
        the nodes, to make it more alike what happens in the actual use cases. *)
     List.concat
-      [ [ Vcs.Log.Line.Init { rev = revs.(0) }; Vcs.Log.Line.Init { rev = revs.(1) } ]
+      [ [ Vcs.Log.Line.Root { rev = revs.(0) }; Vcs.Log.Line.Root { rev = revs.(1) } ]
       ; List.init 4 ~f:(fun i ->
           Vcs.Log.Line.Commit { rev = revs.(i + 2); parent = revs.(i + 1) })
       ]
@@ -387,8 +387,8 @@ let%expect_test "add_nodes" =
   print_s [%sexp (Vcs.Tree.log tree : Vcs.Log.t)];
   [%expect
     {|
-    ((Init (rev b4009f9c14eab4c931474f7647481517b4009f9c))
-     (Init (rev 356b5838cce64758f4fa99b48c4a4552356b5838))
+    ((Root (rev b4009f9c14eab4c931474f7647481517b4009f9c))
+     (Root (rev 356b5838cce64758f4fa99b48c4a4552356b5838))
      (Commit
        (rev    463eed936ec17915e6a76d135aecc4e0463eed93)
        (parent 356b5838cce64758f4fa99b48c4a4552356b5838))
@@ -435,7 +435,7 @@ let%expect_test "set invalid rev" =
   in
   require_does_raise [%here] (fun () -> set_ref_r1 ());
   [%expect {| ("Rev not found" b4009f9c14eab4c931474f7647481517b4009f9c) |}];
-  Vcs.Tree.add_nodes tree ~log:[ Init { rev = r1 } ];
+  Vcs.Tree.add_nodes tree ~log:[ Root { rev = r1 } ];
   set_ref_r1 ();
   print_s [%sexp (Vcs.Tree.refs tree : Vcs.Refs.t)];
   [%expect

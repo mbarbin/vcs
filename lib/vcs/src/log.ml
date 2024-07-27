@@ -23,7 +23,7 @@ module Line = struct
   [@@@coverage off]
 
   type t =
-    | Init of { rev : Rev.t }
+    | Root of { rev : Rev.t }
     | Commit of
         { rev : Rev.t
         ; parent : Rev.t
@@ -36,7 +36,7 @@ module Line = struct
   [@@deriving equal, sexp_of]
 
   let rev = function
-    | Commit { rev; _ } | Merge { rev; _ } | Init { rev } -> rev
+    | Commit { rev; _ } | Merge { rev; _ } | Root { rev } -> rev
   ;;
 end
 
@@ -51,7 +51,7 @@ include T
 let roots (t : t) =
   let queue = Queue.create () in
   List.iter t ~f:(function
-    | Init { rev } -> Queue.enqueue queue rev
+    | Root { rev } -> Queue.enqueue queue rev
     | Commit _ | Merge _ -> ());
   Queue.to_list queue
 ;;
