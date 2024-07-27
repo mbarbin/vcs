@@ -133,7 +133,7 @@ let tree (Provider.T { t; interface }) ~repo_root =
   (let%bind log = L.all t ~repo_root in
    let%bind refs = R.show_ref t ~repo_root in
    Tree.add_nodes tree ~log;
-   List.iter refs ~f:(fun { rev; ref_kind } -> Tree.set_ref tree ~rev ~ref_kind);
+   Tree.set_refs tree ~refs;
    return tree)
   |> of_result ~step:(lazy [%sexp "Vcs.tree", { repo_root : Repo_root.t }])
 ;;
