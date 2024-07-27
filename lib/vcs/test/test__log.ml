@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* More tests for the [Vcs.Log] module in [lib/git_cli/test/test__log.ml]. *)
+(* More tests for the [Vcs.Log] module in [lib/vcs_git_cli/test/test__log.ml]. *)
 
 let%expect_test "parse_exn" =
   Eio_main.run
@@ -27,7 +27,7 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.log") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let log = List.map lines ~f:(fun line -> Git_cli.Log.parse_log_line_exn ~line) in
+  let log = List.map lines ~f:(fun line -> Vcs_git_cli.Log.parse_log_line_exn ~line) in
   let roots = Vcs.Log.roots log in
   print_s [%sexp (roots : Vcs.Rev.t list)];
   [%expect

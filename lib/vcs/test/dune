@@ -28,8 +28,8 @@
   expect_test_helpers
   fpath
   fpath-base
-  git_cli
-  vcs)
+  vcs
+  vcs_git_cli)
  (instrumentation
   (backend bisect_ppx))
  (lint

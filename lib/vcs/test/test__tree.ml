@@ -26,13 +26,13 @@ let%expect_test "tree" =
     let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.log") in
     let contents = Eio.Path.load path in
     let lines = String.split_lines contents in
-    List.map lines ~f:(fun line -> Git_cli.Log.parse_log_line_exn ~line)
+    List.map lines ~f:(fun line -> Vcs_git_cli.Log.parse_log_line_exn ~line)
   in
   let refs =
     let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.refs") in
     let contents = Eio.Path.load path in
     let lines = String.split_lines contents in
-    Git_cli.Refs.parse_lines_exn ~lines
+    Vcs_git_cli.Refs.parse_lines_exn ~lines
   in
   let tree = Vcs.Tree.create () in
   Vcs.Tree.add_nodes tree ~log;

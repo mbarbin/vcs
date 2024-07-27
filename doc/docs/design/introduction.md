@@ -16,13 +16,13 @@ The `vcs` repository contains several components:
 stateDiagram-v2
   vcs : vcs *
   user : user-lib *
-  git_cli : git-cli
+  vcs_git_cli : vcs-git-cli
   executable : executable (eio)
   provider : vcs-git
   runtime : eio
   vcs --> user
   user --> executable
-  git_cli --> provider
+  vcs_git_cli --> provider
   runtime --> provider
   provider --> executable
 ```
@@ -33,21 +33,21 @@ stateDiagram-v2
   Also marked with a * to indicate no runtime dependencies.
 - **executable**: A placeholder for a runtime component based on `user-lib` that
   commits to a specific provider and concurrency model.
-- **git-cli**: A IO-free library that parses the output of a `git` cli process.
-- **vcs-git**: An instantiation of `Git_cli` based on an `Eio` runtime.
-- **vcs-git-blocking**: An instantiation of `Git_cli` based on the OCaml `Stdlib`.
+- **vcs-git-cli**: A IO-free library that parses the output of a `git` cli process.
+- **vcs-git**: An instantiation of `Vcs_git_cli` based on an `Eio` runtime.
+- **vcs-git-blocking**: An instantiation of `Vcs_git_cli` based on the OCaml `Stdlib`.
 
 ```mermaid
 stateDiagram-v2
   vcs : vcs *
   user : user-lib *
-  git_cli : git-cli
+  vcs_git_cli : vcs-git-cli
   executable : executable (blocking)
   provider : vcs-git-blocking
   runtime : stdlib
   vcs --> user
   user --> executable
-  git_cli --> provider
+  vcs_git_cli --> provider
   runtime --> provider
   provider --> executable
 ```

@@ -19,7 +19,6 @@ depends: [
   "eio_main" {>= "1.0"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.0.9"}
-  "git-cli" {= version}
   "mdx" {with-doc & >= "2.4"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}
@@ -41,6 +40,7 @@ depends: [
   "vcs-command" {= version}
   "vcs-git" {= version}
   "vcs-git-blocking" {= version}
+  "vcs-git-cli" {= version}
   "vcs-param" {= version}
   "vcs-private-libs-base" {= version}
   "vcs-private-libs-eio" {= version}

@@ -19,17 +19,17 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** [Git_cli] is a helper library to build git providers for the [Vcs] library.
+(** [Vcs_git_cli] is a helper library to build git providers for the [Vcs] library.
 
-    Given the ability to run a [git] process, [Git_cli] knows what command to
+    Given the ability to run a [git] process, [Vcs_git_cli] knows what command to
     run, how to parse its output and how to interpret its exit code to turn it
     into a typed result.
 
-    [Git_cli] is not meant to be used directly by a user. Rather it is one of
+    [Vcs_git_cli] is not meant to be used directly by a user. Rather it is one of
     the building blocks involved in creating a git provider for the [Vcs]
     library.
 
-    [Git_cli] has currently two instantiations as part of its distribution
+    [Vcs_git_cli] has currently two instantiations as part of its distribution
     (packaged separately to keep the dependencies isolated).
 
     - One based on the [Eio] runtime
@@ -46,7 +46,7 @@ module Runtime = Runtime
 (** {1 Providers of Vcs Traits} *)
 
 module Trait : sig
-  (** The list of traits that are implemented in [Git_cli]. *)
+  (** The list of traits that are implemented in [Vcs_git_cli]. *)
   type t =
     [ Vcs.Trait.add
     | Vcs.Trait.branch

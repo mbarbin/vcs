@@ -1,6 +1,6 @@
 (library
- (name git_cli)
- (public_name git-cli)
+ (name vcs_git_cli)
+ (public_name vcs-git-cli)
  (flags
   :standard
   -w

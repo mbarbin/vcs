@@ -34,7 +34,7 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.name-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let name_status = Git_cli.Name_status.parse_lines_exn ~lines in
+  let name_status = Vcs_git_cli.Name_status.parse_lines_exn ~lines in
   print_s [%sexp (name_status : Vcs.Name_status.t)];
   [%expect
     {|
@@ -170,9 +170,9 @@ let%expect_test "Diff_status" =
   let entries = "ADMUQI?!XRCZ" in
   String.iter entries ~f:(fun char ->
     let diff_status =
-      Git_cli.Name_status.Diff_status.parse_exn (Printf.sprintf "%c something" char)
+      Vcs_git_cli.Name_status.Diff_status.parse_exn (Printf.sprintf "%c something" char)
     in
-    print_s [%sexp (char : Char.t), (diff_status : Git_cli.Name_status.Diff_status.t)]);
+    print_s [%sexp (char : Char.t), (diff_status : Vcs_git_cli.Name_status.Diff_status.t)]);
   [%expect
     {|
     (A A)
@@ -187,7 +187,7 @@ let%expect_test "Diff_status" =
     (R R)
     (C C)
     (Z Not_supported) |}];
-  require_does_raise [%here] (fun () -> Git_cli.Name_status.Diff_status.parse_exn "");
+  require_does_raise [%here] (fun () -> Vcs_git_cli.Name_status.Diff_status.parse_exn "");
   [%expect {|
     "Unexpected empty diff status" |}];
   ()
@@ -215,7 +215,9 @@ let%expect_test "parse_lines_exn" =
     ]
   in
   List.iter lines ~f:(fun line ->
-    let result = Or_error.try_with (fun () -> Git_cli.Name_status.parse_line_exn ~line) in
+    let result =
+      Or_error.try_with (fun () -> Vcs_git_cli.Name_status.parse_line_exn ~line)
+    in
     print_s [%sexp (line : string), (result : Vcs.Name_status.Change.t Or_error.t)]);
   [%expect
     {|

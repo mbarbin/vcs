@@ -25,7 +25,7 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.name-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let name_status = Git_cli.Name_status.parse_lines_exn ~lines in
+  let name_status = Vcs_git_cli.Name_status.parse_lines_exn ~lines in
   let files_at_src = Vcs.Name_status.files_at_src name_status in
   let files_at_dst = Vcs.Name_status.files_at_dst name_status in
   print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Vcs.Path_in_repo).t)];
@@ -47,7 +47,7 @@ let%expect_test "files" =
     ; "R100\toriginal_renamed_file\tnew_renamed_file"
     ]
   in
-  let name_status = Git_cli.Name_status.parse_lines_exn ~lines in
+  let name_status = Vcs_git_cli.Name_status.parse_lines_exn ~lines in
   print_s [%sexp (name_status : Vcs.Name_status.t)];
   [%expect
     {|

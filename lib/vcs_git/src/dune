@@ -20,8 +20,8 @@
   eio
   fpath
   fpath-base
-  git-cli
   vcs
+  vcs-git-cli
   vcs-private-libs-eio.eio-process)
  (instrumentation
   (backend bisect_ppx))

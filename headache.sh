@@ -3,8 +3,6 @@
 dirs=(
     "bin"
     "example"
-    "lib/git_cli/src"
-    "lib/git_cli/test"
     "lib/vcs/src"
     "lib/vcs/test"
     "lib/vcs_command/src"
@@ -13,6 +11,8 @@ dirs=(
     "lib/vcs_git/test"
     "lib/vcs_git_blocking/src"
     "lib/vcs_git_blocking/test"
+    "lib/vcs_git_cli/src"
+    "lib/vcs_git_cli/test"
     "lib/vcs_param/src"
     "lib/vcs_param/test"
     "lib/vcs_test_helpers/src"

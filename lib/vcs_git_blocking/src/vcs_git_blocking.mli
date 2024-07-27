@@ -20,18 +20,18 @@
 (*_******************************************************************************)
 
 (** Implementation of a git provider for the {!module:Vcs} library, based on
-    [Stdlib] and {!module:Git_cli}.
+    [Stdlib] and {!module:Vcs_git_cli}.
 
     This implementation is based on the [git] command line tool. We run it as an
     external program with utils from [Stdlib] and [Unix], producing the right
     command line invocation and parsing the output to produce a typed version of
-    the expected results with [Git_cli]. Note that [git] must be found in the
+    the expected results with [Vcs_git_cli]. Note that [git] must be found in the
     PATH of the running environment. *)
 
-type 'a t = ([> Git_cli.Trait.t ] as 'a) Vcs.t
+type 'a t = ([> Vcs_git_cli.Trait.t ] as 'a) Vcs.t
 
 (** This is a convenient type alias that may be used to designate a provider
     with the exact list of traits supported by this implementation. *)
-type t' = Git_cli.Trait.t t
+type t' = Vcs_git_cli.Trait.t t
 
 val create : unit -> _ t
