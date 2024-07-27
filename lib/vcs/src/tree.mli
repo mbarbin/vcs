@@ -29,6 +29,11 @@
     of what needs to be sent to a process holding such a value in memory to
     complete its view of a tree. *)
 
+(** The abstract type of the nodes of a vcs tree. They can be root, commit or
+    merge nodes. The type is defined early in order to break recursive
+    dependencies. It is meant to be accessed as [Vcs.Tree.Node.t]. *)
+type node
+
 type t [@@deriving sexp_of]
 
 (** create an empty tree that has no nodes. *)
@@ -39,31 +44,45 @@ val create : unit -> t
 val add_nodes : t -> log:Log.t -> unit
 
 module Node_kind : sig
-  type 'index t = private
+  type t = private
     | Root of { rev : Rev.t }
     | Commit of
         { rev : Rev.t
-        ; parent : 'index
+        ; parent : node
         }
     | Merge of
         { rev : Rev.t
-        ; parent1 : 'index
-        ; parent2 : 'index
+        ; parent1 : node
+        ; parent2 : node
         }
   [@@deriving equal, sexp_of]
 
-  val rev : _ t -> Rev.t
-  val map_index : 'a t -> f:('a -> 'b) -> 'b t
+  (** A helper to access the revision of the node itself. This simply returns
+      the first argument of each constructor. *)
+  val rev : t -> Rev.t
 end
 
 module Node : sig
+  (** The node itself doesn't carry much information, rather it is simply a
+      pointer to a location in the tree. Thus the functions of this interface
+      typically also require to be supplied the tree. *)
+
   type tree := t
-  type t [@@deriving equal, sexp_of]
+  type t = node [@@deriving equal, sexp_of]
 
   val rev : tree -> t -> Rev.t
   val parents : tree -> t -> t list
-  val node_kind : tree -> t -> t Node_kind.t
+
+  val node_kind : tree -> t -> Node_kind.t
+
+  (** If the tree has refs (such as tags or branches) attached to this node,
+      they will all be returned by [refs tree node]. The order of the refs in
+      the resulting list is not specified. *)
   val refs : tree -> t -> Ref_kind.t list
+
+  (** Rebuild the log line that represented this node in the git log. This is
+      mainly used for tests and display purposes. *)
+  val log_line : tree -> t -> Log.Line.t
 
   module Descendance : sig
     (** Descendance is a relation between 2 nodes of the tree. Matching on it is

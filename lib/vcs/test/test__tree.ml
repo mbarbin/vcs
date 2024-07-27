@@ -269,11 +269,8 @@ let%expect_test "tree" =
   let node_exn rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
   let ref_kind rev =
     let node = node_exn rev in
-    let node_kind =
-      Vcs.Tree.Node.node_kind tree node
-      |> Vcs.Tree.Node_kind.map_index ~f:(fun index -> Vcs.Tree.Node.rev tree index)
-    in
-    print_s [%sexp (node_kind : Vcs.Rev.t Vcs.Tree.Node_kind.t)]
+    let line = Vcs.Tree.Node.log_line tree node in
+    print_s [%sexp (line : Vcs.Log.Line.t)]
   in
   ref_kind tip;
   [%expect

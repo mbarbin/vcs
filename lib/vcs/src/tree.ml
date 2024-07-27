@@ -19,20 +19,28 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+module Node_T = struct
+  type t = int [@@deriving compare, equal, hash]
+
+  let sexp_of_t i = Sexp.Atom ("#" ^ Int.to_string_hum i)
+end
+
+type node = Node_T.t
+
 module Node_kind = struct
   module T = struct
     [@@@coverage off]
 
-    type 'index t =
+    type t =
       | Root of { rev : Rev.t }
       | Commit of
           { rev : Rev.t
-          ; parent : 'index
+          ; parent : Node_T.t
           }
       | Merge of
           { rev : Rev.t
-          ; parent1 : 'index
-          ; parent2 : 'index
+          ; parent1 : Node_T.t
+          ; parent2 : Node_T.t
           }
     [@@deriving equal, sexp_of]
   end
@@ -43,14 +51,6 @@ module Node_kind = struct
     | Root { rev } -> rev
     | Commit { rev; _ } -> rev
     | Merge { rev; _ } -> rev
-  ;;
-
-  let map_index t ~f =
-    match t with
-    | Root { rev } -> Root { rev }
-    | Commit { rev; parent } -> Commit { rev; parent = f parent }
-    | Merge { rev; parent1; parent2 } ->
-      Merge { rev; parent1 = f parent1; parent2 = f parent2 }
   ;;
 
   let to_log_line t ~f =
@@ -66,7 +66,7 @@ module T = struct
   [@@@coverage off]
 
   type t =
-    { mutable nodes : int Node_kind.t array
+    { mutable nodes : Node_kind.t array
     ; revs : int Hashtbl.M(Rev).t
     ; refs : int Hashtbl.M(Ref_kind).t
     ; reverse_refs : Ref_kind.t list Hashtbl.M(Int).t
@@ -85,7 +85,7 @@ let create () =
 ;;
 
 module Node0 = struct
-  type t = int [@@deriving compare, equal, hash, sexp_of]
+  include Node_T
 
   let _ = hash_fold_t
   let rev t node = Node_kind.rev t.nodes.(node)
@@ -103,6 +103,10 @@ module Node0 = struct
     Hashtbl.find t.reverse_refs node
     |> Option.value ~default:[]
     |> List.sort ~compare:Ref_kind.compare
+  ;;
+
+  let log_line t node =
+    Node_kind.to_log_line t.nodes.(node) ~f:(fun i -> Node_kind.rev t.nodes.(i))
   ;;
 end
 
@@ -198,14 +202,14 @@ let add_nodes t ~log =
       if not (is_visited rev)
       then (
         Hash_set.add visited rev;
-        Queue.enqueue new_nodes (Node_kind.Root { rev }))
+        Queue.enqueue new_nodes line)
     | Commit { rev; parent } ->
       if not (is_visited rev)
       then (
         Hash_set.add visited rev;
         if not (Hashtbl.mem t.revs parent)
         then visit (Hashtbl.find_exn nodes_table parent);
-        Queue.enqueue new_nodes (Node_kind.Commit { rev; parent }))
+        Queue.enqueue new_nodes line)
     | Merge { rev; parent1; parent2 } ->
       if not (is_visited rev)
       then (
@@ -214,18 +218,25 @@ let add_nodes t ~log =
         then visit (Hashtbl.find_exn nodes_table parent1);
         if not (Hashtbl.mem t.revs parent2)
         then visit (Hashtbl.find_exn nodes_table parent2);
-        Queue.enqueue new_nodes (Node_kind.Merge { rev; parent1; parent2 }))
+        Queue.enqueue new_nodes line)
   in
   (* We iter in reverse order to makes the depth of visited path shorter. *)
   List.iter (List.rev log) ~f:visit;
   let new_index = Array.length t.nodes in
   let new_nodes =
+    let find_node_exn rev = Hashtbl.find_exn t.revs rev in
     Queue.to_array new_nodes
     |> Array.mapi ~f:(fun i node ->
       let index = new_index + i in
-      let rev = Node_kind.rev node in
+      let rev = Log.Line.rev node in
       Hashtbl.add_exn t.revs ~key:rev ~data:index;
-      Node_kind.map_index node ~f:(fun rev -> Hashtbl.find_exn t.revs rev))
+      match node with
+      | Root _ -> Node_kind.Root { rev }
+      | Commit { rev; parent; _ } ->
+        Node_kind.Commit { rev; parent = find_node_exn parent }
+      | Merge { rev; parent1; parent2; _ } ->
+        Node_kind.Merge
+          { rev; parent1 = find_node_exn parent1; parent2 = find_node_exn parent2 })
   in
   t.nodes <- Array.append t.nodes new_nodes;
   ()
@@ -301,11 +312,7 @@ let tips t =
   |> Array.to_list
 ;;
 
-let log t =
-  Array.map t.nodes ~f:(fun node ->
-    Node_kind.to_log_line node ~f:(fun i -> Node_kind.rev t.nodes.(i)))
-  |> Array.to_list
-;;
+let log t = Array.mapi t.nodes ~f:(fun node _ -> Node.log_line t node) |> Array.to_list
 
 module Subtree = struct
   module T = struct
@@ -350,9 +357,7 @@ let subtrees t =
   let refs = Array.init num_id ~f:(fun _ -> Queue.create ()) in
   Array.iteri components ~f:(fun i cell ->
     let id = Union_find.get cell in
-    Queue.enqueue
-      logs.(id)
-      (Node_kind.to_log_line t.nodes.(i) ~f:(fun i -> Node_kind.rev t.nodes.(i))));
+    Queue.enqueue logs.(id) (Node.log_line t i));
   Hashtbl.iteri t.refs ~f:(fun ~key:ref_kind ~data:index ->
     let id = Union_find.get components.(index) in
     Queue.enqueue refs.(id) { Refs.Line.rev = Node_kind.rev t.nodes.(index); ref_kind });
