@@ -132,6 +132,13 @@ module Node0 = struct
     | Merge { parent1; parent2; _ } -> [ parent1; parent2 ]
   ;;
 
+  let prepend_parents t node list =
+    match t.nodes.(node) with
+    | Node_kind.Root _ -> list
+    | Commit { parent; _ } -> parent :: list
+    | Merge { parent1; parent2; _ } -> parent1 :: parent2 :: list
+  ;;
+
   let node_kind t node = t.nodes.(node)
 
   let refs t node =
@@ -154,14 +161,15 @@ let iter_ancestors t ~visited node ~f =
     match to_visit with
     | [] -> ()
     | node :: to_visit ->
-      if not visited.(node)
-      then (
-        visited.(node) <- true;
-        f node;
-        match t.nodes.(node) with
-        | Root _ -> loop to_visit
-        | Commit { parent; _ } -> loop (parent :: to_visit)
-        | Merge { parent1; parent2; _ } -> loop (parent1 :: parent2 :: to_visit))
+      let to_visit =
+        if visited.(node)
+        then to_visit
+        else (
+          visited.(node) <- true;
+          f node;
+          Node0.prepend_parents t node to_visit)
+      in
+      loop to_visit
   in
   loop [ node ]
 ;;
