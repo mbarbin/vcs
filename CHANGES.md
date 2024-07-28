@@ -1,4 +1,4 @@
-## 0.0.3 (unreleased)
+## 0.0.3 (2024-07-28)
 
 ### Added
 
@@ -14,13 +14,9 @@
 - Remove type parameter for `Vcs.Tree.Node_kind` (simplify interface).
 - Renamed constructors for root nodes in vcs trees (`Init` => `Root`).
 
-### Deprecated
-
 ### Fixed
 
 - Fix `Vcs.Tree.add_nodes` raising when adding nodes incrementally.
-
-### Removed
 
 ## 0.0.2 (2024-07-26)
 
