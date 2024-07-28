@@ -667,5 +667,32 @@ let%expect_test "debug tree" =
   [%expect {| (#0 #1 #2 #3) |}];
   print_ancestors r4;
   [%expect {| (#0 #1 #2 #3 #4) |}];
+  (* Low level int indexing. *)
+  let node_index node = print_s [%sexp (Vcs.Tree.node_index tree node : int)] in
+  node_index (node ~rev:r1);
+  [%expect {| 0 |}];
+  node_index (node ~rev:r4);
+  [%expect {| 4 |}];
+  let get_node_exn index =
+    print_s [%sexp (Vcs.Tree.get_node_exn tree ~index : Vcs.Tree.Node.t)]
+  in
+  get_node_exn 0;
+  [%expect {| #0 |}];
+  get_node_exn 4;
+  [%expect {| #4 |}];
+  require_does_raise [%here] (fun () -> get_node_exn 5);
+  [%expect
+    {|
+    ("Node index out of bounds" (
+      (index      5)
+      (node_count 5)))
+    |}];
+  require_does_raise [%here] (fun () -> get_node_exn (-1));
+  [%expect
+    {|
+    ("Node index out of bounds" (
+      (index      -1)
+      (node_count 5)))
+    |}];
   ()
 ;;

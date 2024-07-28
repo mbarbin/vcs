@@ -434,3 +434,16 @@ let rec summary t =
   in
   { Summary.refs; roots = roots t |> List.map ~f:(fun id -> rev t id); tips; subtrees }
 ;;
+
+let check_index_exn t ~index =
+  let node_count = node_count t in
+  if index < 0 || index >= node_count
+  then raise_s [%sexp "Node index out of bounds", { index : int; node_count : int }]
+;;
+
+let get_node_exn t ~index =
+  check_index_exn t ~index;
+  (index :> Node.t)
+;;
+
+let node_index _ (node : Node.t) = (node :> int)

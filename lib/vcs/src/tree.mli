@@ -70,6 +70,8 @@ module Node : sig
       exposes an efficient comparable interface, meaning you can e.g. manipulate
       containers indexed by nodes.
 
+      {1:ordering_invariant Ordering invariant}
+
       An invariant that holds in the structure and on which you can rely is that
       the parents of a node are always inserted in the tree before the node
       itself (from left to right), and thus if [n1 > n2] (using the node
@@ -219,3 +221,19 @@ end
 
 (** Print a summary for use in expect test and quick exploratory tests *)
 val summary : t -> Summary.t
+
+(** {1 Low level node ordering}
+
+    This part of the interface is exposed for advanced usage only.
+
+    We make no guarantee about the stability of node ordering across vcs
+    versions. The order in which nodes be inserted is not fully specified,
+    outside of the ordering invariant discussed {{!ordering_invariant} here}. It
+    is considered to be only valid for the lifetime of the tree.
+
+    This is exposed if you want to write algorithms working on tree that take
+    advantage of operations working on int, if the rest of the exposed API isn't
+    enough for your use case. *)
+
+val get_node_exn : t -> index:int -> Node.t
+val node_index : t -> Node.t -> int
