@@ -15,4 +15,4 @@
 
 Vcs is an OCaml library for interacting with Git repositories. It provides a type-safe and direct-style API to programmatically perform Git operations - ranging from creating commits and branches, to loading and navigating commit trees in memory, computing diffs between revisions, and more.
 
-Designed as an "interface", or "virtual" library, Vcs dynamically dispatches its implementation at runtime. It is currently distributed with two distinct backends: a non-blocking version built atop Eio, and a blocking variant based on OCaml's standard library. Both backends operate by executing git as an external process.
+Designed as an interface composed of traits, Vcs dynamically dispatches its implementation at runtime. It is currently distributed with two distinct backends: a non-blocking version built atop Eio, and a blocking variant based on OCaml's standard library. Both backends operate by executing git as an external process.

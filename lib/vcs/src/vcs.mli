@@ -19,19 +19,13 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** A versatile library for Git interaction.
+(** A Versatile Library for Git Interaction.
 
     Vcs is a library providing a direct-style API for interacting with Git
-    repositories in a type-safe way. It is designed as an "interface", or
-    "virtual" library with the actual implementation dynamically dispatched at
-    runtime.
-
-    How it works?
-
-    [Vcs] is an interface composed of traits, each providing different
-    functionalities associated with Git interaction. The dynamic dispatch
-    implementation uses the {{:https://github.com/mbarbin/provider} provider}
-    library. *)
+    repositories in a type-safe way. It is designed as an interface composed of
+    traits, each providing different functionalities associated with Git
+    interaction. Vcs dynamically dispatches its implementation at runtime using
+    the {{:https://github.com/mbarbin/provider} provider} library. *)
 
 module Trait = Trait
 
