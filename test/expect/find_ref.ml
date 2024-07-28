@@ -137,7 +137,7 @@ let%expect_test "find ref" =
   let sexp2 =
     let find_exn ref_kind =
       match Vcs.Tree.find_ref tree ~ref_kind with
-      | Some node -> Vcs.Mock_revs.to_mock mock_revs ~rev:(Vcs.Tree.Node.rev tree node)
+      | Some node -> Vcs.Mock_revs.to_mock mock_revs ~rev:(Vcs.Tree.rev tree node)
       | None -> assert false
     in
     lookup ~find_exn

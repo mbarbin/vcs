@@ -320,7 +320,7 @@ let greatest_common_ancestors_cmd =
        in
        let gca =
          Vcs.Tree.greatest_common_ancestors tree nodes
-         |> List.map ~f:(fun node -> Vcs.Tree.Node.rev tree node)
+         |> List.map ~f:(fun node -> Vcs.Tree.rev tree node)
        in
        Eio_writer.print_sexp ~env [%sexp (gca : Vcs.Rev.t list)];
        return ())

@@ -29,11 +29,6 @@
     of what needs to be sent to a process holding such a value in memory to
     complete its view of a tree. *)
 
-(** The abstract type of the nodes of a vcs tree. They can be root, commit or
-    merge nodes. The type is defined early in order to break recursive
-    dependencies. It is meant to be accessed as [Vcs.Tree.Node.t]. *)
-type node
-
 type t [@@deriving sexp_of]
 
 (** Create an empty tree that has no nodes. *)
@@ -66,28 +61,9 @@ val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
 
 (** {1 Nodes} *)
 
-module Node_kind : sig
-  type t = private
-    | Root of { rev : Rev.t }
-    | Commit of
-        { rev : Rev.t
-        ; parent : node
-        }
-    | Merge of
-        { rev : Rev.t
-        ; parent1 : node
-        ; parent2 : node
-        }
-  [@@deriving equal, sexp_of]
-
-  (** A helper to access the revision of the node itself. This simply returns
-      the first argument of each constructor. *)
-  val rev : t -> Rev.t
-end
-
 module Node : sig
   (** The node itself doesn't carry much information, rather it is simply a
-      pointer to a location in the tree. Thus the functions of this interface
+      pointer to a location in the tree. Thus the functions operating on nodes
       typically also require to be supplied the tree.
 
       For convenience to users writing algorithms on git trees, the type [t]
@@ -100,42 +76,63 @@ module Node : sig
       comparison function) then you can be certain that [n1] is not a parent of
       [n2]. *)
 
-  type tree := t
-  type t = node [@@deriving compare, equal, hash, sexp_of]
+  type t [@@deriving compare, equal, hash, sexp_of]
 
   include Comparable.S with type t := t
-
-  val rev : tree -> t -> Rev.t
-
-  (** Return 0 parents for root nodes, 1 parent for commits, and 2 parents for
-      merge nodes. *)
-  val parents : tree -> t -> t list
-
-  val node_kind : tree -> t -> Node_kind.t
-
-  (** If the tree has refs (such as tags or branches) attached to this node,
-      they will all be returned by [refs tree node]. The order of the refs in
-      the resulting list is not specified. *)
-  val refs : tree -> t -> Ref_kind.t list
-
-  (** Rebuild the log line that represented this node in the git log. This is
-      mainly used for tests and display purposes. *)
-  val log_line : tree -> t -> Log.Line.t
-
-  module Descendance : sig
-    (** Descendance is a relation between 2 nodes of the tree. Matching on it is
-        useful for example when considering the status of a branch head with
-        respect to its upstream counterpart. *)
-    type t =
-      | Same
-      | Strict_ancestor
-      | Strict_descendant
-      | Unrelated
-    [@@deriving equal, enumerate, hash, sexp_of]
-  end
-
-  val descendance : tree -> t -> t -> Descendance.t
 end
+
+module Node_kind : sig
+  type t = private
+    | Root of { rev : Rev.t }
+    | Commit of
+        { rev : Rev.t
+        ; parent : Node.t
+        }
+    | Merge of
+        { rev : Rev.t
+        ; parent1 : Node.t
+        ; parent2 : Node.t
+        }
+  [@@deriving equal, sexp_of]
+
+  (** A helper to access the revision of the node itself. This simply returns
+      the first argument of each constructor. *)
+  val rev : t -> Rev.t
+end
+
+(** Access the revision of a node. *)
+val rev : t -> Node.t -> Rev.t
+
+(** Return 0 parents for root nodes, 1 parent for commits, and 2 parents for
+    merge nodes. *)
+val parents : t -> Node.t -> Node.t list
+
+(** [prepend_parents tree node nodes] is an equivalent but more efficient
+    version of [parents tree node @ nodes]. It may be useful for recursive
+    traversal algorithms. *)
+val prepend_parents : t -> Node.t -> Node.t list -> Node.t list
+
+(** Access the given node from the tree and return its node kind. *)
+val node_kind : t -> Node.t -> Node_kind.t
+
+(** If the tree has refs (such as tags or branches) attached to this node,
+    they will all be returned by [refs tree node]. The order of the refs in
+    the resulting list is not specified. *)
+val node_refs : t -> Node.t -> Ref_kind.t list
+
+module Descendance : sig
+  (** Descendance is a relation between 2 nodes of the tree. Matching on it is
+      useful for example when considering the status of a branch head with
+      respect to its upstream counterpart. *)
+  type t =
+    | Same
+    | Strict_ancestor
+    | Strict_descendant
+    | Unrelated
+  [@@deriving equal, enumerate, hash, sexp_of]
+end
+
+val descendance : t -> Node.t -> Node.t -> Descendance.t
 
 (** The size of a tree is defined as the number of nodes it currently holds. *)
 val size : t -> int
@@ -192,6 +189,11 @@ val greatest_common_ancestors : t -> Node.t list -> Node.t list
 
 (** {1 Log} *)
 
+(** Rebuild the log line that represented this node in the git log. This is
+    mainly used for tests and display purposes. *)
+val log_line : t -> Node.t -> Log.Line.t
+
+(** Rebuild the entire log. *)
 val log : t -> Log.t
 
 (** {1 Subtree} *)

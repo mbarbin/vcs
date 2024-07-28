@@ -44,13 +44,11 @@ let%expect_test "tree" =
   let refs = Vcs.Tree.refs tree in
   List.iter refs ~f:(fun { rev; ref_kind } ->
     let node = Vcs.Tree.find_ref tree ~ref_kind |> Option.value_exn ~here:[%here] in
-    let rev' = Vcs.Tree.Node.rev tree node in
+    let rev' = Vcs.Tree.rev tree node in
     require_equal [%here] (module Vcs.Rev) rev rev';
     let node' = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
     require_equal [%here] (module Vcs.Tree.Node) node node';
-    let parents =
-      Vcs.Tree.Node.parents tree node |> List.map ~f:(Vcs.Tree.Node.rev tree)
-    in
+    let parents = Vcs.Tree.parents tree node |> List.map ~f:(Vcs.Tree.rev tree) in
     print_s
       [%sexp { ref_kind : Vcs.Ref_kind.t; rev : Vcs.Rev.t; parents : Vcs.Rev.t list }]);
   [%expect
@@ -210,8 +208,8 @@ let%expect_test "tree" =
   List.iter [ main; subrepo; progress_bar; tag_0_0_1; tag_0_0_2 ] ~f:(fun node ->
     print_s
       [%sexp
-        { node = (Vcs.Tree.Node.rev tree node : Vcs.Rev.t)
-        ; refs = (Vcs.Tree.Node.refs tree node : Vcs.Ref_kind.t list)
+        { node = (Vcs.Tree.rev tree node : Vcs.Rev.t)
+        ; refs = (Vcs.Tree.node_refs tree node : Vcs.Ref_kind.t list)
         }]);
   [%expect
     {|
@@ -273,7 +271,7 @@ let%expect_test "tree" =
   let node_exn rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
   let ref_kind rev =
     let node = node_exn rev in
-    let line = Vcs.Tree.Node.log_line tree node in
+    let line = Vcs.Tree.log_line tree node in
     print_s [%sexp (line : Vcs.Log.Line.t)]
   in
   ref_kind tip;
@@ -295,8 +293,7 @@ let%expect_test "tree" =
   let parents rev =
     let node = node_exn rev in
     let parents =
-      Vcs.Tree.Node.parents tree node
-      |> List.map ~f:(fun node -> Vcs.Tree.Node.rev tree node)
+      Vcs.Tree.parents tree node |> List.map ~f:(fun node -> Vcs.Tree.rev tree node)
     in
     print_s [%sexp (parents : Vcs.Rev.t list)]
   in
@@ -313,8 +310,7 @@ let%expect_test "tree" =
   let test r1 r2 =
     print_s
       [%sexp
-        (Vcs.Tree.Node.descendance tree (node_exn r1) (node_exn r2)
-         : Vcs.Tree.Node.Descendance.t)]
+        (Vcs.Tree.descendance tree (node_exn r1) (node_exn r2) : Vcs.Tree.Descendance.t)]
   in
   test tip tip;
   [%expect {| Same |}];
@@ -474,13 +470,13 @@ let%expect_test "greatest_common_ancestors" =
     let gcas =
       Vcs.Tree.greatest_common_ancestors tree (List.map revs ~f:(fun rev -> node ~rev))
       |> List.map ~f:(fun node ->
-        match Vcs.Tree.Node.refs tree node with
+        match Vcs.Tree.node_refs tree node with
         | ref :: _ -> Vcs.Ref_kind.to_string ref
         | [] ->
           (* This branch is kept for debug if it is executed by mistake but we
              shouldn't exercise this case since this makes the tests results
              harder to understand. *)
-          (Vcs.Tree.Node.rev tree node |> Vcs.Rev.to_string) [@coverage off])
+          (Vcs.Tree.rev tree node |> Vcs.Rev.to_string) [@coverage off])
     in
     print_s [%sexp { gcas : string list }]
   in
@@ -532,6 +528,23 @@ let%expect_test "greatest_common_ancestors" =
   gcas [ alice_continue; bob_continue ];
   [%expect {| ((gcas (refs/tags/alice refs/tags/bob))) |}];
   ()
+;;
+
+(* In this part of the test, we want to monitor that the interface exposed by
+   [Vcs.Tree] is sufficient to write some algorithm on git trees. As an example
+   here, we are implementing from the user land a function that returns the set
+   of nodes that are ancestors of a given node. *)
+
+let ancestors tree node =
+  let rec loop acc to_visit =
+    match to_visit with
+    | [] -> acc
+    | node :: to_visit ->
+      if Set.mem acc node
+      then loop acc to_visit
+      else loop (Set.add acc node) (Vcs.Tree.prepend_parents tree node to_visit)
+  in
+  loop (Set.empty (module Vcs.Tree.Node)) [ node ]
 ;;
 
 let%expect_test "debug tree" =
@@ -614,7 +627,7 @@ let%expect_test "debug tree" =
   (* node_kind *)
   let node_kind rev =
     let node = node ~rev in
-    print_s [%sexp (Vcs.Tree.Node.node_kind tree node : Vcs.Tree.Node_kind.t)]
+    print_s [%sexp (Vcs.Tree.node_kind tree node : Vcs.Tree.Node_kind.t)]
   in
   node_kind r1;
   [%expect {| (Root (rev b4009f9c14eab4c931474f7647481517b4009f9c)) |}];
@@ -640,5 +653,19 @@ let%expect_test "debug tree" =
       (rev    f610a31854ad58032204ab00120776e4f610a318)
       (parent #3))
     |}];
+  (* ancestors *)
+  let print_ancestors rev =
+    print_s [%sexp (ancestors tree (node ~rev) : Set.M(Vcs.Tree.Node).t)]
+  in
+  print_ancestors r1;
+  [%expect {| (#0) |}];
+  print_ancestors r2;
+  [%expect {| (#0 #1) |}];
+  print_ancestors r3;
+  [%expect {| (#0 #2) |}];
+  print_ancestors m1;
+  [%expect {| (#0 #1 #2 #3) |}];
+  print_ancestors r4;
+  [%expect {| (#0 #1 #2 #3 #4) |}];
   ()
 ;;
