@@ -59,25 +59,24 @@ val set_refs : t -> refs:Refs.t -> unit
 (** Same as [set_refs], but one ref at a time. *)
 val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
 
-(** {1 Nodes} *)
+(** {1 Nodes}
+
+    The node itself doesn't carry much information, rather it is simply a
+    pointer to a location in the tree. Thus the functions operating on nodes
+    typically also require to be supplied the tree.
+
+    For convenience to users writing algorithms on git trees, the type [t]
+    exposes an efficient comparable interface, meaning you can e.g. manipulate
+    containers indexed by nodes.
+
+    {1:ordering_invariant Ordering invariant}
+
+    An invariant that holds in the structure and on which you can rely is that
+    the parents of a node are always inserted in the tree before the node itself
+    (from left to right), and thus if [n1 > n2] (using the node comparison
+    function) then you can be certain that [n1] is not a parent of [n2]. *)
 
 module Node : sig
-  (** The node itself doesn't carry much information, rather it is simply a
-      pointer to a location in the tree. Thus the functions operating on nodes
-      typically also require to be supplied the tree.
-
-      For convenience to users writing algorithms on git trees, the type [t]
-      exposes an efficient comparable interface, meaning you can e.g. manipulate
-      containers indexed by nodes.
-
-      {1:ordering_invariant Ordering invariant}
-
-      An invariant that holds in the structure and on which you can rely is that
-      the parents of a node are always inserted in the tree before the node
-      itself (from left to right), and thus if [n1 > n2] (using the node
-      comparison function) then you can be certain that [n1] is not a parent of
-      [n2]. *)
-
   type t [@@deriving compare, equal, hash, sexp_of]
 
   include Comparable.S with type t := t
