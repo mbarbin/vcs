@@ -313,14 +313,14 @@ let%expect_test "tree" =
         (Vcs.Tree.descendance tree (node_exn r1) (node_exn r2) : Vcs.Tree.Descendance.t)]
   in
   test tip tip;
-  [%expect {| Same |}];
+  [%expect {| Same_node |}];
   test tip root_node;
   [%expect {| Strict_descendant |}];
   test root_node tip;
   [%expect {| Strict_ancestor |}];
   let gh_page_tip = Vcs.Rev.v "7135b7f4790562e94d9122365478f0d39f5ffead" in
   test root_node gh_page_tip;
-  [%expect {| Unrelated |}];
+  [%expect {| Other |}];
   ()
 ;;
 

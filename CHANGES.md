@@ -7,6 +7,7 @@
 
 ### Changed
 
+- Rename `Vcs.Descendance.t` constructors for clarity.
 - Improve `Vcs.Tree.Node` interface.
 - Improve `Vcs.Tree.sexp_of_t` to help with debugging.
 - Rename `git_cli` library to `vcs_git_cli` for consistency.

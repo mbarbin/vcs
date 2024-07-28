@@ -320,21 +320,21 @@ module Descendance = struct
   [@@@coverage off]
 
   type t =
-    | Same
+    | Same_node
     | Strict_ancestor
     | Strict_descendant
-    | Unrelated
+    | Other
   [@@deriving equal, enumerate, hash, sexp_of]
 end
 
 let descendance t a b : Descendance.t =
   if a = b
-  then Same
+  then Same_node
   else if is_strict_ancestor t ~ancestor:a ~descendant:b
   then Strict_ancestor
   else if is_strict_ancestor t ~ancestor:b ~descendant:a
   then Strict_descendant
-  else Unrelated
+  else Other
 ;;
 
 let tips t =

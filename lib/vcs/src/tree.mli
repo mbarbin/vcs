@@ -125,10 +125,10 @@ module Descendance : sig
       useful for example when considering the status of a branch head with
       respect to its upstream counterpart. *)
   type t =
-    | Same
+    | Same_node
     | Strict_ancestor
     | Strict_descendant
-    | Unrelated
+    | Other
   [@@deriving equal, enumerate, hash, sexp_of]
 end
 
