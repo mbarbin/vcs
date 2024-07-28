@@ -1,11 +1,17 @@
-# vcs
+<h1 align="center">
+  <p align="center">A Versatile OCaml Library for Git Interaction</p>
+  <img
+    src="./doc/static/img/ocaml-vcs.png?raw=true"
+    width='216'
+    alt="Logo"
+  />
+</h1>
 
-[![CI Status](https://github.com/mbarbin/vcs/workflows/ci/badge.svg)](https://github.com/mbarbin/vcs/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/mbarbin/vcs/badge.svg?branch=main)](https://coveralls.io/github/mbarbin/vcs?branch=main)
-
-A Versatile OCaml Library for Git Interaction
-
-## Overview
+<p align="center">
+  <a href="https://github.com/mbarbin/vcs/actions/workflows/ci.yml"><img src="https://github.com/mbarbin/vcs/workflows/ci/badge.svg" alt="CI Status"/></a>
+  <a href="https://coveralls.io/github/mbarbin/vcs?branch=main"><img src="https://coveralls.io/repos/github/mbarbin/vcs/badge.svg?branch=main" alt="Coverage Status"/></a>
+  <a href="https://github.com/mbarbin/vcs/actions/workflows/deploy-doc.yml"><img src="https://github.com/mbarbin/vcs/workflows/deploy-doc/badge.svg" alt="Deploy Doc Status"/></a>
+</p>
 
 Vcs is an OCaml library for interacting with Git repositories. It provides a type-safe and direct-style API to programmatically perform Git operations - ranging from creating commits and branches, to loading and navigating commit trees in memory, computing diffs between revisions, and more.
 
