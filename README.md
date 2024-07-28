@@ -3,7 +3,7 @@
 [![CI Status](https://github.com/mbarbin/vcs/workflows/ci/badge.svg)](https://github.com/mbarbin/vcs/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/mbarbin/vcs/badge.svg?branch=main)](https://coveralls.io/github/mbarbin/vcs?branch=main)
 
-A versatile OCaml library for Git interaction
+A Versatile OCaml Library for Git Interaction
 
 ## Overview
 
