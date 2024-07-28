@@ -303,11 +303,14 @@ let is_strict_ancestor t ~ancestor ~descendant =
        | Equal -> true
        | Greater -> loop to_visit
        | Less ->
-         if Hash_set.mem visited node
-         then loop to_visit
-         else (
-           Hash_set.add visited node;
-           loop (Node0.parents t node @ to_visit)))
+         let to_visit =
+           if Hash_set.mem visited node
+           then to_visit
+           else (
+             Hash_set.add visited node;
+             Node0.prepend_parents t node to_visit)
+         in
+         loop to_visit)
   in
   ancestor < descendant && loop [ descendant ]
 ;;
