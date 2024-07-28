@@ -88,10 +88,22 @@ end
 module Node : sig
   (** The node itself doesn't carry much information, rather it is simply a
       pointer to a location in the tree. Thus the functions of this interface
-      typically also require to be supplied the tree. *)
+      typically also require to be supplied the tree.
+
+      For convenience to users writing algorithms on git trees, the type [t]
+      exposes an efficient comparable interface, meaning you can e.g. manipulate
+      containers indexed by nodes.
+
+      An invariant that holds in the structure and on which you can rely is that
+      the parents of a node are always inserted in the tree before the node
+      itself (from left to right), and thus if [n1 > n2] (using the node
+      comparison function) then you can be certain that [n1] is not a parent of
+      [n2]. *)
 
   type tree := t
-  type t = node [@@deriving equal, sexp_of]
+  type t = node [@@deriving compare, equal, hash, sexp_of]
+
+  include Comparable.S with type t := t
 
   val rev : tree -> t -> Rev.t
 

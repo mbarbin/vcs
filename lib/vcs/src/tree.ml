@@ -123,8 +123,8 @@ let size t = Array.length t.nodes
 
 module Node0 = struct
   include Node_T
+  include Comparable.Make (Node_T)
 
-  let _ = hash_fold_t
   let rev t node = Node_kind.rev t.nodes.(node)
 
   let parents t node =
