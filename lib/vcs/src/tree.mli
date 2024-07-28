@@ -36,7 +36,7 @@ type node
 
 type t [@@deriving sexp_of]
 
-(** create an empty tree that has no nodes. *)
+(** Create an empty tree that has no nodes. *)
 val create : unit -> t
 
 (** {1 Initializing the tree}
@@ -124,6 +124,9 @@ module Node : sig
 
   val descendance : tree -> t -> t -> Descendance.t
 end
+
+(** The size of a tree is defined as the number of nodes it currently holds. *)
+val size : t -> int
 
 (** {1 Refs} *)
 

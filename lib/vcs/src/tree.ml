@@ -119,6 +119,8 @@ let create () =
   }
 ;;
 
+let size t = Array.length t.nodes
+
 module Node0 = struct
   include Node_T
 
