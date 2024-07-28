@@ -122,7 +122,7 @@ let create () =
   }
 ;;
 
-let size t = Array.length t.nodes
+let node_count t = Array.length t.nodes
 let node_kind t node = t.nodes.(node)
 let ( .$() ) = node_kind
 let rev t node = Node_kind.rev t.$(node)

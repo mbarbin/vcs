@@ -134,8 +134,8 @@ end
 
 val descendance : t -> Node.t -> Node.t -> Descendance.t
 
-(** The size of a tree is defined as the number of nodes it currently holds. *)
-val size : t -> int
+(** Return the number of nodes the tree currently holds. *)
+val node_count : t -> int
 
 (** {1 Refs} *)
 

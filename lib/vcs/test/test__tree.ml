@@ -35,11 +35,11 @@ let%expect_test "tree" =
     Vcs_git_cli.Refs.parse_lines_exn ~lines
   in
   let tree = Vcs.Tree.create () in
-  print_s [%sexp { size = (Vcs.Tree.size tree : int) }];
-  [%expect {| ((size 0)) |}];
+  print_s [%sexp { node_count = (Vcs.Tree.node_count tree : int) }];
+  [%expect {| ((node_count 0)) |}];
   Vcs.Tree.add_nodes tree ~log;
-  print_s [%sexp { size = (Vcs.Tree.size tree : int) }];
-  [%expect {| ((size 180)) |}];
+  print_s [%sexp { node_count = (Vcs.Tree.node_count tree : int) }];
+  [%expect {| ((node_count 180)) |}];
   List.iter refs ~f:(fun { rev; ref_kind } -> Vcs.Tree.set_ref tree ~rev ~ref_kind);
   let refs = Vcs.Tree.refs tree in
   List.iter refs ~f:(fun { rev; ref_kind } ->
@@ -621,9 +621,9 @@ let%expect_test "debug tree" =
              (remote_name origin)
              (branch_name main)))))))))
     |}];
-  (* size *)
-  print_s [%sexp { size = (Vcs.Tree.size tree : int) }];
-  [%expect {| ((size 5)) |}];
+  (* node_count *)
+  print_s [%sexp { node_count = (Vcs.Tree.node_count tree : int) }];
+  [%expect {| ((node_count 5)) |}];
   (* node_kind *)
   let node_kind rev =
     let node = node ~rev in
