@@ -153,16 +153,16 @@ let log_line t node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.rev
    [visited] is taken as an input so we can re-use the same array multiple
    times, rather than re-allocating it. *)
 let iter_ancestors t ~visited node ~f =
-  Array.fill visited ~pos:0 ~len:(Array.length visited) false;
+  Bit_vector.reset visited false;
   let rec loop to_visit =
     match to_visit with
     | [] -> ()
     | node :: to_visit ->
       let to_visit =
-        if visited.(node)
+        if Bit_vector.get visited node
         then to_visit
         else (
-          visited.(node) <- true;
+          Bit_vector.set visited node true;
           f node;
           prepend_parents t node to_visit)
       in
@@ -176,22 +176,22 @@ let greatest_common_ancestors t nodes =
   | [] -> []
   | [ node ] -> [ node ]
   | node1 :: nodes ->
-    let visited = Array.create ~len:(Array.length t.nodes) false in
+    let node_count = Array.length t.nodes in
+    let visited = Bit_vector.create ~len:node_count false in
     let common_ancestors =
       iter_ancestors t ~visited node1 ~f:(fun _ -> ());
-      Array.copy visited
+      Bit_vector.copy visited
     in
     List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
-      Array.iteri common_ancestors ~f:(fun i b ->
-        common_ancestors.(i) <- b && visited.(i)));
-    for i = Array.length common_ancestors - 1 downto 0 do
-      if common_ancestors.(i)
+      Bit_vector.bw_and_in_place ~mutates:common_ancestors visited);
+    for i = node_count - 1 downto 0 do
+      if Bit_vector.get common_ancestors i
       then
         iter_ancestors t ~visited i ~f:(fun j ->
-          if j <> i then common_ancestors.(j) <- false)
+          if j <> i then Bit_vector.set common_ancestors j false)
     done;
-    Array.filter_mapi common_ancestors ~f:(fun i b -> if b then Some i else None)
+    Bit_vector.filter_mapi common_ancestors ~f:(fun i b -> if b then Some i else None)
     |> Array.to_list
 ;;
 
@@ -293,7 +293,7 @@ let roots t =
 (* Pre condition: ancestor < descendant. *)
 let is_strict_ancestor_internal t ~ancestor ~descendant =
   assert (ancestor < descendant);
-  let visited = Array.create ~len:(descendant - ancestor + 1) false in
+  let visited = Bit_vector.create ~len:(descendant - ancestor + 1) false in
   let rec loop to_visit =
     match to_visit with
     | [] -> false
@@ -304,10 +304,10 @@ let is_strict_ancestor_internal t ~ancestor ~descendant =
        | Less ->
          let to_visit =
            let visited_index = node - ancestor in
-           if visited.(visited_index)
+           if Bit_vector.get visited visited_index
            then to_visit
            else (
-             visited.(visited_index) <- true;
+             Bit_vector.set visited visited_index true;
              prepend_parents t node to_visit)
          in
          loop to_visit)
