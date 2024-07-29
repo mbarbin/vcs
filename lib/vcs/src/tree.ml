@@ -290,8 +290,10 @@ let roots t =
   |> Array.to_list
 ;;
 
-let is_strict_ancestor t ~ancestor ~descendant =
-  let visited = Hash_set.create (module Int) in
+(* Pre condition: ancestor < descendant. *)
+let is_strict_ancestor_internal t ~ancestor ~descendant =
+  assert (ancestor < descendant);
+  let visited = Array.create ~len:(descendant - ancestor + 1) false in
   let rec loop to_visit =
     match to_visit with
     | [] -> false
@@ -301,15 +303,20 @@ let is_strict_ancestor t ~ancestor ~descendant =
        | Greater -> loop to_visit
        | Less ->
          let to_visit =
-           if Hash_set.mem visited node
+           let visited_index = node - ancestor in
+           if visited.(visited_index)
            then to_visit
            else (
-             Hash_set.add visited node;
+             visited.(visited_index) <- true;
              prepend_parents t node to_visit)
          in
          loop to_visit)
   in
-  ancestor < descendant && loop [ descendant ]
+  loop [ descendant ]
+;;
+
+let is_strict_ancestor t ~ancestor ~descendant =
+  ancestor < descendant && is_strict_ancestor_internal t ~ancestor ~descendant
 ;;
 
 let is_ancestor_or_equal t ~ancestor ~descendant =
