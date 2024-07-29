@@ -345,16 +345,16 @@ let descendance t a b : Descendance.t =
 ;;
 
 let tips t =
-  let has_children = Hash_set.create (module Node) in
+  let has_children = Bit_vector.create ~len:(node_count t) false in
   Array.iter t.nodes ~f:(fun node ->
     match node with
     | Root _ -> ()
-    | Commit { parent; _ } -> Hash_set.add has_children parent
+    | Commit { parent; _ } -> Bit_vector.set has_children parent true
     | Merge { parent1; parent2; _ } ->
-      Hash_set.add has_children parent1;
-      Hash_set.add has_children parent2);
+      Bit_vector.set has_children parent1 true;
+      Bit_vector.set has_children parent2 true);
   Array.filter_mapi t.nodes ~f:(fun i _ ->
-    if Hash_set.mem has_children i then None else Some i)
+    if Bit_vector.get has_children i then None else Some i)
   |> Array.to_list
 ;;
 
