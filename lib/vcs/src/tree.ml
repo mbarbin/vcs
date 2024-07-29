@@ -335,13 +335,16 @@ module Descendance = struct
 end
 
 let descendance t a b : Descendance.t =
-  if a = b
-  then Same_node
-  else if is_strict_ancestor t ~ancestor:a ~descendant:b
-  then Strict_ancestor
-  else if is_strict_ancestor t ~ancestor:b ~descendant:a
-  then Strict_descendant
-  else Other
+  match Int.compare a b |> Ordering.of_int with
+  | Equal -> Same_node
+  | Less ->
+    if is_strict_ancestor_internal t ~ancestor:a ~descendant:b
+    then Strict_ancestor
+    else Other
+  | Greater ->
+    if is_strict_ancestor_internal t ~ancestor:b ~descendant:a
+    then Strict_descendant
+    else Other
 ;;
 
 let tips t =
