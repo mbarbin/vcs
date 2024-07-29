@@ -1,6 +1,6 @@
 # Testing the Git Command Line Interface Parsing Logic
 
-This directory contains tests for the parsing logic implemented in the `Git_cli` module. The focus here is on validating the parsing of specific command outputs, rather than testing the entire process invocation. The latter is covered in the `Vcs_git_test` module.
+This directory contains tests for the parsing logic implemented in the `Vcs_git_cli` module. The focus here is on validating the parsing of specific command outputs, rather than testing the entire process invocation. The latter is covered in the `Vcs_git_test` module.
 
 ## Testing Pattern
 
