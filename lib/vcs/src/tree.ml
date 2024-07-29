@@ -176,7 +176,7 @@ let greatest_common_ancestors t nodes =
   | [] -> []
   | [ node ] -> [ node ]
   | node1 :: nodes ->
-    let visited = Array.map t.nodes ~f:(Fn.const false) in
+    let visited = Array.create ~len:(Array.length t.nodes) false in
     let common_ancestors =
       iter_ancestors t ~visited node1 ~f:(fun _ -> ());
       Array.copy visited
