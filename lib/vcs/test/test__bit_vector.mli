@@ -18,22 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-(** A naive implementation of mutable bit vectors.
-
-    At some point, with some benchmarks for sanity checks, it seems desirable to
-    switch to a less naive implementation. *)
-
-type t [@@deriving sexp_of]
-
-val create : len:int -> bool -> t
-val length : t -> int
-val set : t -> int -> bool -> unit
-val get : t -> int -> bool
-val reset : t -> bool -> unit
-val copy : t -> t
-val filter_mapi : t -> f:(int -> bool -> 'a option) -> 'a Array.t
-
-(** {1 In place bitwise operations} *)
-
-val bw_and_in_place : mutates:t -> t -> unit

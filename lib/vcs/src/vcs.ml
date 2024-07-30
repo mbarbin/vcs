@@ -56,5 +56,6 @@ include Exn0
 include Vcs0
 
 module Private = struct
+  module Bit_vector = Bit_vector
   module Validated_string = Validated_string
 end

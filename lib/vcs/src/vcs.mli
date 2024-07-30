@@ -289,5 +289,6 @@ module Private : sig
 
       Use at your own risk/convenience! *)
 
+  module Bit_vector = Bit_vector
   module Validated_string = Validated_string
 end

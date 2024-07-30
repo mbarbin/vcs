@@ -19,26 +19,31 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t = bool array
+module Bit_vector = Vcs.Private.Bit_vector
 
-let sexp_of_t t =
-  let b = Bytes.create (Array.length t) in
-  Array.iteri t ~f:(fun i x -> Bytes.set b i (if x then '1' else '0'));
-  Sexp.Atom (Bytes.to_string b)
-;;
-
-let create ~len value : t = Array.create ~len value
-let length = Array.length
-let set = Array.set
-let get = Array.get
-let reset t value = Array.fill t ~pos:0 ~len:(Array.length t) value
-let copy = Array.copy
-let filter_mapi = Array.filter_mapi
-
-let bw_and_in_place ~mutates other =
-  if Array.length mutates <> Array.length other
-  then invalid_arg "Bit_vector.bw_and_in_place";
-  for i = 0 to Array.length mutates - 1 do
-    mutates.(i) <- mutates.(i) && other.(i)
-  done
+let%expect_test "bw_and_inplace" =
+  let v0 = Bit_vector.create ~len:10 true in
+  print_s [%sexp (v0 : Bit_vector.t)];
+  [%expect {| 1111111111 |}];
+  let v1 = Bit_vector.create ~len:10 false in
+  print_s [%sexp (v1 : Bit_vector.t)];
+  [%expect {| 0000000000 |}];
+  for i = 0 to Bit_vector.length v1 - 1 do
+    if i % 2 = 0 then Bit_vector.set v1 i true
+  done;
+  Bit_vector.bw_and_in_place ~mutates:v0 v1;
+  print_s [%sexp (v0 : Bit_vector.t)];
+  [%expect {| 1010101010 |}];
+  print_s [%sexp (v1 : Bit_vector.t)];
+  [%expect {| 1010101010 |}];
+  Bit_vector.reset v1 false;
+  for i = 0 to Bit_vector.length v1 - 1 do
+    if i % 3 = 0 then Bit_vector.set v1 i true
+  done;
+  Bit_vector.bw_and_in_place ~mutates:v0 v1;
+  print_s [%sexp (v0 : Bit_vector.t)];
+  [%expect {| 1000001000 |}];
+  print_s [%sexp (v1 : Bit_vector.t)];
+  [%expect {| 1001001001 |}];
+  ()
 ;;
