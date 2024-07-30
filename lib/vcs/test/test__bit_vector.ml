@@ -45,5 +45,8 @@ let%expect_test "bw_and_inplace" =
   [%expect {| 1000001000 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 1001001001 |}];
+  let vsmall = Bit_vector.create ~len:5 true in
+  require_does_raise [%here] (fun () -> Bit_vector.bw_and_in_place ~mutates:v0 vsmall);
+  [%expect {| (Invalid_argument Bit_vector.bw_and_in_place) |}];
   ()
 ;;

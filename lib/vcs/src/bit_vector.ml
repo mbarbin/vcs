@@ -37,7 +37,7 @@ let filter_mapi = Array.filter_mapi
 
 let bw_and_in_place ~mutates other =
   if Array.length mutates <> Array.length other
-  then invalid_arg "Bit_vector.bw_and_in_place";
+  then invalid_arg "Bit_vector.bw_and_in_place" [@coverage off];
   for i = 0 to Array.length mutates - 1 do
     mutates.(i) <- mutates.(i) && other.(i)
   done
