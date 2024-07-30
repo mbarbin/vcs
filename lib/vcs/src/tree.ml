@@ -21,7 +21,11 @@
 
 module Node = struct
   module T0 = struct
+    [@@@coverage off]
+
     type t = int [@@deriving compare, hash]
+
+    [@@@coverage on]
 
     let sexp_of_t i = Sexp.Atom ("#" ^ Int.to_string_hum i)
   end

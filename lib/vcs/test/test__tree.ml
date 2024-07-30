@@ -321,6 +321,8 @@ let%expect_test "tree" =
   let gh_page_tip = Vcs.Rev.v "7135b7f4790562e94d9122365478f0d39f5ffead" in
   test root_node gh_page_tip;
   [%expect {| Other |}];
+  test gh_page_tip root_node;
+  [%expect {| Other |}];
   ()
 ;;
 
