@@ -135,6 +135,8 @@
   (ppxlib
    (>= 0.33))
   (vcs
+   (= :version))
+  (vcs-git
    (= :version))))
 
 (package
@@ -201,6 +203,8 @@
   (ppxlib
    (>= 0.33))
   (vcs
+   (= :version))
+  (vcs-git
    (= :version))
   (vcs-param
    (= :version))
