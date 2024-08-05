@@ -71,7 +71,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.4))
+   (>= 0.0.7))
   (vcs-private-libs-base
    (= :version))))
 
@@ -323,7 +323,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.4))
+   (>= 0.0.7))
   (vcs
    (= :version))
   (vcs-git-cli
@@ -386,7 +386,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.4))
+   (>= 0.0.7))
   (vcs
    (= :version))
   (vcs-git-cli
@@ -472,7 +472,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.4))
+   (>= 0.0.7))
   (re
    (>= 1.8.0))
   (sexp_pretty
@@ -670,6 +670,6 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.4))
+   (>= 0.0.7))
   (vcs-private-libs-base
    (= :version))))
