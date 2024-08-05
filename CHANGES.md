@@ -1,3 +1,11 @@
+## 0.0.4 (2024-08-05)
+
+Release a version compatible with the latest renames in the provider library.
+
+### Changed
+
+- Upgrade `provider` to `0.0.7`.
+
 ## 0.0.3 (2024-07-28)
 
 ### Added
