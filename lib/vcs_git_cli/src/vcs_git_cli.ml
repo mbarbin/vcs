@@ -76,8 +76,8 @@ module Make (Runtime : Runtime.S) = struct
     module Show = Show.Make (Runtime)
   end
 
-  let interface () : (t, [> Trait.t ]) Provider.Interface.t =
-    Provider.Interface.make
+  let handler () : (t, [> Trait.t ]) Provider.Handler.t =
+    Provider.Handler.make
       [ Provider.Trait.implement Vcs.Trait.Add ~impl:(module Impl.Add)
       ; Provider.Trait.implement Vcs.Trait.Branch ~impl:(module Impl.Branch)
       ; Provider.Trait.implement Vcs.Trait.Commit ~impl:(module Impl.Commit)

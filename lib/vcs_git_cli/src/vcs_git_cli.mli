@@ -69,7 +69,7 @@ end
 module Make (Runtime : Runtime.S) : sig
   type t = Runtime.t
 
-  val interface : unit -> (t, [> Trait.t ]) Provider.Interface.t
+  val handler : unit -> (t, [> Trait.t ]) Provider.Handler.t
 
   (** {1 Individual implementations} *)
 

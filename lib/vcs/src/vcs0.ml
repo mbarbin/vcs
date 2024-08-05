@@ -28,54 +28,54 @@ let of_result ~step = function
   | Error error -> raise (Exn0.E (Err.init error ~step:(force step)))
 ;;
 
-let load_file (Provider.T { t; interface }) ~path =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.File_system) in
+let load_file (Provider.T { t; handler }) ~path =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system) in
   M.load_file t ~path
   |> of_result ~step:(lazy [%sexp "Vcs.load_file", { path : Absolute_path.t }])
 ;;
 
-let save_file ?perms (Provider.T { t; interface }) ~path ~file_contents =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.File_system) in
+let save_file ?perms (Provider.T { t; handler }) ~path ~file_contents =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system) in
   M.save_file ?perms t ~path ~file_contents
   |> of_result
        ~step:
          (lazy [%sexp "Vcs.save_file", { perms : int option; path : Absolute_path.t }])
 ;;
 
-let add (Provider.T { t; interface }) ~repo_root ~path =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Add) in
+let add (Provider.T { t; handler }) ~repo_root ~path =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Add) in
   M.add t ~repo_root ~path
   |> of_result
        ~step:(lazy [%sexp "Vcs.add", { repo_root : Repo_root.t; path : Path_in_repo.t }])
 ;;
 
-let init (Provider.T { t; interface }) ~path =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Init) in
+let init (Provider.T { t; handler }) ~path =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Init) in
   M.init t ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
 ;;
 
-let current_branch (Provider.T { t; interface }) ~repo_root =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Rev_parse) in
+let current_branch (Provider.T { t; handler }) ~repo_root =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
   M.current_branch t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
 ;;
 
-let current_revision (Provider.T { t; interface }) ~repo_root =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Rev_parse) in
+let current_revision (Provider.T { t; handler }) ~repo_root =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
   M.current_revision t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_revision", { repo_root : Repo_root.t }])
 ;;
 
-let commit (Provider.T { t; interface }) ~repo_root ~commit_message =
-  let module R = (val Provider.Interface.lookup interface ~trait:Trait.Rev_parse) in
-  let module C = (val Provider.Interface.lookup interface ~trait:Trait.Commit) in
+let commit (Provider.T { t; handler }) ~repo_root ~commit_message =
+  let module R = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
+  let module C = (val Provider.Handler.lookup handler ~trait:Trait.Commit) in
   (let%bind () = C.commit t ~repo_root ~commit_message in
    R.current_revision t ~repo_root)
   |> of_result ~step:(lazy [%sexp "Vcs.commit", { repo_root : Repo_root.t }])
 ;;
 
-let ls_files (Provider.T { t; interface }) ~repo_root ~below =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Ls_files) in
+let ls_files (Provider.T { t; handler }) ~repo_root ~below =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Ls_files) in
   M.ls_files t ~repo_root ~below
   |> of_result
        ~step:
@@ -83,8 +83,8 @@ let ls_files (Provider.T { t; interface }) ~repo_root ~below =
            [%sexp "Vcs.ls_files", { repo_root : Repo_root.t; below : Path_in_repo.t }])
 ;;
 
-let rename_current_branch (Provider.T { t; interface }) ~repo_root ~to_ =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Branch) in
+let rename_current_branch (Provider.T { t; handler }) ~repo_root ~to_ =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Branch) in
   M.rename_current_branch t ~repo_root ~to_
   |> of_result
        ~step:
@@ -93,8 +93,8 @@ let rename_current_branch (Provider.T { t; interface }) ~repo_root ~to_ =
              "Vcs.rename_current_branch", { repo_root : Repo_root.t; to_ : Branch_name.t }])
 ;;
 
-let name_status (Provider.T { t; interface }) ~repo_root ~changed =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Name_status) in
+let name_status (Provider.T { t; handler }) ~repo_root ~changed =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Name_status) in
   M.diff t ~repo_root ~changed
   |> of_result
        ~step:
@@ -104,8 +104,8 @@ let name_status (Provider.T { t; interface }) ~repo_root ~changed =
              , { repo_root : Repo_root.t; changed : Name_status.Changed.t }])
 ;;
 
-let num_status (Provider.T { t; interface }) ~repo_root ~changed =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Num_status) in
+let num_status (Provider.T { t; handler }) ~repo_root ~changed =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Num_status) in
   M.diff t ~repo_root ~changed
   |> of_result
        ~step:
@@ -114,21 +114,21 @@ let num_status (Provider.T { t; interface }) ~repo_root ~changed =
              "Vcs.num_status", { repo_root : Repo_root.t; changed : Num_status.Changed.t }])
 ;;
 
-let log (Provider.T { t; interface }) ~repo_root =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Log) in
+let log (Provider.T { t; handler }) ~repo_root =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Log) in
   M.all t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.log", { repo_root : Repo_root.t }])
 ;;
 
-let refs (Provider.T { t; interface }) ~repo_root =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Refs) in
+let refs (Provider.T { t; handler }) ~repo_root =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Refs) in
   M.show_ref t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.refs", { repo_root : Repo_root.t }])
 ;;
 
-let tree (Provider.T { t; interface }) ~repo_root =
-  let module L = (val Provider.Interface.lookup interface ~trait:Trait.Log) in
-  let module R = (val Provider.Interface.lookup interface ~trait:Trait.Refs) in
+let tree (Provider.T { t; handler }) ~repo_root =
+  let module L = (val Provider.Handler.lookup handler ~trait:Trait.Log) in
+  let module R = (val Provider.Handler.lookup handler ~trait:Trait.Refs) in
   let tree = Tree.create () in
   (let%bind log = L.all t ~repo_root in
    let%bind refs = R.show_ref t ~repo_root in
@@ -138,8 +138,8 @@ let tree (Provider.T { t; interface }) ~repo_root =
   |> of_result ~step:(lazy [%sexp "Vcs.tree", { repo_root : Repo_root.t }])
 ;;
 
-let set_user_name (Provider.T { t; interface }) ~repo_root ~user_name =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Config) in
+let set_user_name (Provider.T { t; handler }) ~repo_root ~user_name =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Config) in
   M.set_user_name t ~repo_root ~user_name
   |> of_result
        ~step:
@@ -148,8 +148,8 @@ let set_user_name (Provider.T { t; interface }) ~repo_root ~user_name =
              "Vcs.set_user_name", { repo_root : Repo_root.t; user_name : User_name.t }])
 ;;
 
-let set_user_email (Provider.T { t; interface }) ~repo_root ~user_email =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Config) in
+let set_user_email (Provider.T { t; handler }) ~repo_root ~user_email =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Config) in
   M.set_user_email t ~repo_root ~user_email
   |> of_result
        ~step:
@@ -158,8 +158,8 @@ let set_user_email (Provider.T { t; interface }) ~repo_root ~user_email =
              "Vcs.set_user_email", { repo_root : Repo_root.t; user_email : User_email.t }])
 ;;
 
-let show_file_at_rev (Provider.T { t; interface }) ~repo_root ~rev ~path =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Show) in
+let show_file_at_rev (Provider.T { t; handler }) ~repo_root ~rev ~path =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Show) in
   M.show_file_at_rev t ~repo_root ~rev ~path
   |> of_result
        ~step:
@@ -179,8 +179,8 @@ let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
       }]
 ;;
 
-let git ?env ?run_in_subdir (Provider.T { t; interface }) ~repo_root ~args ~f =
-  let module M = (val Provider.Interface.lookup interface ~trait:Trait.Git) in
+let git ?env ?run_in_subdir (Provider.T { t; handler }) ~repo_root ~args ~f =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Git) in
   let cwd =
     Repo_root.append repo_root (Option.value run_in_subdir ~default:Path_in_repo.root)
   in
@@ -192,12 +192,12 @@ module Private = struct
   let git
     ?env
     ?(run_in_subdir = Path_in_repo.root)
-    (Provider.T { t; interface })
+    (Provider.T { t; handler })
     ~repo_root
     ~args
     ~f
     =
-    let module M = (val Provider.Interface.lookup interface ~trait:Trait.Git) in
+    let module M = (val Provider.Handler.lookup handler ~trait:Trait.Git) in
     let cwd = Repo_root.append repo_root run_in_subdir in
     M.git ?env t ~cwd ~args ~f
   ;;
