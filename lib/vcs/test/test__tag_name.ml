@@ -45,3 +45,11 @@ let%expect_test "of_string" =
   [%expect {| (Error ("Tag_name.of_string: invalid entry" "")) |}];
   ()
 ;;
+
+let%expect_test "no ~" =
+  (* At one point we were tempted to allow '~' as a valid tag character, since
+     it is used as part of preview version names such as [0.1.0~preview].
+     However, this is rejected by git itself so we shouldn't allow it. *)
+  require_does_raise [%here] (fun () -> Vcs.Tag_name.v "1.4.5~preview-0.1");
+  [%expect {| ("Tag_name.of_string: invalid entry" 1.4.5~preview-0.1) |}]
+;;

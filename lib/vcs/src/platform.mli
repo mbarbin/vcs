@@ -33,4 +33,4 @@ include Comparable.S with type t := t
     variant constructor. For example, ["GitHub"] is typically spelled with an
     uppercase 'H'. This is suitable for inclusion into error messages, user
     facing logs, etc. *)
-val to_string_hum : t -> string
+val to_string : t -> string

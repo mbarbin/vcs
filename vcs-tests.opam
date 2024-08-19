@@ -13,7 +13,6 @@ depends: [
   "base" {>= "v0.17" & < "v0.18"}
   "base_quickcheck" {>= "v0.17" & < "v0.18"}
   "bisect_ppx" {dev & >= "2.8.3"}
-  "command-unix-for-opam" {>= "0.0.2"}
   "core" {>= "v0.17" & < "v0.18"}
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}
@@ -31,17 +30,17 @@ depends: [
   "ppx_sexp_message" {>= "v0.17" & < "v0.18"}
   "ppx_sexp_value" {>= "v0.17" & < "v0.18"}
   "ppxlib" {>= "0.33"}
-  "provider" {>= "0.0.7"}
+  "provider" {>= "0.0.8"}
   "re" {>= "1.8.0"}
   "sexp_pretty" {>= "v0.17" & < "v0.18"}
   "sherlodoc" {with-doc & >= "0.2"}
   "stdio" {>= "v0.17" & < "v0.18"}
   "vcs" {= version}
+  "vcs-arg" {= version}
   "vcs-command" {= version}
   "vcs-git" {= version}
   "vcs-git-blocking" {= version}
   "vcs-git-cli" {= version}
-  "vcs-param" {= version}
   "vcs-private-libs-base" {= version}
   "vcs-private-libs-eio" {= version}
   "vcs-test-helpers" {= version}

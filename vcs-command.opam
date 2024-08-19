@@ -12,8 +12,9 @@ depends: [
   "ocaml" {>= "5.2"}
   "base" {>= "v0.17" & < "v0.18"}
   "bisect_ppx" {dev & >= "2.8.3"}
-  "command-unix-for-opam" {>= "0.0.2"}
-  "core" {>= "v0.17" & < "v0.18"}
+  "cmdliner" {= "1.3.0"}
+  "commandlang" {>= "0.0.1~preview-0.1"}
+  "commandlang-to-cmdliner" {>= "0.0.1~preview-0.1"}
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}
   "fpath" {>= "0.7.3"}
@@ -28,8 +29,8 @@ depends: [
   "ppx_sexp_value" {>= "v0.17" & < "v0.18"}
   "ppxlib" {>= "0.33"}
   "vcs" {= version}
+  "vcs-arg" {= version}
   "vcs-git" {= version}
-  "vcs-param" {= version}
   "vcs-private-libs-eio" {= version}
   "odoc" {with-doc}
 ]

@@ -1,6 +1,6 @@
 (library
- (name vcs_param_test)
- (public_name vcs-tests.vcs_param_test)
+ (name vcs_arg_test)
+ (public_name vcs-tests.vcs_arg_test)
  (inline_tests)
  (flags
   :standard
@@ -14,7 +14,7 @@
   Expect_test_helpers
   -open
   Fpath_base)
- (libraries base eio eio_main expect_test_helpers fpath fpath-base vcs_param)
+ (libraries base eio eio_main expect_test_helpers fpath fpath-base vcs_arg)
  (instrumentation
   (backend bisect_ppx))
  (lint

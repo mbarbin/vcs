@@ -28,6 +28,6 @@ end
 include T
 include Comparable.Make (T)
 
-let to_string_hum = function
+let to_string = function
   | GitHub -> "GitHub"
 ;;

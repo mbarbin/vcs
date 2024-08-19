@@ -23,7 +23,7 @@ depends: [
   "ppx_sexp_conv" {>= "v0.17" & < "v0.18"}
   "ppx_sexp_value" {>= "v0.17" & < "v0.18"}
   "ppxlib" {>= "0.33"}
-  "provider" {>= "0.0.7"}
+  "provider" {>= "0.0.8"}
   "vcs" {= version}
   "vcs-git-cli" {= version}
   "odoc" {with-doc}

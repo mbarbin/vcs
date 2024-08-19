@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Common command line parameters in use in vcs. *)
+(** Common command line arguments in use in vcs. *)
 
 (** {1 Initialization} *)
 
@@ -27,10 +27,8 @@ module Config : sig
   type t
 
   val default : t
-  val param : t Command.Param.t
+  val arg : t Command.Arg.t
 end
-
-val config : Config.t Command.Param.t
 
 module Context : sig
   type t
@@ -58,53 +56,53 @@ val initialize
   -> config:Config.t
   -> Initialized.t Or_error.t
 
-(** {1 Params}
+(** {1 Args}
 
-    Some parameters may only be created under a certain context, in that case
-    they're exposed wrapped under a resolvable type. Otherwise they can be
-    exposed as command params directly.
+    Some command line arguments may only be created under a certain context, in
+    that case they're exposed wrapped under a resolvable type. Otherwise they
+    can be exposed as command arguments directly.
 
-    If not otherwise specified, the parameters are resolved under the current
-    context, and are required. Optional parameters ends with [_optional]. *)
+    If not otherwise specified, the arguments are resolved under the current
+    context, and are required. Optional arguments ends with ["_opt"]. *)
 
-(** A ['a Vcs_param.t] is a command line parameter that produces a value of type
+(** A ['a t] is a command line argument parser that produces a value of type
     ['a] under the initialized context. *)
 type 'a t
 
 (** To be called in the body of the command, after initialization. *)
 val resolve : 'a t -> context:Context.t -> 'a Or_error.t
 
-(** A required anon [BRANCH]. *)
-val anon_branch_name : Vcs.Branch_name.t Or_error.t Command.Param.t
+(** A required pos [BRANCH]. *)
+val pos_branch_name : pos:int -> doc:string -> Vcs.Branch_name.t Command.Arg.t
 
-(** An optional anon [BRANCH]. *)
-val anon_branch_name_opt : Vcs.Branch_name.t Or_error.t option Command.Param.t
+(** An optional pos [BRANCH]. *)
+val pos_branch_name_opt : pos:int -> doc:string -> Vcs.Branch_name.t option Command.Arg.t
 
-(** An anonymous parameter for a path. It can be given either as an absolute
+(** An positional argument for a path. It can be given either as an absolute
     path or relative path in the command line, but will always be resolved to an
     absolute path. *)
-val anon_path : Absolute_path.t t Command.Param.t
+val pos_path : pos:int -> doc:string -> Absolute_path.t t Command.Arg.t
 
-(** An anonymous parameter for a path in repo. *)
-val anon_path_in_repo : Vcs.Path_in_repo.t t Command.Param.t
+(** An positional parameter for a path in repo. *)
+val pos_path_in_repo : pos:int -> doc:string -> Vcs.Path_in_repo.t t Command.Arg.t
 
-(** A required anon [REV]. *)
-val anon_rev : Vcs.Rev.t Or_error.t Command.Param.t
+(** A required pos [REV]. *)
+val pos_rev : pos:int -> doc:string -> Vcs.Rev.t Command.Arg.t
 
-(** A required list of anon [REVs]. *)
-val anon_revs : Vcs.Rev.t list Or_error.t Command.Param.t
+(** A required list of pos [REVs]. *)
+val pos_revs : doc:string -> Vcs.Rev.t list Command.Arg.t
 
 (** A flag to restrict the repo to a subdirectory below a certain path. *)
-val below_path_in_repo : Vcs.Path_in_repo.t option t Command.Param.t
+val below_path_in_repo : Vcs.Path_in_repo.t option t Command.Arg.t
 
 (** A required [-m _] nonempty commit message. *)
-val commit_message : Vcs.Commit_message.t Or_error.t Command.Param.t
+val commit_message : Vcs.Commit_message.t Command.Arg.t
 
 (** Perform the side effect if any, but suppress the output in case of success. *)
-val quiet : bool Command.Param.t
+val quiet : bool Command.Arg.t
 
 (** A required [--rev _] that produces a revision. *)
-val rev : Vcs.Rev.t Or_error.t Command.Param.t
+val rev : doc:string -> Vcs.Rev.t Command.Arg.t
 
-val user_email : Vcs.User_email.t Or_error.t Command.Param.t
-val user_name : Vcs.User_name.t Or_error.t Command.Param.t
+val user_email : Vcs.User_email.t Command.Arg.t
+val user_name : Vcs.User_name.t Command.Arg.t

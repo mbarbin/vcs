@@ -66,7 +66,7 @@ val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
     typically also require to be supplied the tree.
 
     For convenience to users writing algorithms on git trees, the type [t]
-    exposes an efficient comparable interface, meaning you can e.g. manipulate
+    exposes an efficient comparable signature, meaning you can e.g. manipulate
     containers indexed by nodes.
 
     {1:ordering_invariant Ordering invariant}

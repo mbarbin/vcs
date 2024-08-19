@@ -14,17 +14,19 @@
   -open
   Or_error.Let_syntax
   -open
-  Vcs_eio_writer)
+  Vcs_eio_writer
+  -open
+  Commandlang)
  (libraries
   base
-  core.command
+  commandlang
   eio
   eio_main
   fpath
   fpath-base
   vcs
+  vcs-arg
   vcs-git
-  vcs-param
   vcs-private-libs-eio.eio-writer)
  (instrumentation
   (backend bisect_ppx))

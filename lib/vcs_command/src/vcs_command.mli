@@ -19,4 +19,4 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-val main : Command.t
+val main : unit Or_error.t Command.t
