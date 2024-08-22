@@ -155,6 +155,8 @@
    (= 1.3.0))
   (commandlang
    (>= 0.0.1))
+  (commandlang-err
+   (>= 0.0.1))
   (commandlang-to-cmdliner
    (>= 0.0.1))
   (eio
@@ -408,6 +410,14 @@
    (and
     :dev
     (>= 2.8.3)))
+  (cmdliner
+   (= 1.3.0))
+  (commandlang
+   (>= 0.0.1))
+  (commandlang-err
+   (>= 0.0.1))
+  (commandlang-to-cmdliner
+   (>= 0.0.1))
   (core
    (and
     (>= v0.17)
