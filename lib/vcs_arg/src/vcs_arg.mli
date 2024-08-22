@@ -38,7 +38,7 @@ module Context : sig
     -> env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. >
     -> config:Config.t
     -> unit
-    -> t Or_error.t
+    -> t
 end
 
 module Initialized : sig
@@ -54,7 +54,7 @@ end
 val initialize
   :  env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. >
   -> config:Config.t
-  -> Initialized.t Or_error.t
+  -> Initialized.t
 
 (** {1 Args}
 
@@ -70,7 +70,7 @@ val initialize
 type 'a t
 
 (** To be called in the body of the command, after initialization. *)
-val resolve : 'a t -> context:Context.t -> 'a Or_error.t
+val resolve : 'a t -> context:Context.t -> 'a
 
 (** A required pos [BRANCH]. *)
 val pos_branch_name : pos:int -> doc:string -> Vcs.Branch_name.t Command.Arg.t

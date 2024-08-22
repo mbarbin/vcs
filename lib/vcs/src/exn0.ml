@@ -20,3 +20,5 @@
 (*******************************************************************************)
 
 exception E of Err.t [@@deriving sexp_of]
+
+let raise_s msg sexp = raise (E (Err.create_s [%sexp (msg : string), (sexp : Sexp.t)]))

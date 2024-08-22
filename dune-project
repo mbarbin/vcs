@@ -90,7 +90,7 @@
     :dev
     (>= 2.8.3)))
   (commandlang
-   (>= 0.0.1~preview-0.1))
+   (>= 0.0.1))
   (eio
    (>= 1.0))
   (fpath
@@ -154,9 +154,9 @@
   (cmdliner
    (= 1.3.0))
   (commandlang
-   (>= 0.0.1~preview-0.1))
+   (>= 0.0.1))
   (commandlang-to-cmdliner
-   (>= 0.0.1~preview-0.1))
+   (>= 0.0.1))
   (eio
    (>= 1.0))
   (eio_main

@@ -25,3 +25,5 @@
     [Vcs], and [Vcs.Exn]. *)
 
 exception E of Err.t [@@deriving sexp_of]
+
+val raise_s : string -> Sexp.t -> _

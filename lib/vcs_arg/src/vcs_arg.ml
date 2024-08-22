@@ -100,10 +100,15 @@ module Context = struct
       | Some cwd -> cwd
       | None -> Unix.getcwd () |> Absolute_path.v
     in
-    let%bind vcs, repo_root =
+    let vcs, repo_root =
       match Create_vcs_backend.from_cwd ~env ~cwd ~config with
-      | Some x -> Ok x
-      | None -> Or_error.error_string "Not in a supported version control repo"
+      | Some x -> x
+      | None ->
+        raise
+          (Vcs.E
+             (Vcs.Err.create_s
+                [%sexp
+                  "Not in a supported version control repo", { cwd : Absolute_path.t }]))
     in
     let t =
       { config
@@ -114,7 +119,7 @@ module Context = struct
       }
     in
     silence_w69_unused_field t;
-    return t
+    t
   ;;
 end
 
@@ -127,11 +132,11 @@ module Initialized = struct
 end
 
 let initialize ~env ~config =
-  let%bind c = Context.create ~env ~config () in
-  return { Initialized.vcs = c.vcs; repo_root = c.repo_root; context = c }
+  let c = Context.create ~env ~config () in
+  { Initialized.vcs = c.vcs; repo_root = c.repo_root; context = c }
 ;;
 
-type 'a t = Context.t -> 'a Or_error.t
+type 'a t = Context.t -> 'a
 
 let resolve t ~context = t context
 
@@ -153,8 +158,7 @@ let pos_path ~pos ~doc =
   let%map_open.Command path =
     Arg.pos ~pos (Param.validated_string (module Fpath)) ~docv:"file" ~doc
   in
-  fun (c : Context.t) ->
-    Or_error.try_with (fun () -> Absolute_path.relativize ~root:c.cwd path)
+  fun (c : Context.t) -> Absolute_path.relativize ~root:c.cwd path
 ;;
 
 let pos_path_in_repo ~pos ~doc =
@@ -163,10 +167,13 @@ let pos_path_in_repo ~pos ~doc =
   in
   fun (c : Context.t) ->
     let repo_root = Vcs.Repo_root.to_absolute_path c.repo_root in
-    Or_error.try_with_join (fun () ->
-      let path = Absolute_path.relativize ~root:c.cwd path in
-      let%bind relative_path = Absolute_path.chop_prefix ~prefix:repo_root path in
-      return (Vcs.Path_in_repo.of_relative_path relative_path))
+    let path = Absolute_path.relativize ~root:c.cwd path in
+    match Absolute_path.chop_prefix ~prefix:repo_root path with
+    | Ok relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
+    | Error _ ->
+      raise
+        (Vcs.E
+           (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }]))
 ;;
 
 let pos_rev ~pos ~doc =
@@ -193,13 +200,14 @@ let below_path_in_repo =
   in
   fun (c : Context.t) ->
     let repo_root = Vcs.Repo_root.to_absolute_path c.repo_root in
-    Or_error.try_with_join (fun () ->
-      match path with
-      | None -> return None
-      | Some path ->
-        let path = Absolute_path.relativize ~root:c.cwd path in
-        let%bind relative_path = Absolute_path.chop_prefix ~prefix:repo_root path in
-        return (Some (Vcs.Path_in_repo.of_relative_path relative_path)))
+    Option.map path ~f:(fun path ->
+      let path = Absolute_path.relativize ~root:c.cwd path in
+      match Absolute_path.chop_prefix ~prefix:repo_root path with
+      | Ok relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
+      | Error _ ->
+        raise
+          (Vcs.E
+             (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }])))
 ;;
 
 let commit_message =

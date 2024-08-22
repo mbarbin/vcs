@@ -36,8 +36,8 @@ Rev-parse.
   rev0
 
   $ ocaml-vcs more-tests branch-revision unknown-branch
-  ("Branch not found" ((branch_name unknown-branch)))
-  [1]
+  Error: Branch not found (branch_name unknown-branch)
+  [123]
 
 Testing a successful file show with git and via vcs.
 
@@ -46,6 +46,12 @@ Testing a successful file show with git and via vcs.
 
   $ ocaml-vcs show-file-at-rev hello -r $rev0
   Hello World
+
+Invalid path-in-repo.
+
+  $ ocaml-vcs show-file-at-rev /hello -r $rev0
+  Error: Path is not in repo (path /hello)
+  [123]
 
 Save / Load files.
 
@@ -71,6 +77,9 @@ Adding a new file under a directory.
   hello
   $ ocaml-vcs ls-files --below dir
   dir/hello
+  $ ocaml-vcs ls-files --below /dir
+  Error: Path is not in repo (path /dir)
+  [123]
 
 Testing an unsuccessful file show with git and via vcs.
 
@@ -136,8 +145,8 @@ Greatest common ancestors.
   ($REV1)
 
   $ ocaml-vcs more-tests gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
-  ("Rev not found" ((rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)))
-  [1]
+  Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
+  [123]
 
 Vcs allows to run the git command line directly if the provider supports it.
 

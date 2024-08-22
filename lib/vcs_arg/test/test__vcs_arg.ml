@@ -28,8 +28,8 @@ let%expect_test "not-in-repo" =
   (match
      Vcs_arg.Context.create ~cwd:Absolute_path.root ~env ~config:Vcs_arg.Config.default ()
    with
-   | Ok _ -> assert false
-   | Error err -> print_s [%sexp (err : Error.t)]);
-  [%expect {| "Not in a supported version control repo" |}];
+   | _ -> assert false
+   | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]);
+  [%expect {| ("Not in a supported version control repo" ((cwd /))) |}];
   ()
 ;;

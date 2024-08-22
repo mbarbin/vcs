@@ -20,16 +20,14 @@
 (*******************************************************************************)
 
 let () =
-  match
-    Cmdliner.Cmd.eval_value'
-      (Commandlang_to_cmdliner.Translate.command
-         Vcs_command.main
-         ~name:"ocaml-vcs"
-         ~version:"%%VERSION%%")
-  with
-  | `Ok (Ok ()) -> ()
-  | `Exit code -> Stdlib.exit code
-  | `Ok (Error err) ->
-    prerr_endline (Base.Error.to_string_hum err);
-    Stdlib.exit 1
+  Commandlang_to_cmdliner.run
+    Vcs_command.main
+    ~name:"ocaml-vcs"
+    ~version:"%%VERSION%%"
+    ~exn_handler:(function
+    | Vcs.E e ->
+      Some
+        (Commandlang_err.Err.make
+           [ Commandlang_err.Err.pp_of_sexp (Vcs.Err.sexp_of_t e) ])
+    | _ -> None [@coverage off])
 ;;

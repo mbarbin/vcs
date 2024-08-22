@@ -73,6 +73,10 @@ exception E of Err.t
 
 module Exn = Vcs_exn
 
+(** Build an err payload from the supplied message and data and raise it as a
+    [!exception:E] exception. *)
+val raise_s : string -> Sexp.t -> _
+
 (** {1 Creating repositories} *)
 
 module Platform = Platform

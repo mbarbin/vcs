@@ -30,10 +30,12 @@ let add_cmd =
      and path = Vcs_arg.pos_path_in_repo ~pos:0 ~doc:"file to add" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context } = Vcs_arg.initialize ~env ~config in
-     let%bind path = Vcs_arg.resolve ~context path in
-     let%bind () = Vcs.Or_error.add vcs ~repo_root ~path in
-     return ())
+     let { Vcs_arg.Initialized.vcs; repo_root; context } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let path = Vcs_arg.resolve ~context path in
+     Vcs.add vcs ~repo_root ~path;
+     ())
 ;;
 
 let commit_cmd =
@@ -44,10 +46,12 @@ let commit_cmd =
      and quiet = Vcs_arg.quiet in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind rev = Vcs.Or_error.commit vcs ~repo_root ~commit_message in
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let rev = Vcs.commit vcs ~repo_root ~commit_message in
      if not quiet then Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
-     return ())
+     ())
 ;;
 
 let current_branch_cmd =
@@ -56,10 +60,12 @@ let current_branch_cmd =
     (let%map_open.Command config = Vcs_arg.Config.arg in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind branch = Vcs.Or_error.current_branch vcs ~repo_root in
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let branch = Vcs.current_branch vcs ~repo_root in
      Eio_writer.print_sexp ~env [%sexp (branch : Vcs.Branch_name.t)];
-     return ())
+     ())
 ;;
 
 let current_revision_cmd =
@@ -68,10 +74,12 @@ let current_revision_cmd =
     (let%map_open.Command config = Vcs_arg.Config.arg in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind rev = Vcs.Or_error.current_revision vcs ~repo_root in
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let rev = Vcs.current_revision vcs ~repo_root in
      Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
-     return ())
+     ())
 ;;
 
 let git_cmd =
@@ -83,13 +91,15 @@ let git_cmd =
      in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind { Vcs.Git.Output.exit_code; stdout; stderr } =
-       Vcs.Or_error.git vcs ~repo_root ~args ~f:return
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let { Vcs.Git.Output.exit_code; stdout; stderr } =
+       Vcs.git vcs ~repo_root ~args ~f:Fn.id
      in
      Eio_writer.print_string ~env stdout;
      Eio_writer.prerr_string ~env stderr;
-     if exit_code = 0 then return () else Stdlib.exit exit_code)
+     if exit_code <> 0 then Stdlib.exit exit_code)
 ;;
 
 let init_cmd =
@@ -100,12 +110,14 @@ let init_cmd =
      and quiet = Vcs_arg.quiet in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root = _; context } = Vcs_arg.initialize ~env ~config in
-     let%bind path = Vcs_arg.resolve path ~context in
-     let%bind repo_root = Vcs.Or_error.init vcs ~path in
+     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let path = Vcs_arg.resolve path ~context in
+     let repo_root = Vcs.init vcs ~path in
      if not quiet
      then Eio_writer.print_sexp ~env [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
-     return ())
+     ())
 ;;
 
 let load_file_cmd =
@@ -115,11 +127,13 @@ let load_file_cmd =
      and path = Vcs_arg.pos_path ~pos:0 ~doc:"file to load" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root = _; context } = Vcs_arg.initialize ~env ~config in
-     let%bind path = Vcs_arg.resolve path ~context in
-     let%bind contents = Vcs.Or_error.load_file vcs ~path in
+     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let path = Vcs_arg.resolve path ~context in
+     let contents = Vcs.load_file vcs ~path in
      Eio_writer.print_string ~env (contents :> string);
-     return ())
+     ())
 ;;
 
 let ls_files_cmd =
@@ -129,14 +143,16 @@ let ls_files_cmd =
      and below = Vcs_arg.below_path_in_repo in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context } = Vcs_arg.initialize ~env ~config in
-     let%bind below = Vcs_arg.resolve below ~context in
+     let { Vcs_arg.Initialized.vcs; repo_root; context } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let below = Vcs_arg.resolve below ~context in
      let below = Option.value below ~default:Vcs.Path_in_repo.root in
-     let%bind files = Vcs.Or_error.ls_files vcs ~repo_root ~below in
+     let files = Vcs.ls_files vcs ~repo_root ~below in
      Eio_writer.with_flow (Eio.Stdenv.stdout env) (fun w ->
        List.iter files ~f:(fun file ->
          Eio_writer.write_line w (Vcs.Path_in_repo.to_string file)));
-     return ())
+     ())
 ;;
 
 let log_cmd =
@@ -145,10 +161,12 @@ let log_cmd =
     (let%map_open.Command config = Vcs_arg.Config.arg in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind log = Vcs.Or_error.log vcs ~repo_root in
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let log = Vcs.log vcs ~repo_root in
      Eio_writer.print_sexp ~env [%sexp (log : Vcs.Log.t)];
-     return ())
+     ())
 ;;
 
 let name_status_cmd =
@@ -159,12 +177,12 @@ let name_status_cmd =
      and dst = Vcs_arg.pos_rev ~pos:1 ~doc:"tip revision" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind name_status =
-       Vcs.Or_error.name_status vcs ~repo_root ~changed:(Between { src; dst })
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
      in
+     let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
      Eio_writer.print_sexp ~env [%sexp (name_status : Vcs.Name_status.t)];
-     return ())
+     ())
 ;;
 
 let num_status_cmd =
@@ -175,12 +193,12 @@ let num_status_cmd =
      and dst = Vcs_arg.pos_rev ~pos:1 ~doc:"tip revision" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind num_status =
-       Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src; dst })
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
      in
+     let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
      Eio_writer.print_sexp ~env [%sexp (num_status : Vcs.Num_status.t)];
-     return ())
+     ())
 ;;
 
 let rename_current_branch_cmd =
@@ -190,8 +208,11 @@ let rename_current_branch_cmd =
      and branch_name = Vcs_arg.pos_branch_name ~pos:0 ~doc:"new name to rename to" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     Vcs.Or_error.rename_current_branch vcs ~repo_root ~to_:branch_name)
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     Vcs.rename_current_branch vcs ~repo_root ~to_:branch_name;
+     ())
 ;;
 
 let refs_cmd =
@@ -200,10 +221,12 @@ let refs_cmd =
     (let%map_open.Command config = Vcs_arg.Config.arg in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind refs = Vcs.Or_error.refs vcs ~repo_root in
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let refs = Vcs.refs vcs ~repo_root in
      Eio_writer.print_sexp ~env [%sexp (refs : Vcs.Refs.t)];
-     return ())
+     ())
 ;;
 
 let save_file_cmd =
@@ -213,8 +236,10 @@ let save_file_cmd =
      and path = Vcs_arg.pos_path ~pos:0 ~doc:"file to save the contents to" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root = _; context } = Vcs_arg.initialize ~env ~config in
-     let%bind path = Vcs_arg.resolve path ~context in
+     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let path = Vcs_arg.resolve path ~context in
      let file_contents =
        Eio.Buf_read.parse_exn
          Eio.Buf_read.take_all
@@ -222,7 +247,8 @@ let save_file_cmd =
          ~max_size:Int.max_value
        |> Vcs.File_contents.create
      in
-     Vcs.Or_error.save_file vcs ~path ~file_contents)
+     Vcs.save_file vcs ~path ~file_contents;
+     ())
 ;;
 
 let set_user_config_cmd =
@@ -233,10 +259,12 @@ let set_user_config_cmd =
      and user_email = Vcs_arg.user_email in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind () = Vcs.Or_error.set_user_name vcs ~repo_root ~user_name in
-     let%bind () = Vcs.Or_error.set_user_email vcs ~repo_root ~user_email in
-     return ())
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     Vcs.set_user_name vcs ~repo_root ~user_name;
+     Vcs.set_user_email vcs ~repo_root ~user_email;
+     ())
 ;;
 
 let show_file_at_rev_cmd =
@@ -247,9 +275,11 @@ let show_file_at_rev_cmd =
      and path = Vcs_arg.pos_path_in_repo ~pos:0 ~doc:"path to file" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context } = Vcs_arg.initialize ~env ~config in
-     let%bind path = Vcs_arg.resolve path ~context in
-     let%bind result = Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path in
+     let { Vcs_arg.Initialized.vcs; repo_root; context } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let path = Vcs_arg.resolve path ~context in
+     let result = Vcs.show_file_at_rev vcs ~repo_root ~rev ~path in
      (match result with
       | `Present contents -> Eio_writer.print_string ~env (contents :> string)
       | `Absent ->
@@ -258,7 +288,7 @@ let show_file_at_rev_cmd =
           "Path '%s' does not exist in '%s'"
           (Vcs.Path_in_repo.to_string path)
           (Vcs.Rev.to_string rev));
-     return ())
+     ())
 ;;
 
 let tree_cmd =
@@ -267,10 +297,12 @@ let tree_cmd =
     (let%map_open.Command config = Vcs_arg.Config.arg in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind tree = Vcs.Or_error.tree vcs ~repo_root in
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let tree = Vcs.tree vcs ~repo_root in
      Eio_writer.print_sexp ~env [%sexp (Vcs.Tree.summary tree : Vcs.Tree.Summary.t)];
-     return ())
+     ())
 ;;
 
 (* The following section expands the cli to help with test coverage. *)
@@ -282,21 +314,29 @@ let branch_revision_cmd =
      and branch_name = Vcs_arg.pos_branch_name_opt ~pos:0 ~doc:"which branch" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind branch_name =
-       match branch_name with
-       | Some branch_name -> return branch_name
-       | None -> Vcs.Or_error.current_branch vcs ~repo_root
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
      in
-     let%bind rev =
-       let%bind refs = Vcs.Or_error.refs vcs ~repo_root >>| Vcs.Refs.to_map in
+     let branch_name =
+       match branch_name with
+       | Some branch_name -> branch_name
+       | None -> Vcs.current_branch vcs ~repo_root
+     in
+     let rev =
+       let refs = Vcs.refs vcs ~repo_root |> Vcs.Refs.to_map in
        match Map.find refs (Local_branch { branch_name }) with
-       | Some rev -> return rev
+       | Some rev -> rev
        | None ->
-         Or_error.error_s [%sexp "Branch not found", { branch_name : Vcs.Branch_name.t }]
+         (* This line is covered in tests, but we need to disable coverage
+            reporting here. The reason is that bisect_ppx inserts an unvisitable
+            coverage point at the out-edge of this raising call, which would
+            otherwise result in a false negative in our test coverage. *)
+         Vcs.raise_s
+           "Branch not found"
+           [%sexp { branch_name : Vcs.Branch_name.t }] [@coverage off]
      in
      Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
-     return ())
+     ())
 ;;
 
 let greatest_common_ancestors_cmd =
@@ -306,21 +346,22 @@ let greatest_common_ancestors_cmd =
      and revs = Vcs_arg.pos_revs ~doc:"all revisions that must descend from the gcas" in
      Eio_main.run
      @@ fun env ->
-     let%bind { vcs; repo_root; context = _ } = Vcs_arg.initialize ~env ~config in
-     let%bind tree = Vcs.Or_error.tree vcs ~repo_root in
-     let%bind nodes =
+     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let tree = Vcs.tree vcs ~repo_root in
+     let nodes =
        List.map revs ~f:(fun rev ->
          match Vcs.Tree.find_rev tree ~rev with
-         | Some node -> return node
-         | None -> Or_error.error_s [%sexp "Rev not found", { rev : Vcs.Rev.t }])
-       |> Or_error.all
+         | Some node -> node
+         | None -> Vcs.raise_s "Rev not found" [%sexp { rev : Vcs.Rev.t }])
      in
      let gca =
        Vcs.Tree.greatest_common_ancestors tree nodes
        |> List.map ~f:(fun node -> Vcs.Tree.rev tree node)
      in
      Eio_writer.print_sexp ~env [%sexp (gca : Vcs.Rev.t list)];
-     return ())
+     ())
 ;;
 
 let more_tests_cmd =
