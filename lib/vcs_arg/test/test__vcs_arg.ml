@@ -1,5 +1,5 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
@@ -19,21 +19,17 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* Most of [Vcs_param] is tested via the vcs cram tests. This file contains
+(* Most of [Vcs_arg] is tested via the vcs cram tests. This file contains
    additional tests that help covering corner cases. *)
 
 let%expect_test "not-in-repo" =
   Eio_main.run
   @@ fun env ->
   (match
-     Vcs_param.Context.create
-       ~cwd:Absolute_path.root
-       ~env
-       ~config:Vcs_param.Config.default
-       ()
+     Vcs_arg.Context.create ~cwd:Absolute_path.root ~env ~config:Vcs_arg.Config.default ()
    with
-   | Ok _ -> assert false
-   | Error err -> print_s [%sexp (err : Error.t)]);
-  [%expect {| "Not in a supported version control repo" |}];
+   | _ -> assert false
+   | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]);
+  [%expect {| ("Not in a supported version control repo" ((cwd /))) |}];
   ()
 ;;

@@ -2,24 +2,17 @@
 
 ## Motivation
 
-In this directory, we test the command line `ocaml-vcs`. This command line is
-itself motivated by the desire to run exploratory tests using the vcs interface
-and the git backend available on actual repositories.
+In this directory, we test the command line `ocaml-vcs`. This command line is itself motivated by the desire to run exploratory tests using the vcs interface and the git backend available on actual repositories.
 
-What we aim for these tests is to make sure `vcs` is not broken in some ways,
-thus we would like to have good coverage of the commands it exposes.
+What we aim for in these tests is to make sure that `ocaml-vcs` is not broken in some ways, thus we would like to have good coverage of the commands it exposes.
 
-This is not a test for `git` itself, and to the extent possible, the tests in
-this directory shall try to make little direct calls to git commands. Prefer
-minting a new `vcs` command that does what you need instead.
+This is not a test for `git` itself, and to the extent possible, the tests in this directory shall try to make little direct calls to git commands. Prefer minting a new `vcs` command that does what you need instead.
 
 ## Testing environment
 
 ### Limiting GitHub specifics
 
-In the testing environment of GitHub workflow actions, it is necessary to take
-some extra steps to make the test work. We prefer not to rely on a solution
-involving using the config of the workflow itself, such as:
+In the testing environment of GitHub workflow actions, it is necessary to take some extra steps to make the test work. We prefer not to rely on a solution involving using the config of the workflow itself, such as:
 
 ```yaml
 steps:
@@ -32,15 +25,11 @@ steps:
             # Your test commands here
 ```
 
-The reason is because we'd also would like the tests to work when run with
-`dune` locally during development, and we prefer to limit special logic we have
-dedicated to the GitHub environment to a minimum and rather find ways to take
-steps that are applicable to all testing environments in use.
+The reason is because we'd also would like the tests to work when run with `dune` locally during development, and we prefer to limit special logic we have dedicated to the GitHub environment to a minimum and rather find ways to take steps that are applicable to all testing environments in use.
 
 ### Initialize git config
 
-It is necessary to set some git config values. This may be done locally to the
-repo under test.
+It is necessary to set some git config values. This may be done locally to the repo under test.
 
 In the cram tests we'll do:
 
@@ -73,12 +62,10 @@ Or the equivalent in `vcs`:
   $ ocaml-vcs rename-current-branch main
 ```
 
-Note that it is not possible to run the following in the GitHub workflow actions
-before `git init` (this results in an error).
+Note that it is not possible to run the following in the GitHub workflow actions before `git init` (this results in an error).
 
 ```sh
   $ git config init.defaultBranch <name>
 ```
 
-And we do not want to make use of the `--global` for the reasons explained in
-the GitHub specifics part.
+And we do not want to make use of the `--global` for the reasons explained in the GitHub specifics part.

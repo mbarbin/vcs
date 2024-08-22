@@ -1,5 +1,5 @@
 (*_******************************************************************************)
-(*_  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
@@ -66,7 +66,7 @@ val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
     typically also require to be supplied the tree.
 
     For convenience to users writing algorithms on git trees, the type [t]
-    exposes an efficient comparable interface, meaning you can e.g. manipulate
+    exposes an efficient comparable signature, meaning you can e.g. manipulate
     containers indexed by nodes.
 
     {1:ordering_invariant Ordering invariant}

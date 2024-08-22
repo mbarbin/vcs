@@ -1,5 +1,5 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
@@ -28,6 +28,6 @@ end
 include T
 include Comparable.Make (T)
 
-let to_string_hum = function
+let to_string = function
   | GitHub -> "GitHub"
 ;;

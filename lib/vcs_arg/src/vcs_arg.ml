@@ -1,5 +1,5 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
@@ -31,15 +31,13 @@ module Config = struct
 
   let default = { unit = () }
 
-  let param =
-    let%map_open.Command () = return () in
+  let arg =
+    let%map_open.Command () = Arg.return () in
     let t = { unit = () } in
     silence_w69_unused_field t;
     t
   ;;
 end
-
-let config = Config.param
 
 module Create_vcs_backend = struct
   let repo_root (dir : _ Eio.Path.t) =
@@ -102,10 +100,15 @@ module Context = struct
       | Some cwd -> cwd
       | None -> Unix.getcwd () |> Absolute_path.v
     in
-    let%bind vcs, repo_root =
+    let vcs, repo_root =
       match Create_vcs_backend.from_cwd ~env ~cwd ~config with
-      | Some x -> Ok x
-      | None -> Or_error.error_string "Not in a supported version control repo"
+      | Some x -> x
+      | None ->
+        raise
+          (Vcs.E
+             (Vcs.Err.create_s
+                [%sexp
+                  "Not in a supported version control repo", { cwd : Absolute_path.t }]))
     in
     let t =
       { config
@@ -116,7 +119,7 @@ module Context = struct
       }
     in
     silence_w69_unused_field t;
-    return t
+    t
   ;;
 end
 
@@ -129,96 +132,127 @@ module Initialized = struct
 end
 
 let initialize ~env ~config =
-  let%bind c = Context.create ~env ~config () in
-  return { Initialized.vcs = c.vcs; repo_root = c.repo_root; context = c }
+  let c = Context.create ~env ~config () in
+  { Initialized.vcs = c.vcs; repo_root = c.repo_root; context = c }
 ;;
 
-type 'a t = Context.t -> 'a Or_error.t
+type 'a t = Context.t -> 'a
 
 let resolve t ~context = t context
 
-let anon_branch_name =
-  let%map_open.Command branch_name = anon ("branch" %: string) in
-  Vcs.Branch_name.of_string branch_name
+let pos_branch_name ~pos ~doc =
+  let%map_open.Command branch_name =
+    Arg.pos ~pos (Param.validated_string (module Vcs.Branch_name)) ~docv:"branch" ~doc
+  in
+  branch_name
 ;;
 
-let anon_branch_name_opt =
-  let%map_open.Command branch_name = anon (maybe ("branch" %: string)) in
-  branch_name |> Option.map ~f:Vcs.Branch_name.of_string
+let pos_branch_name_opt ~pos ~doc =
+  let%map_open.Command branch_name =
+    Arg.pos_opt ~pos (Param.validated_string (module Vcs.Branch_name)) ~docv:"branch" ~doc
+  in
+  branch_name
 ;;
 
-let anon_path =
-  let%map_open.Command path = anon ("file" %: string) in
-  fun (c : Context.t) ->
-    Or_error.try_with (fun () -> Absolute_path.relativize ~root:c.cwd (path |> Fpath.v))
+let pos_path ~pos ~doc =
+  let%map_open.Command path =
+    Arg.pos ~pos (Param.validated_string (module Fpath)) ~docv:"file" ~doc
+  in
+  fun (c : Context.t) -> Absolute_path.relativize ~root:c.cwd path
 ;;
 
-let anon_path_in_repo =
-  let%map_open.Command path = anon ("file" %: string) in
+let pos_path_in_repo ~pos ~doc =
+  let%map_open.Command path =
+    Arg.pos ~pos (Param.validated_string (module Fpath)) ~docv:"file" ~doc
+  in
   fun (c : Context.t) ->
     let repo_root = Vcs.Repo_root.to_absolute_path c.repo_root in
-    Or_error.try_with_join (fun () ->
-      let path = Absolute_path.relativize ~root:c.cwd (path |> Fpath.v) in
-      let%bind relative_path = Absolute_path.chop_prefix ~prefix:repo_root path in
-      return (Vcs.Path_in_repo.of_relative_path relative_path))
+    let path = Absolute_path.relativize ~root:c.cwd path in
+    match Absolute_path.chop_prefix ~prefix:repo_root path with
+    | Ok relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
+    | Error _ ->
+      raise
+        (Vcs.E
+           (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }]))
 ;;
 
-let anon_rev =
-  let%map_open.Command rev = anon ("rev" %: string) in
-  Vcs.Rev.of_string rev
+let pos_rev ~pos ~doc =
+  let%map_open.Command rev =
+    Arg.pos ~pos (Param.validated_string (module Vcs.Rev)) ~docv:"rev" ~doc
+  in
+  rev
 ;;
 
-let anon_revs =
-  let%map_open.Command revs = anon (sequence ("rev" %: string)) in
-  Or_error.all (List.map revs ~f:Vcs.Rev.of_string)
+let pos_revs ~doc =
+  let%map_open.Command revs =
+    Arg.pos_all (Param.validated_string (module Vcs.Rev)) ~docv:"rev" ~doc
+  in
+  revs
 ;;
 
 let below_path_in_repo =
   let%map_open.Command path =
-    flag "--below" (optional string) ~doc:"PATH only below path"
+    Arg.named_opt
+      [ "below" ]
+      (Param.validated_string (module Fpath))
+      ~docv:"PATH"
+      ~doc:"only below path"
   in
   fun (c : Context.t) ->
     let repo_root = Vcs.Repo_root.to_absolute_path c.repo_root in
-    Or_error.try_with_join (fun () ->
-      match path with
-      | None -> return None
-      | Some path ->
-        let path = Absolute_path.relativize ~root:c.cwd (path |> Fpath.v) in
-        let%bind relative_path = Absolute_path.chop_prefix ~prefix:repo_root path in
-        return (Some (Vcs.Path_in_repo.of_relative_path relative_path)))
+    Option.map path ~f:(fun path ->
+      let path = Absolute_path.relativize ~root:c.cwd path in
+      match Absolute_path.chop_prefix ~prefix:repo_root path with
+      | Ok relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
+      | Error _ ->
+        raise
+          (Vcs.E
+             (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }])))
 ;;
 
 let commit_message =
   let%map_open.Command commit_message =
-    flag "--message" ~aliases:[ "-m" ] (required string) ~doc:"MSG commit message"
+    Arg.named
+      [ "message"; "m" ]
+      (Param.validated_string (module Vcs.Commit_message))
+      ~docv:"MSG"
+      ~doc:"commit message"
   in
-  Vcs.Commit_message.of_string commit_message
+  commit_message
 ;;
 
 let quiet =
   let%map_open.Command quiet =
-    flag "--quiet" ~aliases:[ "-q" ] no_arg ~doc:" suppress output on success"
+    Arg.flag [ "quiet"; "q" ] ~doc:"suppress output on success"
   in
   quiet
 ;;
 
-let rev =
+let rev ~doc =
   let%map_open.Command rev =
-    flag "--rev" ~aliases:[ "-r" ] (required string) ~doc:"REV revision"
+    Arg.named [ "rev"; "r" ] (Param.validated_string (module Vcs.Rev)) ~docv:"REV" ~doc
   in
-  Vcs.Rev.of_string rev
+  rev
 ;;
 
 let user_name =
   let%map_open.Command user_name =
-    flag "--user.name" (required string) ~doc:"USER user name"
+    Arg.named
+      [ "user.name" ]
+      (Param.validated_string (module Vcs.User_name))
+      ~docv:"USER"
+      ~doc:"user name"
   in
-  Vcs.User_name.of_string user_name
+  user_name
 ;;
 
 let user_email =
   let%map_open.Command user_email =
-    flag "--user.email" (required string) ~doc:"EMAIL user email"
+    Arg.named
+      [ "user.email" ]
+      (Param.validated_string (module Vcs.User_email))
+      ~docv:"EMAIL"
+      ~doc:"user email"
   in
-  Vcs.User_email.of_string user_email
+  user_email
 ;;

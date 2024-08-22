@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'ocaml-vcs',
-  tagline: 'A Versatile OCaml Library for Git Interaction',
+  tagline: 'A Versatile OCaml Library for Git Operations',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here

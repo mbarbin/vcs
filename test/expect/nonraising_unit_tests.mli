@@ -1,5 +1,5 @@
 (*_******************************************************************************)
-(*_  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
@@ -18,5 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-(*_ This signature is deliberately empty. *)

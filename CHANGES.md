@@ -1,3 +1,11 @@
+## 0.0.5 (2024-08-19)
+
+### Changed
+
+- Renamed `vcs_param` to `vcs_arg` to match commandlang conventions.
+- Switch commands to new library `commandlang` with `cmdliner` backend.
+- Upgrade `provider` to `0.0.8`.
+
 ## 0.0.4 (2024-08-05)
 
 Release a version compatible with the latest renames in the provider library.

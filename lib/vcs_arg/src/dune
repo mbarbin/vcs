@@ -1,6 +1,6 @@
 (library
- (name vcs_param)
- (public_name vcs-param)
+ (name vcs_arg)
+ (public_name vcs-arg)
  (flags
   :standard
   -w
@@ -12,8 +12,10 @@
   -open
   Fpath_base
   -open
-  Or_error.Let_syntax)
- (libraries base core.command eio fpath fpath-base unix vcs vcs-git)
+  Or_error.Let_syntax
+  -open
+  Commandlang)
+ (libraries base commandlang eio fpath fpath-base unix vcs vcs-git)
  (instrumentation
   (backend bisect_ppx))
  (lint

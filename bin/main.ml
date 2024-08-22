@@ -1,5 +1,5 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
@@ -19,4 +19,15 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let () = Command_unix_for_opam.run Vcs_command.main
+let () =
+  Commandlang_to_cmdliner.run
+    Vcs_command.main
+    ~name:"ocaml-vcs"
+    ~version:"%%VERSION%%"
+    ~exn_handler:(function
+    | Vcs.E e ->
+      Some
+        (Commandlang_err.Err.make
+           [ Commandlang_err.Err.pp_of_sexp (Vcs.Err.sexp_of_t e) ])
+    | _ -> None [@coverage off])
+;;

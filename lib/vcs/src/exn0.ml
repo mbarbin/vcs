@@ -1,5 +1,5 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
@@ -20,3 +20,5 @@
 (*******************************************************************************)
 
 exception E of Err.t [@@deriving sexp_of]
+
+let raise_s msg sexp = raise (E (Err.create_s [%sexp (msg : string), (sexp : Sexp.t)]))

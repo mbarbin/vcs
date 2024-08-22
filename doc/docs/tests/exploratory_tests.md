@@ -9,57 +9,99 @@ Whether you're testing new features, diagnosing problems, or seeking to understa
 Below is a quick overview of the commands available in `ocaml-vcs`:
 
 ```bash
-$ ocaml-vcs help -expand-dots -flags -recursive
-call a command from the vcs interface
+$ ocaml-vcs --help=plain
+NAME
+       ocaml-vcs - call a command from the vcs interface
 
-  ocaml-vcs SUBCOMMAND
+SYNOPSIS
+       ocaml-vcs COMMAND …
 
-This is an executable to test the Version Control System (vcs) library.
 
-We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the
-sub commands exposed here, plus additional functionality in [more-tests].
 
-=== subcommands and flags ===
+       This is an executable to test the Version Control System (vcs)
+       library.
 
-  add                        . add a file to the index
-  commit                     . commit a file
-  commit --message MSG, -m   . commit message
-  commit [--quiet], -q       . suppress output on success
-  current-branch             . current branch
-  current-revision           . revision of HEAD
-  git                        . run the git cli
-  git [--]                   . pass the remaining args to git
-  init                       . initialize a new repository
-  init [--quiet], -q         . suppress output on success
-  load-file                  . print a file from the filesystem (aka cat)
-  log                        . show the log of current repo
-  ls-files                   . list file
-  ls-files [--below PATH]    . only below path
-  more-tests                 . more tests combining vcs functions
-  more-tests branch-revision . revision of a branch
-  more-tests gca             . print greatest common ancestors of revisions
-  name-status                . show a summary of the diff between 2 revs
-  num-status                 . show a summary of the number of lines of diff
-                               between 2 revs
-  refs                       . show the refs of current repo
-  rename-current-branch      . move/rename a branch to a new name
-  save-file                  . save stdin to a file from the filesystem (aka
-                               tee)
-  set-user-config            . set the user config
-  set-user-config --user.email EMAIL
-                             . user email
-  set-user-config --user.name USER
-                             . user name
-  show-file-at-rev           . show the contents of file at a given revision
-  show-file-at-rev --rev REV, -r
-                             . revision
-  tree                       . compute tree of current repo
-  version                    . print version information
-  version [-build-info]      . print build info for this build
-  version [-version]         . print the version of this build
-  help                       . explain a given subcommand (perhaps recursively)
-  help [-expand-dots]        . expand subcommands in recursive help
-  help [-flags]              . show flags as well in recursive help
-  help [-recursive]          . show subcommands of subcommands, etc.
+
+
+       We expect a 1:1 mapping between the function exposed in the [Vcs.S]
+       and the sub commands exposed here, plus additional functionality in
+       [more-tests].
+
+
+
+COMMANDS
+       add [OPTION]… file
+           add a file to the index
+
+       commit [--message=MSG] [--quiet] [OPTION]…
+           commit a file
+
+       current-branch [OPTION]…
+           current branch
+
+       current-revision [OPTION]…
+           revision of HEAD
+
+       git [OPTION]… [ARG]…
+           run the git cli
+
+       init [--quiet] [OPTION]… file
+           initialize a new repository
+
+       load-file [OPTION]… file
+           print a file from the filesystem (aka cat)
+
+       log [OPTION]…
+           show the log of current repo
+
+       ls-files [--below=PATH] [OPTION]…
+           list file
+
+       more-tests COMMAND …
+           more tests combining vcs functions
+
+       name-status [OPTION]… rev rev
+           show a summary of the diff between 2 revs
+
+       num-status [OPTION]… rev rev
+           show a summary of the number of lines of diff between 2 revs
+
+       refs [OPTION]…
+           show the refs of current repo
+
+       rename-current-branch [OPTION]… branch
+           move/rename a branch to a new name
+
+       save-file [OPTION]… file
+           save stdin to a file from the filesystem (aka tee)
+
+       set-user-config [--user.email=EMAIL] [--user.name=USER] [OPTION]…
+           set the user config
+
+       show-file-at-rev [--rev=REV] [OPTION]… file
+           show the contents of file at a given revision
+
+       tree [OPTION]…
+           compute tree of current repo
+
+COMMON OPTIONS
+       --help[=FMT] (default=auto)
+           Show this help in format FMT. The value FMT must be one of auto,
+           pager, groff or plain. With auto, the format is pager or plain
+           whenever the TERM env var is dumb or undefined.
+
+       --version
+           Show version information.
+
+EXIT STATUS
+       ocaml-vcs exits with:
+
+       0   on success.
+
+       123 on indiscriminate errors reported on standard error.
+
+       124 on command line parsing errors.
+
+       125 on unexpected internal errors (bugs).
 
 ```

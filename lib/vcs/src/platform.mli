@@ -1,5 +1,5 @@
 (*_******************************************************************************)
-(*_  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
@@ -33,4 +33,4 @@ include Comparable.S with type t := t
     variant constructor. For example, ["GitHub"] is typically spelled with an
     uppercase 'H'. This is suitable for inclusion into error messages, user
     facing logs, etc. *)
-val to_string_hum : t -> string
+val to_string : t -> string

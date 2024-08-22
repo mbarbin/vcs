@@ -6,7 +6,7 @@ The concurrency runtime must be compatible with programs written in a direct sty
 
 ## How It Works
 
-`Vcs` is an interface composed of [Traits](./traits.md), each providing different functionalities associated with Git interaction. The dynamic dispatch implementation of Vcs is powered by the [provider](https://github.com/mbarbin/provider) library.
+`Vcs` is an interface composed of [Traits](./traits.md), each providing different functionalities associated with Git operations. The dynamic dispatch implementation of Vcs is powered by the [provider](https://github.com/mbarbin/provider) library.
 
 ## Architecture
 

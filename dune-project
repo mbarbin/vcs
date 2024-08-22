@@ -19,7 +19,7 @@
 
 (package
  (name vcs)
- (synopsis "A Versatile OCaml Library for Git Interaction")
+ (synopsis "A Versatile OCaml Library for Git Operations")
  (depends
   (ocaml
    (>= 5.2))
@@ -71,13 +71,13 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.7))
+   (>= 0.0.8))
   (vcs-private-libs-base
    (= :version))))
 
 (package
- (name vcs-param)
- (synopsis "[Command.Param] helpers for the Vcs library")
+ (name vcs-arg)
+ (synopsis "[Command.Arg] helpers for the Vcs library")
  (depends
   (ocaml
    (>= 5.2))
@@ -89,10 +89,8 @@
    (and
     :dev
     (>= 2.8.3)))
-  (core
-   (and
-    (>= v0.17)
-    (< v0.18)))
+  (commandlang
+   (>= 0.0.1))
   (eio
    (>= 1.0))
   (fpath
@@ -153,12 +151,14 @@
    (and
     :dev
     (>= 2.8.3)))
-  (command-unix-for-opam
-   (>= 0.0.2))
-  (core
-   (and
-    (>= v0.17)
-    (< v0.18)))
+  (cmdliner
+   (= 1.3.0))
+  (commandlang
+   (>= 0.0.1))
+  (commandlang-err
+   (>= 0.0.1))
+  (commandlang-to-cmdliner
+   (>= 0.0.1))
   (eio
    (>= 1.0))
   (eio_main
@@ -204,9 +204,9 @@
    (>= 0.33))
   (vcs
    (= :version))
-  (vcs-git
+  (vcs-arg
    (= :version))
-  (vcs-param
+  (vcs-git
    (= :version))
   (vcs-private-libs-eio
    (= :version))))
@@ -323,7 +323,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.7))
+   (>= 0.0.8))
   (vcs
    (= :version))
   (vcs-git-cli
@@ -386,7 +386,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.7))
+   (>= 0.0.8))
   (vcs
    (= :version))
   (vcs-git-cli
@@ -410,8 +410,14 @@
    (and
     :dev
     (>= 2.8.3)))
-  (command-unix-for-opam
-   (>= 0.0.2))
+  (cmdliner
+   (= 1.3.0))
+  (commandlang
+   (>= 0.0.1))
+  (commandlang-err
+   (>= 0.0.1))
+  (commandlang-to-cmdliner
+   (>= 0.0.1))
   (core
    (and
     (>= v0.17)
@@ -472,7 +478,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.7))
+   (>= 0.0.8))
   (re
    (>= 1.8.0))
   (sexp_pretty
@@ -489,6 +495,8 @@
     (< v0.18)))
   (vcs
    (= :version))
+  (vcs-arg
+   (= :version))
   (vcs-command
    (= :version))
   (vcs-git
@@ -496,8 +504,6 @@
   (vcs-git-blocking
    (= :version))
   (vcs-git-cli
-   (= :version))
-  (vcs-param
    (= :version))
   (vcs-private-libs-base
    (= :version))
@@ -670,6 +676,6 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.7))
+   (>= 0.0.8))
   (vcs-private-libs-base
    (= :version))))

@@ -1,5 +1,5 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
@@ -44,4 +44,12 @@ let%expect_test "of_string" =
   test "";
   [%expect {| (Error ("Tag_name.of_string: invalid entry" "")) |}];
   ()
+;;
+
+let%expect_test "no ~" =
+  (* At one point we were tempted to allow '~' as a valid tag character, since
+     it is used as part of preview version names such as [0.1.0~preview].
+     However, this is rejected by git itself so we shouldn't allow it. *)
+  require_does_raise [%here] (fun () -> Vcs.Tag_name.v "1.4.5~preview-0.1");
+  [%expect {| ("Tag_name.of_string: invalid entry" 1.4.5~preview-0.1) |}]
 ;;
