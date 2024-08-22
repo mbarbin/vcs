@@ -19,7 +19,7 @@
 
 (package
  (name vcs)
- (synopsis "A Versatile OCaml Library for Git Interaction")
+ (synopsis "A Versatile OCaml Library for Git Operations")
  (depends
   (ocaml
    (>= 5.2))

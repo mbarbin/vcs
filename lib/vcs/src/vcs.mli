@@ -1,5 +1,5 @@
 (*_******************************************************************************)
-(*_  Vcs - a Versatile OCaml Library for Git Interaction                        *)
+(*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
 (*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** A Versatile Library for Git Interaction.
+(** A Versatile Library for Git Operations.
 
     Vcs is a library providing a direct-style API for interacting with Git
     repositories in a type-safe way. It is designed as an interface composed of

@@ -1,5 +1,5 @@
 <h1 align="center">
-  <p align="center">A Versatile OCaml Library for Git Interaction</p>
+  <p align="center">A Versatile OCaml Library for Git Operations</p>
   <img
     src="./img/ocaml-vcs.png?raw=true"
     width='288'
