@@ -11,10 +11,17 @@
   -open
   Base
   -open
-  Expect_test_helpers
+  Fpath_base
   -open
-  Fpath_base)
- (libraries base eio eio_main expect_test_helpers fpath fpath-base vcs_arg)
+  Expect_test_helpers_base)
+ (libraries
+  base
+  eio
+  eio_main
+  expect_test_helpers_core.expect_test_helpers_base
+  fpath
+  fpath-base
+  vcs_arg)
  (instrumentation
   (backend bisect_ppx))
  (lint
