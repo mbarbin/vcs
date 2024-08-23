@@ -11,8 +11,11 @@
   -open
   Base
   -open
-  Expect_test_helpers)
- (libraries base expect_test_helpers vcs_command)
+  Expect_test_helpers_base)
+ (libraries
+  base
+  expect_test_helpers_core.expect_test_helpers_base
+  vcs_command)
  (instrumentation
   (backend bisect_ppx))
  (lint

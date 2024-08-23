@@ -25,9 +25,6 @@ let () =
     ~name:"ocaml-vcs"
     ~version:"%%VERSION%%"
     ~exn_handler:(function
-    | Vcs.E e ->
-      Some
-        (Commandlang_err.Err.make
-           [ Commandlang_err.Err.pp_of_sexp (Vcs.Err.sexp_of_t e) ])
+    | Vcs.E e -> Some (Err0.Err.make [ Err0.Err.pp_of_sexp (Vcs.Err.sexp_of_t e) ])
     | _ -> None [@coverage off])
 ;;

@@ -12,7 +12,7 @@ depends: [
   "ocaml" {>= "5.2"}
   "base" {>= "v0.17" & < "v0.18"}
   "bisect_ppx" {dev & >= "2.8.3"}
-  "commandlang" {>= "0.0.1"}
+  "commandlang" {>= "0.0.2"}
   "eio" {>= "1.0"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.0.9"}

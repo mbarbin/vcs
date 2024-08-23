@@ -1,3 +1,20 @@
+## 0.0.6 (unreleased)
+
+### Added
+
+### Changed
+
+- Now using `expect_test_helpers_base`.
+- Upgrade to `err0` and more recent `commandlang`.
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
+- Removed vendored `expect-test-helpers`.
+
 ## 0.0.5 (2024-08-19)
 
 ### Changed

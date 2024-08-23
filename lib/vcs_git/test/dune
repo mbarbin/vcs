@@ -11,16 +11,16 @@
   -open
   Base
   -open
-  Expect_test_helpers
-  -open
   Fpath_base
+  -open
+  Expect_test_helpers_base
   -open
   Or_error.Let_syntax)
  (libraries
   base
   eio
   eio_main
-  expect_test_helpers
+  expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-base
   vcs

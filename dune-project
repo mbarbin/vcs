@@ -90,7 +90,7 @@
     :dev
     (>= 2.8.3)))
   (commandlang
-   (>= 0.0.1))
+   (>= 0.0.2))
   (eio
    (>= 1.0))
   (fpath
@@ -154,15 +154,15 @@
   (cmdliner
    (= 1.3.0))
   (commandlang
-   (>= 0.0.1))
-  (commandlang-err
-   (>= 0.0.1))
+   (>= 0.0.2))
   (commandlang-to-cmdliner
-   (>= 0.0.1))
+   (>= 0.0.2))
   (eio
    (>= 1.0))
   (eio_main
    (>= 1.0))
+  (err0
+   (>= 0.0.2))
   (fpath
    (>= 0.7.3))
   (fpath-base
@@ -413,11 +413,9 @@
   (cmdliner
    (= 1.3.0))
   (commandlang
-   (>= 0.0.1))
-  (commandlang-err
-   (>= 0.0.1))
+   (>= 0.0.2))
   (commandlang-to-cmdliner
-   (>= 0.0.1))
+   (>= 0.0.2))
   (core
    (and
     (>= v0.17)
@@ -426,6 +424,12 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
+  (err0
+   (>= 0.0.2))
+  (expect_test_helpers_core
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (fpath
    (>= 0.7.3))
   (fpath-base
