@@ -30,8 +30,6 @@ module Make (Runtime : Runtime.S) = struct
       ~f:(fun output ->
         let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
         Or_error.try_with (fun () ->
-          String.split_lines stdout
-          |> List.map ~f:(fun path ->
-            path |> Vcs.Path_in_repo.of_string |> Or_error.ok_exn)))
+          String.split_lines stdout |> List.map ~f:Vcs.Path_in_repo.v))
   ;;
 end

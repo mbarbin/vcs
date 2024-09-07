@@ -41,12 +41,15 @@ let to_string { remote_name; branch_name } =
 
 let of_string str =
   match String.lsplit2 str ~on:'/' with
-  | None ->
-    Or_error.error_s [%sexp "Remote_branch_name.of_string: invalid entry", (str : string)]
+  | None -> Error (`Msg (Printf.sprintf "%S: invalid remote_branch_name" str))
   | Some (remote, branch) ->
-    let%bind remote_name = Remote_name.of_string remote in
-    let%map branch_name = Branch_name.of_string branch in
+    let%bind.Result remote_name = Remote_name.of_string remote in
+    let%map.Result branch_name = Branch_name.of_string branch in
     { remote_name; branch_name }
 ;;
 
-let v t = t |> of_string |> Or_error.ok_exn
+let v str =
+  match str |> of_string with
+  | Ok t -> t
+  | Error (`Msg m) -> invalid_arg m
+;;

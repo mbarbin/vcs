@@ -20,11 +20,11 @@
 (*******************************************************************************)
 
 let () =
-  Commandlang_to_cmdliner.run
+  Cmdlang_to_cmdliner.run
     Vcs_command.main
     ~name:"ocaml-vcs"
     ~version:"%%VERSION%%"
     ~exn_handler:(function
-    | Vcs.E e -> Some (Err0.Err.make [ Err0.Err.pp_of_sexp (Vcs.Err.sexp_of_t e) ])
+    | Vcs.E e -> Some (Err.create [ Err.pp_of_sexp (Vcs.Err.sexp_of_t e) ])
     | _ -> None [@coverage off])
 ;;

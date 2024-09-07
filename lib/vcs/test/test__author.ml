@@ -22,7 +22,7 @@
 let%expect_test "of_string" =
   let test str =
     match Vcs.Author.of_string str with
-    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Error (`Msg m) -> print_s [%sexp Error (m : string)]
     | Ok a -> print_endline (Vcs.Author.to_string a)
   in
   test "John Doe";
@@ -38,15 +38,15 @@ let%expect_test "of_string" =
   [%expect {| John Doe <john.doe@mail.com> |}];
   print_endline
     (Vcs.Author.of_user_config
-       ~user_name:("John Doe" |> Vcs.User_name.of_string |> Or_error.ok_exn)
-       ~user_email:("john.doe@mail.com" |> Vcs.User_email.of_string |> Or_error.ok_exn)
+       ~user_name:("John Doe" |> Vcs.User_name.v)
+       ~user_email:("john.doe@mail.com" |> Vcs.User_email.v)
      |> Vcs.Author.to_string);
   [%expect {| John Doe <john.doe@mail.com> |}];
   (* Some characters are currently not accepted. *)
   test "\\";
-  [%expect {| (Error ("Author.of_string: invalid entry" \)) |}];
+  [%expect {| (Error "\"\\\\\": invalid author") |}];
   (* And we do not accept the empty string. *)
   test "";
-  [%expect {| (Error ("Author.of_string: invalid entry" "")) |}];
+  [%expect {| (Error "\"\": invalid author") |}];
   ()
 ;;

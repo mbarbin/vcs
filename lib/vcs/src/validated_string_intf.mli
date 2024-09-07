@@ -27,10 +27,11 @@ module type S = sig
 
   (** [of_string str] returns [Ok str] if [X.invariant str = true], and an error
       otherwise. This is meant to be used to validate untrusted entries. *)
-  val of_string : string -> t Or_error.t
+  val of_string : string -> (t, [ `Msg of string ]) Result.t
 
-  (** [v str] is a convenient wrapper for [of_string str |> Or_error.ok_exn].
-      This is typically handy for applying on trusted literals. *)
+  (** [v str] is a convenient wrapper to build a [t] or raise
+      [Invalid_argument]. This is typically handy for applying on trusted
+      literals. *)
   val v : string -> t
 end
 

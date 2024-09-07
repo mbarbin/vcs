@@ -29,14 +29,16 @@ let%expect_test "parse" =
     (Vcs_git_cli.Munged_path.parse_exn
      "invalid path"
      ""
-     (Relative_path.of_string "\"\": invalid path")) |}];
+     (Invalid_argument "\"\": invalid path"))
+    |}];
   require_does_raise [%here] (fun () -> test "/tmp => /tmp");
   [%expect
     {|
     (Vcs_git_cli.Munged_path.parse_exn
      "invalid path"
      "/tmp => /tmp"
-     ("Relative_path.of_fpath: not a relative path" /tmp)) |}];
+     (Invalid_argument "\"/tmp\": not a relative path"))
+    |}];
   require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
   [%expect
     {|

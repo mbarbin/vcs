@@ -22,11 +22,11 @@
 let%expect_test "of_string" =
   let test str =
     match Vcs.User_handle.of_string str with
-    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Error (`Msg m) -> print_s [%sexp Error (m : string)]
     | Ok a -> print_endline (Vcs.User_handle.to_string a)
   in
   test "no space";
-  [%expect {| (Error ("User_handle.of_string: invalid entry" "no space")) |}];
+  [%expect {| (Error "\"no space\": invalid user_handle") |}];
   test "jdoe";
   [%expect {| jdoe |}];
   test "john-doe";
@@ -35,9 +35,9 @@ let%expect_test "of_string" =
   [%expect {| john_doe |}];
   (* Some characters are currently not accepted. *)
   test "\\";
-  [%expect {| (Error ("User_handle.of_string: invalid entry" \)) |}];
+  [%expect {| (Error "\"\\\\\": invalid user_handle") |}];
   (* And we do not accept the empty string. *)
   test "";
-  [%expect {| (Error ("User_handle.of_string: invalid entry" "")) |}];
+  [%expect {| (Error "\"\": invalid user_handle") |}];
   ()
 ;;

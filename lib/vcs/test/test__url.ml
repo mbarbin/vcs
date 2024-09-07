@@ -23,7 +23,7 @@ let%expect_test "to_string" =
   let test t =
     let str = Vcs.Url.to_string t in
     print_endline str;
-    let t' = Vcs.Url.of_string str |> Or_error.ok_exn in
+    let t' = Vcs.Url.v str in
     require_equal [%here] (module Vcs.Url) t t'
   in
   test
@@ -44,19 +44,22 @@ let%expect_test "to_string" =
 ;;
 
 let%expect_test "of_string" =
-  let test str = print_s [%sexp (Vcs.Url.of_string str : Vcs.Url.t Or_error.t)] in
+  let test str =
+    print_s [%sexp (Vcs.Url.of_string str : (Vcs.Url.t, [ `Msg of string ]) Result.t)]
+  in
   test "";
-  [%expect {| (Error ("Invalid url" ((url "")))) |}];
+  [%expect {| (Error (Msg "\"\": invalid url")) |}];
   test "mbarbin/myrepo";
-  [%expect {| (Error ("Invalid url" ((url mbarbin/myrepo)))) |}];
+  [%expect {| (Error (Msg "\"mbarbin/myrepo\": invalid url")) |}];
   test "https://github.com/myrepo";
   [%expect
-    {| (Error ("Invalid url" ((url https://github.com/myrepo)) "missing user handle")) |}];
+    {| (Error (Msg "\"https://github.com/myrepo\": invalid url. missing user handle")) |}];
   test "https://github.com/user/myrepo";
   [%expect
     {|
     (Error (
-      "Invalid url" ((url https://github.com/user/myrepo)) "missing .git suffix")) |}];
+      Msg "\"https://github.com/user/myrepo\": invalid url. missing .git suffix"))
+    |}];
   test "https://github.com/user/myrepo.git";
   [%expect
     {|

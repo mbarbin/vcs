@@ -55,9 +55,9 @@ val of_absolute_path : Absolute_path.t -> t
 val to_absolute_path : t -> Absolute_path.t
 
 (** Given an absolute path that is under this repository, returns its relative
-    repo path. This returns an [Error _] if the supplied absolute path doesn't
-    point to a path within this repository. *)
-val relativize : t -> Absolute_path.t -> Path_in_repo.t Or_error.t
+    repo path. This returns [None] if the supplied absolute path doesn't point
+    to a path within this repository. *)
+val relativize : t -> Absolute_path.t -> Path_in_repo.t option
 
 (** This is useful to access file on the file system. *)
 val append : t -> Path_in_repo.t -> Absolute_path.t

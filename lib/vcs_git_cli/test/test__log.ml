@@ -76,7 +76,7 @@ let%expect_test "invalid lines" =
       (parent1 aff8c9c8601e68a41a3bb695ea4a276e2446061f)
       (parent2 d3a24cbfad0a681280ecfe021d40b69fb0b9c589)) |}];
   require_does_raise [%here] (fun () -> test "");
-  [%expect {| ("Rev.of_string: invalid entry" "") |}];
+  [%expect {| (Invalid_argument "\"\": invalid rev") |}];
   require_does_raise [%here] (fun () ->
     test
       "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f \

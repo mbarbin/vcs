@@ -33,5 +33,3 @@ include Validated_string.Make (struct
     let module_name = "Commit_message"
     let invariant = invariant
   end)
-
-let v s = s |> of_string |> Or_error.ok_exn

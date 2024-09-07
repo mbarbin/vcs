@@ -39,5 +39,5 @@ let next (t : t) =
   let seed = Printf.sprintf "%d virtual-rev %s %d" i t.name i in
   let hex = seed |> Stdlib.Digest.string |> Stdlib.Digest.to_hex in
   let rev = String.init 40 ~f:(fun i -> hex.[i % String.length hex]) in
-  Rev.of_string rev |> Or_error.ok_exn
+  Rev.v rev
 ;;
