@@ -67,7 +67,7 @@ let%expect_test "parse_ref_kind_exn" =
   test_ref_kind "refs/heads/blah";
   [%expect {| (Local_branch (branch_name blah)) |}];
   require_does_raise [%here] (fun () -> test_ref_kind "refs/remotes/blah");
-  [%expect {| ("Remote_branch_name.of_string: invalid entry" blah) |}];
+  [%expect {| (Invalid_argument "\"blah\": invalid remote_branch_name") |}];
   test_ref_kind "refs/remotes/origin/main";
   [%expect
     {|

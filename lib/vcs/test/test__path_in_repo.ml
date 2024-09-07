@@ -21,16 +21,18 @@
 
 let%expect_test "of_string" =
   let test s =
-    print_s [%sexp (Vcs.Path_in_repo.of_string s : Vcs.Path_in_repo.t Or_error.t)]
+    print_s
+      [%sexp
+        (Vcs.Path_in_repo.of_string s : (Vcs.Path_in_repo.t, [ `Msg of string ]) Result.t)]
   in
   test "";
-  [%expect {| (Error (Relative_path.of_string "\"\": invalid path")) |}];
+  [%expect {| (Error (Msg "\"\": invalid path")) |}];
   test ".";
   [%expect {| (Ok ./) |}];
   test "/";
-  [%expect {| (Error ("Relative_path.of_fpath: not a relative path" /)) |}];
+  [%expect {| (Error (Msg "\"/\": not a relative path")) |}];
   test "/a/foo";
-  [%expect {| (Error ("Relative_path.of_fpath: not a relative path" /a/foo)) |}];
+  [%expect {| (Error (Msg "\"/a/foo\": not a relative path")) |}];
   test "a/foo/bar";
   [%expect {| (Ok a/foo/bar) |}];
   (* We do keep the trailing slashes if present syntactically. Although we do

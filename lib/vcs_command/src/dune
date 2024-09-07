@@ -14,10 +14,10 @@
   -open
   Vcs_eio_writer
   -open
-  Commandlang)
+  Cmdlang)
  (libraries
   base
-  commandlang
+  cmdlang
   eio
   eio_main
   fpath

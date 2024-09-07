@@ -27,14 +27,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (ppx_compare
    (and
     (>= v0.17)
@@ -49,11 +45,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -85,18 +76,14 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
-  (commandlang
-   (>= 0.0.2))
+  (cmdlang
+   (>= 0.0.4))
   (eio
    (>= 1.0))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (ppx_compare
    (and
     (>= v0.17)
@@ -111,11 +98,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -147,26 +129,22 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
+  (cmdlang
+   (>= 0.0.4))
+  (cmdlang-to-cmdliner
+   (>= 0.0.4))
   (cmdliner
    (= 1.3.0))
-  (commandlang
-   (>= 0.0.2))
-  (commandlang-to-cmdliner
-   (>= 0.0.2))
   (eio
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (err0
-   (>= 0.0.2))
+  (err
+   (>= 0.0.4))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (ppx_compare
    (and
     (>= v0.17)
@@ -181,11 +159,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -221,14 +194,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (ppx_compare
    (and
     (>= v0.17)
@@ -243,11 +212,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -277,16 +241,12 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
   (eio
    (>= 1.0))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (ppx_compare
    (and
     (>= v0.17)
@@ -301,11 +261,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -342,14 +297,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (ppx_compare
    (and
     (>= v0.17)
@@ -364,11 +315,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -398,6 +344,10 @@
  (depends
   (ocaml
    (>= 5.2))
+  (ocamlformat
+   (and
+    :with-dev-setup
+    (= 0.26.2)))
   (base
    (and
     (>= v0.17)
@@ -408,14 +358,14 @@
     (< v0.18)))
   (bisect_ppx
    (and
-    :dev
+    :with-dev-setup
     (>= 2.8.3)))
+  (cmdlang
+   (>= 0.0.4))
+  (cmdlang-to-cmdliner
+   (>= 0.0.4))
   (cmdliner
    (= 1.3.0))
-  (commandlang
-   (>= 0.0.2))
-  (commandlang-to-cmdliner
-   (>= 0.0.2))
   (core
    (and
     (>= v0.17)
@@ -424,8 +374,8 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (err0
-   (>= 0.0.2))
+  (err
+   (>= 0.0.4))
   (expect_test_helpers_core
    (and
     (>= v0.17)
@@ -433,7 +383,7 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (mdx
    (and
     :with-doc
@@ -460,7 +410,7 @@
     (< v0.18)))
   (ppx_js_style
    (and
-    :dev
+    :with-dev-setup
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -489,10 +439,6 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (sherlodoc
-   (and
-    :with-doc
-    (>= 0.2)))
   (stdio
    (and
     (>= v0.17)
@@ -514,7 +460,11 @@
   (vcs-private-libs-eio
    (= :version))
   (vcs-test-helpers
-   (= :version))))
+   (= :version))
+  (sherlodoc
+   (and
+    :with-doc
+    (>= 0.2)))))
 
 (package
  (name vcs-private-libs-base)
@@ -527,10 +477,6 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
   (ppx_compare
    (and
     (>= v0.17)
@@ -545,11 +491,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -578,10 +519,6 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
   (eio
    (>= 1.0))
   (parsexp
@@ -602,11 +539,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let
@@ -634,16 +566,12 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (bisect_ppx
-   (and
-    :dev
-    (>= 2.8.3)))
   (eio
    (>= 1.0))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.0.9))
+   (>= 0.2.0))
   (ppx_compare
    (and
     (>= v0.17)
@@ -658,11 +586,6 @@
     (< v0.18)))
   (ppx_here
    (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_js_style
-   (and
-    :dev
     (>= v0.17)
     (< v0.18)))
   (ppx_let

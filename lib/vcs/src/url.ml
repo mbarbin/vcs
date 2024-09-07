@@ -60,7 +60,7 @@ let to_string t =
   Printf.sprintf "%s%s/%s.git" protocol user_handle repo_name
 ;;
 
-let of_string (s : string) : t Or_error.t =
+let of_string (s : string) : (t, [ `Msg of string ]) Result.t =
   let open Or_error.Let_syntax in
   match
     List.find_map Platform.all ~f:(fun platform ->
@@ -75,12 +75,26 @@ let of_string (s : string) : t Or_error.t =
             String.chop_suffix rest ~suffix:".git"
             |> Result.of_option ~error:(Error.of_string "missing .git suffix")
           in
-          let%bind user_handle = User_handle.of_string user_handle in
-          let%bind repo_name = Repo_name.of_string repo_name in
+          let%bind user_handle =
+            match User_handle.of_string user_handle with
+            | Ok _ as ok -> ok
+            | Error (`Msg m) -> Or_error.error_string m
+          in
+          let%bind repo_name =
+            match Repo_name.of_string repo_name with
+            | Ok _ as ok -> ok
+            | Error (`Msg m) -> Or_error.error_string m
+          in
           return { platform; protocol; user_handle; repo_name })))
   with
   | Some (Ok _ as ok) -> ok
   | Some (Error e) ->
-    Or_error.error_s [%sexp "Invalid url", { url = (s : string) }, (e : Error.t)]
-  | None -> Or_error.error_s [%sexp "Invalid url", { url = (s : string) }]
+    Error (`Msg (Printf.sprintf "%S: invalid url. %s" s (Error.to_string_hum e)))
+  | None -> Error (`Msg (Printf.sprintf "%S: invalid url" s))
+;;
+
+let v str =
+  match of_string str with
+  | Ok t -> t
+  | Error (`Msg m) -> raise (Invalid_argument m)
 ;;

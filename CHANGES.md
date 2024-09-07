@@ -1,15 +1,11 @@
-## 0.0.6 (unreleased)
-
-### Added
+## 0.0.6 (2024-09-07)
 
 ### Changed
 
+- Upgrade to `cmdlang.0.0.4`.
+- Use type `Msg of string` for `of_string` errors.
 - Now using `expect_test_helpers_base`.
-- Upgrade to `err0` and more recent `commandlang`.
-
-### Deprecated
-
-### Fixed
+- Upgrade to `err0` and more recent `cmdlang`.
 
 ### Removed
 
@@ -19,8 +15,8 @@
 
 ### Changed
 
-- Renamed `vcs_param` to `vcs_arg` to match commandlang conventions.
-- Switch commands to new library `commandlang` with `cmdliner` backend.
+- Renamed `vcs_param` to `vcs_arg` to match cmdlang conventions.
+- Switch commands to new library `cmdlang` with `cmdliner` backend.
 - Upgrade `provider` to `0.0.8`.
 
 ## 0.0.4 (2024-08-05)

@@ -22,12 +22,12 @@
 let%expect_test "of_string" =
   let test str =
     match Vcs.Commit_message.of_string str with
-    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Error (`Msg m) -> print_s [%sexp Error (m : string)]
     | Ok a -> print_endline (Vcs.Commit_message.to_string a)
   in
   (* We do not accept the empty string. *)
   test "";
-  [%expect {| (Error ("Commit_message.of_string: invalid entry" "")) |}];
+  [%expect {| (Error "\"\": invalid commit_message") |}];
   (* Currently all characters are currently accepted. *)
   test "\\ including _ spaces and \n newlines";
   [%expect {|
@@ -37,8 +37,8 @@ let%expect_test "of_string" =
   test (String.make 10000 'a');
   [%expect
     {|
-    (Error (
-      "Commit_message.of_string: invalid entry"
-      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa... (10000 characters total)")) |}];
+    (Error
+     "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa... (10000 characters total)\": invalid commit_message")
+    |}];
   ()
 ;;

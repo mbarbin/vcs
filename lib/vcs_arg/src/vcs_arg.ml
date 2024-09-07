@@ -41,11 +41,7 @@ end
 
 module Create_vcs_backend = struct
   let repo_root (dir : _ Eio.Path.t) =
-    dir
-    |> snd
-    |> Absolute_path.of_string
-    |> Or_error.ok_exn
-    |> Vcs.Repo_root.of_absolute_path
+    dir |> snd |> Absolute_path.v |> Vcs.Repo_root.of_absolute_path
   ;;
 
   let from_cwd ~env ~cwd ~config:_ =
@@ -168,9 +164,9 @@ let pos_path_in_repo ~pos ~doc =
   fun (c : Context.t) ->
     let repo_root = Vcs.Repo_root.to_absolute_path c.repo_root in
     let path = Absolute_path.relativize ~root:c.cwd path in
-    match Absolute_path.chop_prefix ~prefix:repo_root path with
-    | Ok relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
-    | Error _ ->
+    match Absolute_path.chop_prefix path ~prefix:repo_root with
+    | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
+    | None ->
       raise
         (Vcs.E
            (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }]))
@@ -202,9 +198,9 @@ let below_path_in_repo =
     let repo_root = Vcs.Repo_root.to_absolute_path c.repo_root in
     Option.map path ~f:(fun path ->
       let path = Absolute_path.relativize ~root:c.cwd path in
-      match Absolute_path.chop_prefix ~prefix:repo_root path with
-      | Ok relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
-      | Error _ ->
+      match Absolute_path.chop_prefix path ~prefix:repo_root with
+      | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
+      | None ->
         raise
           (Vcs.E
              (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }])))

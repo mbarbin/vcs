@@ -47,4 +47,7 @@ type t =
 val to_string : t -> string
 
 (** Parse a string into a url. *)
-val of_string : string -> t Or_error.t
+val of_string : string -> (t, [ `Msg of string ]) Result.t
+
+(** A wrapper for [of_string] that raises [Invalid_argument] on invalid input. *)
+val v : string -> t

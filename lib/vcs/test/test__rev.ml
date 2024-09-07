@@ -20,11 +20,13 @@
 (*******************************************************************************)
 
 let%expect_test "of_string" =
-  let test str = print_s [%sexp (Vcs.Rev.of_string str : Vcs.Rev.t Or_error.t)] in
+  let test str =
+    print_s [%sexp (Vcs.Rev.of_string str : (Vcs.Rev.t, [ `Msg of string ]) Result.t)]
+  in
   test "";
-  [%expect {| (Error ("Rev.of_string: invalid entry" "")) |}];
+  [%expect {| (Error (Msg "\"\": invalid rev")) |}];
   test "too-short";
-  [%expect {| (Error ("Rev.of_string: invalid entry" too-short)) |}];
+  [%expect {| (Error (Msg "\"too-short\": invalid rev")) |}];
   test "3a17020189a3e2f321812d06dcd18f173a170201";
   [%expect {| (Ok 3a17020189a3e2f321812d06dcd18f173a170201) |}];
   test "3a17020189a3e2f321812d06dcd18f173a170201";
@@ -35,8 +37,6 @@ let%expect_test "of_string" =
   [%expect {| (Ok this-string-is-not-a-rev-but-it-is-valid) |}];
   test (String.make 40 ' ');
   [%expect
-    {|
-    (Error (
-      "Rev.of_string: invalid entry" "                                        ")) |}];
+    {| (Error (Msg "\"                                        \": invalid rev")) |}];
   ()
 ;;

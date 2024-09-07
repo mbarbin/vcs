@@ -37,11 +37,14 @@ module Make (X : X) = struct
           ^ Printf.sprintf " (%d characters total)" (String.length s)
         else s
       in
-      Or_error.error_s
-        [%sexp
-          (Printf.sprintf "%s.of_string: invalid entry" X.module_name : string)
-          , (shown_s : string)])
+      Error
+        (`Msg
+          (Printf.sprintf "%S: invalid %s" shown_s (String.uncapitalize X.module_name))))
   ;;
 
-  let v s = Or_error.ok_exn (of_string s)
+  let v s =
+    match of_string s with
+    | Ok t -> t
+    | Error (`Msg m) -> raise (Invalid_argument m)
+  ;;
 end

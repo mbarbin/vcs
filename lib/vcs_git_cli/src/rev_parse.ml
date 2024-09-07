@@ -29,7 +29,9 @@ module Make (Runtime : Runtime.S) = struct
       ~args:[ "rev-parse"; "--abbrev-ref"; "HEAD" ]
       ~f:(fun output ->
         let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
-        Vcs.Branch_name.of_string (String.strip stdout))
+        match Vcs.Branch_name.of_string (String.strip stdout) with
+        | Ok _ as ok -> ok
+        | Error (`Msg m) -> Or_error.error_string m)
   ;;
 
   let current_revision t ~repo_root =
@@ -39,6 +41,8 @@ module Make (Runtime : Runtime.S) = struct
       ~args:[ "rev-parse"; "--verify"; "HEAD^{commit}" ]
       ~f:(fun output ->
         let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
-        Vcs.Rev.of_string (String.strip stdout))
+        match Vcs.Rev.of_string (String.strip stdout) with
+        | Ok _ as ok -> ok
+        | Error (`Msg m) -> Or_error.error_string m)
   ;;
 end

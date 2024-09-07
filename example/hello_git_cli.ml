@@ -67,7 +67,9 @@ let%expect_test "hello cli" =
   let head_rev =
     Vcs.Or_error.git vcs ~repo_root ~args:[ "rev-parse"; "HEAD" ] ~f:(fun output ->
       let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
-      Vcs.Rev.of_string (String.strip stdout))
+      match Vcs.Rev.of_string (String.strip stdout) with
+      | Ok _ as ok -> ok
+      | Error (`Msg m) -> Or_error.error_string m)
     |> Or_error.ok_exn
   in
   require_equal [%here] (module Vcs.Rev) rev head_rev;

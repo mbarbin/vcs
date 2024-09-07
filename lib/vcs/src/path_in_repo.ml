@@ -57,5 +57,15 @@ let to_fpath = Relative_path.to_fpath
 let of_relative_path t = t
 let to_relative_path t = t
 let to_string = Relative_path.to_string
-let of_string str = str |> Relative_path.of_string >>| of_relative_path
-let v s = Or_error.ok_exn (of_string s)
+
+let of_string str =
+  match str |> Relative_path.of_string with
+  | Ok t -> Ok (t |> of_relative_path)
+  | Error (`Msg _) as error -> error
+;;
+
+let v str =
+  match str |> of_string with
+  | Ok t -> t
+  | Error (`Msg m) -> invalid_arg m
+;;

@@ -25,6 +25,7 @@
   base
   eio
   eio_main
+  err
   expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-base

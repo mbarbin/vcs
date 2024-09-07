@@ -55,7 +55,7 @@ cd vcs
 opam switch create . 5.2.0 --no-install
 eval $(opam env)
 opam repo add mbarbin https://github.com/mbarbin/opam-repository.git
-opam install . --deps-only --with-test --with-doc
+opam install . --deps-only --with-doc --with-test --with-dev-setup
 ```
 
 Once this is setup, you can build with dune:

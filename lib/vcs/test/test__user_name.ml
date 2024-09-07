@@ -22,7 +22,7 @@
 let%expect_test "of_string" =
   let test str =
     match Vcs.User_name.of_string str with
-    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Error (`Msg m) -> print_s [%sexp Error (m : string)]
     | Ok a -> print_endline (Vcs.User_name.to_string a)
   in
   test "John Doe";
@@ -37,9 +37,9 @@ let%expect_test "of_string" =
   [%expect {| john.doe |}];
   (* Some characters are currently not accepted. *)
   test "\\";
-  [%expect {| (Error ("User_name.of_string: invalid entry" \)) |}];
+  [%expect {| (Error "\"\\\\\": invalid user_name") |}];
   (* And we do not accept the empty string. *)
   test "";
-  [%expect {| (Error ("User_name.of_string: invalid entry" "")) |}];
+  [%expect {| (Error "\"\": invalid user_name") |}];
   ()
 ;;

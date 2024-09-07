@@ -22,20 +22,20 @@
 let%expect_test "of_string" =
   let test str =
     match Vcs.Remote_name.of_string str with
-    | Error e -> print_s [%sexp Error (e : Error.t)]
+    | Error (`Msg m) -> print_s [%sexp Error (m : string)]
     | Ok a -> print_endline (Vcs.Remote_name.to_string a)
   in
   test "no space";
-  [%expect {| (Error ("Remote_name.of_string: invalid entry" "no space")) |}];
+  [%expect {| (Error "\"no space\": invalid remote_name") |}];
   test "slashes/are/not/allowed";
-  [%expect {| (Error ("Remote_name.of_string: invalid entry" slashes/are/not/allowed)) |}];
+  [%expect {| (Error "\"slashes/are/not/allowed\": invalid remote_name") |}];
   test "dashes-and_underscores";
   [%expect {| dashes-and_underscores |}];
   (* Some characters are currently not accepted. *)
   test "\\";
-  [%expect {| (Error ("Remote_name.of_string: invalid entry" \)) |}];
+  [%expect {| (Error "\"\\\\\": invalid remote_name") |}];
   (* And we do not accept the empty string. *)
   test "";
-  [%expect {| (Error ("Remote_name.of_string: invalid entry" "")) |}];
+  [%expect {| (Error "\"\": invalid remote_name") |}];
   ()
 ;;
