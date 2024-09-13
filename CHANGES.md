@@ -1,3 +1,17 @@
+## 0.0.7 (unreleased)
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Fixed
+
+- Retrieve some code coverage lost during the last release.
+
+### Removed
+
 ## 0.0.6 (2024-09-07)
 
 ### Changed
