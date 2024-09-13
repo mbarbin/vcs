@@ -49,8 +49,8 @@ let%expect_test "of_string" =
   in
   test "";
   [%expect {| (Error (Msg "\"\": invalid url")) |}];
-  test "mbarbin/myrepo";
-  [%expect {| (Error (Msg "\"mbarbin/myrepo\": invalid url")) |}];
+  test "mbarbin/my_repo";
+  [%expect {| (Error (Msg "\"mbarbin/my_repo\": invalid url")) |}];
   test "https://github.com/myrepo";
   [%expect
     {| (Error (Msg "\"https://github.com/myrepo\": invalid url. missing user handle")) |}];
@@ -60,13 +60,43 @@ let%expect_test "of_string" =
     (Error (
       Msg "\"https://github.com/user/myrepo\": invalid url. missing .git suffix"))
     |}];
-  test "https://github.com/user/myrepo.git";
+  test "https://github.com/invalid user/my_repo.git";
+  [%expect
+    {|
+    (Error (
+      Msg
+      "\"https://github.com/invalid user/my_repo.git\": invalid url. \"invalid user\": invalid user_handle"))
+    |}];
+  test "https://github.com/user/invalid repo.git";
+  [%expect
+    {|
+    (Error (
+      Msg
+      "\"https://github.com/user/invalid repo.git\": invalid url. \"invalid repo\": invalid repo_name"))
+    |}];
+  test "https://github.com/user/repo.git";
   [%expect
     {|
     (Ok (
       (platform    GitHub)
       (protocol    Https)
       (user_handle user)
-      (repo_name   myrepo))) |}];
+      (repo_name   repo)))
+    |}];
+  ()
+;;
+
+let%expect_test "v" =
+  let test str = print_s [%sexp (Vcs.Url.v str : Vcs.Url.t)] in
+  require_does_raise [%here] (fun () -> test "user/my_repo");
+  [%expect {| (Invalid_argument "\"user/my_repo\": invalid url") |}];
+  test "https://github.com/user/repo.git";
+  [%expect
+    {|
+    ((platform    GitHub)
+     (protocol    Https)
+     (user_handle user)
+     (repo_name   repo))
+    |}];
   ()
 ;;
