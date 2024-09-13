@@ -69,7 +69,7 @@ let%expect_test "hello cli" =
       let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
       match Vcs.Rev.of_string (String.strip stdout) with
       | Ok _ as ok -> ok
-      | Error (`Msg m) -> Or_error.error_string m)
+      | Error (`Msg _) -> assert false)
     |> Or_error.ok_exn
   in
   require_equal [%here] (module Vcs.Rev) rev head_rev;
