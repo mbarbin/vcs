@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Upgrade to `cmdlang.0.0.5`.
+
 ### Deprecated
 
 ### Fixed
