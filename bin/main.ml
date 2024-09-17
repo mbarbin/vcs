@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 let () =
-  Cmdlang_to_cmdliner.run
+  Cmdlang_cmdliner_runner.run
     Vcs_command.main
     ~name:"ocaml-vcs"
     ~version:"%%VERSION%%"
