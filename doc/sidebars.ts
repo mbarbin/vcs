@@ -12,27 +12,44 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
  */
 const sidebars: SidebarsConfig = {
 
-  odocSidebar: [
-    { type: 'doc', id: 'odoc/odoc', label: 'OCaml Packages' },
-  ],
-
-  designSidebar: [
+  tutorialsSidebar: [
     {
       type: 'category',
-      label: 'Design',
+      label: 'Tutorials',
       items: [
-        { type: 'doc', id: 'design/introduction', label: 'Introduction' },
-        { type: 'doc', id: 'design/traits', label: 'Traits' },
+        { type: 'doc', id: 'tutorials/README', label: 'Introduction' },
       ],
     },
   ],
 
-  testsSidebar: [
+  guidesSidebar: [
     {
       type: 'category',
-      label: 'Tests',
+      label: 'Guides',
       items: [
-        { type: 'doc', id: 'tests/exploratory_tests', label: 'Exploratory tests' },
+        { type: 'doc', id: 'guides/README', label: 'Introduction' },
+      ],
+    },
+  ],
+
+  referenceSidebar: [
+    {
+      type: 'category',
+      label: 'Reference',
+      items: [
+        { type: 'doc', id: 'reference/odoc', label: 'OCaml Packages' },
+      ],
+    },
+  ],
+
+  explanationSidebar: [
+    {
+      type: 'category',
+      label: 'Explanation',
+      items: [
+        { type: 'doc', id: 'explanation/README', label: 'Introduction' },
+        { type: 'doc', id: 'explanation/traits', label: 'Traits' },
+        { type: 'doc', id: 'explanation/exploratory_tests', label: 'Exploratory tests' },
       ],
     },
   ],
