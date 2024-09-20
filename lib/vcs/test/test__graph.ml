@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "tree" =
+let%expect_test "graph" =
   Eio_main.run
   @@ fun env ->
   let log =
@@ -34,21 +34,21 @@ let%expect_test "tree" =
     let lines = String.split_lines contents in
     Vcs_git_cli.Refs.parse_lines_exn ~lines
   in
-  let tree = Vcs.Tree.create () in
-  print_s [%sexp { node_count = (Vcs.Tree.node_count tree : int) }];
+  let graph = Vcs.Graph.create () in
+  print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
   [%expect {| ((node_count 0)) |}];
-  Vcs.Tree.add_nodes tree ~log;
-  print_s [%sexp { node_count = (Vcs.Tree.node_count tree : int) }];
+  Vcs.Graph.add_nodes graph ~log;
+  print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
   [%expect {| ((node_count 180)) |}];
-  List.iter refs ~f:(fun { rev; ref_kind } -> Vcs.Tree.set_ref tree ~rev ~ref_kind);
-  let refs = Vcs.Tree.refs tree in
+  List.iter refs ~f:(fun { rev; ref_kind } -> Vcs.Graph.set_ref graph ~rev ~ref_kind);
+  let refs = Vcs.Graph.refs graph in
   List.iter refs ~f:(fun { rev; ref_kind } ->
-    let node = Vcs.Tree.find_ref tree ~ref_kind |> Option.value_exn ~here:[%here] in
-    let rev' = Vcs.Tree.rev tree node in
+    let node = Vcs.Graph.find_ref graph ~ref_kind |> Option.value_exn ~here:[%here] in
+    let rev' = Vcs.Graph.rev graph node in
     require_equal [%here] (module Vcs.Rev) rev rev';
-    let node' = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
-    require_equal [%here] (module Vcs.Tree.Node) node node';
-    let parents = Vcs.Tree.parents tree node |> List.map ~f:(Vcs.Tree.rev tree) in
+    let node' = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
+    require_equal [%here] (module Vcs.Graph.Node) node node';
+    let parents = Vcs.Graph.parents graph node |> List.map ~f:(Vcs.Graph.rev graph) in
     print_s
       [%sexp { ref_kind : Vcs.Ref_kind.t; rev : Vcs.Rev.t; parents : Vcs.Rev.t list }]);
   [%expect
@@ -109,7 +109,7 @@ let%expect_test "tree" =
     ((ref_kind (Tag (tag_name 0.0.3-preview.1)))
      (rev 1887c81ebf9b84c548bc35038f7af82a18eb77bf)
      (parents (b258b0cde128083c4f05bcf276bcc1322f1d36a2))) |}];
-  print_s [%sexp (Vcs.Tree.summary tree : Vcs.Tree.Summary.t)];
+  print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
   [%expect
     {|
     ((refs (
@@ -141,7 +141,7 @@ let%expect_test "tree" =
          refs/heads/gh-pages refs/remotes/origin/gh-pages))
        (2e4fbeae154ec896262decf1ab3bee5687b93f21 (
          refs/heads/main refs/heads/subrepo refs/remotes/origin/main))))
-     (subtrees (
+     (subgraphs (
        ((refs (
           (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/main)
           (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/subrepo)
@@ -174,20 +174,20 @@ let%expect_test "tree" =
           7135b7f4790562e94d9122365478f0d39f5ffead (
             refs/heads/gh-pages refs/remotes/origin/gh-pages)))))))) |}];
   let main =
-    Vcs.Tree.find_ref
-      tree
+    Vcs.Graph.find_ref
+      graph
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "main" })
     |> Option.value_exn ~here:[%here]
   in
   let subrepo =
-    Vcs.Tree.find_ref
-      tree
+    Vcs.Graph.find_ref
+      graph
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "subrepo" })
     |> Option.value_exn ~here:[%here]
   in
   let progress_bar =
-    Vcs.Tree.find_ref
-      tree
+    Vcs.Graph.find_ref
+      graph
       ~ref_kind:
         (Remote_branch
            { remote_branch_name =
@@ -198,18 +198,18 @@ let%expect_test "tree" =
     |> Option.value_exn ~here:[%here]
   in
   let tag_0_0_1 =
-    Vcs.Tree.find_ref tree ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.1" })
+    Vcs.Graph.find_ref graph ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.1" })
     |> Option.value_exn ~here:[%here]
   in
   let tag_0_0_2 =
-    Vcs.Tree.find_ref tree ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.2" })
+    Vcs.Graph.find_ref graph ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.2" })
     |> Option.value_exn ~here:[%here]
   in
   List.iter [ main; subrepo; progress_bar; tag_0_0_1; tag_0_0_2 ] ~f:(fun node ->
     print_s
       [%sexp
-        { node = (Vcs.Tree.rev tree node : Vcs.Rev.t)
-        ; refs = (Vcs.Tree.node_refs tree node : Vcs.Ref_kind.t list)
+        { node = (Vcs.Graph.rev graph node : Vcs.Rev.t)
+        ; refs = (Vcs.Graph.node_refs graph node : Vcs.Ref_kind.t list)
         }]);
   [%expect
     {|
@@ -240,16 +240,16 @@ let%expect_test "tree" =
     ((node 0d4750ff594236a4bd970e1c90b8bbad80fcadff)
      (refs ((Tag (tag_name 0.0.2))))) |}];
   (* Log. *)
-  print_s [%sexp (List.length (Vcs.Tree.log tree) : int)];
+  print_s [%sexp (List.length (Vcs.Graph.log graph) : int)];
   [%expect {| 180 |}];
   (* Ancestor. *)
   let is_ancestor ancestor descendant =
     print_s
       [%sexp
         { is_ancestor_or_equal =
-            (Vcs.Tree.is_ancestor_or_equal tree ~ancestor ~descendant : bool)
+            (Vcs.Graph.is_ancestor_or_equal graph ~ancestor ~descendant : bool)
         ; is_strict_ancestor =
-            (Vcs.Tree.is_strict_ancestor tree ~ancestor ~descendant : bool)
+            (Vcs.Graph.is_strict_ancestor graph ~ancestor ~descendant : bool)
         }]
   in
   is_ancestor tag_0_0_1 tag_0_0_2;
@@ -268,10 +268,10 @@ let%expect_test "tree" =
   let root_node = Vcs.Rev.v "da46f0d60bfbb9dc9340e95f5625c10815c24af7" in
   let tip = Vcs.Rev.v "2e4fbeae154ec896262decf1ab3bee5687b93f21" in
   (* ref_kind. *)
-  let node_exn rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
+  let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
   let ref_kind rev =
     let node = node_exn rev in
-    let line = Vcs.Tree.log_line tree node in
+    let line = Vcs.Graph.log_line graph node in
     print_s [%sexp (line : Vcs.Log.Line.t)]
   in
   ref_kind tip;
@@ -293,7 +293,7 @@ let%expect_test "tree" =
   let parents rev =
     let node = node_exn rev in
     let parents =
-      Vcs.Tree.parents tree node |> List.map ~f:(fun node -> Vcs.Tree.rev tree node)
+      Vcs.Graph.parents graph node |> List.map ~f:(fun node -> Vcs.Graph.rev graph node)
     in
     print_s [%sexp (parents : Vcs.Rev.t list)]
   in
@@ -310,7 +310,8 @@ let%expect_test "tree" =
   let test r1 r2 =
     print_s
       [%sexp
-        (Vcs.Tree.descendance tree (node_exn r1) (node_exn r2) : Vcs.Tree.Descendance.t)]
+        (Vcs.Graph.descendance graph (node_exn r1) (node_exn r2)
+         : Vcs.Graph.Descendance.t)]
   in
   test tip tip;
   [%expect {| Same_node |}];
@@ -329,8 +330,8 @@ let%expect_test "tree" =
 (* Additional tests to help covering corner cases. *)
 
 let%expect_test "empty summary" =
-  let tree = Vcs.Tree.create () in
-  print_s [%sexp (Vcs.Tree.summary tree : Vcs.Tree.Summary.t)];
+  let graph = Vcs.Graph.create () in
+  print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
   [%expect {|
     ((refs  ())
      (roots ())
@@ -338,23 +339,23 @@ let%expect_test "empty summary" =
   ()
 ;;
 
-let%expect_test "Subtree.is_empty" =
-  let subtree = { Vcs.Tree.Subtree.log = []; refs = [] } in
-  print_s [%sexp (Vcs.Tree.Subtree.is_empty subtree : bool)];
+let%expect_test "Subgraph.is_empty" =
+  let subgraph = { Vcs.Graph.Subgraph.log = []; refs = [] } in
+  print_s [%sexp (Vcs.Graph.Subgraph.is_empty subgraph : bool)];
   [%expect {| true |}];
-  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
-  let subtree =
-    { Vcs.Tree.Subtree.log = [ Root { rev = Vcs.Mock_rev_gen.next mock_rev_gen } ]
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
+  let subgraph =
+    { Vcs.Graph.Subgraph.log = [ Root { rev = Vcs.Mock_rev_gen.next mock_rev_gen } ]
     ; refs = []
     }
   in
-  print_s [%sexp (Vcs.Tree.Subtree.is_empty subtree : bool)];
+  print_s [%sexp (Vcs.Graph.Subgraph.is_empty subgraph : bool)];
   [%expect {| false |}];
   ()
 ;;
 
 let%expect_test "add_nodes" =
-  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let revs = Array.init 10 ~f:(fun _ -> Vcs.Mock_rev_gen.next mock_rev_gen) in
   let log =
     (* Contrary to [git] we prepare the log with the oldest commits first, as I
@@ -366,9 +367,9 @@ let%expect_test "add_nodes" =
           Vcs.Log.Line.Commit { rev = revs.(i + 2); parent = revs.(i + 1) })
       ]
   in
-  let tree = Vcs.Tree.create () in
-  Vcs.Tree.add_nodes tree ~log:(List.rev log);
-  print_s [%sexp (List.length (Vcs.Tree.log tree) : int)];
+  let graph = Vcs.Graph.create () in
+  Vcs.Graph.add_nodes graph ~log:(List.rev log);
+  print_s [%sexp (List.length (Vcs.Graph.log graph) : int)];
   [%expect {| 6 |}];
   (* Adding log is idempotent. Only new nodes are effectively added. *)
   let log =
@@ -377,38 +378,39 @@ let%expect_test "add_nodes" =
       ; [ Vcs.Log.Line.Merge { rev = revs.(6); parent1 = revs.(2); parent2 = revs.(5) } ]
       ]
   in
-  Vcs.Tree.add_nodes tree ~log:(List.rev log);
-  print_s [%sexp (List.length (Vcs.Tree.log tree) : int)];
+  Vcs.Graph.add_nodes graph ~log:(List.rev log);
+  print_s [%sexp (List.length (Vcs.Graph.log graph) : int)];
   [%expect {| 7 |}];
-  (* This tree has a merge node (r.6) which present some corner cases for the
+  (* This graph has a merge node (r.6) which present some corner cases for the
      logic in [is_strict_ancestor] that are hard to cover otherwise. *)
-  let node_exn rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
-  print_s [%sexp (Vcs.Tree.log tree : Vcs.Log.t)];
+  let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
+  print_s [%sexp (Vcs.Graph.log graph : Vcs.Log.t)];
   [%expect
     {|
-    ((Root (rev b4009f9c14eab4c931474f7647481517b4009f9c))
-     (Root (rev 356b5838cce64758f4fa99b48c4a4552356b5838))
+    ((Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9))
+     (Root (rev f453b802f640c6888df978c712057d17f453b802))
      (Commit
-       (rev    463eed936ec17915e6a76d135aecc4e0463eed93)
-       (parent 356b5838cce64758f4fa99b48c4a4552356b5838))
+       (rev    5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+       (parent f453b802f640c6888df978c712057d17f453b802))
      (Commit
-       (rev    08eb34026333c8825254e31ce2921cba08eb3402)
-       (parent 463eed936ec17915e6a76d135aecc4e0463eed93))
+       (rev    9a81fba7a18f740120f1141b1ed109bb9a81fba7)
+       (parent 5deb4aaec51a75ef58765038b7c20b3f5deb4aae))
      (Commit
-       (rev    f610a31854ad58032204ab00120776e4f610a318)
-       (parent 08eb34026333c8825254e31ce2921cba08eb3402))
+       (rev    7216231cd107946841cc3eebe5da287b7216231c)
+       (parent 9a81fba7a18f740120f1141b1ed109bb9a81fba7))
      (Commit
-       (rev    fec942a1014d1c42354c41583584c1a4fec942a1)
-       (parent f610a31854ad58032204ab00120776e4f610a318))
+       (rev    b155b82523d24ea82eb0ad45a5e89adcb155b825)
+       (parent 7216231cd107946841cc3eebe5da287b7216231c))
      (Merge
-       (rev     e47ca7129177810c1a02e01049eb3fd3e47ca712)
-       (parent1 463eed936ec17915e6a76d135aecc4e0463eed93)
-       (parent2 fec942a1014d1c42354c41583584c1a4fec942a1))) |}];
+       (rev     ed2a9ed9f5d7bee45156ba272651656ced2a9ed9)
+       (parent1 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+       (parent2 b155b82523d24ea82eb0ad45a5e89adcb155b825)))
+    |}];
   let is_strict_ancestor r1 r2 =
     print_s
       [%sexp
-        (Vcs.Tree.is_strict_ancestor
-           tree
+        (Vcs.Graph.is_strict_ancestor
+           graph
            ~ancestor:(node_exn r1)
            ~descendant:(node_exn r2)
          : bool)]
@@ -423,62 +425,63 @@ let%expect_test "add_nodes" =
 ;;
 
 let%expect_test "set invalid rev" =
-  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let r1 = Vcs.Mock_rev_gen.next mock_rev_gen in
-  let tree = Vcs.Tree.create () in
+  let graph = Vcs.Graph.create () in
   let set_ref_r1 () =
-    Vcs.Tree.set_ref
-      tree
+    Vcs.Graph.set_ref
+      graph
       ~rev:r1
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "main" })
   in
   require_does_raise [%here] (fun () -> set_ref_r1 ());
-  [%expect {| ("Rev not found" b4009f9c14eab4c931474f7647481517b4009f9c) |}];
-  Vcs.Tree.add_nodes tree ~log:[ Root { rev = r1 } ];
+  [%expect {| ("Rev not found" 5cd237e9598b11065c344d1eb33bc8c15cd237e9) |}];
+  Vcs.Graph.add_nodes graph ~log:[ Root { rev = r1 } ];
   set_ref_r1 ();
-  print_s [%sexp (Vcs.Tree.refs tree : Vcs.Refs.t)];
+  print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
   [%expect
     {|
     ((
-      (rev b4009f9c14eab4c931474f7647481517b4009f9c)
-      (ref_kind (Local_branch (branch_name main))))) |}];
+      (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)
+      (ref_kind (Local_branch (branch_name main)))))
+    |}];
   ()
 ;;
 
 let%expect_test "greatest_common_ancestors" =
-  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
-  let tree = Vcs.Tree.create () in
-  let node ~rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
+  let graph = Vcs.Graph.create () in
+  let node ~rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
   let tag ~rev tag_name =
-    Vcs.Tree.set_ref tree ~rev ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v tag_name })
+    Vcs.Graph.set_ref graph ~rev ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v tag_name })
   in
   let root () =
     let rev = rev () in
-    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Root { rev } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Root { rev } ];
     rev
   in
   let commit ~parent =
     let rev = rev () in
-    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
     rev
   in
   let merge ~parent1 ~parent2 =
     let rev = rev () in
-    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
     rev
   in
   let gcas revs =
     let gcas =
-      Vcs.Tree.greatest_common_ancestors tree (List.map revs ~f:(fun rev -> node ~rev))
+      Vcs.Graph.greatest_common_ancestors graph (List.map revs ~f:(fun rev -> node ~rev))
       |> List.map ~f:(fun node ->
-        match Vcs.Tree.node_refs tree node with
+        match Vcs.Graph.node_refs graph node with
         | ref :: _ -> Vcs.Ref_kind.to_string ref
         | [] ->
           (* This branch is kept for debug if it is executed by mistake but we
              shouldn't exercise this case since this makes the tests results
              harder to understand. *)
-          (Vcs.Tree.rev tree node |> Vcs.Rev.to_string) [@coverage off])
+          (Vcs.Graph.rev graph node |> Vcs.Rev.to_string) [@coverage off])
     in
     print_s [%sexp { gcas : string list }]
   in
@@ -533,41 +536,41 @@ let%expect_test "greatest_common_ancestors" =
 ;;
 
 (* In this part of the test, we want to monitor that the interface exposed by
-   [Vcs.Tree] is sufficient to write some algorithm on git trees. As an example
+   [Vcs.Graph] is sufficient to write some algorithm on git graphs. As an example
    here, we are implementing from the user land a function that returns the set
    of nodes that are ancestors of a given node. *)
 
-let ancestors tree node =
+let ancestors graph node =
   let rec loop acc to_visit =
     match to_visit with
     | [] -> acc
     | node :: to_visit ->
       if Set.mem acc node
       then loop acc to_visit
-      else loop (Set.add acc node) (Vcs.Tree.prepend_parents tree node to_visit)
+      else loop (Set.add acc node) (Vcs.Graph.prepend_parents graph node to_visit)
   in
-  loop (Set.empty (module Vcs.Tree.Node)) [ node ]
+  loop (Set.empty (module Vcs.Graph.Node)) [ node ]
 ;;
 
-let%expect_test "debug tree" =
+let%expect_test "debug graph" =
   (* If needed, sexp_of_t should show helpful indices for nodes. *)
-  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-tree" in
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
-  let tree = Vcs.Tree.create () in
-  let node ~rev = Vcs.Tree.find_rev tree ~rev |> Option.value_exn ~here:[%here] in
+  let graph = Vcs.Graph.create () in
+  let node ~rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
   let root () =
     let rev = rev () in
-    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Root { rev } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Root { rev } ];
     rev
   in
   let commit ~parent =
     let rev = rev () in
-    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
     rev
   in
   let merge ~parent1 ~parent2 =
     let rev = rev () in
-    Vcs.Tree.add_nodes tree ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
     rev
   in
   let r1 = root () in
@@ -575,8 +578,8 @@ let%expect_test "debug tree" =
   let r3 = commit ~parent:r1 in
   let m1 = merge ~parent1:r2 ~parent2:r3 in
   let r4 = commit ~parent:m1 in
-  Vcs.Tree.set_refs
-    tree
+  Vcs.Graph.set_refs
+    graph
     ~refs:
       [ { rev = r2
         ; ref_kind =
@@ -585,34 +588,34 @@ let%expect_test "debug tree" =
       ; { rev = r4; ref_kind = Tag { tag_name = Vcs.Tag_name.v "0.1.0" } }
       ; { rev = r4; ref_kind = Local_branch { branch_name = Vcs.Branch_name.main } }
       ];
-  print_s [%sexp (tree : Vcs.Tree.t)];
+  print_s [%sexp (graph : Vcs.Graph.t)];
   [%expect
     {|
     ((nodes (
        (#4 (
          Commit
-         (rev    f610a31854ad58032204ab00120776e4f610a318)
+         (rev    7216231cd107946841cc3eebe5da287b7216231c)
          (parent #3)))
        (#3 (
          Merge
-         (rev     08eb34026333c8825254e31ce2921cba08eb3402)
+         (rev     9a81fba7a18f740120f1141b1ed109bb9a81fba7)
          (parent1 #1)
          (parent2 #2)))
        (#2 (
          Commit
-         (rev    463eed936ec17915e6a76d135aecc4e0463eed93)
+         (rev    5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
          (parent #0)))
        (#1 (
          Commit
-         (rev    356b5838cce64758f4fa99b48c4a4552356b5838)
+         (rev    f453b802f640c6888df978c712057d17f453b802)
          (parent #0)))
-       (#0 (Root (rev b4009f9c14eab4c931474f7647481517b4009f9c)))))
+       (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
      (revs (
-       (#4 f610a31854ad58032204ab00120776e4f610a318)
-       (#3 08eb34026333c8825254e31ce2921cba08eb3402)
-       (#2 463eed936ec17915e6a76d135aecc4e0463eed93)
-       (#1 356b5838cce64758f4fa99b48c4a4552356b5838)
-       (#0 b4009f9c14eab4c931474f7647481517b4009f9c)))
+       (#4 7216231cd107946841cc3eebe5da287b7216231c)
+       (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
+       (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+       (#1 f453b802f640c6888df978c712057d17f453b802)
+       (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
      (refs (
        (#4 (
          (Local_branch (branch_name main))
@@ -624,27 +627,27 @@ let%expect_test "debug tree" =
              (branch_name main)))))))))
     |}];
   (* node_count *)
-  print_s [%sexp { node_count = (Vcs.Tree.node_count tree : int) }];
+  print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
   [%expect {| ((node_count 5)) |}];
   (* node_kind *)
   let node_kind rev =
     let node = node ~rev in
-    print_s [%sexp (Vcs.Tree.node_kind tree node : Vcs.Tree.Node_kind.t)]
+    print_s [%sexp (Vcs.Graph.node_kind graph node : Vcs.Graph.Node_kind.t)]
   in
   node_kind r1;
-  [%expect {| (Root (rev b4009f9c14eab4c931474f7647481517b4009f9c)) |}];
+  [%expect {| (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
   node_kind r2;
   [%expect
     {|
     (Commit
-      (rev    356b5838cce64758f4fa99b48c4a4552356b5838)
+      (rev    f453b802f640c6888df978c712057d17f453b802)
       (parent #0))
     |}];
   node_kind m1;
   [%expect
     {|
     (Merge
-      (rev     08eb34026333c8825254e31ce2921cba08eb3402)
+      (rev     9a81fba7a18f740120f1141b1ed109bb9a81fba7)
       (parent1 #1)
       (parent2 #2))
     |}];
@@ -652,12 +655,12 @@ let%expect_test "debug tree" =
   [%expect
     {|
     (Commit
-      (rev    f610a31854ad58032204ab00120776e4f610a318)
+      (rev    7216231cd107946841cc3eebe5da287b7216231c)
       (parent #3))
     |}];
   (* ancestors *)
   let print_ancestors rev =
-    print_s [%sexp (ancestors tree (node ~rev) : Set.M(Vcs.Tree.Node).t)]
+    print_s [%sexp (ancestors graph (node ~rev) : Set.M(Vcs.Graph.Node).t)]
   in
   print_ancestors r1;
   [%expect {| (#0) |}];
@@ -670,13 +673,13 @@ let%expect_test "debug tree" =
   print_ancestors r4;
   [%expect {| (#0 #1 #2 #3 #4) |}];
   (* Low level int indexing. *)
-  let node_index node = print_s [%sexp (Vcs.Tree.node_index tree node : int)] in
+  let node_index node = print_s [%sexp (Vcs.Graph.node_index graph node : int)] in
   node_index (node ~rev:r1);
   [%expect {| 0 |}];
   node_index (node ~rev:r4);
   [%expect {| 4 |}];
   let get_node_exn index =
-    print_s [%sexp (Vcs.Tree.get_node_exn tree ~index : Vcs.Tree.Node.t)]
+    print_s [%sexp (Vcs.Graph.get_node_exn graph ~index : Vcs.Graph.Node.t)]
   in
   get_node_exn 0;
   [%expect {| #0 |}];

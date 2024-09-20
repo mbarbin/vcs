@@ -48,6 +48,6 @@ val remote_branches : t -> Remote_branch_name.t list
     quite cheap to get all refs using {!val:Vcs.refs}, turn the result into a
     map with this function, and use the map for the lookups rather than trying
     to run one git command per lookup. You may also use
-    {!val:Vcs.Tree.find_ref} if you build the complete tree with
-    {!val:Vcs.tree}. *)
+    {!val:Vcs.Graph.find_ref} if you build the complete graph with
+    {!val:Vcs.graph}. *)
 val to_map : t -> Rev.t Map.M(Ref_kind).t

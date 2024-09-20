@@ -175,16 +175,16 @@ val num_status
   -> changed:Num_status.Changed.t
   -> Num_status.t
 
-(** {1 Manipulating the tree in memory} *)
+(** {1 Manipulating the graph in memory} *)
 
 module Log = Log
 module Ref_kind = Ref_kind
 module Refs = Refs
-module Tree = Tree
+module Graph = Graph
 
 val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t
 val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t
-val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t
+val graph : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Graph.t
 
 (** {1 Rev parse utils} *)
 

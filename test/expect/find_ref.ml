@@ -131,13 +131,13 @@ let%expect_test "find ref" =
      (tag1    dd5aabd331a75b90cd61725223964e47dd5aabd3)
      (tag2    f452a6f91ee8f448bd58bbd0f3330675f452a6f9))
     |}];
-  (* Next we do the same lookups, this time using [Vcs.Tree.find_ref], and
+  (* Next we do the same lookups, this time using [Vcs.Graph.find_ref], and
      verify that we find the same results. *)
-  let tree = Vcs.tree vcs ~repo_root in
+  let graph = Vcs.graph vcs ~repo_root in
   let sexp2 =
     let find_exn ref_kind =
-      match Vcs.Tree.find_ref tree ~ref_kind with
-      | Some node -> Vcs.Mock_revs.to_mock mock_revs ~rev:(Vcs.Tree.rev tree node)
+      match Vcs.Graph.find_ref graph ~ref_kind with
+      | Some node -> Vcs.Mock_revs.to_mock mock_revs ~rev:(Vcs.Graph.rev graph node)
       | None -> assert false
     in
     lookup ~find_exn
@@ -154,7 +154,7 @@ let%expect_test "find ref" =
      This is the reason why we ended up removing [rev_parse] from the vcs api, and replaced it
      with the 2 technics shown above:
 
-     1. [Vcs.Tree.find_ref] and
+     1. [Vcs.Graph.find_ref] and
      2. [Vcs.refs |> Vcs.Refs.to_map]. *)
   let ambiguous_rev =
     Vcs.git

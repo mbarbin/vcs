@@ -1,18 +1,13 @@
-## 0.0.7 (unreleased)
-
-### Added
+## 0.0.7 (2024-09-20)
 
 ### Changed
 
+- Rename `tree` to `graph` to designate the commit graph of a repository (breaking change).
 - Upgrade to `cmdlang.0.0.5`.
-
-### Deprecated
 
 ### Fixed
 
 - Retrieve some code coverage lost during the last release.
-
-### Removed
 
 ## 0.0.6 (2024-09-07)
 
@@ -48,20 +43,20 @@ Release a version compatible with the latest renames in the provider library.
 ### Added
 
 - Expose gca function in the `ocaml-vcs` command line.
-- Add function and tests to compute GCAs in `Vcs.Tree`.
+- Add function and tests to compute GCAs in `Vcs.Graph`.
 
 ### Changed
 
 - Rename `Vcs.Descendance.t` constructors for clarity.
-- Improve `Vcs.Tree.Node` interface.
-- Improve `Vcs.Tree.sexp_of_t` to help with debugging.
+- Improve `Vcs.Graph.Node` interface.
+- Improve `Vcs.Graph.sexp_of_t` to help with debugging.
 - Rename `git_cli` library to `vcs_git_cli` for consistency.
-- Remove type parameter for `Vcs.Tree.Node_kind` (simplify interface).
-- Renamed constructors for root nodes in vcs trees (`Init` => `Root`).
+- Remove type parameter for `Vcs.Graph.Node_kind` (simplify interface).
+- Renamed constructors for root nodes in vcs graphs (`Init` => `Root`).
 
 ### Fixed
 
-- Fix `Vcs.Tree.add_nodes` raising when adding nodes incrementally.
+- Fix `Vcs.Graph.add_nodes` raising when adding nodes incrementally.
 
 ## 0.0.2 (2024-07-26)
 
@@ -69,7 +64,7 @@ Release a version compatible with the latest renames in the provider library.
 
 - Add documentation website powered by Docusaurus. (#7, @mbarbin)
 - Initiate a library `vcs-test-helpers` to help writing tests. (#4, @mbarbin)
-- Add test showing how to do revision lookup from references using `Vcs.refs` and `Vcs.tree`.
+- Add test showing how to do revision lookup from references using `Vcs.refs` and `Vcs.graph`.
 - Added dependabot config for automatically upgrading action files.
 
 ### Changed

@@ -367,7 +367,7 @@ let tips t =
 
 let log t = Array.mapi t.nodes ~f:(fun node _ -> log_line t node) |> Array.to_list
 
-module Subtree = struct
+module Subgraph = struct
   module T = struct
     [@@@coverage off]
 
@@ -383,14 +383,14 @@ module Subtree = struct
   let is_empty { log; refs } = List.is_empty log && List.is_empty refs
 end
 
-let of_subtree { Subtree.log; refs } =
+let of_subgraph { Subgraph.log; refs } =
   let t = create () in
   add_nodes t ~log;
   set_refs t ~refs;
   t
 ;;
 
-let subtrees t =
+let subgraphs t =
   let dummy_cell = Union_find.create (-1) in
   let components = Array.map t.nodes ~f:(fun _ -> dummy_cell) in
   let component_id = ref 0 in
@@ -415,8 +415,8 @@ let subtrees t =
     let id = Union_find.get components.(index) in
     Queue.enqueue refs.(id) { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind });
   Array.map2_exn logs refs ~f:(fun log refs ->
-    { Subtree.log = Queue.to_list log; refs = Queue.to_list refs })
-  |> Array.filter ~f:(fun subtree -> not (Subtree.is_empty subtree))
+    { Subgraph.log = Queue.to_list log; refs = Queue.to_list refs })
+  |> Array.filter ~f:(fun subgraph -> not (Subgraph.is_empty subgraph))
   |> Array.to_list
 ;;
 
@@ -427,7 +427,7 @@ module Summary = struct
     { refs : (Rev.t * string) list
     ; roots : Rev.t list
     ; tips : (Rev.t * string list) list
-    ; subtrees : t list [@sexp_drop_if List.is_empty]
+    ; subgraphs : t list [@sexp_drop_if List.is_empty]
     }
   [@@deriving sexp_of]
 end
@@ -441,12 +441,12 @@ let rec summary t =
     List.map (tips t) ~f:(fun node ->
       rev t node, node_refs t node |> List.map ~f:Ref_kind.to_string)
   in
-  let subtrees =
-    match subtrees t with
+  let subgraphs =
+    match subgraphs t with
     | [] | [ _ ] -> []
-    | subtrees -> List.map subtrees ~f:(fun subtree -> summary (of_subtree subtree))
+    | subgraphs -> List.map subgraphs ~f:(fun subgraph -> summary (of_subgraph subgraph))
   in
-  { Summary.refs; roots = roots t |> List.map ~f:(fun id -> rev t id); tips; subtrees }
+  { Summary.refs; roots = roots t |> List.map ~f:(fun id -> rev t id); tips; subgraphs }
 ;;
 
 let check_index_exn t ~index =
