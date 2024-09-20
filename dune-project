@@ -116,7 +116,7 @@
    (>= 0.33))
   (vcs
    (= :version))
-  (vcs-git
+  (vcs-git-eio
    (= :version))))
 
 (package
@@ -181,13 +181,13 @@
    (= :version))
   (vcs-arg
    (= :version))
-  (vcs-git
+  (vcs-git-eio
    (= :version))
   (vcs-private-libs-eio
    (= :version))))
 
 (package
- (name vcs-git-cli)
+ (name vcs-git-provider)
  (synopsis "An IO-free library that parses the output of Git commands")
  (depends
   (ocaml
@@ -234,8 +234,9 @@
    (= :version))))
 
 (package
- (name vcs-git)
- (synopsis "A Git provider for Vcs based on Vcs_git_cli for Eio programs")
+ (name vcs-git-eio)
+ (synopsis
+  "A Git provider for Vcs based on Vcs_git_provider for Eio programs")
  (depends
   (ocaml
    (>= 5.2))
@@ -283,7 +284,7 @@
    (>= 0.0.8))
   (vcs
    (= :version))
-  (vcs-git-cli
+  (vcs-git-provider
    (= :version))
   (vcs-private-libs-eio
    (= :version))))
@@ -291,7 +292,7 @@
 (package
  (name vcs-git-blocking)
  (synopsis
-  "A Git provider for Vcs based on Vcs_git_cli for blocking programs")
+  "A Git provider for Vcs based on Vcs_git_provider for blocking programs")
  (depends
   (ocaml
    (>= 5.2))
@@ -337,7 +338,7 @@
    (>= 0.0.8))
   (vcs
    (= :version))
-  (vcs-git-cli
+  (vcs-git-provider
    (= :version))))
 
 (package
@@ -453,11 +454,11 @@
    (= :version))
   (vcs-command
    (= :version))
-  (vcs-git
+  (vcs-git-eio
    (= :version))
   (vcs-git-blocking
    (= :version))
-  (vcs-git-cli
+  (vcs-git-provider
    (= :version))
   (vcs-private-libs-base
    (= :version))

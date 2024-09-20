@@ -19,14 +19,18 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type 'a t = ([> Vcs_git_cli.Trait.t ] as 'a) Vcs.t
-type t' = Vcs_git_cli.Trait.t t
-
-module Impl = struct
-  include Runtime
-  include Vcs_git_cli.Make (Runtime)
-end
-
-let create ~env =
-  Vcs.create (Provider.T { t = Impl.create ~env; handler = Impl.handler () })
+let%expect_test "show" =
+  let test output =
+    print_s
+      [%sexp
+        (Vcs_git_provider.Show.interpret_output output
+         : [ `Absent | `Present of Vcs.File_contents.t ] Or_error.t)]
+  in
+  test { exit_code = 0; stdout = "contents"; stderr = "" };
+  [%expect {| (Ok (Present contents)) |}];
+  test { exit_code = 128; stdout = "contents"; stderr = "" };
+  [%expect {| (Ok Absent) |}];
+  test { exit_code = 1; stdout = "contents"; stderr = "" };
+  [%expect {| (Error ("unexpected exit code" ((accepted_codes (0 128))))) |}];
+  ()
 ;;

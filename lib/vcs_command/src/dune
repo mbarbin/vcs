@@ -24,7 +24,7 @@
   fpath-base
   vcs
   vcs-arg
-  vcs-git
+  vcs-git-eio
   vcs-private-libs-eio.eio-writer)
  (instrumentation
   (backend bisect_ppx))

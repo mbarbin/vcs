@@ -11,7 +11,7 @@
   Base
   -open
   Fpath_base)
- (libraries base fpath fpath-base provider unix vcs vcs-git-cli)
+ (libraries base fpath fpath-base provider unix vcs vcs-git-provider)
  (instrumentation
   (backend bisect_ppx))
  (lint

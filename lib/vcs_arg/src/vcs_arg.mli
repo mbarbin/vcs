@@ -43,7 +43,7 @@ end
 
 module Initialized : sig
   type t =
-    { vcs : Vcs_git.t'
+    { vcs : Vcs_git_eio.t'
     ; repo_root : Vcs.Repo_root.t
     ; context : Context.t
     }

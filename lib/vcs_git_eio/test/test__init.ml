@@ -19,45 +19,23 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Munged_path = Vcs_git_cli.Private.Munged_path
-
-let%expect_test "parse" =
-  let test path = print_s [%sexp (Munged_path.parse_exn path : Munged_path.t)] in
-  require_does_raise [%here] (fun () -> test "");
-  [%expect
-    {|
-    (Vcs_git_cli.Munged_path.parse_exn
-     "invalid path"
-     ""
-     (Invalid_argument "\"\": invalid path"))
-    |}];
-  require_does_raise [%here] (fun () -> test "/tmp => /tmp");
-  [%expect
-    {|
-    (Vcs_git_cli.Munged_path.parse_exn
-     "invalid path"
-     "/tmp => /tmp"
-     (Invalid_argument "\"/tmp\": not a relative path"))
-    |}];
-  require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
-  [%expect
-    {|
-    (Vcs_git_cli.Munged_path.parse_exn
-     "invalid path"
-     "tmp => tmp2 => tmp3"
-     "Too many '=>'") |}];
-  test "a/simple/path";
-  [%expect {| (One_file a/simple/path) |}];
-  test "a/simple/path => another/path";
-  [%expect {|
-    (Two_files
-      (src a/simple/path)
-      (dst another/path)) |}];
-  test "a/{simple => not/so/simple}/path";
-  [%expect
-    {|
-    (Two_files
-      (src a/simple/path)
-      (dst a/not/so/simple/path)) |}];
+let%expect_test "init" =
+  Eio_main.run
+  @@ fun env ->
+  Eio.Switch.run
+  @@ fun sw ->
+  let vcs = Vcs_git_eio.create ~env in
+  let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
+  let repo_root =
+    Eio.Switch.on_release sw (fun () ->
+      Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
+    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
+  in
+  require_equal
+    [%here]
+    (module Absolute_path)
+    (Absolute_path.v path)
+    (Vcs.Repo_root.to_absolute_path repo_root);
+  [%expect {||}];
   ()
 ;;

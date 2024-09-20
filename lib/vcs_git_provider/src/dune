@@ -1,7 +1,6 @@
 (library
- (name vcs_git_test)
- (public_name vcs-tests.vcs_git_test)
- (inline_tests)
+ (name vcs_git_provider)
+ (public_name vcs-git-provider)
  (flags
   :standard
   -w
@@ -13,29 +12,18 @@
   -open
   Fpath_base
   -open
-  Expect_test_helpers_base
-  -open
   Or_error.Let_syntax)
- (libraries
-  base
-  eio
-  eio_main
-  expect_test_helpers_core.expect_test_helpers_base
-  fpath
-  fpath-base
-  vcs
-  vcs_git
-  vcs_test_helpers)
+ (libraries base fpath fpath-base vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint
   (pps ppx_js_style -check-doc-comments))
+ (modules_without_implementation runtime)
  (preprocess
   (pps
    -unused-code-warnings=force
    ppx_compare
    ppx_enumerate
-   ppx_expect
    ppx_hash
    ppx_here
    ppx_let

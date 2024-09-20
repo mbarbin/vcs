@@ -31,7 +31,7 @@ let%expect_test "hello commit" =
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
      provider. We're using [Vcs_git] for this here. It is a provider based on
      [Eio] and running the [git] command line as an external process. *)
-  let vcs = Vcs_git.create ~env in
+  let vcs = Vcs_git_eio.create ~env in
   (* The next step takes care of creating a fresh repository. We make use of a
      helper library to encapsulate the required steps. *)
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in

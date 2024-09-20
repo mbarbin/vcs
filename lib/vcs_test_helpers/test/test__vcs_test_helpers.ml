@@ -24,7 +24,7 @@ let%expect_test "init_temp_repo" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git.create ~env in
+  let vcs = Vcs_git_eio.create ~env in
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   Vcs.save_file
@@ -64,7 +64,7 @@ let%expect_test "init_temp_repo" =
 let%expect_test "redact_sexp" =
   Eio_main.run
   @@ fun env ->
-  let vcs = Vcs_git.create ~env in
+  let vcs = Vcs_git_eio.create ~env in
   let invalid_path = Absolute_path.v "/invalid/path" in
   let error =
     match Vcs.init vcs ~path:invalid_path with

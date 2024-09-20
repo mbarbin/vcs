@@ -1,6 +1,6 @@
 (library
- (name vcs_git_cli_test)
- (public_name vcs-tests.vcs_git_cli_test)
+ (name vcs_git_provider_test)
+ (public_name vcs-tests.vcs_git_provider_test)
  (inline_tests
   (deps
    (glob_files *.name-status)
@@ -22,7 +22,7 @@
   eio
   eio_main
   expect_test_helpers_core.expect_test_helpers_base
-  vcs_git_cli)
+  vcs_git_provider)
  (instrumentation
   (backend bisect_ppx))
  (lint

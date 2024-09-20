@@ -1,6 +1,6 @@
 (library
- (name vcs_git)
- (public_name vcs-git)
+ (name vcs_git_eio)
+ (public_name vcs-git-eio)
  (flags
   :standard
   -w
@@ -21,7 +21,7 @@
   fpath
   fpath-base
   vcs
-  vcs-git-cli
+  vcs-git-provider
   vcs-private-libs-eio.eio-process)
  (instrumentation
   (backend bisect_ppx))

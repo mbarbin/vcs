@@ -33,7 +33,9 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.log") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let log = List.map lines ~f:(fun line -> Vcs_git_cli.Log.parse_log_line_exn ~line) in
+  let log =
+    List.map lines ~f:(fun line -> Vcs_git_provider.Log.parse_log_line_exn ~line)
+  in
   let roots = Vcs.Log.roots log in
   print_s [%sexp (roots : Vcs.Rev.t list)];
   [%expect
@@ -52,7 +54,7 @@ let%expect_test "parse_exn" =
 
 let%expect_test "invalid lines" =
   let test line =
-    print_s [%sexp (Vcs_git_cli.Log.parse_log_line_exn ~line : Vcs.Log.Line.t)]
+    print_s [%sexp (Vcs_git_provider.Log.parse_log_line_exn ~line : Vcs.Log.Line.t)]
   in
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d";
   [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
