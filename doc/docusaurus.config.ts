@@ -73,23 +73,29 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'odocSidebar',
+          sidebarId: 'tutorialsSidebar',
           position: 'left',
-          label: 'OCaml Packages',
+          label: 'Tutorials',
         },
         {
           type: 'docSidebar',
-          sidebarId: 'designSidebar',
+          sidebarId: 'guidesSidebar',
           position: 'left',
-          label: 'Design',
+          label: 'Guides',
         },
         {
           type: 'docSidebar',
-          sidebarId: 'testsSidebar',
+          sidebarId: 'referenceSidebar',
           position: 'left',
-          label: 'Tests',
+          label: 'Reference',
         },
-        { to: '/blog/', label: 'Blog', position: 'left' },
+        {
+          type: 'docSidebar',
+          sidebarId: 'explanationSidebar',
+          position: 'left',
+          label: 'Explanation',
+        },
+        { to: '/blog/', label: 'Blog', position: 'right' },
         {
           href: 'https://github.com/mbarbin/vcs',
           label: 'GitHub',
@@ -110,16 +116,20 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'OCaml Packages',
-              to: '/docs/odoc/',
+              label: 'Tutorials',
+              to: '/docs/tutorials/',
             },
             {
-              label: 'Design',
-              to: '/docs/design/introduction/',
+              label: 'Guides',
+              to: '/docs/guides/',
             },
             {
-              label: 'Tests',
-              to: '/docs/tests/exploratory_tests/',
+              label: 'Reference',
+              to: '/docs/reference/odoc/',
+            },
+            {
+              label: 'Explanation',
+              to: '/docs/explanation/',
             },
           ],
         },

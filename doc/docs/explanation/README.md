@@ -1,4 +1,8 @@
-# Design principles
+# Explanation
+
+Welcome to the Explanation section of the `vcs` documentation. Here, we delve into the details of how `vcs` works, its design principles, and our future plans. This section is intended to provide a deeper understanding of the project for developers and contributors.
+
+## Design principles
 
 `Vcs` is designed to be backend-agnostic and concurrency-runtime independent. It's compatible with both `Eio` and OCaml `Stdlib` runtimes. We plan to explore the feasibility of supporting [luv](https://github.com/aantron/luv) and [miou](https://github.com/robur-coop/miou) runtimes as separate future work.
 
