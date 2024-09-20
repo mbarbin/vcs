@@ -30,7 +30,7 @@ depends: [
   "ppxlib" {>= "0.33"}
   "vcs" {= version}
   "vcs-arg" {= version}
-  "vcs-git" {= version}
+  "vcs-git-eio" {= version}
   "vcs-private-libs-eio" {= version}
   "odoc" {with-doc}
 ]

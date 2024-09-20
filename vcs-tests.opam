@@ -44,7 +44,7 @@ depends: [
   "vcs" {= version}
   "vcs-arg" {= version}
   "vcs-command" {= version}
-  "vcs-git" {= version}
+  "vcs-git-eio" {= version}
   "vcs-git-blocking" {= version}
   "vcs-git-cli" {= version}
   "vcs-private-libs-base" {= version}

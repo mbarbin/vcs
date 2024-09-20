@@ -68,7 +68,7 @@ module Create_vcs_backend = struct
     | Some ((`Git as vcs), dir) ->
       let vcs =
         match vcs with
-        | `Git -> Vcs_git.create ~env
+        | `Git -> Vcs_git_eio.create ~env
       in
       let repo_root = repo_root dir in
       Some (vcs, repo_root)
@@ -80,7 +80,7 @@ module Context = struct
     { config : Config.t
     ; fs : Eio.Fs.dir_ty Eio.Path.t
     ; cwd : Absolute_path.t
-    ; vcs : Vcs_git.t'
+    ; vcs : Vcs_git_eio.t'
     ; repo_root : Vcs.Repo_root.t
     }
 
@@ -121,7 +121,7 @@ end
 
 module Initialized = struct
   type t =
-    { vcs : Vcs_git.t'
+    { vcs : Vcs_git_eio.t'
     ; repo_root : Vcs.Repo_root.t
     ; context : Context.t
     }

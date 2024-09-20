@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Rename `vcs-git` to `vcs-git-eio` (breaking change).
 - Rename `tree` to `graph` to designate the commit graph of a repository (breaking change).
 - Upgrade to `cmdlang.0.0.5`.
 

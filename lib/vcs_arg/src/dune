@@ -15,7 +15,7 @@
   Or_error.Let_syntax
   -open
   Cmdlang)
- (libraries base cmdlang eio fpath fpath-base unix vcs vcs-git)
+ (libraries base cmdlang eio fpath fpath-base unix vcs vcs-git-eio)
  (instrumentation
   (backend bisect_ppx))
  (lint

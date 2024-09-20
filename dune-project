@@ -116,7 +116,7 @@
    (>= 0.33))
   (vcs
    (= :version))
-  (vcs-git
+  (vcs-git-eio
    (= :version))))
 
 (package
@@ -181,7 +181,7 @@
    (= :version))
   (vcs-arg
    (= :version))
-  (vcs-git
+  (vcs-git-eio
    (= :version))
   (vcs-private-libs-eio
    (= :version))))
@@ -234,7 +234,7 @@
    (= :version))))
 
 (package
- (name vcs-git)
+ (name vcs-git-eio)
  (synopsis "A Git provider for Vcs based on Vcs_git_cli for Eio programs")
  (depends
   (ocaml
@@ -453,7 +453,7 @@
    (= :version))
   (vcs-command
    (= :version))
-  (vcs-git
+  (vcs-git-eio
    (= :version))
   (vcs-git-blocking
    (= :version))

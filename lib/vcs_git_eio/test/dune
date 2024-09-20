@@ -1,6 +1,6 @@
 (library
- (name vcs_git_test)
- (public_name vcs-tests.vcs_git_test)
+ (name vcs_git_eio_test)
+ (public_name vcs-tests.vcs_git_eio_test)
  (inline_tests)
  (flags
   :standard
@@ -24,7 +24,7 @@
   fpath
   fpath-base
   vcs
-  vcs_git
+  vcs_git_eio
   vcs_test_helpers)
  (instrumentation
   (backend bisect_ppx))

@@ -1,6 +1,6 @@
 (library
- (name vcs_git)
- (public_name vcs-git)
+ (name vcs_git_eio)
+ (public_name vcs-git-eio)
  (flags
   :standard
   -w

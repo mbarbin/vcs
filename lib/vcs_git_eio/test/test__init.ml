@@ -24,7 +24,7 @@ let%expect_test "init" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git.create ~env in
+  let vcs = Vcs_git_eio.create ~env in
   let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
   let repo_root =
     Eio.Switch.on_release sw (fun () ->
