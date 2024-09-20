@@ -19,18 +19,45 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "show" =
-  let test output =
-    print_s
-      [%sexp
-        (Vcs_git_cli.Show.interpret_output output
-         : [ `Absent | `Present of Vcs.File_contents.t ] Or_error.t)]
-  in
-  test { exit_code = 0; stdout = "contents"; stderr = "" };
-  [%expect {| (Ok (Present contents)) |}];
-  test { exit_code = 128; stdout = "contents"; stderr = "" };
-  [%expect {| (Ok Absent) |}];
-  test { exit_code = 1; stdout = "contents"; stderr = "" };
-  [%expect {| (Error ("unexpected exit code" ((accepted_codes (0 128))))) |}];
+module Munged_path = Vcs_git_provider.Private.Munged_path
+
+let%expect_test "parse" =
+  let test path = print_s [%sexp (Munged_path.parse_exn path : Munged_path.t)] in
+  require_does_raise [%here] (fun () -> test "");
+  [%expect
+    {|
+    (Vcs_git_provider.Munged_path.parse_exn
+     "invalid path"
+     ""
+     (Invalid_argument "\"\": invalid path"))
+    |}];
+  require_does_raise [%here] (fun () -> test "/tmp => /tmp");
+  [%expect
+    {|
+    (Vcs_git_provider.Munged_path.parse_exn
+     "invalid path"
+     "/tmp => /tmp"
+     (Invalid_argument "\"/tmp\": not a relative path"))
+    |}];
+  require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
+  [%expect
+    {|
+    (Vcs_git_provider.Munged_path.parse_exn
+     "invalid path"
+     "tmp => tmp2 => tmp3"
+     "Too many '=>'") |}];
+  test "a/simple/path";
+  [%expect {| (One_file a/simple/path) |}];
+  test "a/simple/path => another/path";
+  [%expect {|
+    (Two_files
+      (src a/simple/path)
+      (dst another/path)) |}];
+  test "a/{simple => not/so/simple}/path";
+  [%expect
+    {|
+    (Two_files
+      (src a/simple/path)
+      (dst a/not/so/simple/path)) |}];
   ()
 ;;

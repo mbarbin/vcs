@@ -19,12 +19,12 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type 'a t = ([> Vcs_git_cli.Trait.t ] as 'a) Vcs.t
-type t' = Vcs_git_cli.Trait.t t
+type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
+type t' = Vcs_git_provider.Trait.t t
 
 module Impl = struct
   include Runtime
-  include Vcs_git_cli.Make (Runtime)
+  include Vcs_git_provider.Make (Runtime)
 end
 
 let create () = Vcs.create (Provider.T { t = Impl.create (); handler = Impl.handler () })

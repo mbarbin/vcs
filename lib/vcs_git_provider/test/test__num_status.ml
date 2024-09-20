@@ -27,7 +27,7 @@ let%expect_test "parse_exn - super-master-mind" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.num-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let num_status = Vcs_git_cli.Num_status.parse_lines_exn ~lines in
+  let num_status = Vcs_git_provider.Num_status.parse_lines_exn ~lines in
   print_s [%sexp (num_status : Vcs.Num_status.t)];
   [%expect
     {|
@@ -331,7 +331,7 @@ let%expect_test "parse_exn - eio" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "eio.num-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let num_status = Vcs_git_cli.Num_status.parse_lines_exn ~lines in
+  let num_status = Vcs_git_provider.Num_status.parse_lines_exn ~lines in
   print_s [%sexp (num_status : Vcs.Num_status.t)];
   [%expect
     {|
@@ -472,7 +472,7 @@ let%expect_test "parse_lines_exn" =
   in
   List.iter lines ~f:(fun line ->
     let result =
-      Or_error.try_with (fun () -> Vcs_git_cli.Num_status.parse_line_exn ~line)
+      Or_error.try_with (fun () -> Vcs_git_provider.Num_status.parse_line_exn ~line)
     in
     print_s [%sexp (line : string), (result : Vcs.Num_status.Change.t Or_error.t)]);
   [%expect

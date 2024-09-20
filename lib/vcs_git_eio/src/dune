@@ -21,7 +21,7 @@
   fpath
   fpath-base
   vcs
-  vcs-git-cli
+  vcs-git-provider
   vcs-private-libs-eio.eio-process)
  (instrumentation
   (backend bisect_ppx))
