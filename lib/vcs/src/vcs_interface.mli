@@ -120,7 +120,7 @@ module type S = sig
 
   val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t result
   val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t result
-  val tree : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Tree.t result
+  val graph : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Graph.t result
 
   val set_user_name
     :  [> Trait.config ] t

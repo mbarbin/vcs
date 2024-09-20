@@ -65,7 +65,7 @@ module Make (M : M) :
 
   let log vcs ~repo_root = try_with (fun () -> Vcs0.log vcs ~repo_root)
   let refs vcs ~repo_root = try_with (fun () -> Vcs0.refs vcs ~repo_root)
-  let tree vcs ~repo_root = try_with (fun () -> Vcs0.tree vcs ~repo_root)
+  let graph vcs ~repo_root = try_with (fun () -> Vcs0.graph vcs ~repo_root)
 
   let current_branch vcs ~repo_root =
     try_with (fun () -> Vcs0.current_branch vcs ~repo_root)

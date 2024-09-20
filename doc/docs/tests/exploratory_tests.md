@@ -45,6 +45,9 @@ COMMANDS
        git [OPTION]… [ARG]…
            run the git cli
 
+       graph [OPTION]…
+           compute graph of current repo
+
        init [--quiet] [OPTION]… file
            initialize a new repository
 
@@ -80,9 +83,6 @@ COMMANDS
 
        show-file-at-rev [--rev=REV] [OPTION]… file
            show the contents of file at a given revision
-
-       tree [OPTION]…
-           compute tree of current repo
 
 COMMON OPTIONS
        --help[=FMT] (default=auto)

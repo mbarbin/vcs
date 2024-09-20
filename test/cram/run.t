@@ -126,9 +126,9 @@ Log.
     (parent $REV0))
    (Root (rev $REV0)))
 
-Tree.
+Graph.
 
-  $ ocaml-vcs tree | stabilize_output
+  $ ocaml-vcs graph | stabilize_output
   ((refs (($REV2 refs/heads/main)))
    (roots ($REV0))
    (tips (($REV2 (refs/heads/main)))))
@@ -211,6 +211,9 @@ Vcs's help for review.
          git [OPTION]… [ARG]…
              run the git cli
   
+         graph [OPTION]…
+             compute graph of current repo
+  
          init [--quiet] [OPTION]… file
              initialize a new repository
   
@@ -246,9 +249,6 @@ Vcs's help for review.
   
          show-file-at-rev [--rev=REV] [OPTION]… file
              show the contents of file at a given revision
-  
-         tree [OPTION]…
-             compute tree of current repo
   
   COMMON OPTIONS
          --help[=FMT] (default=auto)

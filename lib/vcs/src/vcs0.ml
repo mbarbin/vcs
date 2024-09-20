@@ -126,16 +126,16 @@ let refs (Provider.T { t; handler }) ~repo_root =
   |> of_result ~step:(lazy [%sexp "Vcs.refs", { repo_root : Repo_root.t }])
 ;;
 
-let tree (Provider.T { t; handler }) ~repo_root =
+let graph (Provider.T { t; handler }) ~repo_root =
   let module L = (val Provider.Handler.lookup handler ~trait:Trait.Log) in
   let module R = (val Provider.Handler.lookup handler ~trait:Trait.Refs) in
-  let tree = Tree.create () in
+  let graph = Graph.create () in
   (let%bind log = L.all t ~repo_root in
    let%bind refs = R.show_ref t ~repo_root in
-   Tree.add_nodes tree ~log;
-   Tree.set_refs tree ~refs;
-   return tree)
-  |> of_result ~step:(lazy [%sexp "Vcs.tree", { repo_root : Repo_root.t }])
+   Graph.add_nodes graph ~log;
+   Graph.set_refs graph ~refs;
+   return graph)
+  |> of_result ~step:(lazy [%sexp "Vcs.graph", { repo_root : Repo_root.t }])
 ;;
 
 let set_user_name (Provider.T { t; handler }) ~repo_root ~user_name =

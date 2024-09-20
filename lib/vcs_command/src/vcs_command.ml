@@ -291,17 +291,17 @@ let show_file_at_rev_cmd =
      ())
 ;;
 
-let tree_cmd =
+let graph_cmd =
   Command.make
-    ~summary:"compute tree of current repo"
+    ~summary:"compute graph of current repo"
     (let%map_open.Command config = Vcs_arg.Config.arg in
      Eio_main.run
      @@ fun env ->
      let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
        Vcs_arg.initialize ~env ~config
      in
-     let tree = Vcs.tree vcs ~repo_root in
-     Eio_writer.print_sexp ~env [%sexp (Vcs.Tree.summary tree : Vcs.Tree.Summary.t)];
+     let graph = Vcs.graph vcs ~repo_root in
+     Eio_writer.print_sexp ~env [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
      ())
 ;;
 
@@ -349,16 +349,16 @@ let greatest_common_ancestors_cmd =
      let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
        Vcs_arg.initialize ~env ~config
      in
-     let tree = Vcs.tree vcs ~repo_root in
+     let graph = Vcs.graph vcs ~repo_root in
      let nodes =
        List.map revs ~f:(fun rev ->
-         match Vcs.Tree.find_rev tree ~rev with
+         match Vcs.Graph.find_rev graph ~rev with
          | Some node -> node
          | None -> Vcs.raise_s "Rev not found" [%sexp { rev : Vcs.Rev.t }])
      in
      let gca =
-       Vcs.Tree.greatest_common_ancestors tree nodes
-       |> List.map ~f:(fun node -> Vcs.Tree.rev tree node)
+       Vcs.Graph.greatest_common_ancestors graph nodes
+       |> List.map ~f:(fun node -> Vcs.Graph.rev graph node)
      in
      Eio_writer.print_sexp ~env [%sexp (gca : Vcs.Rev.t list)];
      ())
@@ -396,7 +396,7 @@ sub commands exposed here, plus additional functionality in [more-tests].
     ; "save-file", save_file_cmd
     ; "set-user-config", set_user_config_cmd
     ; "show-file-at-rev", show_file_at_rev_cmd
-    ; "tree", tree_cmd
+    ; "graph", graph_cmd
     ; "more-tests", more_tests_cmd
     ]
 ;;

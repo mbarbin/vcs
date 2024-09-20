@@ -252,9 +252,9 @@ let%expect_test "num stat without lines" =
   in
   [%expect {| (((rev rev3) (ref_kind (Local_branch (branch_name main))))) |}];
   let () =
-    match Vcs.Or_error.tree vcs ~repo_root with
+    match Vcs.Or_error.graph vcs ~repo_root with
     | Error _ -> assert false
-    | Ok tree -> print_s (map_sexp [%sexp (tree : Vcs.Tree.t)])
+    | Ok graph -> print_s (map_sexp [%sexp (graph : Vcs.Graph.t)])
   in
   [%expect
     {|
