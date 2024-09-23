@@ -62,9 +62,7 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.8))
-  (vcs-private-libs-base
-   (= :version))))
+   (>= 0.0.8))))
 
 (package
  (name vcs-arg)
@@ -460,8 +458,6 @@
    (= :version))
   (vcs-git-provider
    (= :version))
-  (vcs-private-libs-base
-   (= :version))
   (vcs-private-libs-eio
    (= :version))
   (vcs-test-helpers
@@ -470,48 +466,6 @@
    (and
     :with-doc
     (>= 0.2)))))
-
-(package
- (name vcs-private-libs-base)
- (synopsis "Private libraries used by vcs -- do not use!")
- (allow_empty)
- (depends
-  (ocaml
-   (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppxlib
-   (>= 0.33))))
 
 (package
  (name vcs-private-libs-eio)
@@ -608,6 +562,4 @@
   (ppxlib
    (>= 0.33))
   (provider
-   (>= 0.0.8))
-  (vcs-private-libs-base
-   (= :version))))
+   (>= 0.0.8))))

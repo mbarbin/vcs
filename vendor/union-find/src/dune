@@ -1,6 +1,0 @@
-(library
- (name vcs_union_find)
- (public_name vcs-private-libs-base.union-find)
- (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Base)
- (libraries base)
- (preprocess no_preprocessing))
