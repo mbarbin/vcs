@@ -339,6 +339,14 @@ let%expect_test "empty summary" =
   ()
 ;;
 
+let%expect_test "subgraphs of empty graph" =
+  let graph = Vcs.Graph.create () in
+  let subgraphs = Vcs.Graph.subgraphs graph in
+  print_s [%sexp (subgraphs : Vcs.Graph.Subgraph.t list)];
+  [%expect {| () |}];
+  ()
+;;
+
 let%expect_test "Subgraph.is_empty" =
   let subgraph = { Vcs.Graph.Subgraph.log = []; refs = [] } in
   print_s [%sexp (Vcs.Graph.Subgraph.is_empty subgraph : bool)];
