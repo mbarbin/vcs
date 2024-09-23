@@ -69,7 +69,7 @@ val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
     exposes an efficient comparable signature, meaning you can e.g. manipulate
     containers indexed by nodes.
 
-    {1:ordering_invariant Ordering invariant}
+    {2:ordering_invariant Ordering invariant}
 
     An invariant that holds in the structure and on which you can rely is that
     the parents of a node are always inserted in the graph before the node itself
@@ -121,20 +121,6 @@ val node_kind : t -> Node.t -> Node_kind.t
     the resulting list is not specified. *)
 val node_refs : t -> Node.t -> Ref_kind.t list
 
-module Descendance : sig
-  (** Descendance is a relation between 2 nodes of the graph. Matching on it is
-      useful for example when considering the status of a branch head with
-      respect to its upstream counterpart. *)
-  type t =
-    | Same_node
-    | Strict_ancestor
-    | Strict_descendant
-    | Other
-  [@@deriving equal, enumerate, hash, sexp_of]
-end
-
-val descendance : t -> Node.t -> Node.t -> Descendance.t
-
 (** Return the number of nodes the graph currently holds. *)
 val node_count : t -> int
 
@@ -162,7 +148,13 @@ val roots : t -> Node.t list
 (** Return the list of nodes that do not have any children. *)
 val tips : t -> Node.t list
 
-(** {1 Ancestors} *)
+(** {1 Ancestors & Descendance}
+
+    Given two nodes of the graph, we say that [a] is an ancestor of [d] iif
+    there exists an oriented path that leads from [a] to [d]. We say that [a] is
+    a strict ancestor of [d] if [a] is an ancestor of [d] and [a] is not equal
+    to [d]. Symmetrically, if a node [a] is an ancestor of node [d], we also say that
+    [d] is a descendant of [a]. *)
 
 (** [is_strict_ancestor t ~ancestor:a ~descendant:b] returns [true] iif there
     exists a non empty path that leads from [a] to [b]. By definition, any node
@@ -188,6 +180,44 @@ val is_ancestor_or_equal : t -> ancestor:Node.t -> descendant:Node.t -> bool
     cases of complex merge histories, hence the list return type. *)
 val greatest_common_ancestors : t -> Node.t list -> Node.t list
 
+module Descendance : sig
+  (** Given two nodes we can determine whether one is an ancestor of the other.
+      We encode the four cases of the result into a variant type named
+      [Descendance.t]. *)
+
+  type t =
+    | Same_node
+    | Strict_ancestor
+    | Strict_descendant
+    | Other
+  [@@deriving equal, enumerate, hash, sexp_of]
+end
+
+(** [descendance graph a b] characterizes the descendance relationship between
+    nodes [a] and [b]. For example, it returns [Strict_ancestor] if
+    [is_strict_ancestor graph ~ancestor:a ~descendant:b] holds. Be mindful
+    that the order of the arguments [a] and [b] matters.
+
+    For example, consider the following commit graph, with history going from
+    older commits at the bottom to newer commits at the top (like in "gitk"):
+
+    {v
+     |      |
+     e      f
+      \    /
+       \  /
+        \/
+        a
+        |
+        | root
+    v}
+
+    - [descendance graph a a] returns [Same_node]
+    - [descendance graph a f] returns [Strict_ancestor]
+    - [descendance graph f a] returns [Strict_descendant]
+    - [descendance graph e f] returns [Other] *)
+val descendance : t -> Node.t -> Node.t -> Descendance.t
+
 (** {1 Log} *)
 
 (** Rebuild the log line that represented this node in the git log. This is
@@ -197,7 +227,20 @@ val log_line : t -> Node.t -> Log.Line.t
 (** Rebuild the entire log. *)
 val log : t -> Log.t
 
-(** {1 Subgraph} *)
+(** {1 Subgraph}
+
+    Given a commit graph, we call subgraph a subset of the graph that contains
+    nodes that are connected to each other, excluding from the rest of the graph
+    nodes that are not.
+
+    Having multiple subgraphs may happen for example if the graph contains
+    multiple branches that are isolated and do not share history (e.g. "main"
+    and "gh-pages").
+
+    The root nodes of two different subgraphs are necessary distinct, by
+    definition. However, note that two distinct roots of a graph may in fact
+    belong to the same subgraph, if two of their respective descendants were
+    subsequently merged. *)
 
 module Subgraph : sig
   type t =
@@ -209,7 +252,13 @@ module Subgraph : sig
   val is_empty : t -> bool
 end
 
+(** Partition the commit graph into the subgraphs it contains. By convention, if
+    [empty] denotes an empty graph, [subgraphs empty] returns the empty list,
+    rather than a list containing an empty subgraph. A generalization of this
+    convention is that the subgraphs returned by [subgraphs] are never empty. *)
 val subgraphs : t -> Subgraph.t list
+
+(** Build a commit graph containing only the supplied subgraph. *)
 val of_subgraph : Subgraph.t -> t
 
 (** {1 Summary} *)
@@ -226,13 +275,14 @@ val summary : t -> Summary.t
     This part of the interface is exposed for advanced usage only.
 
     We make no guarantee about the stability of node ordering across vcs
-    versions. The order in which nodes be inserted is not fully specified,
-    outside of the ordering invariant discussed {{!ordering_invariant} here}. It
-    is considered to be only valid for the lifetime of the graph.
+    versions. The order in which nodes are stored is not fully specified,
+    outside of the ordering invariant discussed {{!ordering_invariant} here}.
+    The specific ordering that result from one specific execution path is
+    considered to be valid only for the lifetime of the graph.
 
-    This is exposed if you want to write algorithms working on graph that take
-    advantage of operations working on int, if the rest of the exposed API isn't
-    enough for your use case. *)
+    These helpers are exposed if you want to write algorithms working on graph
+    that take advantage of operations working on integers, if the rest of the
+    exposed API isn't enough for your use case. *)
 
 val get_node_exn : t -> index:int -> Node.t
 val node_index : t -> Node.t -> int
