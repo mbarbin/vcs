@@ -454,9 +454,9 @@
    (= :version))
   (vcs-command
    (= :version))
-  (vcs-git-eio
-   (= :version))
   (vcs-git-blocking
+   (= :version))
+  (vcs-git-eio
    (= :version))
   (vcs-git-provider
    (= :version))

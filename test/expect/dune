@@ -24,8 +24,8 @@
   fpath
   fpath-base
   vcs
-  vcs_git_eio
   vcs_git_blocking
+  vcs_git_eio
   vcs_test_helpers)
  (instrumentation
   (backend bisect_ppx))
