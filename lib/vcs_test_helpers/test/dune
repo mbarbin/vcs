@@ -13,9 +13,7 @@
   -open
   Fpath_base
   -open
-  Expect_test_helpers_base
-  -open
-  Or_error.Let_syntax)
+  Expect_test_helpers_base)
  (libraries
   base
   eio
