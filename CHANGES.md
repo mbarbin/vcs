@@ -1,3 +1,17 @@
+## 0.0.8 (unreleased)
+
+### Added
+
+### Changed
+
+- Remove `eio-writer` dependency in `vcs-command`.
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.7 (2024-09-20)
 
 ### Changed
