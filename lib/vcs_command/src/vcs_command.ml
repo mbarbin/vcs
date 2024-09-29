@@ -23,6 +23,8 @@
    the name the associated function has in the [V.S] interface, prepending the
    suffix "_cmd". *)
 
+let print_sexp sexp = Stdlib.print_endline (Sexp.to_string_hum sexp)
+
 let add_cmd =
   Command.make
     ~summary:"add a file to the index"
@@ -50,7 +52,7 @@ let commit_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let rev = Vcs.commit vcs ~repo_root ~commit_message in
-     if not quiet then Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
+     if not quiet then print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
 ;;
 
@@ -64,7 +66,7 @@ let current_branch_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let branch = Vcs.current_branch vcs ~repo_root in
-     Eio_writer.print_sexp ~env [%sexp (branch : Vcs.Branch_name.t)];
+     print_sexp [%sexp (branch : Vcs.Branch_name.t)];
      ())
 ;;
 
@@ -78,7 +80,7 @@ let current_revision_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let rev = Vcs.current_revision vcs ~repo_root in
-     Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
+     print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
 ;;
 
@@ -97,8 +99,8 @@ let git_cmd =
      let { Vcs.Git.Output.exit_code; stdout; stderr } =
        Vcs.git vcs ~repo_root ~args ~f:Fn.id
      in
-     Eio_writer.print_string ~env stdout;
-     Eio_writer.prerr_string ~env stderr;
+     Stdlib.print_string stdout;
+     Stdlib.prerr_string stderr;
      if exit_code <> 0 then Stdlib.exit exit_code)
 ;;
 
@@ -115,8 +117,7 @@ let init_cmd =
      in
      let path = Vcs_arg.resolve path ~context in
      let repo_root = Vcs.init vcs ~path in
-     if not quiet
-     then Eio_writer.print_sexp ~env [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
+     if not quiet then print_sexp [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
      ())
 ;;
 
@@ -132,7 +133,7 @@ let load_file_cmd =
      in
      let path = Vcs_arg.resolve path ~context in
      let contents = Vcs.load_file vcs ~path in
-     Eio_writer.print_string ~env (contents :> string);
+     Stdlib.print_string (contents :> string);
      ())
 ;;
 
@@ -149,9 +150,8 @@ let ls_files_cmd =
      let below = Vcs_arg.resolve below ~context in
      let below = Option.value below ~default:Vcs.Path_in_repo.root in
      let files = Vcs.ls_files vcs ~repo_root ~below in
-     Eio_writer.with_flow (Eio.Stdenv.stdout env) (fun w ->
-       List.iter files ~f:(fun file ->
-         Eio_writer.write_line w (Vcs.Path_in_repo.to_string file)));
+     List.iter files ~f:(fun file ->
+       Stdlib.print_endline (Vcs.Path_in_repo.to_string file));
      ())
 ;;
 
@@ -165,7 +165,7 @@ let log_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let log = Vcs.log vcs ~repo_root in
-     Eio_writer.print_sexp ~env [%sexp (log : Vcs.Log.t)];
+     print_sexp [%sexp (log : Vcs.Log.t)];
      ())
 ;;
 
@@ -181,7 +181,7 @@ let name_status_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
-     Eio_writer.print_sexp ~env [%sexp (name_status : Vcs.Name_status.t)];
+     print_sexp [%sexp (name_status : Vcs.Name_status.t)];
      ())
 ;;
 
@@ -197,7 +197,7 @@ let num_status_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
-     Eio_writer.print_sexp ~env [%sexp (num_status : Vcs.Num_status.t)];
+     print_sexp [%sexp (num_status : Vcs.Num_status.t)];
      ())
 ;;
 
@@ -225,7 +225,7 @@ let refs_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let refs = Vcs.refs vcs ~repo_root in
-     Eio_writer.print_sexp ~env [%sexp (refs : Vcs.Refs.t)];
+     print_sexp [%sexp (refs : Vcs.Refs.t)];
      ())
 ;;
 
@@ -281,10 +281,9 @@ let show_file_at_rev_cmd =
      let path = Vcs_arg.resolve path ~context in
      let result = Vcs.show_file_at_rev vcs ~repo_root ~rev ~path in
      (match result with
-      | `Present contents -> Eio_writer.print_string ~env (contents :> string)
+      | `Present contents -> Stdlib.print_string (contents :> string)
       | `Absent ->
-        Eio_writer.eprintf
-          ~env
+        Stdlib.Printf.eprintf
           "Path '%s' does not exist in '%s'"
           (Vcs.Path_in_repo.to_string path)
           (Vcs.Rev.to_string rev));
@@ -301,7 +300,7 @@ let graph_cmd =
        Vcs_arg.initialize ~env ~config
      in
      let graph = Vcs.graph vcs ~repo_root in
-     Eio_writer.print_sexp ~env [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
+     print_sexp [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
      ())
 ;;
 
@@ -335,7 +334,7 @@ let branch_revision_cmd =
            "Branch not found"
            [%sexp { branch_name : Vcs.Branch_name.t }] [@coverage off]
      in
-     Eio_writer.print_sexp ~env [%sexp (rev : Vcs.Rev.t)];
+     print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
 ;;
 
@@ -360,7 +359,7 @@ let greatest_common_ancestors_cmd =
        Vcs.Graph.greatest_common_ancestors graph nodes
        |> List.map ~f:(fun node -> Vcs.Graph.rev graph node)
      in
-     Eio_writer.print_sexp ~env [%sexp (gca : Vcs.Rev.t list)];
+     print_sexp [%sexp (gca : Vcs.Rev.t list)];
      ())
 ;;
 

@@ -10,22 +10,10 @@
   -open
   Base
   -open
-  Fpath_base
-  -open
-  Vcs_eio_writer
+  Fpath_sexp0
   -open
   Cmdlang)
- (libraries
-  base
-  cmdlang
-  eio
-  eio_main
-  fpath
-  fpath-base
-  vcs
-  vcs-arg
-  vcs-git-eio
-  vcs-private-libs-eio.eio-writer)
+ (libraries base cmdlang eio eio_main fpath-sexp0 vcs vcs-arg vcs-git-eio)
  (instrumentation
   (backend bisect_ppx))
  (lint

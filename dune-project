@@ -131,8 +131,6 @@
    (>= 0.0.5))
   (cmdlang-cmdliner-runner
    (>= 0.0.5))
-  (cmdlang-to-cmdliner
-   (>= 0.0.5))
   (cmdliner
    (= 1.3.0))
   (eio
@@ -143,7 +141,7 @@
    (>= 0.0.5))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -180,8 +178,6 @@
   (vcs-arg
    (= :version))
   (vcs-git-eio
-   (= :version))
-  (vcs-private-libs-eio
    (= :version))))
 
 (package
