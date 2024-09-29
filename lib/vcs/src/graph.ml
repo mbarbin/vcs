@@ -390,29 +390,48 @@ let of_subgraph { Subgraph.log; refs } =
   t
 ;;
 
+(* In [subgraphs] we are using what is conceptually an union-find algorithm.
+   Each commit is attached to a representative for the subgraph it belongs to.
+   Unique representatives are created for every root node. We perform an union
+   of representatives during the processing of merge nodes. Because of the
+   specific nature of how we represent graphs here, we get away with a
+   simplified union-find. Indeed, all the union-find paths that are manipulated
+   are always in "compressed" form, and thus we can simply use ordinary
+   references rather than compressible union-find nodes. *)
 let subgraphs t =
-  let dummy_cell = Union_find.create (-1) in
+  let dummy_cell = ref (-1) in
   let components = Array.map t.nodes ~f:(fun _ -> dummy_cell) in
   let component_id = ref 0 in
   Array.iteri t.nodes ~f:(fun i node ->
-    match node with
-    | Root { rev = _ } ->
-      let id = !component_id in
-      Int.incr component_id;
-      components.(i) <- Union_find.create id
-    | Commit { rev = _; parent } -> components.(i) <- components.(parent)
-    | Merge { rev = _; parent1; parent2 } ->
-      let component1 = components.(parent1) in
-      Union_find.union component1 components.(parent2);
-      components.(i) <- component1);
-  let num_id = !component_id in
+    let representative =
+      match node with
+      | Root { rev = _ } ->
+        (* Mint a new representative. *)
+        let id = component_id.contents in
+        Int.incr component_id;
+        ref id
+      | Commit { rev = _; parent } ->
+        (* Reuse an existing representative. *)
+        components.(parent)
+      | Merge { rev = _; parent1; parent2 } ->
+        (* Keep component1 as representative for the union of 2 nodes. *)
+        let component1 = components.(parent1) in
+        components.(parent2).contents <- component1.contents;
+        component1
+    in
+    components.(i) <- representative);
+  (* In the general case, [num_id] is greater than the actual number of
+     resulting subgraphs. The subgraphs that correspond to the component ids
+     that were not kept as representatives during the processing of [Merge]
+     nodes are going to be empty at the end, and we filter them out. *)
+  let num_id = component_id.contents in
   let logs = Array.init num_id ~f:(fun _ -> Queue.create ()) in
   let refs = Array.init num_id ~f:(fun _ -> Queue.create ()) in
   Array.iteri components ~f:(fun i cell ->
-    let id = Union_find.get cell in
+    let id = cell.contents in
     Queue.enqueue logs.(id) (log_line t i));
   Hashtbl.iteri t.refs ~f:(fun ~key:ref_kind ~data:index ->
-    let id = Union_find.get components.(index) in
+    let id = components.(index).contents in
     Queue.enqueue refs.(id) { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind });
   Array.map2_exn logs refs ~f:(fun log refs ->
     { Subgraph.log = Queue.to_list log; refs = Queue.to_list refs })
