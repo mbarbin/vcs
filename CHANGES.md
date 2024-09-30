@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Reduced dependencies from `fpath-base` to `fpath-sexp0` where able.
+- Inline `eio-process` dependency into.
 - Remove `eio-writer` dependency in `vcs-command`.
 
 ### Deprecated
@@ -11,6 +13,8 @@
 ### Fixed
 
 ### Removed
+
+- No more `vendor/` libraries.
 
 ## 0.0.7 (2024-09-20)
 
