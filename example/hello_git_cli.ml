@@ -66,7 +66,7 @@ let%expect_test "hello cli" =
      its output, and how to do this with the non-raising API of Vcs. *)
   let head_rev =
     Vcs.Or_error.git vcs ~repo_root ~args:[ "rev-parse"; "HEAD" ] ~f:(fun output ->
-      let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
+      let%bind.Or_error stdout = Vcs.Git.Or_error.exit0_and_stdout output in
       match Vcs.Rev.of_string (String.strip stdout) with
       | Ok _ as ok -> ok
       | Error (`Msg _) -> assert false)
@@ -180,7 +180,7 @@ let%expect_test "hello cli" =
       ~repo_root
       ~args:[ "rev-parse"; "--abbrev-ref"; ref_ ]
       ~f:Vcs.Git.Or_error.exit0_and_stdout
-    >>| String.strip
+    |> Or_error.map ~f:String.strip
   in
   (* You may be tempted to think the setup is ok, based on the happy path
      behavior. *)
@@ -218,7 +218,7 @@ let%expect_test "hello cli" =
       ~repo_root
       ~args:[ "rev-parse"; "--abbrev-ref"; ref_ ]
       ~f:Vcs.Git.Or_error.exit0_and_stdout
-    >>| String.strip
+    |> Or_error.map ~f:String.strip
   in
   (* The behavior is the same in the happy path. *)
   print_s [%sexp (abbrev_ref "HEAD" : string Or_error.t)];

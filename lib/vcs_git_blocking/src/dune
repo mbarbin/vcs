@@ -10,8 +10,8 @@
   -open
   Base
   -open
-  Fpath_base)
- (libraries base fpath fpath-base provider unix vcs vcs-git-provider)
+  Fpath_sexp0)
+ (libraries base fpath fpath-sexp0 provider unix vcs vcs-git-provider)
  (instrumentation
   (backend bisect_ppx))
  (lint

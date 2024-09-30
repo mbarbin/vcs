@@ -1,16 +1,25 @@
-## 0.0.8 (unreleased)
-
-### Added
+## 0.0.8 (2024-09-30)
 
 ### Changed
 
-- Remove `eio-writer` dependency in `vcs-command`.
-
-### Deprecated
+- Reduced dependencies from `fpath-base` to `fpath-sexp0` where able (#27, @mbarbin).
+- Inline `eio-process` dependency into `vcs_git_eio` (#27, @mbarbin).
+- Replace calls to `eio-writer` by print functions from stdlib in `vcs-command` (#26, @mbarbin).
+- Refactor subgraph computation to not need union-find (#25, @mbarbin).
+- Improve `Vcs.Graph` documentation (#24, @mbarbin).
+- Upgrade documentation dependencies (#23, @mbarbin).
+- Update documentation to use diataxis (#22, @mbarbin).
 
 ### Fixed
 
+- Fixed stale names in headache script.
+
 ### Removed
+
+- No more `vendor/` libraries.
+- Removed dependency to vendored `eio-process`.
+- Removed dependency to vendored `eio-writer`.
+- Removed dependency to vendored `union-find`.
 
 ## 0.0.7 (2024-09-20)
 

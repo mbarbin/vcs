@@ -16,6 +16,38 @@ This notice file contains more details, as well as document the organization of 
 
 - **NOTICE.md** (this file) documents the project licensing.
 
+## A note about Eio-process
+
+To spawn processes in `Eio` and collect their output we've copied some code from the [Eio_process](https://github.com/mbarbin/eio-process) project. The `Eio_process` project is released under `MIT`.
+
+### Notice
+
+The file where we make use of this code is `lib/vcs_git_eio/src/runtime.ml`. We've added a notice in the file and a comment next to the code that was copied and modified, which include `Eio_process`'s original LICENSE:
+
+```text
+MIT License
+
+Copyright (c) 2023 Mathieu Barbin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ## A note about Iron
 
 In 2016-2017, Jane Street released on GitHub an internal code review system named [Iron](https://github.com/janestreet/iron).

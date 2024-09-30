@@ -80,7 +80,7 @@
    (>= 1.0))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -192,7 +192,7 @@
     (< v0.18)))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -242,7 +242,7 @@
    (>= 1.0))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -279,8 +279,6 @@
   (vcs
    (= :version))
   (vcs-git-provider
-   (= :version))
-  (vcs-private-libs-eio
    (= :version))))
 
 (package
@@ -296,7 +294,7 @@
     (< v0.18)))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -383,6 +381,8 @@
    (>= 0.7.3))
   (fpath-base
    (>= 0.2.0))
+  (fpath-sexp0
+   (>= 0.2.0))
   (mdx
    (and
     :with-doc
@@ -454,62 +454,12 @@
    (= :version))
   (vcs-git-provider
    (= :version))
-  (vcs-private-libs-eio
-   (= :version))
   (vcs-test-helpers
    (= :version))
   (sherlodoc
    (and
     :with-doc
     (>= 0.2)))))
-
-(package
- (name vcs-private-libs-eio)
- (synopsis "Private eio libraries used by vcs -- do not use!")
- (allow_empty)
- (depends
-  (ocaml
-   (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (eio
-   (>= 1.0))
-  (parsexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppxlib
-   (>= 0.33))))
 
 (package
  (name vcs-test-helpers)
@@ -525,7 +475,7 @@
    (>= 1.0))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and

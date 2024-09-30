@@ -25,6 +25,7 @@ depends: [
   "expect_test_helpers_core" {>= "v0.17" & < "v0.18"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.2.0"}
+  "fpath-sexp0" {>= "0.2.0"}
   "mdx" {with-doc & >= "2.4"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}
@@ -47,7 +48,6 @@ depends: [
   "vcs-git-blocking" {= version}
   "vcs-git-eio" {= version}
   "vcs-git-provider" {= version}
-  "vcs-private-libs-eio" {= version}
   "vcs-test-helpers" {= version}
   "sherlodoc" {with-doc & >= "0.2"}
   "odoc" {with-doc}
