@@ -42,18 +42,92 @@ let save_file ?(perms = 0o666) t ~path ~(file_contents : Vcs.File_contents.t) =
     Eio.Path.save ~create:(`Or_truncate perms) path (file_contents :> string))
 ;;
 
+module Exit_status = struct
+  [@@@coverage off]
+
+  type t =
+    [ `Exited of int
+    | `Signaled of int
+    ]
+  [@@deriving sexp_of]
+end
+
+module Lines = struct
+  type t = string list
+
+  let sexp_of_t (t : t) =
+    match t with
+    | [] -> [%sexp ""]
+    | [ hd ] -> [%sexp (hd : string)]
+    | _ :: _ :: _ as lines -> [%sexp (lines : string list)]
+  ;;
+
+  let create string : t = String.split_lines string
+end
+
+exception User_error of Error.t
+
 let git ?env t ~cwd ~args ~f =
-  Eio_process.run
-    ~process_mgr:t.process_mgr
-    ~cwd:Eio.Path.(t.fs / Absolute_path.to_string cwd)
-    ?env
-    ~prog:"git"
-    ~args
-    ()
-    ~f:(fun { Eio_process.Output.stdout; stderr; exit_status } ->
-      match exit_status with
-      | `Exited exit_code -> f { Vcs.Git.Output.exit_code; stdout; stderr }
-      | `Signaled signal ->
-        Or_error.error_s
-          [%sexp "process exited abnormally", { signal : int }] [@coverage off])
+  let cwd = Eio.Path.(t.fs / Absolute_path.to_string cwd) in
+  let prog = "git" in
+  Eio.Switch.run
+  @@ fun sw ->
+  let r, w = Eio.Process.pipe t.process_mgr ~sw in
+  let re, we = Eio.Process.pipe t.process_mgr ~sw in
+  let exit_status_r : [ Exit_status.t | `Unknown ] ref = ref `Unknown in
+  let stdout_r = ref "" in
+  let stderr_r = ref "" in
+  try
+    let child =
+      Eio.Process.spawn
+        ~sw
+        t.process_mgr
+        ~cwd
+        ?stdin:None
+        ~stdout:w
+        ~stderr:we
+        ?env
+        ?executable:None
+        (prog :: args)
+    in
+    Eio.Flow.close w;
+    Eio.Flow.close we;
+    let stdout = Eio.Buf_read.parse_exn Eio.Buf_read.take_all r ~max_size:Int.max_value in
+    stdout_r := stdout;
+    let stderr =
+      Eio.Buf_read.parse_exn Eio.Buf_read.take_all re ~max_size:Int.max_value
+    in
+    stderr_r := stderr;
+    Eio.Flow.close r;
+    let exit_status = Eio.Process.await child in
+    exit_status_r := (exit_status :> [ Exit_status.t | `Unknown ]);
+    match exit_status with
+    | `Signaled signal ->
+      raise
+        (User_error
+           (Error.create_s
+              [%sexp "process exited abnormally", { signal : int }] [@coverage off]))
+      [@coverage off]
+    | `Exited exit_code ->
+      (match f { Vcs.Git.Output.exit_code; stdout; stderr } with
+       | Ok _ as ok -> ok
+       | Error err -> raise (User_error err))
+  with
+  | (Eio.Exn.Io _ | User_error _) as exn ->
+    let error =
+      match exn with
+      | Eio.Exn.Io _ -> Error.of_exn exn
+      | User_error error -> error
+      | _ -> assert false
+    in
+    Or_error.error_s
+      [%sexp
+        { prog : string
+        ; args : string list
+        ; exit_status = (!exit_status_r : [ Exit_status.t | `Unknown ])
+        ; cwd = (snd cwd : string)
+        ; stdout = (Lines.create !stdout_r : Lines.t)
+        ; stderr = (Lines.create !stderr_r : Lines.t)
+        ; error : Error.t
+        }]
 ;;

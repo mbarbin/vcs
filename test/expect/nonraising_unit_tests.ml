@@ -79,7 +79,7 @@ let%expect_test "num stat without lines" =
        (exit_status (Exited 128))
        (cwd    <REDACTED>)
        (stdout "")
-       (stderr ("fatal: pathspec 'unknown-file.txt' did not match any files"))
+       (stderr "fatal: pathspec 'unknown-file.txt' did not match any files")
        (error "expected exit code 0"))))
     |}];
   let () =
