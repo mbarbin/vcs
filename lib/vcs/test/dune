@@ -16,7 +16,7 @@
   -open
   Base
   -open
-  Fpath_base
+  Fpath_sexp0
   -open
   Expect_test_helpers_base)
  (libraries
@@ -26,7 +26,7 @@
   err
   expect_test_helpers_core.expect_test_helpers_base
   fpath
-  fpath-base
+  fpath-sexp0
   vcs
   vcs_git_provider)
  (instrumentation

@@ -10,10 +10,10 @@
   -open
   Base
   -open
-  Fpath_base
+  Fpath_sexp0
   -open
   Cmdlang)
- (libraries base cmdlang eio fpath fpath-base unix vcs vcs-git-eio)
+ (libraries base cmdlang eio fpath fpath-sexp0 unix vcs vcs-git-eio)
  (instrumentation
   (backend bisect_ppx))
  (lint

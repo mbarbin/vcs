@@ -10,17 +10,8 @@
   -open
   Base
   -open
-  Fpath_base
-  -open
-  Vcs_eio_process)
- (libraries
-  base
-  eio
-  fpath
-  fpath-base
-  vcs
-  vcs-git-provider
-  vcs-private-libs-eio.eio-process)
+  Fpath_sexp0)
+ (libraries base eio fpath fpath-sexp0 vcs vcs-git-provider)
  (instrumentation
   (backend bisect_ppx))
  (lint

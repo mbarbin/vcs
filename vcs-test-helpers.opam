@@ -13,7 +13,7 @@ depends: [
   "base" {>= "v0.17" & < "v0.18"}
   "eio" {>= "1.0"}
   "fpath" {>= "0.7.3"}
-  "fpath-base" {>= "0.2.0"}
+  "fpath-sexp0" {>= "0.2.0"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}
   "ppx_hash" {>= "v0.17" & < "v0.18"}

@@ -10,8 +10,8 @@
   -open
   Base
   -open
-  Fpath_base)
- (libraries base eio fpath fpath-base unix vcs)
+  Fpath_sexp0)
+ (libraries base eio fpath fpath-sexp0 unix vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

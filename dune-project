@@ -80,7 +80,7 @@
    (>= 1.0))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -192,7 +192,7 @@
     (< v0.18)))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -242,7 +242,7 @@
    (>= 1.0))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -296,7 +296,7 @@
     (< v0.18)))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
@@ -382,6 +382,8 @@
   (fpath
    (>= 0.7.3))
   (fpath-base
+   (>= 0.2.0))
+  (fpath-sexp0
    (>= 0.2.0))
   (mdx
    (and
@@ -525,7 +527,7 @@
    (>= 1.0))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.0))
   (ppx_compare
    (and
