@@ -42,6 +42,49 @@ let save_file ?(perms = 0o666) t ~path ~(file_contents : Vcs.File_contents.t) =
     Eio.Path.save ~create:(`Or_truncate perms) path (file_contents :> string))
 ;;
 
+(* The modules [Exit_status], [Lines] and the function [git] below are derived
+   from the [Eio_process] project version [0.0.4] which is released under MIT
+   and may be found at [https://github.com/mbarbin/eio-process].
+
+   The changes we made to the code are:
+
+   - We removed the ability to parse the output of the process as a sexp. We
+     don't expect a git process to use the sexp format for its output (stdout
+     and stderr alike).
+
+   - We treat a signaled exit status as an error.
+
+   - The [git] function was adapted from [Eio_process.run], inlining the part
+     specific to git directly into the new function. We expect that the [git]
+     function may be further specialized in the future to fit the requirement of
+     the project.
+
+   See Eio_process's LICENSE below:
+
+   ----------------------------------------------------------------------------
+
+   MIT License
+
+   Copyright (c) 2023 Mathieu Barbin
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE. *)
+
 module Exit_status = struct
   [@@@coverage off]
 
