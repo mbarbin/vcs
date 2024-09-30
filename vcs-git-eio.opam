@@ -25,7 +25,6 @@ depends: [
   "provider" {>= "0.0.8"}
   "vcs" {= version}
   "vcs-git-provider" {= version}
-  "vcs-private-libs-eio" {= version}
   "odoc" {with-doc}
 ]
 build: [

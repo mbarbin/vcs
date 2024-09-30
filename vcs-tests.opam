@@ -48,7 +48,6 @@ depends: [
   "vcs-git-blocking" {= version}
   "vcs-git-eio" {= version}
   "vcs-git-provider" {= version}
-  "vcs-private-libs-eio" {= version}
   "vcs-test-helpers" {= version}
   "sherlodoc" {with-doc & >= "0.2"}
   "odoc" {with-doc}
