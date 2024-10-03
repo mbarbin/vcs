@@ -51,6 +51,8 @@ module Make (M : M) :
     try_with (fun () -> Vcs0.save_file ?perms vcs ~path ~file_contents)
   ;;
 
+  let read_dir vcs ~dir = try_with (fun () -> Vcs0.read_dir vcs ~dir)
+
   let rename_current_branch vcs ~repo_root ~to_ =
     try_with (fun () -> Vcs0.rename_current_branch vcs ~repo_root ~to_)
   ;;

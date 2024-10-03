@@ -100,6 +100,8 @@ module type S = sig
     -> file_contents:File_contents.t
     -> unit result
 
+  val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fpart.t list result
+
   val rename_current_branch
     :  [> Trait.branch ] t
     -> repo_root:Repo_root.t

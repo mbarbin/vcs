@@ -134,12 +134,18 @@ val show_file_at_rev
 
 val load_file : [> Trait.file_system ] t -> path:Absolute_path.t -> File_contents.t
 
+(** Create a new file, or truncate an existing one. *)
 val save_file
   :  ?perms:int (** defaults to [0o666]. *)
   -> [> Trait.file_system ] t
   -> path:Absolute_path.t
   -> file_contents:File_contents.t
   -> unit
+
+(** Returns the entries of the supplied directory, ordered increasingly
+    according to [String.compare]. The result does not include the unix entries
+    ".", "..". *)
+val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fpart.t list
 
 (** {1 Branches & Tags} *)
 

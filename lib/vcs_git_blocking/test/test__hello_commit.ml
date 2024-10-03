@@ -60,3 +60,35 @@ let%expect_test "hello commit" =
   [%expect {| (Ok (Present "Hello World!\n")) |}];
   ()
 ;;
+
+let%expect_test "read_dir" =
+  let vcs = Vcs_git_blocking.create () in
+  let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fpart.t list)] in
+  let cwd = Unix.getcwd () in
+  let dir = Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
+  let save_file file file_contents =
+    Vcs.save_file
+      vcs
+      ~path:(Absolute_path.extend dir (Fpart.v file))
+      ~file_contents:(Vcs.File_contents.create file_contents)
+  in
+  read_dir dir;
+  [%expect {| () |}];
+  save_file "hello.txt" "Hello World!\n";
+  [%expect {||}];
+  read_dir dir;
+  [%expect {| (hello.txt) |}];
+  save_file "foo" "Hello Foo!\n";
+  [%expect {||}];
+  read_dir dir;
+  [%expect {| (foo hello.txt) |}];
+  require_does_raise [%here] (fun () ->
+    Vcs.read_dir vcs ~dir:(Absolute_path.v "/invalid"));
+  [%expect
+    {|
+    (repo/vcs/lib/vcs/src/exn0.ml.E (
+      (steps ((Vcs.read_dir ((dir /invalid)))))
+      (error (Sys_error "/invalid: No such file or directory"))))
+    |}];
+  ()
+;;

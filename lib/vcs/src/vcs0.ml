@@ -42,6 +42,12 @@ let save_file ?perms (Provider.T { t; handler }) ~path ~file_contents =
          (lazy [%sexp "Vcs.save_file", { perms : int option; path : Absolute_path.t }])
 ;;
 
+let read_dir (Provider.T { t; handler }) ~dir =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system) in
+  M.read_dir t ~dir
+  |> of_result ~step:(lazy [%sexp "Vcs.read_dir", { dir : Absolute_path.t }])
+;;
+
 let add (Provider.T { t; handler }) ~repo_root ~path =
   let module M = (val Provider.Handler.lookup handler ~trait:Trait.Add) in
   M.add t ~repo_root ~path
