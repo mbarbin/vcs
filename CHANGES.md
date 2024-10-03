@@ -6,6 +6,8 @@
 
 ### Changed
 
+- Moved `ocaml-vcs more-tests` commands at top-level (#PR, @mbarbin).
+
 ### Deprecated
 
 ### Fixed

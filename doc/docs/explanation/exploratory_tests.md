@@ -24,14 +24,16 @@ SYNOPSIS
 
 
        We expect a 1:1 mapping between the function exposed in the [Vcs.S]
-       and the sub commands exposed here, plus additional functionality in
-       [more-tests].
+       and the sub commands exposed here, plus additional ones.
 
 
 
 COMMANDS
        add [OPTION]… file
            add a file to the index
+
+       branch-revision [OPTION]… [branch]
+           revision of a branch
 
        commit [--message=MSG] [--quiet] [OPTION]…
            commit a file
@@ -41,6 +43,9 @@ COMMANDS
 
        current-revision [OPTION]…
            revision of HEAD
+
+       gca [OPTION]… [rev]…
+           print greatest common ancestors of revisions
 
        git [OPTION]… [ARG]…
            run the git cli
@@ -60,14 +65,14 @@ COMMANDS
        ls-files [--below=PATH] [OPTION]…
            list file
 
-       more-tests COMMAND …
-           more tests combining vcs functions
-
        name-status [OPTION]… rev rev
            show a summary of the diff between 2 revs
 
        num-status [OPTION]… rev rev
            show a summary of the number of lines of diff between 2 revs
+
+       read-dir [OPTION]… file
+           print the list of files in a directory
 
        refs [OPTION]…
            show the refs of current repo

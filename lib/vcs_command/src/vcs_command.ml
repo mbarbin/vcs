@@ -201,6 +201,22 @@ let num_status_cmd =
      ())
 ;;
 
+let read_dir_cmd =
+  Command.make
+    ~summary:"print the list of files in a directory"
+    (let%map_open.Command config = Vcs_arg.Config.arg
+     and dir = Vcs_arg.pos_path ~pos:0 ~doc:"dir to read" in
+     Eio_main.run
+     @@ fun env ->
+     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
+       Vcs_arg.initialize ~env ~config
+     in
+     let dir = Vcs_arg.resolve dir ~context in
+     let entries = Vcs.read_dir vcs ~dir in
+     print_sexp [%sexp (entries : Fpart.t list)];
+     ())
+;;
+
 let rename_current_branch_cmd =
   Command.make
     ~summary:"move/rename a branch to a new name"
@@ -363,12 +379,6 @@ let greatest_common_ancestors_cmd =
      ())
 ;;
 
-let more_tests_cmd =
-  Command.group
-    ~summary:"more tests combining vcs functions"
-    [ "branch-revision", branch_revision_cmd; "gca", greatest_common_ancestors_cmd ]
-;;
-
 let main =
   Command.group
     ~summary:"call a command from the vcs interface"
@@ -377,25 +387,27 @@ let main =
 This is an executable to test the Version Control System (vcs) library.
 
 We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the
-sub commands exposed here, plus additional functionality in [more-tests].
+sub commands exposed here, plus additional ones.
 |})
     [ "add", add_cmd
+    ; "branch-revision", branch_revision_cmd
     ; "commit", commit_cmd
     ; "current-branch", current_branch_cmd
     ; "current-revision", current_revision_cmd
+    ; "gca", greatest_common_ancestors_cmd
     ; "git", git_cmd
+    ; "graph", graph_cmd
     ; "init", init_cmd
     ; "load-file", load_file_cmd
     ; "log", log_cmd
     ; "ls-files", ls_files_cmd
     ; "name-status", name_status_cmd
     ; "num-status", num_status_cmd
+    ; "read-dir", read_dir_cmd
     ; "refs", refs_cmd
     ; "rename-current-branch", rename_current_branch_cmd
     ; "save-file", save_file_cmd
     ; "set-user-config", set_user_config_cmd
     ; "show-file-at-rev", show_file_at_rev_cmd
-    ; "graph", graph_cmd
-    ; "more-tests", more_tests_cmd
     ]
 ;;

@@ -29,13 +29,13 @@ Rev-parse.
   $ ocaml-vcs current-branch
   main
 
-  $ ocaml-vcs more-tests branch-revision | sed -e "s/$rev0/rev0/g"
+  $ ocaml-vcs branch-revision | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs more-tests branch-revision main | sed -e "s/$rev0/rev0/g"
+  $ ocaml-vcs branch-revision main | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs more-tests branch-revision unknown-branch
+  $ ocaml-vcs branch-revision unknown-branch
   Error: Branch not found (branch_name unknown-branch)
   [123]
 
@@ -53,13 +53,54 @@ Invalid path-in-repo.
   Error: Path is not in repo (path /hello)
   [123]
 
-Save / Load files.
+File system operations.
+
+  $ ocaml-vcs read-dir untracked
+  Error:
+  ((steps
+    ((Vcs.read_dir
+      ((dir
+        $TESTCASE_ROOT/untracked)))))
+   (error
+    ( "Eio.Io Fs Not_found Unix_error (No such file or directory, \"openat2\", \"\"),\
+     \n  reading directory <fs:$TESTCASE_ROOT/untracked>")))
+  [123]
 
   $ mkdir -p untracked
+
+  $ ocaml-vcs read-dir untracked
+  ()
+
   $ echo "New untracked file" | ocaml-vcs save-file untracked/hello
+
+  $ ocaml-vcs read-dir untracked
+  (hello)
+
+  $ ocaml-vcs read-dir untracked/hello
+  Error:
+  ((steps
+    ((Vcs.read_dir
+      ((dir
+        $TESTCASE_ROOT/untracked/hello)))))
+   (error
+    ( "Eio.Io Unix_error (Not a directory, \"openat2\", \"\"),\
+     \n  reading directory <fs:$TESTCASE_ROOT/untracked/hello>")))
+  [123]
 
   $ ocaml-vcs load-file untracked/hello
   New untracked file
+
+  $ chmod -r untracked
+  $ ocaml-vcs read-dir untracked
+  Error:
+  ((steps
+    ((Vcs.read_dir
+      ((dir
+        $TESTCASE_ROOT/untracked)))))
+   (error
+    ( "Eio.Io Fs Permission_denied Unix_error (Permission denied, \"openat2\", \"\"),\
+     \n  reading directory <fs:$TESTCASE_ROOT/untracked>")))
+  [123]
 
   $ rm untracked/hello
   $ rmdir untracked
@@ -135,16 +176,16 @@ Graph.
 
 Greatest common ancestors.
 
-  $ ocaml-vcs more-tests gca
+  $ ocaml-vcs gca
   ()
 
-  $ ocaml-vcs more-tests gca $rev1 | stabilize_output
+  $ ocaml-vcs gca $rev1 | stabilize_output
   ($REV1)
 
-  $ ocaml-vcs more-tests gca $rev1 $rev2 | stabilize_output
+  $ ocaml-vcs gca $rev1 $rev2 | stabilize_output
   ($REV1)
 
-  $ ocaml-vcs more-tests gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
+  $ ocaml-vcs gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
   Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
@@ -190,14 +231,16 @@ Vcs's help for review.
           
   
          We expect a 1:1 mapping between the function exposed in the [Vcs.S]
-         and the sub commands exposed here, plus additional functionality in
-         [more-tests].
+         and the sub commands exposed here, plus additional ones.
   
           
   
   COMMANDS
          add [OPTION]… file
              add a file to the index
+  
+         branch-revision [OPTION]… [branch]
+             revision of a branch
   
          commit [--message=MSG] [--quiet] [OPTION]…
              commit a file
@@ -207,6 +250,9 @@ Vcs's help for review.
   
          current-revision [OPTION]…
              revision of HEAD
+  
+         gca [OPTION]… [rev]…
+             print greatest common ancestors of revisions
   
          git [OPTION]… [ARG]…
              run the git cli
@@ -226,14 +272,14 @@ Vcs's help for review.
          ls-files [--below=PATH] [OPTION]…
              list file
   
-         more-tests COMMAND …
-             more tests combining vcs functions
-  
          name-status [OPTION]… rev rev
              show a summary of the diff between 2 revs
   
          num-status [OPTION]… rev rev
              show a summary of the number of lines of diff between 2 revs
+  
+         read-dir [OPTION]… file
+             print the list of files in a directory
   
          refs [OPTION]…
              show the refs of current repo
