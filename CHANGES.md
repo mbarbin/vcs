@@ -2,6 +2,7 @@
 
 ### Added
 
+- Add `Vcs.find_enclosing_repo_root` helper (#PR, @mbarbin).
 - Add `Vcs.read_dir` helper (#PR, @mbarbin).
 
 ### Changed
@@ -13,6 +14,8 @@
 ### Fixed
 
 ### Removed
+
+- Removed package `vcs-arg` and inline what's needed directly in `vcs-command` (#PR, @mbarbin).
 
 ## 0.0.8 (2024-09-30)
 
