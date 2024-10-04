@@ -84,9 +84,31 @@ module Repo_name = Repo_name
 module Repo_root = Repo_root
 module Url = Url
 
-(** Initialize a git repository at the given path. This errors out if a
+(** Initialize a Git repository at the given path. This errors out if a
     repository is already initialized there. *)
 val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t
+
+(** [find_enclosing_repo_root ?stop_if_present vcs ~from:dir] walks up the path from
+    the given directory [dir] and stops when at the root of a repository. If no
+    repo root has been found when reaching the root path ["/"], the function
+    returns [None].
+
+    The way we determine whether we are at the root of a repo is by looking for
+    the presence of a [".git"] entry in the directory.
+
+    When present, we do not check that the path [".git"] is itself a directory,
+    so that this function is able to correctly infer and return the root of Git
+    repos where [".git"] is not a directory (e.g. Git worktrees).
+
+    You may also make the recursive search stop if specific entries are present.
+    For example, if you pass [~stop_if_present:[".hg"]] and call it from within
+    a Mercurial repo, the function will find its root and return it, along with
+    the [`Other ".hg"] tag. *)
+val find_enclosing_repo_root
+  :  ?stop_if_present:Fpart.t list
+  -> [> Trait.file_system ] t
+  -> from:Absolute_path.t
+  -> ([ `Git | `Other of Fpart.t ] * Repo_root.t) option
 
 (** {1 Revisions} *)
 
@@ -206,7 +228,7 @@ module User_name = User_name
 
 (** During tests in the GitHub environment we end up having issues if we do not
     set the user name and email. Also, we rather not do it globally. If this
-    is never called, the current user config is used as usual by git processes
+    is never called, the current user config is used as usual by Git processes
     invocations. *)
 
 val set_user_name

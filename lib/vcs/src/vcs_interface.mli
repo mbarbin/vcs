@@ -56,6 +56,12 @@ module type S = sig
 
   val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t result
 
+  val find_enclosing_repo_root
+    :  ?stop_if_present:Fpart.t list
+    -> [> Trait.file_system ] t
+    -> from:Absolute_path.t
+    -> ([ `Git | `Other of Fpart.t ] * Repo_root.t) option result
+
   val add
     :  [> Trait.add ] t
     -> repo_root:Repo_root.t
