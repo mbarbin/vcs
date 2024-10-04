@@ -42,6 +42,11 @@ let save_file ?(perms = 0o666) t ~path ~(file_contents : Vcs.File_contents.t) =
     Eio.Path.save ~create:(`Or_truncate perms) path (file_contents :> string))
 ;;
 
+let read_dir t ~dir =
+  let dir = Eio.Path.(t.fs / Absolute_path.to_string dir) in
+  Or_error.try_with (fun () -> Eio.Path.read_dir dir |> List.map ~f:Fpart.v)
+;;
+
 (* The modules [Exit_status], [Lines] and the function [git] below are derived
    from the [Eio_process] project version [0.0.4] which is released under MIT
    and may be found at [https://github.com/mbarbin/eio-process].

@@ -84,9 +84,43 @@ module Repo_name = Repo_name
 module Repo_root = Repo_root
 module Url = Url
 
-(** Initialize a git repository at the given path. This errors out if a
+(** Initialize a Git repository at the given path. This errors out if a
     repository is already initialized there. *)
 val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t
+
+(** [find_enclosing_repo_root vcs ~from:dir ~store] walks up the path from
+    the given directory [dir] and stops when at the root of a repository. If no
+    repo root has been found when reaching the root path ["/"], the function
+    returns [None].
+
+    The way we determine whether we are at the root of a repo is by looking for
+    the presence of one of the store entries in the directory (e.g. [".git"]).
+
+    When present, we do not check that the store is itself a directory, so that
+    this function is able to correctly infer and return the root of Git repos
+    where [".git"] is not a directory (e.g. Git worktrees).
+
+    You may supply several stores if you want to stop at the first store that is
+    encountered, if you do not know in what kind of repo you are. For example,
+    [[".git"; ".hg"]]. The store that was matched is returned as part of the
+    result.
+
+    If you know you are in a Git repository you may want to use the wrapper
+    {!val:find_enclosing_git_repo_root} instead. *)
+val find_enclosing_repo_root
+  :  [> Trait.file_system ] t
+  -> from:Absolute_path.t
+  -> store:Fpart.t list
+  -> ([ `Store of Fpart.t ] * Repo_root.t) option
+
+(** [find_enclosing_git_repo_root vcs ~from:dir] is a convenient wrapper around
+    {!val:find_enclosing_repo_root} for Git repositories. This is looking for
+    the right most directory containing a [".git"] entry, starting from [dir]
+    and walking up. *)
+val find_enclosing_git_repo_root
+  :  [> Trait.file_system ] t
+  -> from:Absolute_path.t
+  -> Repo_root.t option
 
 (** {1 Revisions} *)
 
@@ -134,12 +168,18 @@ val show_file_at_rev
 
 val load_file : [> Trait.file_system ] t -> path:Absolute_path.t -> File_contents.t
 
+(** Create a new file, or truncate an existing one. *)
 val save_file
   :  ?perms:int (** defaults to [0o666]. *)
   -> [> Trait.file_system ] t
   -> path:Absolute_path.t
   -> file_contents:File_contents.t
   -> unit
+
+(** Returns the entries of the supplied directory, ordered increasingly
+    according to [String.compare]. The result does not include the unix entries
+    ".", "..". *)
+val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fpart.t list
 
 (** {1 Branches & Tags} *)
 
@@ -200,7 +240,7 @@ module User_name = User_name
 
 (** During tests in the GitHub environment we end up having issues if we do not
     set the user name and email. Also, we rather not do it globally. If this
-    is never called, the current user config is used as usual by git processes
+    is never called, the current user config is used as usual by Git processes
     invocations. *)
 
 val set_user_name

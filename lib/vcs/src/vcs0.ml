@@ -42,6 +42,12 @@ let save_file ?perms (Provider.T { t; handler }) ~path ~file_contents =
          (lazy [%sexp "Vcs.save_file", { perms : int option; path : Absolute_path.t }])
 ;;
 
+let read_dir (Provider.T { t; handler }) ~dir =
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system) in
+  M.read_dir t ~dir
+  |> of_result ~step:(lazy [%sexp "Vcs.read_dir", { dir : Absolute_path.t }])
+;;
+
 let add (Provider.T { t; handler }) ~repo_root ~path =
   let module M = (val Provider.Handler.lookup handler ~trait:Trait.Add) in
   M.add t ~repo_root ~path
@@ -52,6 +58,31 @@ let add (Provider.T { t; handler }) ~repo_root ~path =
 let init (Provider.T { t; handler }) ~path =
   let module M = (val Provider.Handler.lookup handler ~trait:Trait.Init) in
   M.init t ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
+;;
+
+let find_enclosing_repo_root t ~from ~store =
+  let rec visit dir =
+    let entries = read_dir t ~dir in
+    match List.find entries ~f:(fun entry -> List.mem store entry ~equal:Fpart.equal) with
+    | Some entry ->
+      let dir =
+        Fpath.rem_empty_seg (dir :> Fpath.t)
+        |> Absolute_path.of_fpath
+        |> Option.value ~default:dir
+      in
+      Some (`Store entry, Repo_root.of_absolute_path dir)
+    | None ->
+      (match Absolute_path.parent dir with
+       | None -> None
+       | Some parent_dir -> visit parent_dir)
+  in
+  visit from
+;;
+
+let find_enclosing_git_repo_root t ~from =
+  match find_enclosing_repo_root t ~from ~store:[ Fpart.dot_git ] with
+  | None -> None
+  | Some (_, repo_root) -> Some repo_root
 ;;
 
 let current_branch (Provider.T { t; handler }) ~repo_root =

@@ -28,7 +28,6 @@ depends: [
   "ppx_sexp_value" {>= "v0.17" & < "v0.18"}
   "ppxlib" {>= "0.33"}
   "vcs" {= version}
-  "vcs-arg" {= version}
   "vcs-git-eio" {= version}
   "odoc" {with-doc}
 ]

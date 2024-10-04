@@ -56,6 +56,17 @@ module type S = sig
 
   val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t result
 
+  val find_enclosing_git_repo_root
+    :  [> Trait.file_system ] t
+    -> from:Absolute_path.t
+    -> Repo_root.t option result
+
+  val find_enclosing_repo_root
+    :  [> Trait.file_system ] t
+    -> from:Absolute_path.t
+    -> store:Fpart.t list
+    -> ([ `Store of Fpart.t ] * Repo_root.t) option result
+
   val add
     :  [> Trait.add ] t
     -> repo_root:Repo_root.t
@@ -99,6 +110,8 @@ module type S = sig
     -> path:Absolute_path.t
     -> file_contents:File_contents.t
     -> unit result
+
+  val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fpart.t list result
 
   val rename_current_branch
     :  [> Trait.branch ] t

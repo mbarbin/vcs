@@ -20,7 +20,8 @@
   fpath
   fpath-sexp0
   vcs
-  vcs_git_blocking)
+  vcs_git_blocking
+  vcs_test_helpers)
  (instrumentation
   (backend bisect_ppx))
  (lint

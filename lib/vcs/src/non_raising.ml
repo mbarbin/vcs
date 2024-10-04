@@ -31,6 +31,15 @@ module Make (M : M) :
   ;;
 
   let init vcs ~path = try_with (fun () -> Vcs0.init vcs ~path)
+
+  let find_enclosing_repo_root vcs ~from ~store =
+    try_with (fun () -> Vcs0.find_enclosing_repo_root vcs ~from ~store)
+  ;;
+
+  let find_enclosing_git_repo_root vcs ~from =
+    try_with (fun () -> Vcs0.find_enclosing_git_repo_root vcs ~from)
+  ;;
+
   let add vcs ~repo_root ~path = try_with (fun () -> Vcs0.add vcs ~repo_root ~path)
 
   let commit vcs ~repo_root ~commit_message =
@@ -50,6 +59,8 @@ module Make (M : M) :
   let save_file ?perms vcs ~path ~file_contents =
     try_with (fun () -> Vcs0.save_file ?perms vcs ~path ~file_contents)
   ;;
+
+  let read_dir vcs ~dir = try_with (fun () -> Vcs0.read_dir vcs ~dir)
 
   let rename_current_branch vcs ~repo_root ~to_ =
     try_with (fun () -> Vcs0.rename_current_branch vcs ~repo_root ~to_)

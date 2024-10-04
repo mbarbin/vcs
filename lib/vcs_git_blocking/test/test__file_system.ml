@@ -19,48 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* This is a simple test to make sure we can initialize a repo and commit a
-   file, and verify the mock rev mapping, in a purely blocking fashion. *)
-
-let%expect_test "hello commit" =
-  let vcs = Vcs_git_blocking.create () in
-  let mock_revs = Vcs.Mock_revs.create () in
-  let cwd = Unix.getcwd () |> Absolute_path.v in
-  let repo_root = Vcs.For_test.init vcs ~path:cwd |> Or_error.ok_exn in
-  let hello_file = Vcs.Path_in_repo.v "hello.txt" in
-  Vcs.save_file
-    vcs
-    ~path:(Vcs.Repo_root.append repo_root hello_file)
-    ~file_contents:(Vcs.File_contents.create "Hello World!\n");
-  let file_contents =
-    Vcs.load_file vcs ~path:(Vcs.Repo_root.append repo_root hello_file)
-  in
-  print_string (Vcs.File_contents.to_string file_contents);
-  [%expect {| Hello World! |}];
-  Vcs.add vcs ~repo_root ~path:hello_file;
-  let rev =
-    Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
-  in
-  let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
-  print_s
-    [%sexp
-      (Vcs.Or_error.show_file_at_rev
-         vcs
-         ~repo_root
-         ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.value_exn ~here:[%here])
-         ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
-  [%expect {| (Ok (Present "Hello World!\n")) |}];
-  print_s
-    [%sexp
-      (Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
-  [%expect {| (Ok (Present "Hello World!\n")) |}];
-  ()
-;;
-
 let%expect_test "read_dir" =
   let vcs = Vcs_git_blocking.create () in
   let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fpart.t list)] in
@@ -82,15 +40,34 @@ let%expect_test "read_dir" =
   [%expect {||}];
   read_dir dir;
   [%expect {| (foo hello.txt) |}];
+  (* Below we redact the actual temporary directory because they make the tests
+     non stable. We redact the error when it contains a non-stable path. *)
   let () =
-    match Vcs.read_dir vcs ~dir:(Absolute_path.v "/invalid") with
+    (* [Vcs.read_dir] errors out on non-existing directories. *)
+    match Vcs.read_dir vcs ~dir:(Absolute_path.v "/non-existing") with
     | (_ : Fpart.t list) -> assert false
-    | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]
+    | exception Vcs.E err ->
+      print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "dir" ])
   in
   [%expect
     {|
-    ((steps ((Vcs.read_dir ((dir /invalid)))))
-     (error (Sys_error "/invalid: No such file or directory")))
+    ((steps ((Vcs.read_dir ((dir <REDACTED>)))))
+     (error (Sys_error "/non-existing: No such file or directory")))
     |}];
+  let () =
+    (* [Vcs.read_dir] errors out when called on an existing file rather than a
+       directory. *)
+    let path = Absolute_path.extend dir (Fpart.v "foo") in
+    let file_exists = Stdlib.Sys.file_exists (Absolute_path.to_string path) in
+    assert file_exists;
+    print_s [%sexp { file_exists : bool }];
+    [%expect {| ((file_exists true)) |}];
+    match Vcs.read_dir vcs ~dir:path with
+    | (_ : Fpart.t list) -> assert false
+    | exception Vcs.E err ->
+      print_s
+        (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
+  in
+  [%expect {| ((steps ((Vcs.read_dir ((dir <REDACTED>))))) (error <REDACTED>)) |}];
   ()
 ;;

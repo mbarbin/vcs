@@ -29,13 +29,13 @@ Rev-parse.
   $ ocaml-vcs current-branch
   main
 
-  $ ocaml-vcs more-tests branch-revision | sed -e "s/$rev0/rev0/g"
+  $ ocaml-vcs branch-revision | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs more-tests branch-revision main | sed -e "s/$rev0/rev0/g"
+  $ ocaml-vcs branch-revision main | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs more-tests branch-revision unknown-branch
+  $ ocaml-vcs branch-revision unknown-branch
   Error: Branch not found (branch_name unknown-branch)
   [123]
 
@@ -53,16 +53,81 @@ Invalid path-in-repo.
   Error: Path is not in repo (path /hello)
   [123]
 
-Save / Load files.
+File system operations.
+
+  $ ocaml-vcs read-dir untracked
+  Error:
+  ((steps
+    ((Vcs.read_dir
+      ((dir
+        $TESTCASE_ROOT/untracked)))))
+   (error
+    ( "Eio.Io Fs Not_found Unix_error (No such file or directory, \"openat2\", \"\"),\
+     \n  reading directory <fs:$TESTCASE_ROOT/untracked>")))
+  [123]
 
   $ mkdir -p untracked
+
+  $ ocaml-vcs read-dir untracked
+  ()
+
   $ echo "New untracked file" | ocaml-vcs save-file untracked/hello
+
+  $ ocaml-vcs read-dir untracked
+  (hello)
+
+  $ ocaml-vcs read-dir untracked/hello
+  Error:
+  ((steps
+    ((Vcs.read_dir
+      ((dir
+        $TESTCASE_ROOT/untracked/hello)))))
+   (error
+    ( "Eio.Io Unix_error (Not a directory, \"openat2\", \"\"),\
+     \n  reading directory <fs:$TESTCASE_ROOT/untracked/hello>")))
+  [123]
 
   $ ocaml-vcs load-file untracked/hello
   New untracked file
 
+  $ chmod -r untracked
+  $ ocaml-vcs read-dir untracked
+  Error:
+  ((steps
+    ((Vcs.read_dir
+      ((dir
+        $TESTCASE_ROOT/untracked)))))
+   (error
+    ( "Eio.Io Fs Permission_denied Unix_error (Permission denied, \"openat2\", \"\"),\
+     \n  reading directory <fs:$TESTCASE_ROOT/untracked>")))
+  [123]
+
   $ rm untracked/hello
   $ rmdir untracked
+
+Find enclosing repo root.
+
+  $ (cd "/" && ocaml-vcs current-revision)
+  Error: Failed to locate enclosing repo root from directory (from /)
+  [123]
+
+  $ ocaml-vcs find-enclosing-repo-root
+  .git: $TESTCASE_ROOT
+
+  $ mkdir subdir
+  $ ocaml-vcs find-enclosing-repo-root --from subdir
+  .git: $TESTCASE_ROOT
+
+  $ ocaml-vcs find-enclosing-repo-root --from "/"
+
+  $ mkdir -p subdir/hg/otherdir
+  $ touch subdir/hg/.hg
+
+  $ ocaml-vcs find-enclosing-repo-root --from subdir/hg/otherdir
+  .git: $TESTCASE_ROOT
+
+  $ ocaml-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .hg
+  .hg: $TESTCASE_ROOT/subdir/hg
 
 Adding a new file under a directory.
 
@@ -135,16 +200,16 @@ Graph.
 
 Greatest common ancestors.
 
-  $ ocaml-vcs more-tests gca
+  $ ocaml-vcs gca
   ()
 
-  $ ocaml-vcs more-tests gca $rev1 | stabilize_output
+  $ ocaml-vcs gca $rev1 | stabilize_output
   ($REV1)
 
-  $ ocaml-vcs more-tests gca $rev1 $rev2 | stabilize_output
+  $ ocaml-vcs gca $rev1 $rev2 | stabilize_output
   ($REV1)
 
-  $ ocaml-vcs more-tests gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
+  $ ocaml-vcs gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
   Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
@@ -190,14 +255,16 @@ Vcs's help for review.
           
   
          We expect a 1:1 mapping between the function exposed in the [Vcs.S]
-         and the sub commands exposed here, plus additional functionality in
-         [more-tests].
+         and the sub commands exposed here, plus additional ones.
   
           
   
   COMMANDS
          add [OPTION]… file
              add a file to the index
+  
+         branch-revision [OPTION]… [BRANCH]
+             revision of a branch
   
          commit [--message=MSG] [--quiet] [OPTION]…
              commit a file
@@ -208,16 +275,23 @@ Vcs's help for review.
          current-revision [OPTION]…
              revision of HEAD
   
+         find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
+         [OPTION]…
+             find enclosing repo root
+  
+         gca [OPTION]… [REV]…
+             print greatest common ancestors of revisions
+  
          git [OPTION]… [ARG]…
              run the git cli
   
          graph [OPTION]…
              compute graph of current repo
   
-         init [--quiet] [OPTION]… file
+         init [--quiet] [OPTION]… path/to/root
              initialize a new repository
   
-         load-file [OPTION]… file
+         load-file [OPTION]… path/to/file
              print a file from the filesystem (aka cat)
   
          log [OPTION]…
@@ -226,14 +300,14 @@ Vcs's help for review.
          ls-files [--below=PATH] [OPTION]…
              list file
   
-         more-tests COMMAND …
-             more tests combining vcs functions
-  
-         name-status [OPTION]… rev rev
+         name-status [OPTION]… BASE TIP
              show a summary of the diff between 2 revs
   
-         num-status [OPTION]… rev rev
+         num-status [OPTION]… BASE TIP
              show a summary of the number of lines of diff between 2 revs
+  
+         read-dir [OPTION]… path/to/dir
+             print the list of files in a directory
   
          refs [OPTION]…
              show the refs of current repo
@@ -241,13 +315,13 @@ Vcs's help for review.
          rename-current-branch [OPTION]… branch
              move/rename a branch to a new name
   
-         save-file [OPTION]… file
+         save-file [OPTION]… FILE
              save stdin to a file from the filesystem (aka tee)
   
          set-user-config [--user.email=EMAIL] [--user.name=USER] [OPTION]…
              set the user config
   
-         show-file-at-rev [--rev=REV] [OPTION]… file
+         show-file-at-rev [--rev=REV] [OPTION]… FILE
              show the contents of file at a given revision
   
   COMMON OPTIONS

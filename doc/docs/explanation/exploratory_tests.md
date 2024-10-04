@@ -24,14 +24,16 @@ SYNOPSIS
 
 
        We expect a 1:1 mapping between the function exposed in the [Vcs.S]
-       and the sub commands exposed here, plus additional functionality in
-       [more-tests].
+       and the sub commands exposed here, plus additional ones.
 
 
 
 COMMANDS
        add [OPTION]… file
            add a file to the index
+
+       branch-revision [OPTION]… [BRANCH]
+           revision of a branch
 
        commit [--message=MSG] [--quiet] [OPTION]…
            commit a file
@@ -42,16 +44,23 @@ COMMANDS
        current-revision [OPTION]…
            revision of HEAD
 
+       find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
+       [OPTION]…
+           find enclosing repo root
+
+       gca [OPTION]… [REV]…
+           print greatest common ancestors of revisions
+
        git [OPTION]… [ARG]…
            run the git cli
 
        graph [OPTION]…
            compute graph of current repo
 
-       init [--quiet] [OPTION]… file
+       init [--quiet] [OPTION]… path/to/root
            initialize a new repository
 
-       load-file [OPTION]… file
+       load-file [OPTION]… path/to/file
            print a file from the filesystem (aka cat)
 
        log [OPTION]…
@@ -60,14 +69,14 @@ COMMANDS
        ls-files [--below=PATH] [OPTION]…
            list file
 
-       more-tests COMMAND …
-           more tests combining vcs functions
-
-       name-status [OPTION]… rev rev
+       name-status [OPTION]… BASE TIP
            show a summary of the diff between 2 revs
 
-       num-status [OPTION]… rev rev
+       num-status [OPTION]… BASE TIP
            show a summary of the number of lines of diff between 2 revs
+
+       read-dir [OPTION]… path/to/dir
+           print the list of files in a directory
 
        refs [OPTION]…
            show the refs of current repo
@@ -75,13 +84,13 @@ COMMANDS
        rename-current-branch [OPTION]… branch
            move/rename a branch to a new name
 
-       save-file [OPTION]… file
+       save-file [OPTION]… FILE
            save stdin to a file from the filesystem (aka tee)
 
        set-user-config [--user.email=EMAIL] [--user.name=USER] [OPTION]…
            set the user config
 
-       show-file-at-rev [--rev=REV] [OPTION]… file
+       show-file-at-rev [--rev=REV] [OPTION]… FILE
            show the contents of file at a given revision
 
 COMMON OPTIONS

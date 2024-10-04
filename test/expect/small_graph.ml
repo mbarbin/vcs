@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* Cover once each function using the non-raising interface. *)
-
 (* A utility to map the revisions to short and stable keys ("rev0", "rev1", etc). *)
 let map_sexp =
   let next = ref (-1) in
@@ -48,7 +46,7 @@ let map_sexp =
   aux
 ;;
 
-let%expect_test "num stat without lines" =
+let%expect_test "small graph" =
   Eio_main.run
   @@ fun env ->
   Eio.Switch.run

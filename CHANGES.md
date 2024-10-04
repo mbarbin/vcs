@@ -1,3 +1,22 @@
+## 0.0.9 (unreleased)
+
+### Added
+
+- Add `Vcs.find_enclosing_repo_root` helper (#28, @mbarbin).
+- Add `Vcs.read_dir` helper (#28, @mbarbin).
+
+### Changed
+
+- Moved `ocaml-vcs more-tests` commands at top-level (#28, @mbarbin).
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
+- Removed package `vcs-arg` and inline what's needed directly in `vcs-command` (#28, @mbarbin).
+
 ## 0.0.8 (2024-09-30)
 
 ### Changed

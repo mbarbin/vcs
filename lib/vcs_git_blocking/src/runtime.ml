@@ -44,6 +44,13 @@ let save_file ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
       (fun () -> Stdlib.Out_channel.output_string oc (file_contents :> string)))
 ;;
 
+let read_dir () ~dir =
+  Or_error.try_with (fun () ->
+    let entries = Stdlib.Sys.readdir (Absolute_path.to_string dir) in
+    Array.sort entries ~compare:String.compare;
+    entries |> Array.map ~f:Fpart.v |> Array.to_list)
+;;
+
 let with_cwd ~cwd ~f =
   let old_cwd = Unix.getcwd () in
   Stdlib.Fun.protect
