@@ -107,6 +107,10 @@ File system operations.
 
 Find enclosing repo root.
 
+  $ (cd "/" && ocaml-vcs current-revision)
+  Error: Failed to locate enclosing repo root from directory (from /)
+  [123]
+
   $ ocaml-vcs find-enclosing-repo-root
   .git: $TESTCASE_ROOT
 
