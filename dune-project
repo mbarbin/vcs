@@ -65,59 +65,6 @@
    (>= 0.0.8))))
 
 (package
- (name vcs-arg)
- (synopsis "[Command.Arg] helpers for the Vcs library")
- (depends
-  (ocaml
-   (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (cmdlang
-   (>= 0.0.5))
-  (eio
-   (>= 1.0))
-  (fpath
-   (>= 0.7.3))
-  (fpath-sexp0
-   (>= 0.2.0))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppxlib
-   (>= 0.33))
-  (vcs
-   (= :version))
-  (vcs-git-eio
-   (= :version))))
-
-(package
  (name vcs-command)
  (synopsis "A command line tool for the Vcs library")
  (depends
@@ -174,8 +121,6 @@
   (ppxlib
    (>= 0.33))
   (vcs
-   (= :version))
-  (vcs-arg
    (= :version))
   (vcs-git-eio
    (= :version))))
@@ -443,8 +388,6 @@
     (>= v0.17)
     (< v0.18)))
   (vcs
-   (= :version))
-  (vcs-arg
    (= :version))
   (vcs-command
    (= :version))
