@@ -1,8 +1,15 @@
 {
     "cSpell.words": [
+        "chdir",
+        "ENOENT",
         "janestreet",
+        "mkdirs",
         "odoc",
         "opam",
+        "pathspec",
+        "rmtree",
+        "Stdenv",
+        "subdir",
         "worktree",
         "worktrees"
     ]
