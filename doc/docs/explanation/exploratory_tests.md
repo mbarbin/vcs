@@ -32,7 +32,7 @@ COMMANDS
        add [OPTION]… file
            add a file to the index
 
-       branch-revision [OPTION]… [branch]
+       branch-revision [OPTION]… [BRANCH]
            revision of a branch
 
        commit [--message=MSG] [--quiet] [OPTION]…
@@ -44,7 +44,7 @@ COMMANDS
        current-revision [OPTION]…
            revision of HEAD
 
-       gca [OPTION]… [rev]…
+       gca [OPTION]… [REV]…
            print greatest common ancestors of revisions
 
        git [OPTION]… [ARG]…
@@ -53,10 +53,10 @@ COMMANDS
        graph [OPTION]…
            compute graph of current repo
 
-       init [--quiet] [OPTION]… file
+       init [--quiet] [OPTION]… path/to/root
            initialize a new repository
 
-       load-file [OPTION]… file
+       load-file [OPTION]… path/to/file
            print a file from the filesystem (aka cat)
 
        log [OPTION]…
@@ -65,13 +65,13 @@ COMMANDS
        ls-files [--below=PATH] [OPTION]…
            list file
 
-       name-status [OPTION]… rev rev
+       name-status [OPTION]… BASE TIP
            show a summary of the diff between 2 revs
 
-       num-status [OPTION]… rev rev
+       num-status [OPTION]… BASE TIP
            show a summary of the number of lines of diff between 2 revs
 
-       read-dir [OPTION]… file
+       read-dir [OPTION]… path/to/dir
            print the list of files in a directory
 
        refs [OPTION]…
@@ -80,13 +80,13 @@ COMMANDS
        rename-current-branch [OPTION]… branch
            move/rename a branch to a new name
 
-       save-file [OPTION]… file
+       save-file [OPTION]… FILE
            save stdin to a file from the filesystem (aka tee)
 
        set-user-config [--user.email=EMAIL] [--user.name=USER] [OPTION]…
            set the user config
 
-       show-file-at-rev [--rev=REV] [OPTION]… file
+       show-file-at-rev [--rev=REV] [OPTION]… FILE
            show the contents of file at a given revision
 
 COMMON OPTIONS

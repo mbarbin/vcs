@@ -25,17 +25,53 @@
 
 let print_sexp sexp = Stdlib.print_endline (Sexp.to_string_hum sexp)
 
+module Initialized = struct
+  type t =
+    { vcs : Vcs_git_eio.t'
+    ; repo_root : Vcs.Repo_root.t
+    ; cwd : Absolute_path.t
+    }
+end
+
+let find_enclosing_repo_root vcs ~from =
+  match Vcs.find_enclosing_repo_root vcs ~from with
+  | Some (`Git, repo_root) -> repo_root
+  | Some (`Other _, _) | None ->
+    Vcs.raise_s
+      "Failed to locate enclosing repo root from directory"
+      [%sexp { from : Absolute_path.t }]
+;;
+
+let initialize ~env =
+  let vcs = Vcs_git_eio.create ~env in
+  let cwd = Unix.getcwd () |> Absolute_path.v in
+  let repo_root = find_enclosing_repo_root vcs ~from:cwd in
+  { Initialized.vcs; repo_root; cwd }
+;;
+
+let relativize ~repo_root ~cwd ~path =
+  let path = Absolute_path.relativize ~root:cwd path in
+  match
+    Absolute_path.chop_prefix path ~prefix:(repo_root |> Vcs.Repo_root.to_absolute_path)
+  with
+  | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
+  | None -> Vcs.raise_s "Path is not in repo" [%sexp { path : Absolute_path.t }]
+;;
+
 let add_cmd =
   Command.make
     ~summary:"add a file to the index"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and path = Vcs_arg.pos_path_in_repo ~pos:0 ~doc:"file to add" in
+    (let%map_open.Command path =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Fpath))
+         ~docv:"file"
+         ~doc:"file to add"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context } =
-       Vcs_arg.initialize ~env ~config
-     in
-     let path = Vcs_arg.resolve ~context path in
+     let { Initialized.vcs; repo_root; cwd } = initialize ~env in
+     let path = relativize ~repo_root ~cwd ~path in
      Vcs.add vcs ~repo_root ~path;
      ())
 ;;
@@ -43,14 +79,16 @@ let add_cmd =
 let commit_cmd =
   Command.make
     ~summary:"commit a file"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and commit_message = Vcs_arg.commit_message
-     and quiet = Vcs_arg.quiet in
+    (let%map_open.Command commit_message =
+       Arg.named
+         [ "message"; "m" ]
+         (Param.validated_string (module Vcs.Commit_message))
+         ~docv:"MSG"
+         ~doc:"commit message"
+     and quiet = Arg.flag [ "quiet"; "q" ] ~doc:"suppress output on success" in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let rev = Vcs.commit vcs ~repo_root ~commit_message in
      if not quiet then print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
@@ -59,12 +97,10 @@ let commit_cmd =
 let current_branch_cmd =
   Command.make
     ~summary:"current branch"
-    (let%map_open.Command config = Vcs_arg.Config.arg in
+    (let%map_open.Command () = Arg.return () in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let branch = Vcs.current_branch vcs ~repo_root in
      print_sexp [%sexp (branch : Vcs.Branch_name.t)];
      ())
@@ -73,12 +109,10 @@ let current_branch_cmd =
 let current_revision_cmd =
   Command.make
     ~summary:"revision of HEAD"
-    (let%map_open.Command config = Vcs_arg.Config.arg in
+    (let%map_open.Command () = Arg.return () in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let rev = Vcs.current_revision vcs ~repo_root in
      print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
@@ -87,15 +121,12 @@ let current_revision_cmd =
 let git_cmd =
   Command.make
     ~summary:"run the git cli"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and args =
+    (let%map_open.Command args =
        Arg.pos_all Param.string ~docv:"ARG" ~doc:"pass the remaining args to git"
      in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let { Vcs.Git.Output.exit_code; stdout; stderr } =
        Vcs.git vcs ~repo_root ~args ~f:Fn.id
      in
@@ -107,15 +138,19 @@ let git_cmd =
 let init_cmd =
   Command.make
     ~summary:"initialize a new repository"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and path = Vcs_arg.pos_path ~pos:0 ~doc:"where to initialize the repository"
-     and quiet = Vcs_arg.quiet in
+    (let%map_open.Command path =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Fpath))
+         ~docv:"path/to/root"
+         ~doc:"where to initialize the repository"
+     and quiet =
+       Arg.flag [ "quiet"; "q" ] ~doc:"do not print the initialized repo root"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
-       Vcs_arg.initialize ~env ~config
-     in
-     let path = Vcs_arg.resolve path ~context in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let path = Absolute_path.relativize ~root:cwd path in
      let repo_root = Vcs.init vcs ~path in
      if not quiet then print_sexp [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
      ())
@@ -124,14 +159,17 @@ let init_cmd =
 let load_file_cmd =
   Command.make
     ~summary:"print a file from the filesystem (aka cat)"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and path = Vcs_arg.pos_path ~pos:0 ~doc:"file to load" in
+    (let%map_open.Command path =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Fpath))
+         ~docv:"path/to/file"
+         ~doc:"file to load"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
-       Vcs_arg.initialize ~env ~config
-     in
-     let path = Vcs_arg.resolve path ~context in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let path = Absolute_path.relativize ~root:cwd path in
      let contents = Vcs.load_file vcs ~path in
      Stdlib.print_string (contents :> string);
      ())
@@ -140,15 +178,21 @@ let load_file_cmd =
 let ls_files_cmd =
   Command.make
     ~summary:"list file"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and below = Vcs_arg.below_path_in_repo in
+    (let%map_open.Command below =
+       Arg.named_opt
+         [ "below" ]
+         (Param.validated_string (module Fpath))
+         ~docv:"PATH"
+         ~doc:"restrict the selection to path/to/subdir"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context } =
-       Vcs_arg.initialize ~env ~config
+     let { Initialized.vcs; repo_root; cwd } = initialize ~env in
+     let below =
+       match below with
+       | None -> Vcs.Path_in_repo.root
+       | Some path -> relativize ~repo_root ~cwd ~path
      in
-     let below = Vcs_arg.resolve below ~context in
-     let below = Option.value below ~default:Vcs.Path_in_repo.root in
      let files = Vcs.ls_files vcs ~repo_root ~below in
      List.iter files ~f:(fun file ->
        Stdlib.print_endline (Vcs.Path_in_repo.to_string file));
@@ -158,12 +202,10 @@ let ls_files_cmd =
 let log_cmd =
   Command.make
     ~summary:"show the log of current repo"
-    (let%map_open.Command config = Vcs_arg.Config.arg in
+    (let%map_open.Command () = Arg.return () in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let log = Vcs.log vcs ~repo_root in
      print_sexp [%sexp (log : Vcs.Log.t)];
      ())
@@ -172,14 +214,22 @@ let log_cmd =
 let name_status_cmd =
   Command.make
     ~summary:"show a summary of the diff between 2 revs"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and src = Vcs_arg.pos_rev ~pos:0 ~doc:"base revision"
-     and dst = Vcs_arg.pos_rev ~pos:1 ~doc:"tip revision" in
+    (let%map_open.Command src =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"BASE"
+         ~doc:"base revision"
+     and dst =
+       Arg.pos
+         ~pos:1
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"TIP"
+         ~doc:"tip revision"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
      print_sexp [%sexp (name_status : Vcs.Name_status.t)];
      ())
@@ -188,14 +238,22 @@ let name_status_cmd =
 let num_status_cmd =
   Command.make
     ~summary:"show a summary of the number of lines of diff between 2 revs"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and src = Vcs_arg.pos_rev ~pos:0 ~doc:"base revision"
-     and dst = Vcs_arg.pos_rev ~pos:1 ~doc:"tip revision" in
+    (let%map_open.Command src =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"BASE"
+         ~doc:"base revision"
+     and dst =
+       Arg.pos
+         ~pos:1
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"TIP"
+         ~doc:"tip revision"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
      print_sexp [%sexp (num_status : Vcs.Num_status.t)];
      ())
@@ -204,14 +262,17 @@ let num_status_cmd =
 let read_dir_cmd =
   Command.make
     ~summary:"print the list of files in a directory"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and dir = Vcs_arg.pos_path ~pos:0 ~doc:"dir to read" in
+    (let%map_open.Command dir =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Fpath))
+         ~docv:"path/to/dir"
+         ~doc:"dir to read"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
-       Vcs_arg.initialize ~env ~config
-     in
-     let dir = Vcs_arg.resolve dir ~context in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let dir = Absolute_path.relativize ~root:cwd dir in
      let entries = Vcs.read_dir vcs ~dir in
      print_sexp [%sexp (entries : Fpart.t list)];
      ())
@@ -220,13 +281,16 @@ let read_dir_cmd =
 let rename_current_branch_cmd =
   Command.make
     ~summary:"move/rename a branch to a new name"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and branch_name = Vcs_arg.pos_branch_name ~pos:0 ~doc:"new name to rename to" in
+    (let%map_open.Command branch_name =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Vcs.Branch_name))
+         ~docv:"branch"
+         ~doc:"new name to rename to"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      Vcs.rename_current_branch vcs ~repo_root ~to_:branch_name;
      ())
 ;;
@@ -234,12 +298,10 @@ let rename_current_branch_cmd =
 let refs_cmd =
   Command.make
     ~summary:"show the refs of current repo"
-    (let%map_open.Command config = Vcs_arg.Config.arg in
+    (let%map_open.Command () = Arg.return () in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let refs = Vcs.refs vcs ~repo_root in
      print_sexp [%sexp (refs : Vcs.Refs.t)];
      ())
@@ -248,14 +310,17 @@ let refs_cmd =
 let save_file_cmd =
   Command.make
     ~summary:"save stdin to a file from the filesystem (aka tee)"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and path = Vcs_arg.pos_path ~pos:0 ~doc:"file to save the contents to" in
+    (let%map_open.Command path =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Fpath))
+         ~docv:"FILE"
+         ~doc:"path to file where to save the contents to"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root = _; context } =
-       Vcs_arg.initialize ~env ~config
-     in
-     let path = Vcs_arg.resolve path ~context in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let path = Absolute_path.relativize ~root:cwd path in
      let file_contents =
        Eio.Buf_read.parse_exn
          Eio.Buf_read.take_all
@@ -270,14 +335,22 @@ let save_file_cmd =
 let set_user_config_cmd =
   Command.make
     ~summary:"set the user config"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and user_name = Vcs_arg.user_name
-     and user_email = Vcs_arg.user_email in
+    (let%map_open.Command user_name =
+       Arg.named
+         [ "user.name" ]
+         (Param.validated_string (module Vcs.User_name))
+         ~docv:"USER"
+         ~doc:"user name"
+     and user_email =
+       Arg.named
+         [ "user.email" ]
+         (Param.validated_string (module Vcs.User_email))
+         ~docv:"EMAIL"
+         ~doc:"user email"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      Vcs.set_user_name vcs ~repo_root ~user_name;
      Vcs.set_user_email vcs ~repo_root ~user_email;
      ())
@@ -286,15 +359,23 @@ let set_user_config_cmd =
 let show_file_at_rev_cmd =
   Command.make
     ~summary:"show the contents of file at a given revision"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and rev = Vcs_arg.rev ~doc:"revision to show"
-     and path = Vcs_arg.pos_path_in_repo ~pos:0 ~doc:"path to file" in
+    (let%map_open.Command rev =
+       Arg.named
+         [ "rev"; "r" ]
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"REV"
+         ~doc:"revision to show"
+     and path =
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Fpath))
+         ~docv:"FILE"
+         ~doc:"path to file"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context } =
-       Vcs_arg.initialize ~env ~config
-     in
-     let path = Vcs_arg.resolve path ~context in
+     let { Initialized.vcs; repo_root; cwd } = initialize ~env in
+     let path = relativize ~repo_root ~cwd ~path in
      let result = Vcs.show_file_at_rev vcs ~repo_root ~rev ~path in
      (match result with
       | `Present contents -> Stdlib.print_string (contents :> string)
@@ -309,12 +390,10 @@ let show_file_at_rev_cmd =
 let graph_cmd =
   Command.make
     ~summary:"compute graph of current repo"
-    (let%map_open.Command config = Vcs_arg.Config.arg in
+    (let%map_open.Command () = Arg.return () in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let graph = Vcs.graph vcs ~repo_root in
      print_sexp [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
      ())
@@ -325,13 +404,16 @@ let graph_cmd =
 let branch_revision_cmd =
   Command.make
     ~summary:"revision of a branch"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and branch_name = Vcs_arg.pos_branch_name_opt ~pos:0 ~doc:"which branch" in
+    (let%map_open.Command branch_name =
+       Arg.pos_opt
+         ~pos:0
+         (Param.validated_string (module Vcs.Branch_name))
+         ~docv:"BRANCH"
+         ~doc:"which branch"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let branch_name =
        match branch_name with
        | Some branch_name -> branch_name
@@ -357,13 +439,15 @@ let branch_revision_cmd =
 let greatest_common_ancestors_cmd =
   Command.make
     ~summary:"print greatest common ancestors of revisions"
-    (let%map_open.Command config = Vcs_arg.Config.arg
-     and revs = Vcs_arg.pos_revs ~doc:"all revisions that must descend from the gcas" in
+    (let%map_open.Command revs =
+       Arg.pos_all
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"REV"
+         ~doc:"all revisions that must descend from the gcas"
+     in
      Eio_main.run
      @@ fun env ->
-     let { Vcs_arg.Initialized.vcs; repo_root; context = _ } =
-       Vcs_arg.initialize ~env ~config
-     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let graph = Vcs.graph vcs ~repo_root in
      let nodes =
        List.map revs ~f:(fun rev ->

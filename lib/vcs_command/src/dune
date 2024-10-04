@@ -13,7 +13,7 @@
   Fpath_sexp0
   -open
   Cmdlang)
- (libraries base cmdlang eio eio_main fpath-sexp0 vcs vcs-arg vcs-git-eio)
+ (libraries base cmdlang eio eio_main fpath-sexp0 vcs vcs-git-eio)
  (instrumentation
   (backend bisect_ppx))
  (lint
