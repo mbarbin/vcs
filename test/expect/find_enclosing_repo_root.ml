@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* Test Vcs using the raising interface. *)
-
 let%expect_test "find_enclosing_repo_root" =
   Eio_main.run
   @@ fun env ->
