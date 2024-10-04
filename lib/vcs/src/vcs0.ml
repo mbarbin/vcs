@@ -60,24 +60,29 @@ let init (Provider.T { t; handler }) ~path =
   M.init t ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
 ;;
 
-let find_enclosing_repo_root ?(stop_if_present = []) t ~from =
-  let git_store = Fpart.v ".git" in
-  let stop_if_present = git_store :: stop_if_present in
+let find_enclosing_repo_root t ~from ~store =
   let rec visit dir =
     let entries = read_dir t ~dir in
-    match
-      List.find entries ~f:(fun entry ->
-        List.mem stop_if_present entry ~equal:Fpart.equal)
-    with
+    match List.find entries ~f:(fun entry -> List.mem store entry ~equal:Fpart.equal) with
     | Some entry ->
-      let tag = if Fpart.equal entry git_store then `Git else `Other entry in
-      Some (tag, Repo_root.of_absolute_path dir)
+      let dir =
+        Fpath.rem_empty_seg (dir :> Fpath.t)
+        |> Absolute_path.of_fpath
+        |> Option.value ~default:dir
+      in
+      Some (`Store entry, Repo_root.of_absolute_path dir)
     | None ->
       (match Absolute_path.parent dir with
        | None -> None
        | Some parent_dir -> visit parent_dir)
   in
   visit from
+;;
+
+let find_enclosing_git_repo_root t ~from =
+  match find_enclosing_repo_root t ~from ~store:[ Fpart.dot_git ] with
+  | None -> None
+  | Some (_, repo_root) -> Some repo_root
 ;;
 
 let current_branch (Provider.T { t; handler }) ~repo_root =

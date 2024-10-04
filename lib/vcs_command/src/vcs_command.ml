@@ -34,9 +34,9 @@ module Initialized = struct
 end
 
 let find_enclosing_repo_root vcs ~from =
-  match Vcs.find_enclosing_repo_root vcs ~from with
-  | Some (`Git, repo_root) -> repo_root
-  | Some (`Other _, _) | None ->
+  match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fpart.dot_git ] with
+  | Some (`Store _, repo_root) -> repo_root
+  | None ->
     Vcs.raise_s
       "Failed to locate enclosing repo root from directory"
       [%sexp { from : Absolute_path.t }]
@@ -116,6 +116,39 @@ let current_revision_cmd =
      let rev = Vcs.current_revision vcs ~repo_root in
      print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
+;;
+
+let find_enclosing_repo_root_cmd =
+  Command.make
+    ~summary:"find enclosing repo root"
+    (let%map_open.Command from =
+       Arg.named_opt
+         [ "from" ]
+         (Param.validated_string (module Fpath))
+         ~docv:"path/to/dir"
+         ~doc:"walk up from the supplied directory (default is cwd)"
+     and store =
+       Arg.named_opt
+         [ "store" ]
+         (Param.comma_separated (Param.validated_string (module Fpart)))
+         ~doc:"stop the search if one of these entries is found (e.g. '.hg')"
+       >>| Option.value ~default:[ Fpart.dot_git ]
+     in
+     Eio_main.run
+     @@ fun env ->
+     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let from =
+       match from with
+       | None -> cwd
+       | Some from -> Absolute_path.relativize ~root:cwd from
+     in
+     match Vcs.find_enclosing_repo_root vcs ~from ~store with
+     | None -> ()
+     | Some (`Store store, repo_root) ->
+       Stdlib.Printf.printf
+         "%s: %s\n"
+         (Fpart.to_string store)
+         (Vcs.Repo_root.to_string repo_root))
 ;;
 
 let git_cmd =
@@ -478,6 +511,7 @@ sub commands exposed here, plus additional ones.
     ; "commit", commit_cmd
     ; "current-branch", current_branch_cmd
     ; "current-revision", current_revision_cmd
+    ; "find-enclosing-repo-root", find_enclosing_repo_root_cmd
     ; "gca", greatest_common_ancestors_cmd
     ; "git", git_cmd
     ; "graph", graph_cmd

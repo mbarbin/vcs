@@ -19,4 +19,81 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* Cover once each function using the raising interface. *)
+(* Test Vcs using the raising interface. *)
+
+let%expect_test "find_enclosing_repo_root" =
+  Eio_main.run
+  @@ fun env ->
+  Eio.Switch.run
+  @@ fun sw ->
+  let vcs = Vcs_git_eio.create ~env in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  (* Find the root from the root itself. *)
+  let () =
+    match
+      Vcs.find_enclosing_git_repo_root
+        vcs
+        ~from:(repo_root |> Vcs.Repo_root.to_absolute_path)
+    with
+    | None -> assert false
+    | Some repo_root2 ->
+      require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+      [%expect {||}]
+  in
+  (* Find the root from a subdirectory. *)
+  let () =
+    let subdir = Vcs.Repo_root.append repo_root (Vcs.Path_in_repo.v "path/in/repo") in
+    Eio.Path.mkdirs
+      ~exists_ok:true
+      ~perm:0o777
+      Eio.Path.(Eio.Stdenv.fs env / Absolute_path.to_string subdir);
+    match Vcs.find_enclosing_git_repo_root vcs ~from:subdir with
+    | None -> assert false
+    | Some repo_root2 ->
+      require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+      [%expect {||}]
+  in
+  (* Stop before root (e.g. in a Mercurial repo). *)
+  let () =
+    let stop_at = Vcs.Repo_root.append repo_root (Vcs.Path_in_repo.v "path") in
+    let subdir = Absolute_path.append stop_at (Relative_path.v "other/dir") in
+    Eio.Path.mkdirs
+      ~exists_ok:true
+      ~perm:0o777
+      Eio.Path.(Eio.Stdenv.fs env / Absolute_path.to_string subdir);
+    (match
+       Vcs.find_enclosing_repo_root
+         vcs
+         ~from:subdir
+         ~store:[ Fpart.dot_git; Fpart.dot_hg ]
+     with
+     | None -> assert false
+     | Some (`Store store, repo_root2) ->
+       require_equal [%here] (module Fpart) store Fpart.dot_git;
+       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       [%expect {||}]);
+    Eio.Path.save
+      ~create:(`Or_truncate 0o666)
+      Eio.Path.(Eio.Stdenv.fs env / Absolute_path.to_string stop_at / ".hg")
+      "";
+    match Vcs.find_enclosing_repo_root vcs ~from:subdir ~store:[ Fpart.dot_hg ] with
+    | None -> assert false
+    | Some (`Store store, repo_root2) ->
+      require_equal [%here] (module Fpart) store Fpart.dot_hg;
+      require_equal
+        [%here]
+        (module Vcs.Repo_root)
+        (Vcs.Repo_root.of_absolute_path stop_at)
+        repo_root2;
+      [%expect {||}]
+  in
+  (* Not found. This one is a bit more tricky to test because when running in
+     the dune environment, we are inside a Git repo. *)
+  let () =
+    (match Vcs.find_enclosing_git_repo_root vcs ~from:Absolute_path.root with
+     | Some _ -> assert false
+     | None -> ());
+    [%expect {||}]
+  in
+  ()
+;;

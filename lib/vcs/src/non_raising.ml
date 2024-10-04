@@ -32,8 +32,12 @@ module Make (M : M) :
 
   let init vcs ~path = try_with (fun () -> Vcs0.init vcs ~path)
 
-  let find_enclosing_repo_root ?stop_if_present vcs ~from =
-    try_with (fun () -> Vcs0.find_enclosing_repo_root ?stop_if_present vcs ~from)
+  let find_enclosing_repo_root vcs ~from ~store =
+    try_with (fun () -> Vcs0.find_enclosing_repo_root vcs ~from ~store)
+  ;;
+
+  let find_enclosing_git_repo_root vcs ~from =
+    try_with (fun () -> Vcs0.find_enclosing_git_repo_root vcs ~from)
   ;;
 
   let add vcs ~repo_root ~path = try_with (fun () -> Vcs0.add vcs ~repo_root ~path)

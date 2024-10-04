@@ -105,6 +105,26 @@ File system operations.
   $ rm untracked/hello
   $ rmdir untracked
 
+Find enclosing repo root.
+
+  $ ocaml-vcs find-enclosing-repo-root
+  .git: $TESTCASE_ROOT
+
+  $ mkdir subdir
+  $ ocaml-vcs find-enclosing-repo-root --from subdir
+  .git: $TESTCASE_ROOT
+
+  $ ocaml-vcs find-enclosing-repo-root --from "/"
+
+  $ mkdir -p subdir/hg/otherdir
+  $ touch subdir/hg/.hg
+
+  $ ocaml-vcs find-enclosing-repo-root --from subdir/hg/otherdir
+  .git: $TESTCASE_ROOT
+
+  $ ocaml-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .hg
+  .hg: $TESTCASE_ROOT/subdir/hg
+
 Adding a new file under a directory.
 
   $ mkdir dir
@@ -250,6 +270,10 @@ Vcs's help for review.
   
          current-revision [OPTION]…
              revision of HEAD
+  
+         find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
+         [OPTION]…
+             find enclosing repo root
   
          gca [OPTION]… [REV]…
              print greatest common ancestors of revisions

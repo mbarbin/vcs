@@ -44,6 +44,10 @@ COMMANDS
        current-revision [OPTION]…
            revision of HEAD
 
+       find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
+       [OPTION]…
+           find enclosing repo root
+
        gca [OPTION]… [REV]…
            print greatest common ancestors of revisions
 
