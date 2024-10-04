@@ -26,6 +26,16 @@ let%expect_test "find_enclosing_repo_root" =
   @@ fun sw ->
   let vcs = Vcs_git_eio.create ~env in
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  (* read_dir *)
+  let () =
+    let entries = Vcs.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root) in
+    print_s [%sexp (entries : Fpart.t list)];
+    [%expect {| (.git) |}];
+    (match Vcs.Result.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root) with
+     | Error _ -> assert false
+     | Ok entries -> print_s [%sexp (entries : Fpart.t list)]);
+    [%expect {| (.git) |}]
+  in
   (* Find the root from the root itself. *)
   let () =
     match
@@ -59,6 +69,7 @@ let%expect_test "find_enclosing_repo_root" =
       ~exists_ok:true
       ~perm:0o777
       Eio.Path.(Eio.Stdenv.fs env / Absolute_path.to_string subdir);
+    (* 1. Raising [find_enclosing_repo_root]. *)
     (match
        Vcs.find_enclosing_repo_root
          vcs
@@ -68,6 +79,30 @@ let%expect_test "find_enclosing_repo_root" =
      | None -> assert false
      | Some (`Store store, repo_root2) ->
        require_equal [%here] (module Fpart) store Fpart.dot_git;
+       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       [%expect {||}]);
+    (* 2. Non-raising [find_enclosing_repo_root]. *)
+    (match
+       Vcs.Result.find_enclosing_repo_root
+         vcs
+         ~from:subdir
+         ~store:[ Fpart.dot_git; Fpart.dot_hg ]
+     with
+     | Error _ | Ok None -> assert false
+     | Ok (Some (`Store store, repo_root2)) ->
+       require_equal [%here] (module Fpart) store Fpart.dot_git;
+       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       [%expect {||}]);
+    (* 3. Raising [find_enclosing_git_repo_root]. *)
+    (match Vcs.find_enclosing_git_repo_root vcs ~from:subdir with
+     | None -> assert false
+     | Some repo_root2 ->
+       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       [%expect {||}]);
+    (* 4. Non-raising [find_enclosing_git_repo_root]. *)
+    (match Vcs.Result.find_enclosing_git_repo_root vcs ~from:subdir with
+     | Error _ | Ok None -> assert false
+     | Ok (Some repo_root2) ->
        require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     Eio.Path.save
