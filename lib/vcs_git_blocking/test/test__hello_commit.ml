@@ -82,13 +82,15 @@ let%expect_test "read_dir" =
   [%expect {||}];
   read_dir dir;
   [%expect {| (foo hello.txt) |}];
-  require_does_raise [%here] (fun () ->
-    Vcs.read_dir vcs ~dir:(Absolute_path.v "/invalid"));
+  let () =
+    match Vcs.read_dir vcs ~dir:(Absolute_path.v "/invalid") with
+    | (_ : Fpart.t list) -> assert false
+    | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]
+  in
   [%expect
     {|
-    (repo/vcs/lib/vcs/src/exn0.ml.E (
-      (steps ((Vcs.read_dir ((dir /invalid)))))
-      (error (Sys_error "/invalid: No such file or directory"))))
+    ((steps ((Vcs.read_dir ((dir /invalid)))))
+     (error (Sys_error "/invalid: No such file or directory")))
     |}];
   ()
 ;;
