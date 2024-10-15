@@ -48,7 +48,7 @@ let read_dir () ~dir =
   Or_error.try_with (fun () ->
     let entries = Stdlib.Sys.readdir (Absolute_path.to_string dir) in
     Array.sort entries ~compare:String.compare;
-    entries |> Array.map ~f:Fpart.v |> Array.to_list)
+    entries |> Array.map ~f:Fsegment.v |> Array.to_list)
 ;;
 
 let with_cwd ~cwd ~f =

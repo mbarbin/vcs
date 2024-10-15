@@ -29,11 +29,11 @@ let%expect_test "find_enclosing_repo_root" =
   (* read_dir *)
   let () =
     let entries = Vcs.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root) in
-    print_s [%sexp (entries : Fpart.t list)];
+    print_s [%sexp (entries : Fsegment.t list)];
     [%expect {| (.git) |}];
     (match Vcs.Result.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root) with
      | Error _ -> assert false
-     | Ok entries -> print_s [%sexp (entries : Fpart.t list)]);
+     | Ok entries -> print_s [%sexp (entries : Fsegment.t list)]);
     [%expect {| (.git) |}]
   in
   (* Find the root from the root itself. *)
@@ -74,11 +74,11 @@ let%expect_test "find_enclosing_repo_root" =
        Vcs.find_enclosing_repo_root
          vcs
          ~from:subdir
-         ~store:[ Fpart.dot_git; Fpart.dot_hg ]
+         ~store:[ Fsegment.dot_git; Fsegment.dot_hg ]
      with
      | None -> assert false
      | Some (`Store store, repo_root2) ->
-       require_equal [%here] (module Fpart) store Fpart.dot_git;
+       require_equal [%here] (module Fsegment) store Fsegment.dot_git;
        require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     (* 2. Non-raising [find_enclosing_repo_root]. *)
@@ -86,11 +86,11 @@ let%expect_test "find_enclosing_repo_root" =
        Vcs.Result.find_enclosing_repo_root
          vcs
          ~from:subdir
-         ~store:[ Fpart.dot_git; Fpart.dot_hg ]
+         ~store:[ Fsegment.dot_git; Fsegment.dot_hg ]
      with
      | Error _ | Ok None -> assert false
      | Ok (Some (`Store store, repo_root2)) ->
-       require_equal [%here] (module Fpart) store Fpart.dot_git;
+       require_equal [%here] (module Fsegment) store Fsegment.dot_git;
        require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     (* 3. Raising [find_enclosing_git_repo_root]. *)
@@ -109,10 +109,10 @@ let%expect_test "find_enclosing_repo_root" =
       ~create:(`Or_truncate 0o666)
       Eio.Path.(Eio.Stdenv.fs env / Absolute_path.to_string stop_at / ".hg")
       "";
-    match Vcs.find_enclosing_repo_root vcs ~from:subdir ~store:[ Fpart.dot_hg ] with
+    match Vcs.find_enclosing_repo_root vcs ~from:subdir ~store:[ Fsegment.dot_hg ] with
     | None -> assert false
     | Some (`Store store, repo_root2) ->
-      require_equal [%here] (module Fpart) store Fpart.dot_hg;
+      require_equal [%here] (module Fsegment) store Fsegment.dot_hg;
       require_equal
         [%here]
         (module Vcs.Repo_root)

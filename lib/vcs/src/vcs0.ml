@@ -63,7 +63,9 @@ let init (Provider.T { t; handler }) ~path =
 let find_enclosing_repo_root t ~from ~store =
   let rec visit dir =
     let entries = read_dir t ~dir in
-    match List.find entries ~f:(fun entry -> List.mem store entry ~equal:Fpart.equal) with
+    match
+      List.find entries ~f:(fun entry -> List.mem store entry ~equal:Fsegment.equal)
+    with
     | Some entry ->
       let dir =
         Fpath.rem_empty_seg (dir :> Fpath.t)
@@ -80,7 +82,7 @@ let find_enclosing_repo_root t ~from ~store =
 ;;
 
 let find_enclosing_git_repo_root t ~from =
-  match find_enclosing_repo_root t ~from ~store:[ Fpart.dot_git ] with
+  match find_enclosing_repo_root t ~from ~store:[ Fsegment.dot_git ] with
   | None -> None
   | Some (_, repo_root) -> Some repo_root
 ;;

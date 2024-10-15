@@ -47,5 +47,5 @@ module type S = sig
       according to [String.compare]. This must error out if [dir] is not a
       directory, or if we don't have access to it. The unix entries "." and
       ".." shall not be included in the result. *)
-  val read_dir : t -> dir:Absolute_path.t -> Fpart.t list Or_error.t
+  val read_dir : t -> dir:Absolute_path.t -> Fsegment.t list Or_error.t
 end
