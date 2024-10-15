@@ -110,8 +110,8 @@ val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t
 val find_enclosing_repo_root
   :  [> Trait.file_system ] t
   -> from:Absolute_path.t
-  -> store:Fpart.t list
-  -> ([ `Store of Fpart.t ] * Repo_root.t) option
+  -> store:Fsegment.t list
+  -> ([ `Store of Fsegment.t ] * Repo_root.t) option
 
 (** [find_enclosing_git_repo_root vcs ~from:dir] is a convenient wrapper around
     {!val:find_enclosing_repo_root} for Git repositories. This is looking for
@@ -179,7 +179,7 @@ val save_file
 (** Returns the entries of the supplied directory, ordered increasingly
     according to [String.compare]. The result does not include the unix entries
     ".", "..". *)
-val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fpart.t list
+val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fsegment.t list
 
 (** {1 Branches & Tags} *)
 

@@ -63,13 +63,13 @@ let%expect_test "hello commit" =
 
 let%expect_test "read_dir" =
   let vcs = Vcs_git_blocking.create () in
-  let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fpart.t list)] in
+  let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fsegment.t list)] in
   let cwd = Unix.getcwd () in
   let dir = Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
   let save_file file file_contents =
     Vcs.save_file
       vcs
-      ~path:(Absolute_path.extend dir (Fpart.v file))
+      ~path:(Absolute_path.extend dir (Fsegment.v file))
       ~file_contents:(Vcs.File_contents.create file_contents)
   in
   read_dir dir;
@@ -84,7 +84,7 @@ let%expect_test "read_dir" =
   [%expect {| (foo hello.txt) |}];
   let () =
     match Vcs.read_dir vcs ~dir:(Absolute_path.v "/invalid") with
-    | (_ : Fpart.t list) -> assert false
+    | (_ : Fsegment.t list) -> assert false
     | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]
   in
   [%expect

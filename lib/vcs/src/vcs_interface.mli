@@ -64,8 +64,8 @@ module type S = sig
   val find_enclosing_repo_root
     :  [> Trait.file_system ] t
     -> from:Absolute_path.t
-    -> store:Fpart.t list
-    -> ([ `Store of Fpart.t ] * Repo_root.t) option result
+    -> store:Fsegment.t list
+    -> ([ `Store of Fsegment.t ] * Repo_root.t) option result
 
   val add
     :  [> Trait.add ] t
@@ -111,7 +111,7 @@ module type S = sig
     -> file_contents:File_contents.t
     -> unit result
 
-  val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fpart.t list result
+  val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fsegment.t list result
 
   val rename_current_branch
     :  [> Trait.branch ] t

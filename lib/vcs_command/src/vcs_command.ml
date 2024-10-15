@@ -34,7 +34,7 @@ module Initialized = struct
 end
 
 let find_enclosing_repo_root vcs ~from =
-  match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fpart.dot_git ] with
+  match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fsegment.dot_git ] with
   | Some (`Store _, repo_root) -> repo_root
   | None ->
     Vcs.raise_s
@@ -130,9 +130,9 @@ let find_enclosing_repo_root_cmd =
      and store =
        Arg.named_opt
          [ "store" ]
-         (Param.comma_separated (Param.validated_string (module Fpart)))
+         (Param.comma_separated (Param.validated_string (module Fsegment)))
          ~doc:"stop the search if one of these entries is found (e.g. '.hg')"
-       >>| Option.value ~default:[ Fpart.dot_git ]
+       >>| Option.value ~default:[ Fsegment.dot_git ]
      in
      Eio_main.run
      @@ fun env ->
@@ -147,7 +147,7 @@ let find_enclosing_repo_root_cmd =
      | Some (`Store store, repo_root) ->
        Stdlib.Printf.printf
          "%s: %s\n"
-         (Fpart.to_string store)
+         (Fsegment.to_string store)
          (Vcs.Repo_root.to_string repo_root))
 ;;
 
@@ -307,7 +307,7 @@ let read_dir_cmd =
      let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
      let dir = Absolute_path.relativize ~root:cwd dir in
      let entries = Vcs.read_dir vcs ~dir in
-     print_sexp [%sexp (entries : Fpart.t list)];
+     print_sexp [%sexp (entries : Fsegment.t list)];
      ())
 ;;
 
