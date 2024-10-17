@@ -64,8 +64,8 @@ module type S = sig
   val find_enclosing_repo_root
     :  [> Trait.file_system ] t
     -> from:Absolute_path.t
-    -> store:Fsegment.t list
-    -> ([ `Store of Fsegment.t ] * Repo_root.t) option result
+    -> store:(Fsegment.t * 'store) list
+    -> ('store * Repo_root.t) option result
 
   val add
     :  [> Trait.add ] t

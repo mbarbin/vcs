@@ -74,11 +74,10 @@ let%expect_test "find_enclosing_repo_root" =
        Vcs.find_enclosing_repo_root
          vcs
          ~from:subdir
-         ~store:[ Fsegment.dot_git; Fsegment.dot_hg ]
+         ~store:[ Fsegment.dot_git, `Git; Fsegment.dot_hg, `Hg ]
      with
-     | None -> assert false
-     | Some (`Store store, repo_root2) ->
-       require_equal [%here] (module Fsegment) store Fsegment.dot_git;
+     | None | Some (`Hg, _) -> assert false
+     | Some (`Git, repo_root2) ->
        require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     (* 2. Non-raising [find_enclosing_repo_root]. *)
@@ -86,11 +85,10 @@ let%expect_test "find_enclosing_repo_root" =
        Vcs.Result.find_enclosing_repo_root
          vcs
          ~from:subdir
-         ~store:[ Fsegment.dot_git; Fsegment.dot_hg ]
+         ~store:[ Fsegment.dot_git, `Git; Fsegment.dot_hg, `Hg ]
      with
-     | Error _ | Ok None -> assert false
-     | Ok (Some (`Store store, repo_root2)) ->
-       require_equal [%here] (module Fsegment) store Fsegment.dot_git;
+     | Error _ | Ok None | Ok (Some (`Hg, _)) -> assert false
+     | Ok (Some (`Git, repo_root2)) ->
        require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     (* 3. Raising [find_enclosing_git_repo_root]. *)
@@ -109,10 +107,11 @@ let%expect_test "find_enclosing_repo_root" =
       ~create:(`Or_truncate 0o666)
       Eio.Path.(Eio.Stdenv.fs env / Absolute_path.to_string stop_at / ".hg")
       "";
-    match Vcs.find_enclosing_repo_root vcs ~from:subdir ~store:[ Fsegment.dot_hg ] with
+    match
+      Vcs.find_enclosing_repo_root vcs ~from:subdir ~store:[ Fsegment.dot_hg, `Hg ]
+    with
     | None -> assert false
-    | Some (`Store store, repo_root2) ->
-      require_equal [%here] (module Fsegment) store Fsegment.dot_hg;
+    | Some (`Hg, repo_root2) ->
       require_equal
         [%here]
         (module Vcs.Repo_root)
