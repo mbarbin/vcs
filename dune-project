@@ -65,6 +65,55 @@
    (>= 0.0.8))))
 
 (package
+ (name vcs-base)
+ (synopsis "An Extension of Vcs to use with Base")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (base
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-base
+   (>= 0.2.2))
+  (ppx_compare
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_enumerate
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_hash
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_here
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_let
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_value
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppxlib
+   (>= 0.33))
+  (provider
+   (>= 0.0.8))
+  (vcs
+   (= :version))))
+
+(package
  (name vcs-command)
  (synopsis "A command line tool for the Vcs library")
  (depends
