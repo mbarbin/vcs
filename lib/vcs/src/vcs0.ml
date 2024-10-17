@@ -64,15 +64,17 @@ let find_enclosing_repo_root t ~from ~store =
   let rec visit dir =
     let entries = read_dir t ~dir in
     match
-      List.find entries ~f:(fun entry -> List.mem store entry ~equal:Fsegment.equal)
+      List.find_map entries ~f:(fun entry ->
+        List.find_map store ~f:(fun (seg, store) ->
+          Option.some_if (Fsegment.equal seg entry) store))
     with
-    | Some entry ->
+    | Some store ->
       let dir =
         Fpath.rem_empty_seg (dir :> Fpath.t)
         |> Absolute_path.of_fpath
         |> Option.value ~default:dir
       in
-      Some (`Store entry, Repo_root.of_absolute_path dir)
+      Some (store, Repo_root.of_absolute_path dir)
     | None ->
       (match Absolute_path.parent dir with
        | None -> None
@@ -82,9 +84,9 @@ let find_enclosing_repo_root t ~from ~store =
 ;;
 
 let find_enclosing_git_repo_root t ~from =
-  match find_enclosing_repo_root t ~from ~store:[ Fsegment.dot_git ] with
+  match find_enclosing_repo_root t ~from ~store:[ Fsegment.dot_git, `Git ] with
   | None -> None
-  | Some (_, repo_root) -> Some repo_root
+  | Some (`Git, repo_root) -> Some repo_root
 ;;
 
 let current_branch (Provider.T { t; handler }) ~repo_root =

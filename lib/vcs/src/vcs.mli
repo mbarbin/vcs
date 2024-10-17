@@ -102,16 +102,16 @@ val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t
 
     You may supply several stores if you want to stop at the first store that is
     encountered, if you do not know in what kind of repo you are. For example,
-    [[".git"; ".hg"]]. The store that was matched is returned as part of the
-    result.
+    [[".git", `Git; ".hg", `Hg]]. The store that was matched is returned as part
+    of the result.
 
     If you know you are in a Git repository you may want to use the wrapper
     {!val:find_enclosing_git_repo_root} instead. *)
 val find_enclosing_repo_root
   :  [> Trait.file_system ] t
   -> from:Absolute_path.t
-  -> store:Fsegment.t list
-  -> ([ `Store of Fsegment.t ] * Repo_root.t) option
+  -> store:(Fsegment.t * 'store) list
+  -> ('store * Repo_root.t) option
 
 (** [find_enclosing_git_repo_root vcs ~from:dir] is a convenient wrapper around
     {!val:find_enclosing_repo_root} for Git repositories. This is looking for

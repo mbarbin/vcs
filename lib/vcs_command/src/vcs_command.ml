@@ -34,8 +34,8 @@ module Initialized = struct
 end
 
 let find_enclosing_repo_root vcs ~from =
-  match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fsegment.dot_git ] with
-  | Some (`Store _, repo_root) -> repo_root
+  match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fsegment.dot_git, `Git ] with
+  | Some (`Git, repo_root) -> repo_root
   | None ->
     Vcs.raise_s
       "Failed to locate enclosing repo root from directory"
@@ -142,6 +142,7 @@ let find_enclosing_repo_root_cmd =
        | None -> cwd
        | Some from -> Absolute_path.relativize ~root:cwd from
      in
+     let store = List.map store ~f:(fun store -> store, `Store store) in
      match Vcs.find_enclosing_repo_root vcs ~from ~store with
      | None -> ()
      | Some (`Store store, repo_root) ->
