@@ -43,6 +43,8 @@
  * related to [.fe] files.
  *)
 
+open! Import
+
 module T = struct
   [@@@coverage off]
 

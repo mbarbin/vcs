@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
   match String.split (String.strip str) ~on:' ' with
   | [ rev ] -> Root { rev = Vcs.Rev.v rev }

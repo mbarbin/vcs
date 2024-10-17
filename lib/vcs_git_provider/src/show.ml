@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 let interpret_output output =
   match%map Vcs.Git.Or_error.exit_code output ~accept:[ 0, `Present; 128, `Absent ] with
   | `Present -> `Present (Vcs.File_contents.create output.stdout)

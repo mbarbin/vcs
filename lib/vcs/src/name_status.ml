@@ -43,6 +43,8 @@
  * which are available in Git. The file utils return sets rather than lists.
  *)
 
+open! Import
+
 module Change = struct
   [@@@coverage off]
 

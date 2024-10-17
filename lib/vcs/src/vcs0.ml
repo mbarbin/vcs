@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 type 'a t = 'a Provider.t
 
 let create provider = provider

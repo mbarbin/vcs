@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 module Dereferenced = struct
   module T = struct
     [@@@coverage off]

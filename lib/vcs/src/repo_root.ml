@@ -42,6 +42,8 @@
  * removed the logic pertaining to the repo root in which the program started.
  *)
 
+open! Import
+
 module T = struct
   [@@@coverage off]
 

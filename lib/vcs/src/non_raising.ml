@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 module type M = Vcs_interface.Error_S
 module type S = Vcs_interface.S
 

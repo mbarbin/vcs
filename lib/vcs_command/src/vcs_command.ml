@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 (* The commands below are sorted alphabetically. Their name must be derived from
    the name the associated function has in the [V.S] interface, prepending the
    suffix "_cmd". *)

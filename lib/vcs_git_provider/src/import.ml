@@ -19,41 +19,4 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
-module Line = struct
-  [@@@coverage off]
-
-  type t =
-    | Root of { rev : Rev.t }
-    | Commit of
-        { rev : Rev.t
-        ; parent : Rev.t
-        }
-    | Merge of
-        { rev : Rev.t
-        ; parent1 : Rev.t
-        ; parent2 : Rev.t
-        }
-  [@@deriving equal, sexp_of]
-
-  let rev = function
-    | Commit { rev; _ } | Merge { rev; _ } | Root { rev } -> rev
-  ;;
-end
-
-module T = struct
-  [@@@coverage off]
-
-  type t = Line.t list [@@deriving equal, sexp_of]
-end
-
-include T
-
-let roots (t : t) =
-  let queue = Queue.create () in
-  List.iter t ~f:(function
-    | Root { rev } -> Queue.enqueue queue rev
-    | Commit _ | Merge _ -> ());
-  Queue.to_list queue
-;;
+include Vcs.Private.Import
