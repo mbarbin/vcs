@@ -35,12 +35,15 @@ module Line : sig
         ; parent1 : Rev.t
         ; parent2 : Rev.t
         }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
 
+  val equal : t -> t -> bool
   val rev : t -> Rev.t
 end
 
-type t = Line.t list [@@deriving equal, sexp_of]
+type t = Line.t list [@@deriving sexp_of]
+
+val equal : t -> t -> bool
 
 (** {1 Accessors} *)
 

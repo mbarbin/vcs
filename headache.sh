@@ -5,6 +5,8 @@ dirs=(
     "example"
     "lib/vcs/src"
     "lib/vcs/test"
+    "lib/vcs_base/src"
+    "lib/vcs_base/test"
     "lib/vcs_command/src"
     "lib/vcs_command/test"
     "lib/vcs_git_blocking/src"

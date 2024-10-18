@@ -25,9 +25,11 @@
     This is used to implement convenient utils, such as utils to clone
     repositories from GitHub, etc. *)
 
-type t = GitHub [@@deriving compare, equal, enumerate, hash, sexp_of]
+type t = GitHub
 
-include Comparable.S with type t := t
+include Container_key.S with type t := t
+
+val all : t list
 
 (** A string representing the platform, using the styled capitalization of the
     variant constructor. For example, ["GitHub"] is typically spelled with an

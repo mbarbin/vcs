@@ -29,7 +29,7 @@ let%expect_test "init" =
   let repo_root =
     Eio.Switch.on_release sw (fun () ->
       Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
-    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
+    Vcs.For_test.init vcs ~path:(Absolute_path.v path)
   in
   require_equal
     [%here]

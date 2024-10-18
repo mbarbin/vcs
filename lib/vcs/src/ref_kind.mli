@@ -24,8 +24,7 @@ type t =
   | Remote_branch of { remote_branch_name : Remote_branch_name.t }
   | Tag of { tag_name : Tag_name.t }
   | Other of { name : string }
-[@@deriving compare, equal, hash, sexp_of]
 
-include Comparable.S with type t := t
+include Container_key.S with type t := t
 
 val to_string : t -> string

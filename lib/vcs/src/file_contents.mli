@@ -22,7 +22,9 @@
 (** Representing the raw contents of files on disk. *)
 
 (** This is a simple wrapper for the type string, used to increase type safety. *)
-type t = private string [@@deriving compare, equal, hash, sexp_of]
+type t = private string
+
+include Container_key.S with type t := t
 
 (** [create file_contents] returns a [t] representing the given file contents. *)
 val create : string -> t

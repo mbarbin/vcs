@@ -24,6 +24,7 @@ open! Import
 type 'a t = 'a Provider.t
 
 let create provider = provider
+let ( let* ) = Stdlib.Result.bind
 
 let of_result ~step = function
   | Ok r -> r
@@ -106,7 +107,7 @@ let current_revision (Provider.T { t; handler }) ~repo_root =
 let commit (Provider.T { t; handler }) ~repo_root ~commit_message =
   let module R = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
   let module C = (val Provider.Handler.lookup handler ~trait:Trait.Commit) in
-  (let%bind.Or_error () = C.commit t ~repo_root ~commit_message in
+  (let* () = C.commit t ~repo_root ~commit_message in
    R.current_revision t ~repo_root)
   |> of_result ~step:(lazy [%sexp "Vcs.commit", { repo_root : Repo_root.t }])
 ;;
@@ -167,12 +168,11 @@ let graph (Provider.T { t; handler }) ~repo_root =
   let module L = (val Provider.Handler.lookup handler ~trait:Trait.Log) in
   let module R = (val Provider.Handler.lookup handler ~trait:Trait.Refs) in
   let graph = Graph.create () in
-  (let open Or_error.Let_syntax in
-   let%bind log = L.all t ~repo_root in
-   let%bind refs = R.show_ref t ~repo_root in
+  (let* log = L.all t ~repo_root in
+   let* refs = R.show_ref t ~repo_root in
    Graph.add_nodes graph ~log;
    Graph.set_refs graph ~refs;
-   return graph)
+   Result.return graph)
   |> of_result ~step:(lazy [%sexp "Vcs.graph", { repo_root : Repo_root.t }])
 ;;
 

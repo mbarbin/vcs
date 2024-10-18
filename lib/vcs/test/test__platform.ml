@@ -24,3 +24,17 @@ let%expect_test "to_string_hum" =
   [%expect {| GitHub |}];
   ()
 ;;
+
+let%expect_test "hash" =
+  List.iter Vcs.Platform.all ~f:(fun t ->
+    let stdlib_hash = Stdlib.Hashtbl.hash t in
+    let vcs_hash = Vcs.Platform.hash t in
+    print_s [%sexp (t : Vcs.Platform.t), { stdlib_hash : int; vcs_hash : int }]);
+  [%expect
+    {|
+    (GitHub (
+      (stdlib_hash 129913994)
+      (vcs_hash    129913994)))
+    |}];
+  ()
+;;

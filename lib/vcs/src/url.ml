@@ -22,16 +22,20 @@
 open! Import
 
 module Protocol = struct
-  module T = struct
-    [@@@coverage off]
+  [@@@coverage off]
 
-    type t =
-      | Ssh
-      | Https
-    [@@deriving compare, equal, enumerate, hash, sexp_of]
-  end
+  type t =
+    | Ssh
+    | Https
+  [@@deriving enumerate, sexp_of]
 
-  include T
+  let compare = (Stdlib.compare : t -> t -> int)
+  let equal = (Stdlib.( = ) : t -> t -> bool)
+
+  [@@@coverage on]
+
+  let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
+  let hash = (Stdlib.Hashtbl.hash : t -> int)
 
   let to_string t ~(platform : Platform.t) =
     match platform, t with
@@ -40,19 +44,52 @@ module Protocol = struct
   ;;
 end
 
-module T = struct
-  [@@@coverage off]
+[@@@coverage off]
 
-  type t =
-    { platform : Platform.t
-    ; protocol : Protocol.t
-    ; user_handle : User_handle.t
-    ; repo_name : Repo_name.t
-    }
-  [@@deriving compare, equal, hash, sexp_of]
-end
+type t =
+  { platform : Platform.t
+  ; protocol : Protocol.t
+  ; user_handle : User_handle.t
+  ; repo_name : Repo_name.t
+  }
+[@@deriving sexp_of]
 
-include T
+let compare =
+  (fun a__005_ b__006_ ->
+     if Stdlib.( == ) a__005_ b__006_
+     then 0
+     else (
+       match Platform.compare a__005_.platform b__006_.platform with
+       | 0 ->
+         (match Protocol.compare a__005_.protocol b__006_.protocol with
+          | 0 ->
+            (match User_handle.compare a__005_.user_handle b__006_.user_handle with
+             | 0 -> Repo_name.compare a__005_.repo_name b__006_.repo_name
+             | n -> n)
+          | n -> n)
+       | n -> n)
+   : t -> t -> int)
+;;
+
+let equal =
+  (fun a__007_ b__008_ ->
+     if Stdlib.( == ) a__007_ b__008_
+     then true
+     else
+       Stdlib.( && )
+         (Platform.equal a__007_.platform b__008_.platform)
+         (Stdlib.( && )
+            (Protocol.equal a__007_.protocol b__008_.protocol)
+            (Stdlib.( && )
+               (User_handle.equal a__007_.user_handle b__008_.user_handle)
+               (Repo_name.equal a__007_.repo_name b__008_.repo_name)))
+   : t -> t -> bool)
+;;
+
+[@@@coverage on]
+
+let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
+let hash = (Stdlib.Hashtbl.hash : t -> int)
 
 let to_string t =
   let { platform; protocol; user_handle; repo_name } = t in
@@ -63,35 +100,33 @@ let to_string t =
 ;;
 
 let of_string (s : string) : (t, [ `Msg of string ]) Result.t =
-  let open Or_error.Let_syntax in
+  let ( let* ) = Stdlib.Result.bind in
   match
     List.find_map Platform.all ~f:(fun platform ->
       List.find_map Protocol.all ~f:(fun protocol ->
         let prefix = Protocol.to_string protocol ~platform in
         Option.map (String.chop_prefix s ~prefix) ~f:(fun rest ->
-          let%bind user_handle, rest =
-            String.lsplit2 rest ~on:'/'
-            |> Result.of_option ~error:(Error.of_string "missing user handle")
+          let* user_handle, rest =
+            String.lsplit2 rest ~on:'/' |> Result.of_option ~error:"missing user handle"
           in
-          let%bind repo_name =
+          let* repo_name =
             String.chop_suffix rest ~suffix:".git"
-            |> Result.of_option ~error:(Error.of_string "missing .git suffix")
+            |> Result.of_option ~error:"missing .git suffix"
           in
-          let%bind user_handle =
+          let* user_handle =
             match User_handle.of_string user_handle with
             | Ok _ as ok -> ok
-            | Error (`Msg m) -> Or_error.error_string m
+            | Error (`Msg m) -> Error m
           in
-          let%bind repo_name =
+          let* repo_name =
             match Repo_name.of_string repo_name with
             | Ok _ as ok -> ok
-            | Error (`Msg m) -> Or_error.error_string m
+            | Error (`Msg m) -> Error m
           in
-          return { platform; protocol; user_handle; repo_name })))
+          Result.return { platform; protocol; user_handle; repo_name })))
   with
   | Some (Ok _ as ok) -> ok
-  | Some (Error e) ->
-    Error (`Msg (Printf.sprintf "%S: invalid url. %s" s (Error.to_string_hum e)))
+  | Some (Error e) -> Error (`Msg (Printf.sprintf "%S: invalid url. %s" s e))
   | None -> Error (`Msg (Printf.sprintf "%S: invalid url" s))
 ;;
 

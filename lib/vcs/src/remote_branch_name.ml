@@ -21,18 +21,40 @@
 
 open! Import
 
-module T = struct
-  [@@@coverage off]
+[@@@coverage off]
 
-  type t =
-    { remote_name : Remote_name.t
-    ; branch_name : Branch_name.t
-    }
-  [@@deriving compare, hash, sexp_of]
-end
+type t =
+  { remote_name : Remote_name.t
+  ; branch_name : Branch_name.t
+  }
+[@@deriving sexp_of]
 
-include T
-include Comparable.Make (T)
+let compare =
+  (fun a__001_ b__002_ ->
+     if Stdlib.( == ) a__001_ b__002_
+     then 0
+     else (
+       match Remote_name.compare a__001_.remote_name b__002_.remote_name with
+       | 0 -> Branch_name.compare a__001_.branch_name b__002_.branch_name
+       | n -> n)
+   : t -> t -> int)
+;;
+
+let equal =
+  (fun a__003_ b__004_ ->
+     if Stdlib.( == ) a__003_ b__004_
+     then true
+     else
+       Stdlib.( && )
+         (Remote_name.equal a__003_.remote_name b__004_.remote_name)
+         (Branch_name.equal a__003_.branch_name b__004_.branch_name)
+   : t -> t -> bool)
+;;
+
+[@@@coverage on]
+
+let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
+let hash = (Stdlib.Hashtbl.hash : t -> int)
 
 let to_string { remote_name; branch_name } =
   Printf.sprintf
@@ -45,9 +67,10 @@ let of_string str =
   match String.lsplit2 str ~on:'/' with
   | None -> Error (`Msg (Printf.sprintf "%S: invalid remote_branch_name" str))
   | Some (remote, branch) ->
-    let%bind.Result remote_name = Remote_name.of_string remote in
-    let%map.Result branch_name = Branch_name.of_string branch in
-    { remote_name; branch_name }
+    let ( let* ) = Stdlib.Result.bind in
+    let* remote_name = Remote_name.of_string remote in
+    let* branch_name = Branch_name.of_string branch in
+    Result.return { remote_name; branch_name }
 ;;
 
 let v str =

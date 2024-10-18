@@ -20,14 +20,7 @@
 (*******************************************************************************)
 
 open! Import
-
-module T = struct
-  [@@@coverage off]
-
-  type t = string [@@deriving compare, equal, hash, sexp_of]
-end
-
-include T
+include Container_key.String_impl
 
 let invariant t = (not (String.is_empty t)) && String.length t <= 512
 

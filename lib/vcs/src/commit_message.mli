@@ -25,6 +25,7 @@
     sets some arbitrary limits on the length of the message, and mustn't be
     empty. *)
 
-type t [@@deriving compare, equal, hash, sexp_of]
+type t
 
+include Container_key.S with type t := t
 include Validated_string.S with type t := t

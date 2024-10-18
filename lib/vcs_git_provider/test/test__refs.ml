@@ -36,7 +36,7 @@ let%expect_test "parse_exn" =
   let refs = Vcs_git_provider.Refs.parse_lines_exn ~lines in
   print_s
     [%sexp
-      { tags = (Vcs.Refs.tags refs : Set.M(Vcs.Tag_name).t)
+      { tags = (Vcs.Refs.tags refs : Vcs.Tag_name.t list)
       ; local_branches = (Vcs.Refs.local_branches refs : Vcs.Branch_name.t list)
       ; remote_branches = (Vcs.Refs.remote_branches refs : Vcs.Remote_branch_name.t list)
       }];

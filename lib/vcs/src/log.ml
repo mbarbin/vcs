@@ -35,7 +35,31 @@ module Line = struct
         ; parent1 : Rev.t
         ; parent2 : Rev.t
         }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
+
+  let equal =
+    (fun a__001_ b__002_ ->
+       if Stdlib.( == ) a__001_ b__002_
+       then true
+       else (
+         match a__001_, b__002_ with
+         | Root _a__003_, Root _b__004_ -> Rev.equal _a__003_.rev _b__004_.rev
+         | Root _, _ -> false
+         | _, Root _ -> false
+         | Commit _a__005_, Commit _b__006_ ->
+           Stdlib.( && )
+             (Rev.equal _a__005_.rev _b__006_.rev)
+             (Rev.equal _a__005_.parent _b__006_.parent)
+         | Commit _, _ -> false
+         | _, Commit _ -> false
+         | Merge _a__007_, Merge _b__008_ ->
+           Stdlib.( && )
+             (Rev.equal _a__007_.rev _b__008_.rev)
+             (Stdlib.( && )
+                (Rev.equal _a__007_.parent1 _b__008_.parent1)
+                (Rev.equal _a__007_.parent2 _b__008_.parent2)))
+     : t -> t -> bool)
+  ;;
 
   let rev = function
     | Commit { rev; _ } | Merge { rev; _ } | Root { rev } -> rev
@@ -45,7 +69,9 @@ end
 module T = struct
   [@@@coverage off]
 
-  type t = Line.t list [@@deriving equal, sexp_of]
+  type t = Line.t list [@@deriving sexp_of]
+
+  let equal a b = equal_list Line.equal a b
 end
 
 include T

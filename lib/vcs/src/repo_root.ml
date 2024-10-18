@@ -43,15 +43,7 @@
  *)
 
 open! Import
-
-module T = struct
-  [@@@coverage off]
-
-  type t = Absolute_path.t [@@deriving compare, hash, sexp_of]
-end
-
-include T
-include Comparable.Make (T)
+include Absolute_path
 
 let of_absolute_path t = t
 let to_absolute_path t = t

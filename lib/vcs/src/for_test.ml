@@ -20,16 +20,8 @@
 (*******************************************************************************)
 
 let init vcs ~path =
-  let open Or_error.Let_syntax in
-  let%bind repo_root = Vcs_or_error.init vcs ~path in
-  let%bind () =
-    Vcs_or_error.set_user_name vcs ~repo_root ~user_name:(User_name.v "Test User")
-  in
-  let%bind () =
-    Vcs_or_error.set_user_email
-      vcs
-      ~repo_root
-      ~user_email:(User_email.v "test@example.com")
-  in
-  return repo_root
+  let repo_root = Vcs0.init vcs ~path in
+  Vcs0.set_user_name vcs ~repo_root ~user_name:(User_name.v "Test User");
+  Vcs0.set_user_email vcs ~repo_root ~user_email:(User_email.v "test@example.com");
+  repo_root
 ;;

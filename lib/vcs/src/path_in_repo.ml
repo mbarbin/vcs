@@ -44,15 +44,7 @@
  *)
 
 open! Import
-
-module T = struct
-  [@@@coverage off]
-
-  type t = Relative_path.t [@@deriving compare, hash, sexp_of]
-end
-
-include T
-include Comparable.Make (T)
+include Relative_path
 
 let root = Relative_path.empty
 let to_fpath = Relative_path.to_fpath

@@ -20,13 +20,7 @@
 (*******************************************************************************)
 
 open! Import
-
-module T = struct
-  type t = string [@@deriving compare, hash, sexp_of]
-end
-
-include T
-include Comparable.Make (T)
+include Container_key.String_impl
 
 let invariant t =
   Int.(String.length t = 40)

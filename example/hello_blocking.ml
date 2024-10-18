@@ -34,7 +34,7 @@ let%expect_test "hello commit" =
      GitHub Actions environment, where no default user config exists. *)
   let repo_root =
     let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
-    Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
+    Vcs.For_test.init vcs ~path:(Absolute_path.v path)
   in
   (* Ok, we are all set, we are now inside a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it

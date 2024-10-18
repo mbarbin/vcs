@@ -26,8 +26,9 @@
 
     For example: [Author.v "John Doe <john.doe@mail.com>"]. *)
 
-type t [@@deriving compare, equal, hash, sexp_of]
+type t
 
+include Container_key.S with type t := t
 include Validated_string.S with type t := t
 
 val of_user_config : user_name:User_name.t -> user_email:User_email.t -> t

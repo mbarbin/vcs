@@ -58,19 +58,21 @@ module Change : sig
         ; similarity : int
         }
   [@@deriving sexp_of]
+
+  val equal : t -> t -> bool
 end
 
 type t = Change.t list [@@deriving sexp_of]
 
 (** Returns the set of files that are involved by the changes, either at [src]
     or [dst]. *)
-val files : t -> Set.M(Path_in_repo).t
+val files : t -> Path_in_repo.t list
 
 (** Returns the set of files that are involved by the changes, that are also
     present at [src] or [dst] respectively. *)
 
-val files_at_src : t -> Set.M(Path_in_repo).t
-val files_at_dst : t -> Set.M(Path_in_repo).t
+val files_at_src : t -> Path_in_repo.t list
+val files_at_dst : t -> Path_in_repo.t list
 
 module Changed : sig
   (** Specifies which {!type:Name_status.t} we want to compute. *)
@@ -79,5 +81,7 @@ module Changed : sig
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
+
+  val equal : t -> t -> bool
 end

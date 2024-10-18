@@ -47,9 +47,9 @@
     This is a wrapper for a [Fpath.t] relative to the repo root, used for
     accrued type safety. *)
 
-type t [@@deriving compare, equal, hash, sexp_of]
+type t
 
-include Comparable.S with type t := t
+include Container_key.S with type t := t
 include Validated_string.S with type t := t
 
 val root : t

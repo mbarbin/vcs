@@ -20,15 +20,7 @@
 (*******************************************************************************)
 
 open! Import
-
-module T = struct
-  [@@@coverage off]
-
-  type t = string [@@deriving compare, hash, sexp_of]
-end
-
-include T
-include Comparable.Make (T)
+include Container_key.String_impl
 
 let invariant t =
   (not (String.is_empty t))
