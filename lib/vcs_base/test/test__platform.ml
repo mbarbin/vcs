@@ -19,20 +19,24 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "monitor-hashes" =
-  List.iter Vcs.Platform.all ~f:(fun t ->
-    let stdlib_hash = Stdlib.Hashtbl.hash t in
-    let vcs_hash = Vcs.Platform.hash t in
-    let vcs_base_hash = Vcs_base.Vcs.Platform.hash t in
-    print_s
-      [%sexp
-        (t : Vcs.Platform.t), { stdlib_hash : int; vcs_hash : int; vcs_base_hash : int }]);
+let%expect_test "hash" =
+  Hash_test.run (module Vcs.Platform) (module Vcs_base.Vcs.Platform) Vcs.Platform.all;
   [%expect
     {|
-    (GitHub (
-      (stdlib_hash   129913994)
+    (((value GitHub))
+     ((stdlib_hash   129913994)
       (vcs_hash      129913994)
       (vcs_base_hash 0)))
+    (((value GitHub)
+      (seed  0))
+     ((stdlib_hash   129913994)
+      (vcs_hash      129913994)
+      (vcs_base_hash 0)))
+    (((value GitHub)
+      (seed  42))
+     ((stdlib_hash   269061838)
+      (vcs_hash      269061838)
+      (vcs_base_hash 142593372)))
     |}];
   ()
 ;;

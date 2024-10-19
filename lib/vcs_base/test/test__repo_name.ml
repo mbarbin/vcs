@@ -19,8 +19,40 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "to_string_hum" =
-  List.iter Vcs.Platform.all ~f:(fun t -> print_endline (Vcs.Platform.to_string t));
-  [%expect {| GitHub |}];
+let values = [ Vcs.Repo_name.v "vcs"; Vcs.Repo_name.v "loc" ]
+
+let%expect_test "hash" =
+  Hash_test.run (module Vcs.Repo_name) (module Vcs_base.Vcs.Repo_name) values;
+  [%expect
+    {|
+    (((value vcs))
+     ((stdlib_hash   416069169)
+      (vcs_hash      416069169)
+      (vcs_base_hash 416069169)))
+    (((value vcs)
+      (seed  0))
+     ((stdlib_hash   416069169)
+      (vcs_hash      416069169)
+      (vcs_base_hash 416069169)))
+    (((value vcs)
+      (seed  42))
+     ((stdlib_hash   363610390)
+      (vcs_hash      363610390)
+      (vcs_base_hash 363610390)))
+    (((value loc))
+     ((stdlib_hash   41095261)
+      (vcs_hash      41095261)
+      (vcs_base_hash 41095261)))
+    (((value loc)
+      (seed  0))
+     ((stdlib_hash   41095261)
+      (vcs_hash      41095261)
+      (vcs_base_hash 41095261)))
+    (((value loc)
+      (seed  42))
+     ((stdlib_hash   683447793)
+      (vcs_hash      683447793)
+      (vcs_base_hash 683447793)))
+    |}];
   ()
 ;;

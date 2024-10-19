@@ -19,8 +19,17 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+module Vcs = Vcs_base.Vcs
+
 let%expect_test "to_string_hum" =
-  List.iter Vcs.Platform.all ~f:(fun t -> print_endline (Vcs.Platform.to_string t));
-  [%expect {| GitHub |}];
+  let test t = print_endline (Vcs.Num_lines_in_diff.to_string_hum t) in
+  test { insertions = 0; deletions = 0 };
+  [%expect {| 0 |}];
+  test { insertions = 100; deletions = 0 };
+  [%expect {| +100 |}];
+  test { insertions = 0; deletions = 15 };
+  [%expect {| -15 |}];
+  test { insertions = 1999; deletions = 13898 };
+  [%expect {| +1,999, -13,898 |}];
   ()
 ;;

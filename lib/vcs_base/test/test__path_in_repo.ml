@@ -19,8 +19,40 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "to_string_hum" =
-  List.iter Vcs.Platform.all ~f:(fun t -> print_endline (Vcs.Platform.to_string t));
-  [%expect {| GitHub |}];
+let values = [ Vcs.Path_in_repo.v "foo.txt"; Vcs.Path_in_repo.v "bar/baz.ml" ]
+
+let%expect_test "hash" =
+  Hash_test.run (module Vcs.Path_in_repo) (module Vcs_base.Vcs.Path_in_repo) values;
+  [%expect
+    {|
+    (((value foo.txt))
+     ((stdlib_hash   836355526)
+      (vcs_hash      836355526)
+      (vcs_base_hash 836355526)))
+    (((value foo.txt)
+      (seed  0))
+     ((stdlib_hash   836355526)
+      (vcs_hash      836355526)
+      (vcs_base_hash 836355526)))
+    (((value foo.txt)
+      (seed  42))
+     ((stdlib_hash   444099220)
+      (vcs_hash      444099220)
+      (vcs_base_hash 444099220)))
+    (((value bar/baz.ml))
+     ((stdlib_hash   615308050)
+      (vcs_hash      615308050)
+      (vcs_base_hash 615308050)))
+    (((value bar/baz.ml)
+      (seed  0))
+     ((stdlib_hash   615308050)
+      (vcs_hash      615308050)
+      (vcs_base_hash 615308050)))
+    (((value bar/baz.ml)
+      (seed  42))
+     ((stdlib_hash   922480314)
+      (vcs_hash      922480314)
+      (vcs_base_hash 922480314)))
+    |}];
   ()
 ;;

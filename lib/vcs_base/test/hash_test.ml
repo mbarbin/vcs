@@ -19,8 +19,39 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "to_string_hum" =
-  List.iter Vcs.Platform.all ~f:(fun t -> print_endline (Vcs.Platform.to_string t));
-  [%expect {| GitHub |}];
-  ()
+module type H = sig
+  type t
+
+  val sexp_of_t : t -> Sexp.t
+  val hash : t -> int
+  val seeded_hash : int -> t -> int
+end
+
+let run
+  (type a)
+  (module V : H with type t = a)
+  (module V_base : Ppx_hash_lib.Hashable.S with type t = a)
+  values
+  =
+  let test_hash (t : a) =
+    let stdlib_hash = Stdlib.Hashtbl.hash t in
+    let vcs_hash = V.hash t in
+    let vcs_base_hash = V_base.hash t in
+    print_s
+      [%sexp
+        { value = (t : V.t) }, { stdlib_hash : int; vcs_hash : int; vcs_base_hash : int }]
+  in
+  let test_fold (t : a) ~seed =
+    let stdlib_hash = Stdlib.Hashtbl.seeded_hash seed t in
+    let vcs_hash = V.seeded_hash seed t in
+    let vcs_base_hash = Hash.run ~seed V_base.hash_fold_t t in
+    print_s
+      [%sexp
+        { value = (t : V.t); seed : int }
+        , { stdlib_hash : int; vcs_hash : int; vcs_base_hash : int }]
+  in
+  List.iter values ~f:(fun t ->
+    test_hash t;
+    test_fold t ~seed:0;
+    test_fold t ~seed:42)
 ;;

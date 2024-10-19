@@ -1,7 +1,12 @@
 (library
  (name vcs_base_test)
  (public_name vcs-tests.vcs_base_test)
- (inline_tests)
+ (inline_tests
+  (deps
+   (glob_files *.name-status)
+   (glob_files *.num-status)
+   (glob_files *.log)
+   (glob_files *.refs)))
  (flags
   :standard
   -w
@@ -40,3 +45,21 @@
    ppx_let
    ppx_sexp_conv
    ppx_sexp_value)))
+
+(rule
+ (copy
+  %{project_root}/test/data/super-master-mind.name-status
+  super-master-mind.name-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/super-master-mind.num-status
+  super-master-mind.num-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/super-master-mind.refs
+  super-master-mind.refs))
+
+(rule
+ (copy %{project_root}/test/data/super-master-mind.log super-master-mind.log))

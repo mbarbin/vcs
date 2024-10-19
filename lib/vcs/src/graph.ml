@@ -26,7 +26,7 @@ module Node = struct
 
   let compare = Int.compare
   let equal = Int.equal
-  let hash = Int.hash
+  let hash = Stdlib.Int.hash
   let seeded_hash = Stdlib.Int.seeded_hash
   let sexp_of_t i = Sexp.Atom ("#" ^ Int.to_string_hum i)
 end
