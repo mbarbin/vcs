@@ -101,7 +101,7 @@ let%expect_test "parse_exn" =
      (Modified lib/super_master_mind/test/test__opening_book.ml)
      (Modified super-master-mind.opam)
      (Modified test/maker.t)) |}];
-  print_s [%sexp (Vcs.Name_status.files name_status : Set.M(Vcs.Path_in_repo).t)];
+  print_s [%sexp (Vcs.Name_status.files name_status : Vcs.Path_in_repo.t list)];
   [%expect
     {|
     (.github/workflows/ci.yml

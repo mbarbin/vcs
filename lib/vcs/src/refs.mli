@@ -33,21 +33,17 @@ module Line : sig
     { rev : Rev.t
     ; ref_kind : Ref_kind.t
     }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
+
+  val equal : t -> t -> bool
 end
 
-type t = Line.t list [@@deriving equal, sexp_of]
+type t = Line.t list [@@deriving sexp_of]
+
+val equal : t -> t -> bool
 
 (** {1 Accessors} *)
 
-val tags : t -> Set.M(Tag_name).t
+val tags : t -> Tag_name.t list
 val local_branches : t -> Branch_name.t list
 val remote_branches : t -> Remote_branch_name.t list
-
-(** To lookup the revision of references (branch, tag, etc.), it is usually
-    quite cheap to get all refs using {!val:Vcs.refs}, turn the result into a
-    map with this function, and use the map for the lookups rather than trying
-    to run one git command per lookup. You may also use
-    {!val:Vcs.Graph.find_ref} if you build the complete graph with
-    {!val:Vcs.graph}. *)
-val to_map : t -> Rev.t Map.M(Ref_kind).t

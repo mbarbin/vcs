@@ -23,7 +23,6 @@ type t =
   { remote_name : Remote_name.t
   ; branch_name : Branch_name.t
   }
-[@@deriving compare, equal, hash, sexp_of]
 
-include Comparable.S with type t := t
+include Container_key.S with type t := t
 include Validated_string.S with type t := t

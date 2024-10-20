@@ -557,7 +557,7 @@ let ancestors graph node =
       then loop acc to_visit
       else loop (Set.add acc node) (Vcs.Graph.prepend_parents graph node to_visit)
   in
-  loop (Set.empty (module Vcs.Graph.Node)) [ node ]
+  loop (Set.empty (module Vcs_base.Vcs.Graph.Node)) [ node ]
 ;;
 
 let%expect_test "debug graph" =
@@ -681,7 +681,7 @@ let%expect_test "debug graph" =
   print_ancestors r4;
   [%expect {| (#0 #1 #2 #3 #4) |}];
   (* Low level int indexing. *)
-  let node_index node = print_s [%sexp (Vcs.Graph.node_index graph node : int)] in
+  let node_index node = print_s [%sexp (Vcs.Graph.node_index node : int)] in
   node_index (node ~rev:r1);
   [%expect {| 0 |}];
   node_index (node ~rev:r4);

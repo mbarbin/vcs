@@ -2,6 +2,7 @@
 
 ### Added
 
+- Add new `vcs-base` package meant to extend `vcs` with base-style functionality.
 - Add `Vcs.find_enclosing_repo_root` helper (#28, @mbarbin).
 - Add `Vcs.read_dir` helper (#28, @mbarbin).
 

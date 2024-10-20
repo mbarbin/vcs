@@ -40,8 +40,10 @@
  *
  * Changes: This has similarities with the module [Hg.Status]. We added support
  * for renames, removed support for [Changed_by Rev.t], added [similarity] values
- * which are available in Git. The file utils return sets rather than lists.
+ * which are available in Git.
  *)
+
+open! Import
 
 module Change = struct
   [@@@coverage off]
@@ -61,6 +63,38 @@ module Change = struct
         ; similarity : int
         }
   [@@deriving sexp_of]
+
+  let equal =
+    (fun a__001_ b__002_ ->
+       if Stdlib.( == ) a__001_ b__002_
+       then true
+       else (
+         match a__001_, b__002_ with
+         | Added _a__003_, Added _b__004_ -> Path_in_repo.equal _a__003_ _b__004_
+         | Added _, _ -> false
+         | _, Added _ -> false
+         | Removed _a__005_, Removed _b__006_ -> Path_in_repo.equal _a__005_ _b__006_
+         | Removed _, _ -> false
+         | _, Removed _ -> false
+         | Modified _a__007_, Modified _b__008_ -> Path_in_repo.equal _a__007_ _b__008_
+         | Modified _, _ -> false
+         | _, Modified _ -> false
+         | Copied _a__009_, Copied _b__010_ ->
+           Stdlib.( && )
+             (Path_in_repo.equal _a__009_.src _b__010_.src)
+             (Stdlib.( && )
+                (Path_in_repo.equal _a__009_.dst _b__010_.dst)
+                (equal_int _a__009_.similarity _b__010_.similarity))
+         | Copied _, _ -> false
+         | _, Copied _ -> false
+         | Renamed _a__011_, Renamed _b__012_ ->
+           Stdlib.( && )
+             (Path_in_repo.equal _a__011_.src _b__012_.src)
+             (Stdlib.( && )
+                (Path_in_repo.equal _a__011_.dst _b__012_.dst)
+                (equal_int _a__011_.similarity _b__012_.similarity)))
+     : t -> t -> bool)
+  ;;
 end
 
 module T = struct
@@ -70,40 +104,34 @@ end
 include T
 
 let files_at_src (t : t) =
-  List.fold
-    t
-    ~init:(Set.empty (module Path_in_repo))
-    ~f:(fun set change ->
-      match change with
-      | Added _ -> set
-      | Removed path
-      | Modified path
-      | Copied { src = path; dst = _; similarity = _ }
-      | Renamed { src = path; dst = _; similarity = _ } -> Set.add set path)
+  List.fold t ~init:[] ~f:(fun acc change ->
+    match change with
+    | Added _ -> acc
+    | Removed path
+    | Modified path
+    | Copied { src = path; dst = _; similarity = _ }
+    | Renamed { src = path; dst = _; similarity = _ } -> path :: acc)
+  |> List.dedup_and_sort ~compare:Path_in_repo.compare
 ;;
 
 let files_at_dst (t : t) =
-  List.fold
-    t
-    ~init:(Set.empty (module Path_in_repo))
-    ~f:(fun set change ->
-      match change with
-      | Removed _ -> set
-      | Added path
-      | Modified path
-      | Copied { src = _; dst = path; similarity = _ }
-      | Renamed { src = _; dst = path; similarity = _ } -> Set.add set path)
+  List.fold t ~init:[] ~f:(fun acc change ->
+    match change with
+    | Removed _ -> acc
+    | Added path
+    | Modified path
+    | Copied { src = _; dst = path; similarity = _ }
+    | Renamed { src = _; dst = path; similarity = _ } -> path :: acc)
+  |> List.dedup_and_sort ~compare:Path_in_repo.compare
 ;;
 
 let files (t : t) =
-  List.fold
-    t
-    ~init:(Set.empty (module Path_in_repo))
-    ~f:(fun set change ->
-      match change with
-      | Removed path | Added path | Modified path -> Set.add set path
-      | Copied { src; dst; similarity = _ } | Renamed { src; dst; similarity = _ } ->
-        Set.add (Set.add set src) dst)
+  List.fold t ~init:[] ~f:(fun acc change ->
+    match change with
+    | Removed path | Added path | Modified path -> path :: acc
+    | Copied { src; dst; similarity = _ } | Renamed { src; dst; similarity = _ } ->
+      src :: dst :: acc)
+  |> List.dedup_and_sort ~compare:Path_in_repo.compare
 ;;
 
 module Changed = struct
@@ -114,5 +142,18 @@ module Changed = struct
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
+
+  let equal =
+    (fun a__034_ b__035_ ->
+       if Stdlib.( == ) a__034_ b__035_
+       then true
+       else (
+         match a__034_, b__035_ with
+         | Between _a__036_, Between _b__037_ ->
+           Stdlib.( && )
+             (Rev.equal _a__036_.src _b__037_.src)
+             (Rev.equal _a__036_.dst _b__037_.dst))
+     : t -> t -> bool)
+  ;;
 end

@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 module Line = struct
   [@@@coverage off]
 
@@ -26,13 +28,26 @@ module Line = struct
     { rev : Rev.t
     ; ref_kind : Ref_kind.t
     }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
+
+  let equal =
+    (fun a__001_ b__002_ ->
+       if Stdlib.( == ) a__001_ b__002_
+       then true
+       else
+         Stdlib.( && )
+           (Rev.equal a__001_.rev b__002_.rev)
+           (Ref_kind.equal a__001_.ref_kind b__002_.ref_kind)
+     : t -> t -> bool)
+  ;;
 end
 
 module T = struct
   [@@@coverage off]
 
-  type t = Line.t list [@@deriving equal, sexp_of]
+  type t = Line.t list [@@deriving sexp_of]
+
+  let equal a b = equal_list Line.equal a b
 end
 
 include T
@@ -41,13 +56,14 @@ let tags (t : t) =
   List.filter_map t ~f:(function
     | { rev = _; ref_kind = Tag { tag_name } } -> Some tag_name
     | _ -> None)
-  |> Set.of_list (module Tag_name)
+  |> List.sort ~compare:Tag_name.compare
 ;;
 
 let local_branches (t : t) =
   List.filter_map t ~f:(function
     | { rev = _; ref_kind = Local_branch { branch_name } } -> Some branch_name
     | _ -> None)
+  |> List.sort ~compare:Branch_name.compare
 ;;
 
 let remote_branches (t : t) =
@@ -55,11 +71,5 @@ let remote_branches (t : t) =
     | { rev = _; ref_kind = Remote_branch { remote_branch_name } } ->
       Some remote_branch_name
     | _ -> None)
-;;
-
-let to_map (t : t) =
-  List.fold
-    t
-    ~init:(Map.empty (module Ref_kind))
-    ~f:(fun acc { rev; ref_kind } -> Map.add_exn acc ~key:ref_kind ~data:rev)
+  |> List.sort ~compare:Remote_branch_name.compare
 ;;

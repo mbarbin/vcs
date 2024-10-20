@@ -29,8 +29,10 @@ type t =
   { insertions : int
   ; deletions : int
   }
-[@@deriving compare, equal, sexp_of]
+[@@deriving sexp_of]
 
+val compare : t -> t -> int
+val equal : t -> t -> bool
 val zero : t
 val ( + ) : t -> t -> t
 val sum : t list -> t

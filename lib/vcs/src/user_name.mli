@@ -25,6 +25,7 @@
     [User_name.v "John Doe"]. This is not to be conflated with the
     {!module:User_handle}, which are used as GitHub logins and other contexts. *)
 
-type t [@@deriving compare, equal, hash, sexp_of]
+type t
 
+include Container_key.S with type t := t
 include Validated_string.S with type t := t

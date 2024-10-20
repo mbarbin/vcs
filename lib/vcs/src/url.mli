@@ -31,7 +31,10 @@ module Protocol : sig
   type t =
     | Ssh
     | Https
-  [@@deriving compare, equal, enumerate, hash, sexp_of]
+
+  include Container_key.S with type t := t
+
+  val all : t list
 end
 
 type t =
@@ -40,7 +43,8 @@ type t =
   ; user_handle : User_handle.t
   ; repo_name : Repo_name.t
   }
-[@@deriving compare, equal, hash, sexp_of]
+
+include Container_key.S with type t := t
 
 (** Create a complete string suitable for use with git commands, such as remote
     add, clone, etc. *)

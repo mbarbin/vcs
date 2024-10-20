@@ -36,7 +36,7 @@
     repository. For this, the GitHub {!module:User_handle} must be added. See
     {!module:Url} for a complete url to a repository. *)
 
-type t [@@deriving compare, equal, hash, sexp_of]
+type t
 
-include Comparable.S with type t := t
+include Container_key.S with type t := t
 include Validated_string.S with type t := t

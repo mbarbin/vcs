@@ -19,12 +19,36 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 module T = struct
   type t =
     { insertions : int
     ; deletions : int
     }
-  [@@deriving compare, equal, sexp_of]
+  [@@deriving sexp_of]
+
+  let compare =
+    (fun a__001_ b__002_ ->
+       if Stdlib.( == ) a__001_ b__002_
+       then 0
+       else (
+         match compare_int a__001_.insertions b__002_.insertions with
+         | 0 -> compare_int a__001_.deletions b__002_.deletions
+         | n -> n)
+     : t -> t -> int)
+  ;;
+
+  let equal =
+    (fun a__003_ b__004_ ->
+       if Stdlib.( == ) a__003_ b__004_
+       then true
+       else
+         Stdlib.( && )
+           (equal_int a__003_.insertions b__004_.insertions)
+           (equal_int a__003_.deletions b__004_.deletions)
+     : t -> t -> bool)
+  ;;
 
   let zero = { insertions = 0; deletions = 0 }
 

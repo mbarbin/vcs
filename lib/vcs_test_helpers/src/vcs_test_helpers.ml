@@ -29,7 +29,7 @@ type 'a env = 'a
 let init_temp_repo ~env ~sw ~vcs =
   let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
   Eio.Switch.on_release sw (fun () -> Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
-  Vcs.For_test.init vcs ~path:(Absolute_path.v path) |> Or_error.ok_exn
+  Vcs.For_test.init vcs ~path:(Absolute_path.v path)
 ;;
 
 let redact_sexp err ~fields =

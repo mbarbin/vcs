@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 type t =
   { fs : Eio.Fs.dir_ty Eio.Path.t
   ; process_mgr : [ `Generic ] Eio.Process.mgr_ty Eio.Process.mgr

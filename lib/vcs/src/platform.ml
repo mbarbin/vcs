@@ -19,14 +19,14 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module T = struct
-  [@@@coverage off]
+open! Import
 
-  type t = GitHub [@@deriving compare, enumerate, hash, sexp_of]
-end
+type t = GitHub [@@deriving enumerate, sexp_of]
 
-include T
-include Comparable.Make (T)
+let compare = (Stdlib.compare : t -> t -> int)
+let equal = (Stdlib.( = ) : t -> t -> bool)
+let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
+let hash = (Stdlib.Hashtbl.hash : t -> int)
 
 let to_string = function
   | GitHub -> "GitHub"

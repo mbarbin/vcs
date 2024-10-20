@@ -19,19 +19,16 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 module Node = struct
-  module T0 = struct
-    [@@@coverage off]
+  type t = int
 
-    type t = int [@@deriving compare, hash]
-
-    [@@@coverage on]
-
-    let sexp_of_t i = Sexp.Atom ("#" ^ Int.to_string_hum i)
-  end
-
-  include T0
-  include Comparable.Make (T0)
+  let compare = Int.compare
+  let equal = Int.equal
+  let hash = Stdlib.Int.hash
+  let seeded_hash = Stdlib.Int.seeded_hash
+  let sexp_of_t i = Sexp.Atom ("#" ^ Int.to_string_hum i)
 end
 
 module Node_kind = struct
@@ -49,7 +46,31 @@ module Node_kind = struct
           ; parent1 : Node.t
           ; parent2 : Node.t
           }
-    [@@deriving equal, sexp_of]
+    [@@deriving sexp_of]
+
+    let equal =
+      (fun a__001_ b__002_ ->
+         if Stdlib.( == ) a__001_ b__002_
+         then true
+         else (
+           match a__001_, b__002_ with
+           | Root _a__003_, Root _b__004_ -> Rev.equal _a__003_.rev _b__004_.rev
+           | Root _, _ -> false
+           | _, Root _ -> false
+           | Commit _a__005_, Commit _b__006_ ->
+             Stdlib.( && )
+               (Rev.equal _a__005_.rev _b__006_.rev)
+               (Node.equal _a__005_.parent _b__006_.parent)
+           | Commit _, _ -> false
+           | _, Commit _ -> false
+           | Merge _a__007_, Merge _b__008_ ->
+             Stdlib.( && )
+               (Rev.equal _a__007_.rev _b__008_.rev)
+               (Stdlib.( && )
+                  (Node.equal _a__007_.parent1 _b__008_.parent1)
+                  (Node.equal _a__007_.parent2 _b__008_.parent2)))
+       : t -> t -> bool)
+    ;;
   end
 
   include T
@@ -335,7 +356,12 @@ module Descendance = struct
     | Strict_ancestor
     | Strict_descendant
     | Other
-  [@@deriving equal, enumerate, hash, sexp_of]
+  [@@deriving enumerate, sexp_of]
+
+  let compare = (Stdlib.compare : t -> t -> int)
+  let equal = (Stdlib.( = ) : t -> t -> bool)
+  let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
+  let hash = (Stdlib.Hashtbl.hash : t -> int)
 end
 
 let descendance t a b : Descendance.t =
@@ -479,4 +505,4 @@ let get_node_exn t ~index =
   (index :> Node.t)
 ;;
 
-let node_index _ (node : Node.t) = (node :> int)
+let node_index (node : Node.t) = (node :> int)

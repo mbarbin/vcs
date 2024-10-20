@@ -47,8 +47,9 @@
 
     This is a wrapper around [Absolute_path.t] to increase type safety. *)
 
-type t [@@deriving compare, equal, hash, sexp_of]
+type t
 
+include Container_key.S with type t := t
 include Validated_string.S with type t := t
 
 val of_absolute_path : Absolute_path.t -> t

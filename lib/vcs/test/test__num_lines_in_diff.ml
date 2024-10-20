@@ -82,3 +82,30 @@ let%expect_test "to_string_hum" =
   [%expect {| +1,999, -13,898 |}];
   ()
 ;;
+
+let%expect_test "equal-and-compare" =
+  let t1 = { Vcs.Num_lines_in_diff.insertions = 1; deletions = 2 } in
+  let t2 = { Vcs.Num_lines_in_diff.insertions = 1; deletions = 2 } in
+  let t3 = { Vcs.Num_lines_in_diff.insertions = 1; deletions = 3 } in
+  let t4 = { Vcs.Num_lines_in_diff.insertions = 2; deletions = 2 } in
+  require_equal [%here] (module Vcs.Num_lines_in_diff) t1 t1;
+  [%expect {||}];
+  require_equal [%here] (module Vcs.Num_lines_in_diff) t1 t2;
+  [%expect {||}];
+  require_not_equal [%here] (module Vcs.Num_lines_in_diff) t1 t3;
+  [%expect {||}];
+  require_not_equal [%here] (module Vcs.Num_lines_in_diff) t1 t4;
+  [%expect {||}];
+  let cmp a b =
+    print_s [%sexp (Vcs.Num_lines_in_diff.compare a b |> Ordering.of_int : Ordering.t)]
+  in
+  cmp t1 t1;
+  [%expect {| Equal |}];
+  cmp t1 t2;
+  [%expect {| Equal |}];
+  cmp t1 t3;
+  [%expect {| Less |}];
+  cmp t1 t4;
+  [%expect {| Less |}];
+  ()
+;;

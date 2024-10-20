@@ -26,7 +26,4 @@
     your machine. This isolates the test from your local settings, and also
     makes things work when running in the GitHub Actions environment, where no
     default user config exists. *)
-val init
-  :  [> Trait.config | Trait.init ] Vcs0.t
-  -> path:Absolute_path.t
-  -> Repo_root.t Or_error.t
+val init : [> Trait.config | Trait.init ] Vcs0.t -> path:Absolute_path.t -> Repo_root.t

@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 (* The commands below are sorted alphabetically. Their name must be derived from
    the name the associated function has in the [V.S] interface, prepending the
    suffix "_cmd". *)
@@ -454,9 +456,12 @@ let branch_revision_cmd =
        | None -> Vcs.current_branch vcs ~repo_root
      in
      let rev =
-       let refs = Vcs.refs vcs ~repo_root |> Vcs.Refs.to_map in
-       match Map.find refs (Local_branch { branch_name }) with
-       | Some rev -> rev
+       let refs = Vcs.refs vcs ~repo_root in
+       match
+         List.find refs ~f:(fun { Vcs.Refs.Line.ref_kind; rev = _ } ->
+           Vcs.Ref_kind.equal ref_kind (Local_branch { branch_name }))
+       with
+       | Some ref -> ref.rev
        | None ->
          (* This line is covered in tests, but we need to disable coverage
             reporting here. The reason is that bisect_ppx inserts an unvisitable

@@ -77,9 +77,9 @@ val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
     function) then you can be certain that [n1] is not a parent of [n2]. *)
 
 module Node : sig
-  type t [@@deriving compare, equal, hash, sexp_of]
+  type t
 
-  include Comparable.S with type t := t
+  include Container_key.S with type t := t
 end
 
 module Node_kind : sig
@@ -94,7 +94,9 @@ module Node_kind : sig
         ; parent1 : Node.t
         ; parent2 : Node.t
         }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
+
+  val equal : t -> t -> bool
 
   (** A helper to access the revision of the node itself. This simply returns
       the first argument of each constructor. *)
@@ -190,7 +192,10 @@ module Descendance : sig
     | Strict_ancestor
     | Strict_descendant
     | Other
-  [@@deriving equal, enumerate, hash, sexp_of]
+
+  val all : t list
+
+  include Container_key.S with type t := t
 end
 
 (** [descendance graph a b] characterizes the descendance relationship between
@@ -285,4 +290,4 @@ val summary : t -> Summary.t
     exposed API isn't enough for your use case. *)
 
 val get_node_exn : t -> index:int -> Node.t
-val node_index : t -> Node.t -> int
+val node_index : Node.t -> int

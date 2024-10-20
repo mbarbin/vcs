@@ -26,7 +26,8 @@ module Key : sig
         { src : Path_in_repo.t
         ; dst : Path_in_repo.t
         }
-  [@@deriving compare, equal, hash, sexp_of]
+
+  include Container_key.S with type t := t
 end
 
 module Change : sig
@@ -39,6 +40,8 @@ module Change : sig
       | Num_lines_in_diff of Num_lines_in_diff.t
       | Binary_file
     [@@deriving sexp_of]
+
+    val equal : t -> t -> bool
   end
 
   type t =
@@ -46,6 +49,8 @@ module Change : sig
     ; num_stat : Num_stat.t
     }
   [@@deriving sexp_of]
+
+  val equal : t -> t -> bool
 end
 
 type t = Change.t list [@@deriving sexp_of]
@@ -57,5 +62,7 @@ module Changed : sig
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
+
+  val equal : t -> t -> bool
 end

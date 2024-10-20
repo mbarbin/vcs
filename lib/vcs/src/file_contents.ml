@@ -19,13 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module T = struct
-  [@@@coverage off]
-
-  type t = string [@@deriving compare, equal, hash, sexp_of]
-end
-
-include T
+open! Import
+include Container_key.String_impl
 
 let create t = t
 let to_string t = t
