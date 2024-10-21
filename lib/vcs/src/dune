@@ -43,6 +43,7 @@
  (preprocess
   (pps
    -unused-code-warnings=force
+   ppx_compare
    ppx_enumerate
    ppx_sexp_conv
    ppx_sexp_value)))
