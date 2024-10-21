@@ -26,3 +26,12 @@ let reraise_with_context err bt ~step =
 let raise_s msg sexp =
   raise (Exn0.E (Err.create_s [%sexp (msg : string), (sexp : Sexp.t)]))
 ;;
+
+module Private = struct
+  let try_with f =
+    match f () with
+    | ok -> Ok ok
+    | exception Exn0.E err -> Error err
+    | exception exn -> Error (Err.of_exn exn)
+  ;;
+end

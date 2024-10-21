@@ -48,3 +48,14 @@ val reraise_with_context : Err.t -> Stdlib.Printexc.raw_backtrace -> step:Sexp.t
 (** Build an err payload from the supplied message and data and raise it as a
     {!exception:Vcs.E} exception. *)
 val raise_s : string -> Sexp.t -> _
+
+module Private : sig
+  (** [try_with f] runs [f] and wraps any exception it raises into an
+      {!type:Err.t} error. Because this catches all exceptions, including
+      exceptions that may not be designed to be caught (such as
+      [Stack_overlow], [Out_of_memory], etc.) we recommend that code be
+      refactored overtime not to rely on this function. However, this is
+      rather hard to do without assistance from the type checker, thus we
+      currently rely on this function. TBD! *)
+  val try_with : (unit -> 'a) -> ('a, Err.t) Result.t
+end
