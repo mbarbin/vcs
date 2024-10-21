@@ -21,5 +21,5 @@
 
 type t = Error.t [@@deriving sexp_of]
 
-let of_err = Err.Vcs_base.to_error
-let to_err = Err.Vcs_base.of_error
+let of_err = Err.Private.Vcs_base.to_error
+let to_err = Err.Private.Vcs_base.of_error

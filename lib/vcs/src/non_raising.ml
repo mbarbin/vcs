@@ -100,7 +100,8 @@ module Make (M : M) :
     match
       Vcs0.Private.git ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
         f output
-        |> Result.map_error ~f:(fun err_m -> Err.Vcs_base.to_error (M.to_err err_m)))
+        |> Result.map_error ~f:(fun err_m ->
+          Err.Private.Vcs_base.to_error (M.to_err err_m)))
     with
     | Ok t -> Ok t
     | Error error ->
