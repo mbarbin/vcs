@@ -19,7 +19,13 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = [ `Vcs of Err.t ]
+module Vcs = Vcs_base.Vcs
 
-let map_error err = `Vcs err
-let to_error (`Vcs err) = Err.to_error err
+let%expect_test "sexp_of_t" =
+  let test r = print_s [%sexp (r : int Vcs.Or_error.t)] in
+  test (Or_error.error_s [%sexp Hello]);
+  [%expect {| (Error Hello) |}];
+  test (Or_error.return 0);
+  [%expect {| (Ok 0) |}];
+  ()
+;;

@@ -25,6 +25,7 @@ module Vcs : sig
   module Author = Author
   module Branch_name = Branch_name
   module Commit_message = Commit_message
+  module Err = Err
   module File_contents = File_contents
   module Graph = Graph
   module Name_status = Name_status
@@ -49,6 +50,7 @@ module Vcs : sig
     with module Author := Vcs.Author
      and module Branch_name := Vcs.Branch_name
      and module Commit_message := Vcs.Commit_message
+     and module Err := Vcs.Err
      and module File_contents := Vcs.File_contents
      and module Graph := Vcs.Graph
      and module Name_status := Vcs.Name_status

@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = Error.t
+type t = Error.t [@@deriving sexp_of]
 
-let map_error = Err.to_error
-let to_error = Fn.id
+let of_err = Err.Private.Vcs_base.to_error
+let to_err = Err.Private.Vcs_base.of_error

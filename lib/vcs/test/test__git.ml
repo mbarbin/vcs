@@ -113,13 +113,9 @@ let%expect_test "exit_code" =
 (* [Vcs.Git.Result] *)
 
 let%expect_test "exit0" =
-  let test output =
-    match Vcs.Git.Result.exit0 output with
-    | Ok () -> print_s [%sexp Ok]
-    | Error (`Vcs err) -> print_s [%sexp Error (err : Vcs.Err.t)]
-  in
+  let test output = print_s [%sexp (Vcs.Git.Result.exit0 output : unit Vcs.Result.t)] in
   test { exit_code = 0; stdout = ""; stderr = "" };
-  [%expect {| Ok |}];
+  [%expect {| (Ok ()) |}];
   (* The error does not contain the stdout or stderr, as this is already handled
      by the code that interprets the result of the user function supplied to
      [Vcs.Result.git]. *)
@@ -130,9 +126,7 @@ let%expect_test "exit0" =
 
 let%expect_test "exit0_and_stdout" =
   let test output =
-    match Vcs.Git.Result.exit0_and_stdout output with
-    | Ok stdout -> print_s [%sexp Ok (stdout : string)]
-    | Error (`Vcs err) -> print_s [%sexp Error (err : Vcs.Err.t)]
+    print_s [%sexp (Vcs.Git.Result.exit0_and_stdout output : string Vcs.Result.t)]
   in
   test { exit_code = 0; stdout = "stdout"; stderr = "" };
   [%expect {| (Ok stdout) |}];
@@ -144,9 +138,10 @@ let%expect_test "exit0_and_stdout" =
 
 let%expect_test "exit_code" =
   let test output =
-    match Vcs.Git.Result.exit_code output ~accept:[ 0, "ok"; 42, "other" ] with
-    | Ok result -> print_s [%sexp Ok (result : string)]
-    | Error (`Vcs err) -> print_s [%sexp Error (err : Vcs.Err.t)]
+    print_s
+      [%sexp
+        (Vcs.Git.Result.exit_code output ~accept:[ 0, "ok"; 42, "other" ]
+         : string Vcs.Result.t)]
   in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ok) |}];

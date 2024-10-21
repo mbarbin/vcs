@@ -21,11 +21,11 @@
 
 (** An [Vcs] API based on [Base.Or_error]. *)
 
-type err = Error.t
-type 'a result = 'a Or_error.t
+type err = Error.t [@@deriving sexp_of]
+type 'a t = 'a Or_error.t [@@deriving sexp_of]
 
 (** {1 Non raising API}
 
     The individual functions are documented the {!module:Vcs} module. *)
 
-include Non_raising.S with type 'a t := 'a Vcs0.t and type 'a result := 'a result
+include Non_raising.S with type 'a t := 'a Vcs0.t and type 'a result := 'a t

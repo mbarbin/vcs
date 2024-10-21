@@ -150,7 +150,37 @@ let%expect_test "hello cli" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (`Vcs (Vcs.Err.create_s [%sexp "Hello invalid exit code"])))
+        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code"]))
+    with
+    | Ok _ -> assert false
+    | Error err ->
+      print_s
+        (Vcs_test_helpers.redact_sexp
+           [%sexp (err : Vcs.Err.t)]
+           ~fields:[ "cwd"; "repo_root"; "stderr" ])
+  in
+  [%expect
+    {|
+    ((steps ((Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))))
+     (error (
+       (prog git)
+       (args        (rev-parse INVALID-REF))
+       (exit_status (Exited    128))
+       (cwd    <REDACTED>)
+       (stdout INVALID-REF)
+       (stderr <REDACTED>)
+       (error  "Hello invalid exit code"))))
+    |}];
+  let () =
+    match
+      Vcs.Rresult.git
+        vcs
+        ~repo_root
+        ~args:[ "rev-parse"; "INVALID-REF" ]
+        ~f:(fun output ->
+          if output.exit_code = 0
+          then assert false [@coverage off]
+          else Error (`Vcs (Vcs.Err.create_s [%sexp "Hello invalid exit code"])))
     with
     | Ok _ -> assert false
     | Error (`Vcs err) ->

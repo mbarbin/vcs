@@ -2,12 +2,13 @@
 
 ### Added
 
-- Add new `vcs-base` package meant to extend `vcs` with base-style functionality.
+- Add new `vcs-base` package meant to extend `vcs` with base-style functionality (#31, @mbarbin).
 - Add `Vcs.find_enclosing_repo_root` helper (#28, @mbarbin).
 - Add `Vcs.read_dir` helper (#28, @mbarbin).
 
 ### Changed
 
+- Rename what was `Vcs.Result` to `Vcs.Rresult` and introduce `Vcs.Result` whose type is simpler (#32, @mbarbin).
 - Moved `ocaml-vcs more-tests` commands at top-level (#28, @mbarbin).
 
 ### Deprecated

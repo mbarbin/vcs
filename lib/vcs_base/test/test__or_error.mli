@@ -18,14 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-(** An [Vcs] API based on [Result] and [Vcs.Err]. *)
-
-type err = Err.t [@@deriving sexp_of]
-type 'a t = ('a, err) Result.t [@@deriving sexp_of]
-
-(** {1 Non raising API}
-
-    The individual functions are documented the {!module:Vcs} module. *)
-
-include Non_raising.S with type 'a t := 'a Vcs0.t and type 'a result := 'a t

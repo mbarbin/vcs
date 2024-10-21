@@ -19,4 +19,13 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-include Vcs_interface.Error_S with type err = [ `Vcs of Err.t ]
+type t = Vcs.Err.t
+
+include module type of Vcs.Err with type t := t
+
+(** Inject [t] into [Base.Error.t]. This is useful if you'd like to use [Vcs]
+    inside the [Or_error] monad. *)
+val to_error : t -> Error.t
+
+(** Create an error with no initial step. *)
+val of_error : Error.t -> t

@@ -19,18 +19,9 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = Vcs_result0.err
-type 'a result = ('a, err) Result.t
+open! Import
 
-include Non_raising.Make (Vcs_result0)
+type err = Err.t [@@deriving sexp_of]
+type 'a t = ('a, err) Result.t [@@deriving sexp_of]
 
-let pp_error fmt (`Vcs err) = Stdlib.Format.pp_print_string fmt (Err.to_string_hum err)
-
-let open_error = function
-  | Ok _ as r -> r
-  | Error (`Vcs _) as r -> r
-;;
-
-let error_to_msg (r : 'a result) =
-  Result.map_error r ~f:(fun (`Vcs err) -> `Msg (Err.to_string_hum err))
-;;
+include Non_raising.Make (Err.Private.Non_raising_M)

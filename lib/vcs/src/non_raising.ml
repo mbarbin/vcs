@@ -25,11 +25,11 @@ module type M = Vcs_interface.Error_S
 module type S = Vcs_interface.S
 
 module Make (M : M) :
-  S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.err) Result.t = struct
+  S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.t) Result.t = struct
   let try_with f =
     match f () with
     | r -> Ok r
-    | exception Exn0.E err -> Error (M.map_error err)
+    | exception Exn0.E err -> Error (M.of_err err)
   ;;
 
   let init vcs ~path = try_with (fun () -> Vcs0.init vcs ~path)
@@ -99,14 +99,16 @@ module Make (M : M) :
   let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
     match
       Vcs0.Private.git ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
-        f output |> Result.map_error ~f:M.to_error)
+        f output
+        |> Result.map_error ~f:(fun err_m ->
+          Err.Private.Vcs_base.to_error (M.to_err err_m)))
     with
     | Ok t -> Ok t
     | Error error ->
       Error
-        (M.map_error
+        (M.of_err
            (Err.init
-              error
+              (Error.sexp_of_t error)
               ~step:
                 (Vcs0.Private.make_git_err_step ?env ?run_in_subdir ~repo_root ~args ())))
   ;;

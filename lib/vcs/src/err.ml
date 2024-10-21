@@ -22,24 +22,45 @@
 open! Import
 
 type t =
-  { steps : Info.t list
-  ; error : Error.t
+  { steps : Sexp.t list
+  ; error : Sexp.t
   }
 [@@deriving sexp_of]
 
-let sexp_of_t ({ steps; error } as t) =
-  if List.is_empty steps then Error.sexp_of_t error else sexp_of_t t
-;;
-
+let sexp_of_t ({ steps; error } as t) = if List.is_empty steps then error else sexp_of_t t
 let to_string_hum t = t |> sexp_of_t |> Sexp.to_string_hum
-let create_s sexp = { steps = []; error = Error.create_s sexp }
+let create_s sexp = { steps = []; error = sexp }
+let error_string str = create_s (Sexp.Atom str)
+let of_exn exn = create_s (sexp_of_exn exn)
+let add_context t ~step = { steps = step :: t.steps; error = t.error }
+let init error ~step = { steps = [ step ]; error }
 
-let to_error t =
-  match t.steps with
-  | [] -> t.error
-  | _ :: _ -> Error.create_s (sexp_of_t t)
-;;
+module Private = struct
+  module Non_raising_M = struct
+    type nonrec t = t
 
-let of_error error = { steps = []; error }
-let add_context t ~step = { steps = Info.create_s step :: t.steps; error = t.error }
-let init error ~step = { steps = [ Info.create_s step ]; error }
+    let sexp_of_t = sexp_of_t
+    let to_err t = t
+    let of_err t = t
+  end
+
+  module View = struct
+    type nonrec t = t =
+      { steps : Sexp.t list
+      ; error : Sexp.t
+      }
+  end
+
+  let view t = t
+
+  module Vcs_base = struct
+    let to_error t =
+      Error.create_s
+        (match view t with
+         | { steps = []; error } -> error
+         | { steps = _ :: _; error = _ } -> sexp_of_t t)
+    ;;
+
+    let of_error error = create_s (Error.sexp_of_t error)
+  end
+end

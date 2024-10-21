@@ -36,18 +36,40 @@ val sexp_of_t : t -> Sexp.t
 (** [to_string_hum t] is a convenience wrapper around [t |> sexp_of_t |> Sexp.to_string_hum]. *)
 val to_string_hum : t -> string
 
+val error_string : string -> t
 val create_s : Sexp.t -> t
-
-(** Inject [t] into [Base.Error.t]. This is useful if you'd like to use [Vcs]
-    inside the [Or_error] monad. *)
-val to_error : t -> Error.t
-
-(** Create an error with no initial step. *)
-val of_error : Error.t -> t
+val of_exn : exn -> t
 
 (** Add a step of context into the stack trace contained by the error. *)
 val add_context : t -> step:Sexp.t -> t
 
-(** This is useful if you are starting from an [Error.t] initially with an
+(** This is useful if you are starting from an [Sexp.t] initially with an
     initial step. *)
-val init : Error.t -> step:Sexp.t -> t
+val init : Sexp.t -> step:Sexp.t -> t
+
+module Private : sig
+  module Non_raising_M : sig
+    type nonrec t = t [@@deriving sexp_of]
+
+    val to_err : t -> t
+    val of_err : t -> t
+  end
+
+  module View : sig
+    type t =
+      { steps : Sexp.t list
+      ; error : Sexp.t
+      }
+  end
+
+  val view : t -> View.t
+
+  module Vcs_base : sig
+    (** Inject [t] into [Base.Error.t]. This is useful if you'd like to use [Vcs]
+        inside the [Or_error] monad. *)
+    val to_error : t -> Error.t
+
+    (** Create an error with no initial step. *)
+    val of_error : Error.t -> t
+  end
+end

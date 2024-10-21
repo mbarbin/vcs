@@ -20,57 +20,59 @@
 (*******************************************************************************)
 
 let%expect_test "sexp_of_t" =
-  print_s [%sexp (Vcs.Err.create_s [%sexp Hello] : Vcs.Err.t)];
+  let test r = print_s [%sexp (r : int Vcs.Rresult.t)] in
+  test (Result.return 0);
+  [%expect {| (Ok 0) |}];
+  test (Error (`Vcs (Vcs.Err.error_string "Hello Rresult error")));
+  [%expect {| (Error (Vcs "Hello Rresult error")) |}];
+  ()
+;;
+
+let%expect_test "pp_error" =
+  Vcs.Rresult.pp_error Stdlib.Format.std_formatter (`Vcs (Vcs.Err.create_s [%sexp Hello]));
   [%expect {| Hello |}];
-  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
-  [%expect {| ((steps (Step)) (error Hello)) |}];
   ()
 ;;
 
-let%expect_test "to_string_hum" =
-  print_endline (Vcs.Err.to_string_hum (Vcs.Err.create_s [%sexp Hello]));
-  [%expect {| Hello |}];
+let%expect_test "error_to_msg" =
+  let test r =
+    print_s [%sexp (Vcs.Rresult.error_to_msg r : (unit, [ `Msg of string ]) Result.t)]
+  in
+  test (Ok ());
+  [%expect {| (Ok ()) |}];
+  test (Error (`Vcs (Vcs.Err.create_s [%sexp Hello])));
+  [%expect {| (Error (Msg Hello)) |}];
   ()
 ;;
 
-let%expect_test "error_string" =
-  let err = Vcs.Err.error_string "error message" in
-  print_endline (Vcs.Err.to_string_hum err);
-  [%expect {| "error message" |}];
-  print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| "error message" |}];
-  ()
-;;
-
-let%expect_test "of_exn" =
-  let err = Vcs.Err.of_exn (Failure "exn message") in
-  print_endline (Vcs.Err.to_string_hum err);
-  [%expect {| (Failure "exn message") |}];
-  print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| (Failure "exn message") |}];
-  let err = Vcs.Err.of_exn (Invalid_argument "exn message") in
-  print_endline (Vcs.Err.to_string_hum err);
-  [%expect {| (Invalid_argument "exn message") |}];
-  print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| (Invalid_argument "exn message") |}];
-  ()
-;;
-
-let%expect_test "add_context" =
-  let err = Vcs.Err.create_s [%sexp Hello] in
-  print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| Hello |}];
-  let err = Vcs.Err.add_context err ~step:[%sexp Step_1] in
-  print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| ((steps (Step_1)) (error Hello)) |}];
-  let err = Vcs.Err.add_context err ~step:[%sexp Step_2, { x = 42 }] in
-  print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| ((steps ((Step_2 ((x 42))) Step_1)) (error Hello)) |}];
-  ()
-;;
-
-let%expect_test "init" =
-  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
-  [%expect {| ((steps (Step)) (error Hello)) |}];
+let%expect_test "open_error" =
+  (* Here we simulate a program where the type for errors changes as we go. *)
+  let result =
+    let%bind.Result () = Result.return () in
+    Result.return ()
+  in
+  print_s [%sexp (result : (unit, unit) Result.t)];
+  [%expect {| (Ok ()) |}];
+  let result =
+    let%bind.Result () = result in
+    let%bind.Result () = (Result.return () : (unit, [ `My_int_error of int ]) Result.t) in
+    Result.return ()
+  in
+  print_s [%sexp (result : (unit, [ `My_int_error of int ]) Result.t)];
+  [%expect {| (Ok ()) |}];
+  let result =
+    let%bind.Result () =
+      match result with
+      | Ok _ as r -> r
+      | Error (`My_int_error _) as r -> r [@coverage off]
+    in
+    let ok = (Ok () : unit Vcs.Rresult.t) in
+    let%bind.Result () = Vcs.Rresult.open_error ok in
+    let error = Error (`Vcs (Vcs.Err.create_s [%sexp Vcs_error])) in
+    let%bind.Result () = Vcs.Rresult.open_error error in
+    (Result.return () [@coverage off])
+  in
+  print_s [%sexp (result : (unit, [ `My_int_error of int | `Vcs of Vcs.Err.t ]) Result.t)];
+  [%expect {| (Error (Vcs Vcs_error)) |}];
   ()
 ;;

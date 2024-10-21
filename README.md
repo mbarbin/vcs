@@ -39,7 +39,7 @@ We extend our gratitude to the following individuals and teams, whose contributi
 
 - Vincent Simonet and contributors for [headache](https://github.com/Frama-C/headache), which we use to manage the copyright headers at the beginning of our files.
 
-- The [Rresult](https://erratique.ch/software/rresult/doc/Rresult/index.html#usage) developers: Their usage design guidelines have been a reference in the design of `Vcs`'s error handling, the `Vcs.Result` module in particular.
+- The [Rresult](https://erratique.ch/software/rresult/doc/Rresult/index.html#usage) developers: Their usage design guidelines have been a reference in the design of `Vcs`'s error handling, the `Vcs.Rresult` module in particular.
 
 We look forward to continuing to learn from and collaborate with the broader open source community.
 

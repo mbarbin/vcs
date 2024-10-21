@@ -58,10 +58,10 @@ end
 module Non_raising = struct
   module type M = Vcs_interface.Error_S
 
-  module Make (M : M) : S with type 'a result := ('a, M.err) Result.t = struct
+  module Make (M : M) : S with type 'a result := ('a, M.t) Result.t = struct
     let map_result = function
       | Ok x -> Ok x
-      | Error error -> Error (M.map_error (Err.of_error error))
+      | Error error -> Error (M.of_err (Err.Private.Vcs_base.of_error error))
     ;;
 
     let exit0 output = Or_error.exit0 output |> map_result
@@ -72,11 +72,12 @@ end
 
 let err_exn = function
   | Ok x -> x
-  | Error err -> raise (Exn0.E (Err.of_error err))
+  | Error err -> raise (Exn0.E (Err.Private.Vcs_base.of_error err))
 ;;
 
 let exit0 output = Or_error.exit0 output |> err_exn
 let exit0_and_stdout output = Or_error.exit0_and_stdout output |> err_exn
 let exit_code output ~accept = Or_error.exit_code output ~accept |> err_exn
 
-module Result = Non_raising.Make (Vcs_result0)
+module Rresult = Non_raising.Make (Vcs_rresult0)
+module Result = Non_raising.Make (Err.Private.Non_raising_M)

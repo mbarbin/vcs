@@ -19,4 +19,4 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-include Vcs_interface.Error_S with type err = Error.t
+include Vcs_interface.Error_S with type t = Error.t

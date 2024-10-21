@@ -19,45 +19,20 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Author = Author
-module Branch_name = Branch_name
-module Commit_message = Commit_message
-module Err = Err
-module Exn = Vcs_exn
-module File_contents = File_contents
-module For_test = For_test
-module Git = Git
-module Graph = Graph
-module Log = Log
-module Mock_rev_gen = Mock_rev_gen
-module Mock_revs = Mock_revs
-module Name_status = Name_status
-module Non_raising = Non_raising
-module Num_status = Num_status
-module Num_lines_in_diff = Num_lines_in_diff
-module Or_error = Vcs_or_error
-module Path_in_repo = Path_in_repo
-module Platform = Platform
-module Ref_kind = Ref_kind
-module Refs = Refs
-module Remote_branch_name = Remote_branch_name
-module Remote_name = Remote_name
-module Repo_name = Repo_name
-module Repo_root = Repo_root
-module Result = Vcs_result
-module Rresult = Vcs_rresult
-module Rev = Rev
-module Tag_name = Tag_name
-module Trait = Trait
-module Url = Url
-module User_email = User_email
-module User_handle = User_handle
-module User_name = User_name
-include Exn0
-include Vcs0
+module Vcs = Vcs_base.Vcs
 
-module Private = struct
-  module Bit_vector = Bit_vector
-  module Import = Import
-  module Validated_string = Validated_string
-end
+let%expect_test "to_error" =
+  let test err = print_s [%sexp (Vcs.Err.to_error err : Error.t)] in
+  test (Vcs.Err.create_s [%sexp Hello]);
+  [%expect {| Hello |}];
+  test (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step]);
+  [%expect {| ((steps (Step)) (error Hello)) |}];
+  ()
+;;
+
+let%expect_test "of_error" =
+  let test err = print_s [%sexp (Vcs.Err.of_error err : Vcs.Err.t)] in
+  test (Error.create_s [%sexp Hello]);
+  [%expect {| Hello |}];
+  ()
+;;

@@ -324,6 +324,7 @@ module For_test = For_test
 
 module Or_error = Vcs_or_error
 module Result = Vcs_result
+module Rresult = Vcs_rresult
 module Non_raising = Non_raising
 
 module Private : sig
