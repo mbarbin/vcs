@@ -110,8 +110,8 @@ val find_enclosing_repo_root
 
 (** [find_enclosing_git_repo_root vcs ~from:dir] is a convenient wrapper around
     {!val:find_enclosing_repo_root} for Git repositories. This is looking for
-    the right most directory containing a [".git"] entry, starting from [dir]
-    and walking up. *)
+    the deepest directory containing a [".git"] entry, starting from [dir] and
+    walking up. *)
 val find_enclosing_git_repo_root
   :  [> Trait.file_system ] t
   -> from:Absolute_path.t
