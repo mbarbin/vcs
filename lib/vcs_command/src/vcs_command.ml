@@ -39,7 +39,7 @@ let find_enclosing_repo_root vcs ~from =
   match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fsegment.dot_git, `Git ] with
   | Some (`Git, repo_root) -> repo_root
   | None ->
-    Vcs.raise_s
+    Vcs.Exn.raise_s
       "Failed to locate enclosing repo root from directory"
       [%sexp { from : Absolute_path.t }]
 ;;
@@ -57,7 +57,7 @@ let relativize ~repo_root ~cwd ~path =
     Absolute_path.chop_prefix path ~prefix:(repo_root |> Vcs.Repo_root.to_absolute_path)
   with
   | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
-  | None -> Vcs.raise_s "Path is not in repo" [%sexp { path : Absolute_path.t }]
+  | None -> Vcs.Exn.raise_s "Path is not in repo" [%sexp { path : Absolute_path.t }]
 ;;
 
 let add_cmd =
@@ -467,7 +467,7 @@ let branch_revision_cmd =
             reporting here. The reason is that bisect_ppx inserts an unvisitable
             coverage point at the out-edge of this raising call, which would
             otherwise result in a false negative in our test coverage. *)
-         Vcs.raise_s
+         Vcs.Exn.raise_s
            "Branch not found"
            [%sexp { branch_name : Vcs.Branch_name.t }] [@coverage off]
      in
@@ -492,7 +492,7 @@ let greatest_common_ancestors_cmd =
        List.map revs ~f:(fun rev ->
          match Vcs.Graph.find_rev graph ~rev with
          | Some node -> node
-         | None -> Vcs.raise_s "Rev not found" [%sexp { rev : Vcs.Rev.t }])
+         | None -> Vcs.Exn.raise_s "Rev not found" [%sexp { rev : Vcs.Rev.t }])
      in
      let gca =
        Vcs.Graph.greatest_common_ancestors graph nodes

@@ -24,6 +24,4 @@
     This module is used to break what's otherwise a dependency cycle between
     [Vcs], and [Vcs.Exn]. *)
 
-exception E of Err.t [@@deriving sexp_of]
-
-val raise_s : string -> Sexp.t -> _
+exception E of Err.t
