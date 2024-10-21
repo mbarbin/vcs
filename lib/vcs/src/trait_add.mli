@@ -22,5 +22,5 @@
 module type S = sig
   type t
 
-  val add : t -> repo_root:Repo_root.t -> path:Path_in_repo.t -> unit Or_error.t
+  val add : t -> repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
 end

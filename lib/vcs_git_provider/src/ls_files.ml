@@ -30,8 +30,9 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(Vcs.Repo_root.append repo_root below)
       ~args:[ "ls-files"; "--full-name" ]
       ~f:(fun output ->
-        let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
-        Or_error.try_with (fun () ->
+        let open Result.Monad_syntax in
+        let* stdout = Vcs.Git.Result.exit0_and_stdout output in
+        Vcs.Exn.Private.try_with (fun () ->
           String.split_lines stdout |> List.map ~f:Vcs.Path_in_repo.v))
   ;;
 end

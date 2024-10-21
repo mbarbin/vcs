@@ -29,6 +29,6 @@ module Make (Runtime : Runtime.S) = struct
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "add"; path |> Vcs.Path_in_repo.to_string ]
-      ~f:Vcs.Git.Or_error.exit0
+      ~f:Vcs.Git.Result.exit0
   ;;
 end

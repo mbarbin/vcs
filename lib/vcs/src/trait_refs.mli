@@ -22,5 +22,5 @@
 module type S = sig
   type t
 
-  val show_ref : t -> repo_root:Repo_root.t -> Refs.t Or_error.t
+  val show_ref : t -> repo_root:Repo_root.t -> (Refs.t, Err.t) Result.t
 end

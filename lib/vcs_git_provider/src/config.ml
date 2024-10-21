@@ -29,7 +29,7 @@ module Make (Runtime : Runtime.S) = struct
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "config"; "user.name"; user_name |> Vcs.User_name.to_string ]
-      ~f:Vcs.Git.Or_error.exit0
+      ~f:Vcs.Git.Result.exit0
   ;;
 
   let set_user_email t ~repo_root ~user_email =
@@ -37,6 +37,6 @@ module Make (Runtime : Runtime.S) = struct
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "config"; "user.email"; user_email |> Vcs.User_email.to_string ]
-      ~f:Vcs.Git.Or_error.exit0
+      ~f:Vcs.Git.Result.exit0
   ;;
 end

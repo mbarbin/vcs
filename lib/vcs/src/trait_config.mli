@@ -26,11 +26,11 @@ module type S = sig
     :  t
     -> repo_root:Repo_root.t
     -> user_name:User_name.t
-    -> unit Or_error.t
+    -> (unit, Err.t) Result.t
 
   val set_user_email
     :  t
     -> repo_root:Repo_root.t
     -> user_email:User_email.t
-    -> unit Or_error.t
+    -> (unit, Err.t) Result.t
 end

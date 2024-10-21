@@ -82,7 +82,9 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "show-ref"; "--dereference" ]
       ~f:(fun output ->
-        let%bind output = Vcs.Git.Or_error.exit0_and_stdout output in
-        Or_error.try_with (fun () -> parse_lines_exn ~lines:(String.split_lines output)))
+        let open Result.Monad_syntax in
+        let* output = Vcs.Git.Result.exit0_and_stdout output in
+        Vcs.Exn.Private.try_with (fun () ->
+          parse_lines_exn ~lines:(String.split_lines output)))
   ;;
 end

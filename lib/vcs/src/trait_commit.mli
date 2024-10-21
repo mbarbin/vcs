@@ -26,5 +26,5 @@ module type S = sig
     :  t
     -> repo_root:Repo_root.t
     -> commit_message:Commit_message.t
-    -> unit Or_error.t
+    -> (unit, Err.t) Result.t
 end

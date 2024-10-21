@@ -31,7 +31,7 @@ let%expect_test "hello error" =
   let redact_sexp sexp =
     (* Because the actual error may become too brittle overtime, we actually
        redact it. *)
-    Vcs_test_helpers.redact_sexp sexp ~fields:[ "error/error" ]
+    Vcs_test_helpers.redact_sexp sexp ~fields:[ "error" ]
   in
   let () =
     match Vcs.init vcs ~path:invalid_path with
@@ -40,15 +40,15 @@ let%expect_test "hello error" =
   in
   [%expect
     {|
-    ((steps ((Vcs.init ((path /invalid/path)))))
-     (error (
-       (prog git)
-       (args (init .))
-       (exit_status Unknown)
-       (cwd         /invalid/path)
-       (stdout      "")
-       (stderr      "")
-       (error       <REDACTED>))))
+    ((steps (
+       (Vcs.init ((path /invalid/path)))
+       ((prog git)
+        (args (init .))
+        (exit_status Unknown)
+        (cwd         /invalid/path)
+        (stdout      "")
+        (stderr      ""))))
+     (error <REDACTED>))
     |}];
   (* Let's do the same with the non-raising interfaces. *)
   let () =
@@ -58,15 +58,15 @@ let%expect_test "hello error" =
   in
   [%expect
     {|
-    ((steps ((Vcs.init ((path /invalid/path)))))
-     (error (
-       (prog git)
-       (args (init .))
-       (exit_status Unknown)
-       (cwd         /invalid/path)
-       (stdout      "")
-       (stderr      "")
-       (error       <REDACTED>))))
+    ((steps (
+       (Vcs.init ((path /invalid/path)))
+       ((prog git)
+        (args (init .))
+        (exit_status Unknown)
+        (cwd         /invalid/path)
+        (stdout      "")
+        (stderr      ""))))
+     (error <REDACTED>))
     |}];
   let () =
     match Vcs.Result.init vcs ~path:invalid_path with
@@ -75,15 +75,15 @@ let%expect_test "hello error" =
   in
   [%expect
     {|
-    ((steps ((Vcs.init ((path /invalid/path)))))
-     (error (
-       (prog git)
-       (args (init .))
-       (exit_status Unknown)
-       (cwd         /invalid/path)
-       (stdout      "")
-       (stderr      "")
-       (error       <REDACTED>))))
+    ((steps (
+       (Vcs.init ((path /invalid/path)))
+       ((prog git)
+        (args (init .))
+        (exit_status Unknown)
+        (cwd         /invalid/path)
+        (stdout      "")
+        (stderr      ""))))
+     (error <REDACTED>))
     |}];
   let () =
     match Vcs.Rresult.init vcs ~path:invalid_path with
@@ -93,15 +93,15 @@ let%expect_test "hello error" =
   [%expect
     {|
     (Vcs (
-      (steps ((Vcs.init ((path /invalid/path)))))
-      (error (
-        (prog git)
-        (args (init .))
-        (exit_status Unknown)
-        (cwd         /invalid/path)
-        (stdout      "")
-        (stderr      "")
-        (error       <REDACTED>)))))
+      (steps (
+        (Vcs.init ((path /invalid/path)))
+        ((prog git)
+         (args (init .))
+         (exit_status Unknown)
+         (cwd         /invalid/path)
+         (stdout      "")
+         (stderr      ""))))
+      (error <REDACTED>)))
     |}];
   ()
 ;;

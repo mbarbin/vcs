@@ -22,6 +22,6 @@
 module type S = sig
   type t
 
-  val current_branch : t -> repo_root:Repo_root.t -> Branch_name.t Or_error.t
-  val current_revision : t -> repo_root:Repo_root.t -> Rev.t Or_error.t
+  val current_branch : t -> repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
+  val current_revision : t -> repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
 end

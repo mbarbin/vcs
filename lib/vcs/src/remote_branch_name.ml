@@ -67,7 +67,7 @@ let of_string str =
   match String.lsplit2 str ~on:'/' with
   | None -> Error (`Msg (Printf.sprintf "%S: invalid remote_branch_name" str))
   | Some (remote, branch) ->
-    let ( let* ) = Stdlib.Result.bind in
+    let open Result.Monad_syntax in
     let* remote_name = Remote_name.of_string remote in
     let* branch_name = Branch_name.of_string branch in
     Result.return { remote_name; branch_name }

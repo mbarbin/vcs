@@ -22,5 +22,5 @@
 module type S = sig
   type t
 
-  val all : t -> repo_root:Repo_root.t -> Log.t Or_error.t
+  val all : t -> repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
 end

@@ -23,10 +23,10 @@ module type S = sig
   type t
 
   val git
-    :  ?env:string Export.array
+    :  ?env:string array
     -> t
     -> cwd:Absolute_path.t
     -> args:string list
-    -> f:(Git_output0.t -> 'a Or_error.t)
-    -> 'a Or_error.t
+    -> f:(Git_output0.t -> ('a, Err.t) Result.t)
+    -> ('a, Err.t) Result.t
 end

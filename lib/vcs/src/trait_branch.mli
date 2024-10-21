@@ -28,5 +28,5 @@ module type S = sig
     :  t
     -> repo_root:Repo_root.t
     -> to_:Branch_name.t
-    -> unit Or_error.t
+    -> (unit, Err.t) Result.t
 end

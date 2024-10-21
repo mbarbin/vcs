@@ -21,10 +21,11 @@
 
 open! Import
 
-let interpret_output output =
-  match%map Vcs.Git.Or_error.exit_code output ~accept:[ 0, `Present; 128, `Absent ] with
-  | `Present -> `Present (Vcs.File_contents.create output.stdout)
-  | `Absent -> `Absent
+let interpret_output (output : Vcs.Git.Output.t) =
+  Vcs.Git.Result.exit_code output ~accept:[ 0, `Present; 128, `Absent ]
+  |> Result.map ~f:(function
+    | `Present -> `Present (Vcs.File_contents.create output.stdout)
+    | `Absent -> `Absent)
 ;;
 
 module Make (Runtime : Runtime.S) = struct
