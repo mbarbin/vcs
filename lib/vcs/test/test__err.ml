@@ -19,17 +19,40 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+let%expect_test "sexp_of_t" =
+  print_s [%sexp (Vcs.Err.create_s [%sexp Hello] : Vcs.Err.t)];
+  [%expect {| Hello |}];
+  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
+  [%expect {| ((steps (Step)) (error Hello)) |}];
+  ()
+;;
+
 let%expect_test "to_string_hum" =
   print_endline (Vcs.Err.to_string_hum (Vcs.Err.create_s [%sexp Hello]));
   [%expect {| Hello |}];
   ()
 ;;
 
-let%expect_test "sexp_of_t" =
-  print_s [%sexp (Vcs.Err.create_s [%sexp Hello] : Vcs.Err.t)];
-  [%expect {| Hello |}];
-  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
-  [%expect {| ((steps (Step)) (error Hello)) |}];
+let%expect_test "error_string" =
+  let err = Vcs.Err.error_string "error message" in
+  print_endline (Vcs.Err.to_string_hum err);
+  [%expect {| "error message" |}];
+  print_s [%sexp (err : Vcs.Err.t)];
+  [%expect {| "error message" |}];
+  ()
+;;
+
+let%expect_test "of_exn" =
+  let err = Vcs.Err.of_exn (Failure "exn message") in
+  print_endline (Vcs.Err.to_string_hum err);
+  [%expect {| (Failure "exn message") |}];
+  print_s [%sexp (err : Vcs.Err.t)];
+  [%expect {| (Failure "exn message") |}];
+  let err = Vcs.Err.of_exn (Invalid_argument "exn message") in
+  print_endline (Vcs.Err.to_string_hum err);
+  [%expect {| (Invalid_argument "exn message") |}];
+  print_s [%sexp (err : Vcs.Err.t)];
+  [%expect {| (Invalid_argument "exn message") |}];
   ()
 ;;
 

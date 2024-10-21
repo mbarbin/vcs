@@ -19,6 +19,15 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+let%expect_test "sexp_of_t" =
+  let test r = print_s [%sexp (r : int Vcs.Rresult.t)] in
+  test (Result.return 0);
+  [%expect {| (Ok 0) |}];
+  test (Error (`Vcs (Vcs.Err.error_string "Hello Rresult error")));
+  [%expect {| (Error (Vcs "Hello Rresult error")) |}];
+  ()
+;;
+
 let%expect_test "pp_error" =
   Vcs.Rresult.pp_error Stdlib.Format.std_formatter (`Vcs (Vcs.Err.create_s [%sexp Hello]));
   [%expect {| Hello |}];
