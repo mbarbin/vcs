@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Provider interfaces now uses `Vcs.Result` type instead of `Or_error` (#34, @mbarbin).
 - Moved `Vcs.raise_s` to `Vcs.Exn.raise_s` to group exn related helpers (#34, @mbarbin).
 - Rename what was `Vcs.Result` to `Vcs.Rresult` and introduce `Vcs.Result` whose type is simpler (#33, @mbarbin).
 - Moved `ocaml-vcs more-tests` commands at top-level (#28, @mbarbin).

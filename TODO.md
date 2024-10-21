@@ -37,7 +37,7 @@ Only keep sexp related ppx that have no runtime dependency on `base`, such as `s
 
 ### Stage 4 - Trait implementation use `Result`
 
-- [ ] Pending
+- [x] Completed: Oct. 2024
 
 ### Stage 5 - Move `Or_error` module into `Vcs_base`.
 
