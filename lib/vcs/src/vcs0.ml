@@ -28,7 +28,7 @@ let ( let* ) = Stdlib.Result.bind
 
 let of_result ~step = function
   | Ok r -> r
-  | Error error -> raise (Exn0.E (Err.init error ~step:(force step)))
+  | Error error -> raise (Exn0.E (Err.init (Error.sexp_of_t error) ~step:(force step)))
 ;;
 
 let load_file (Provider.T { t; handler }) ~path =

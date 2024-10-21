@@ -28,23 +28,22 @@ let%expect_test "to_string_hum" =
 let%expect_test "sexp_of_t" =
   print_s [%sexp (Vcs.Err.create_s [%sexp Hello] : Vcs.Err.t)];
   [%expect {| Hello |}];
-  print_s
-    [%sexp (Vcs.Err.init (Error.create_s [%sexp Hello]) ~step:[%sexp Step] : Vcs.Err.t)];
+  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
   [%expect {| ((steps (Step)) (error Hello)) |}];
   ()
 ;;
 
 let%expect_test "to_error" =
-  let test err = print_s [%sexp (Vcs.Err.to_error err : Error.t)] in
+  let test err = print_s [%sexp (Vcs.Err.Vcs_base.to_error err : Error.t)] in
   test (Vcs.Err.create_s [%sexp Hello]);
   [%expect {| Hello |}];
-  test (Vcs.Err.init (Error.create_s [%sexp Hello]) ~step:[%sexp Step]);
+  test (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step]);
   [%expect {| ((steps (Step)) (error Hello)) |}];
   ()
 ;;
 
 let%expect_test "of_error" =
-  let test err = print_s [%sexp (Vcs.Err.of_error err : Vcs.Err.t)] in
+  let test err = print_s [%sexp (Vcs.Err.Vcs_base.of_error err : Vcs.Err.t)] in
   test (Error.create_s [%sexp Hello]);
   [%expect {| Hello |}];
   ()
@@ -64,8 +63,7 @@ let%expect_test "add_context" =
 ;;
 
 let%expect_test "init" =
-  print_s
-    [%sexp (Vcs.Err.init (Error.create_s [%sexp Hello]) ~step:[%sexp Step] : Vcs.Err.t)];
+  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
   [%expect {| ((steps (Step)) (error Hello)) |}];
   ()
 ;;

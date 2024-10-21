@@ -61,7 +61,7 @@ module Non_raising = struct
   module Make (M : M) : S with type 'a result := ('a, M.t) Result.t = struct
     let map_result = function
       | Ok x -> Ok x
-      | Error error -> Error (M.of_err (Err.of_error error))
+      | Error error -> Error (M.of_err (Err.Vcs_base.of_error error))
     ;;
 
     let exit0 output = Or_error.exit0 output |> map_result
@@ -72,7 +72,7 @@ end
 
 let err_exn = function
   | Ok x -> x
-  | Error err -> raise (Exn0.E (Err.of_error err))
+  | Error err -> raise (Exn0.E (Err.Vcs_base.of_error err))
 ;;
 
 let exit0 output = Or_error.exit0 output |> err_exn
