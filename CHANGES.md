@@ -8,7 +8,7 @@
 
 ### Changed
 
-- Rename what was `Vcs.Result` to `Vcs.Rresult` and introduce `Vcs.Result` whose type is simpler (#PR, @mbarbin).
+- Rename what was `Vcs.Result` to `Vcs.Rresult` and introduce `Vcs.Result` whose type is simpler (#32, @mbarbin).
 - Moved `ocaml-vcs more-tests` commands at top-level (#28, @mbarbin).
 
 ### Deprecated

@@ -31,7 +31,7 @@ Only keep sexp related ppx that have no runtime dependency on `base`, such as `s
 
 ### Stage 3 - Refactor non-raising APIs
 
-- [ ] Pending
+- [x] Completed: Oct. 2024
 
 - Rename `Result` => `Rresult`, introduce a new `Result` one.
 
@@ -52,6 +52,7 @@ Use `vcs/src/import` to make a local mini-stdlib with utils required to remove `
 Do this for the other libraries:
 
 - [ ] vcs
+- [ ] vcs_command
+- [ ] vcs_git_blocking
 - [ ] vcs_git_eio
 - [ ] vcs_git_provider
-- [ ] vcs_git_blocking
