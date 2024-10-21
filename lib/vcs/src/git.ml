@@ -34,24 +34,28 @@ end
 
 module type S = Vcs_interface.Process_S
 
-module Or_error = struct
+module Result_impl = struct
   let exit0 { Output.exit_code; stdout = _; stderr = _ } =
-    if Int.equal exit_code 0 then Ok () else Or_error.error_string "expected exit code 0"
+    if Int.equal exit_code 0
+    then Ok ()
+    else Error (Err.error_string "expected exit code 0")
   ;;
 
   let exit0_and_stdout { Output.exit_code; stdout; stderr = _ } =
     if Int.equal exit_code 0
     then Ok stdout
-    else Or_error.error_string "expected exit code 0"
+    else Error (Err.error_string "expected exit code 0")
   ;;
 
   let exit_code { Output.exit_code; stdout = _; stderr = _ } ~accept =
     match List.find accept ~f:(fun (code, _) -> Int.equal exit_code code) with
     | Some (_, result) -> Ok result
     | None ->
-      Or_error.error_s
-        [%sexp
-          "unexpected exit code", { accepted_codes : int list = List.map accept ~f:fst }]
+      Error
+        (Err.create_s
+           [%sexp
+             "unexpected exit code"
+             , { accepted_codes : int list = List.map accept ~f:fst }])
   ;;
 end
 
@@ -61,23 +65,24 @@ module Non_raising = struct
   module Make (M : M) : S with type 'a result := ('a, M.t) Result.t = struct
     let map_result = function
       | Ok x -> Ok x
-      | Error error -> Error (M.of_err (Err.Private.Vcs_base.of_error error))
+      | Error err -> Error (M.of_err err)
     ;;
 
-    let exit0 output = Or_error.exit0 output |> map_result
-    let exit0_and_stdout output = Or_error.exit0_and_stdout output |> map_result
-    let exit_code output ~accept = Or_error.exit_code output ~accept |> map_result
+    let exit0 output = Result_impl.exit0 output |> map_result
+    let exit0_and_stdout output = Result_impl.exit0_and_stdout output |> map_result
+    let exit_code output ~accept = Result_impl.exit_code output ~accept |> map_result
   end
 end
 
 let err_exn = function
   | Ok x -> x
-  | Error err -> raise (Exn0.E (Err.Private.Vcs_base.of_error err))
+  | Error err -> raise (Exn0.E err)
 ;;
 
-let exit0 output = Or_error.exit0 output |> err_exn
-let exit0_and_stdout output = Or_error.exit0_and_stdout output |> err_exn
-let exit_code output ~accept = Or_error.exit_code output ~accept |> err_exn
+let exit0 output = Result_impl.exit0 output |> err_exn
+let exit0_and_stdout output = Result_impl.exit0_and_stdout output |> err_exn
+let exit_code output ~accept = Result_impl.exit_code output ~accept |> err_exn
 
+module Or_error = Non_raising.Make (Vcs_or_error0)
 module Rresult = Non_raising.Make (Vcs_rresult0)
-module Result = Non_raising.Make (Err.Private.Non_raising_M)
+module Result = Result_impl
