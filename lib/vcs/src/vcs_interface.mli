@@ -167,11 +167,11 @@ module type Error_S = sig
   (** Interface used to build non raising interfaces to [Vcs] via
       [Vcs.Non_raising.Make]. *)
 
-  (** [err] must represent the type of errors in your monad. *)
-  type err
+  (** [t] must represent the type of errors in your monad. *)
+  type t [@@deriving sexp_of]
 
   (** The conversion functions you need to provide. *)
 
-  val map_error : Err.t -> err
-  val to_error : err -> Error.t
+  val of_err : Err.t -> t
+  val to_err : t -> Err.t
 end

@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = [ `Vcs of Err.t ]
+type t = [ `Vcs of Err.t ] [@@deriving sexp_of]
 
-let map_error err = `Vcs err
-let to_error (`Vcs err) = Err.to_error err
+let of_err err = `Vcs err
+let to_err (`Vcs err) = err

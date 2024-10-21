@@ -56,8 +56,8 @@ module Non_raising : sig
 
   module type M = Vcs_interface.Error_S
 
-  module Make (M : M) : S with type 'a result := ('a, M.err) Result.t
+  module Make (M : M) : S with type 'a result := ('a, M.t) Result.t
 end
 
-module Or_error : S with type 'a result := ('a, Vcs_or_error0.err) Result.t
-module Result : S with type 'a result := ('a, Vcs_result0.err) Result.t
+module Or_error : S with type 'a result := ('a, Vcs_or_error0.t) Result.t
+module Result : S with type 'a result := ('a, Vcs_result0.t) Result.t

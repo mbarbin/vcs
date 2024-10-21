@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = Vcs_result0.err
+type err = Vcs_result0.t
 type 'a result = ('a, err) Result.t
 
 include Non_raising.Make (Vcs_result0)
