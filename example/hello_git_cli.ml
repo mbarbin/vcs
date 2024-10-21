@@ -150,10 +150,10 @@ let%expect_test "hello cli" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (`Vcs (Vcs.Err.create_s [%sexp "Hello invalid exit code"])))
+        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code"]))
     with
     | Ok _ -> assert false
-    | Error (`Vcs err) ->
+    | Error err ->
       print_s
         (Vcs_test_helpers.redact_sexp
            [%sexp (err : Vcs.Err.t)]

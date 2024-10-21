@@ -33,8 +33,8 @@ end
 
 (** This is the interface commonly used by raising and non-raising helper
     modules, such as {!module:Vcs.Git}, {!module:Vcs.Git.Or_error},
-    {!module:Vcs.Git.Result}, and custom ones built with
-    {!module:Vcs.Git.Non_raising.Make}. [S] is parametrized by the result
+    {!module:Vcs.Git.Result}, {!module:Vcs.Git.Rresult}, and custom ones built
+    with {!module:Vcs.Git.Non_raising.Make}. [S] is parametrized by the result
     type returned by the helpers. *)
 module type S = Vcs_interface.Process_S
 
@@ -48,11 +48,11 @@ module type S = Vcs_interface.Process_S
 include S with type 'a result := 'a
 
 module Non_raising : sig
-  (** A functor to build non raising helpers based on a custom result type.
+  (** A functor to build non raising helpers based on a custom error type.
 
-      In addition to {!module:Vcs.Git.Or_error} and {!module:Vcs.Git.Result}, we
-      provide this functor to create a [Git.S] interface based on a custom
-      result type of your choice. *)
+      In addition to {!module:Vcs.Git.Or_error}, {!module:Vcs.Git.Result} and
+      {!module:Vcs.Git.Rresult} we provide this functor to create a [Git.S]
+      interface based on a custom error type of your choice. *)
 
   module type M = Vcs_interface.Error_S
 
@@ -60,4 +60,5 @@ module Non_raising : sig
 end
 
 module Or_error : S with type 'a result := ('a, Vcs_or_error0.t) Result.t
-module Result : S with type 'a result := ('a, Vcs_result0.t) Result.t
+module Rresult : S with type 'a result := ('a, Vcs_rresult0.t) Result.t
+module Result : S with type 'a result := ('a, Err.t) Result.t

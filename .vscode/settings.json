@@ -8,6 +8,7 @@
         "opam",
         "pathspec",
         "rmtree",
+        "rresult",
         "Stdenv",
         "subdir",
         "worktree",

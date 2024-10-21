@@ -79,4 +79,5 @@ let exit0 output = Or_error.exit0 output |> err_exn
 let exit0_and_stdout output = Or_error.exit0_and_stdout output |> err_exn
 let exit_code output ~accept = Or_error.exit_code output ~accept |> err_exn
 
-module Result = Non_raising.Make (Vcs_result0)
+module Rresult = Non_raising.Make (Vcs_rresult0)
+module Result = Non_raising.Make (Err.Private.Non_raising_M)

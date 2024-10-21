@@ -71,7 +71,7 @@ let%expect_test "hello error" =
   let () =
     match Vcs.Result.init vcs ~path:invalid_path with
     | Ok _ -> assert false
-    | Error (`Vcs err) -> print_s (redact_sexp [%sexp (err : Vcs.Err.t)])
+    | Error err -> print_s (redact_sexp [%sexp (err : Vcs.Err.t)])
   in
   [%expect
     {|

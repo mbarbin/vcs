@@ -20,14 +20,14 @@
 (*******************************************************************************)
 
 let%expect_test "pp_error" =
-  Vcs.Result.pp_error Stdlib.Format.std_formatter (`Vcs (Vcs.Err.create_s [%sexp Hello]));
+  Vcs.Rresult.pp_error Stdlib.Format.std_formatter (`Vcs (Vcs.Err.create_s [%sexp Hello]));
   [%expect {| Hello |}];
   ()
 ;;
 
 let%expect_test "error_to_msg" =
   let test r =
-    print_s [%sexp (Vcs.Result.error_to_msg r : (unit, [ `Msg of string ]) Result.t)]
+    print_s [%sexp (Vcs.Rresult.error_to_msg r : (unit, [ `Msg of string ]) Result.t)]
   in
   test (Ok ());
   [%expect {| (Ok ()) |}];
@@ -57,10 +57,10 @@ let%expect_test "open_error" =
       | Ok _ as r -> r
       | Error (`My_int_error _) as r -> r [@coverage off]
     in
-    let ok = (Ok () : unit Vcs.Result.result) in
-    let%bind.Result () = Vcs.Result.open_error ok in
+    let ok = (Ok () : unit Vcs.Rresult.t) in
+    let%bind.Result () = Vcs.Rresult.open_error ok in
     let error = Error (`Vcs (Vcs.Err.create_s [%sexp Vcs_error])) in
-    let%bind.Result () = Vcs.Result.open_error error in
+    let%bind.Result () = Vcs.Rresult.open_error error in
     (Result.return () [@coverage off])
   in
   print_s [%sexp (result : (unit, [ `My_int_error of int | `Vcs of Vcs.Err.t ]) Result.t)];
