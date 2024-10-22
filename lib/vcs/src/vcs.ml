@@ -25,7 +25,6 @@ module Commit_message = Commit_message
 module Err = Err
 module Exn = Vcs_exn
 module File_contents = File_contents
-module For_test = For_test
 module Git = Git
 module Graph = Graph
 module Log = Log

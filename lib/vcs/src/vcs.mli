@@ -307,10 +307,6 @@ val git
   -> f:(Git.Output.t -> 'a)
   -> 'a
 
-(** {1 Test utils} *)
-
-module For_test = For_test
-
 (** {1:non_raising_apis Non-raising APIs}
 
     For convenience and to allow experimenting with different error handling

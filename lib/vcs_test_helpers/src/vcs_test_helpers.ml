@@ -19,6 +19,13 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+let init vcs ~path =
+  let repo_root = Vcs.init vcs ~path in
+  Vcs.set_user_name vcs ~repo_root ~user_name:(Vcs.User_name.v "Test User");
+  Vcs.set_user_email vcs ~repo_root ~user_email:(Vcs.User_email.v "test@example.com");
+  repo_root
+;;
+
 type 'a env = 'a
   constraint
     'a =
@@ -29,7 +36,7 @@ type 'a env = 'a
 let init_temp_repo ~env ~sw ~vcs =
   let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
   Eio.Switch.on_release sw (fun () -> Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
-  Vcs.For_test.init vcs ~path:(Absolute_path.v path)
+  init vcs ~path:(Absolute_path.v path)
 ;;
 
 let redact_sexp err ~fields =

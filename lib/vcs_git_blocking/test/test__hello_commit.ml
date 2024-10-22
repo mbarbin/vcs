@@ -26,7 +26,7 @@ let%expect_test "hello commit" =
   let vcs = Vcs_git_blocking.create () in
   let mock_revs = Vcs.Mock_revs.create () in
   let cwd = Unix.getcwd () |> Absolute_path.v in
-  let repo_root = Vcs.For_test.init vcs ~path:cwd in
+  let repo_root = Vcs_test_helpers.init vcs ~path:cwd in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   Vcs.save_file
     vcs
