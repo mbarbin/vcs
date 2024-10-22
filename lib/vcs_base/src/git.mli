@@ -19,4 +19,5 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-include Vcs_interface.Error_S with type t = Error.t
+include module type of Vcs.Git
+module Or_error : S with type 'a result := ('a, Vcs_or_error0.t) Base.Result.t

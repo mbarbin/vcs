@@ -52,15 +52,4 @@ module Private = struct
   end
 
   let view t = t
-
-  module Vcs_base = struct
-    let to_error t =
-      Error.create_s
-        (match view t with
-         | { steps = []; error } -> error
-         | { steps = _ :: _; error = _ } -> sexp_of_t t)
-    ;;
-
-    let of_error error = create_s (Error.sexp_of_t error)
-  end
 end

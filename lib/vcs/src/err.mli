@@ -63,13 +63,4 @@ module Private : sig
   end
 
   val view : t -> View.t
-
-  module Vcs_base : sig
-    (** Inject [t] into [Base.Error.t]. This is useful if you'd like to use [Vcs]
-        inside the [Or_error] monad. *)
-    val to_error : t -> Error.t
-
-    (** Create an error with no initial step. *)
-    val of_error : Error.t -> t
-  end
 end

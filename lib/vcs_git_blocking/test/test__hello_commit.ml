@@ -46,17 +46,17 @@ let%expect_test "hello commit" =
   [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
   print_s
     [%sexp
-      (Vcs.Or_error.show_file_at_rev
+      (Vcs.Result.show_file_at_rev
          vcs
          ~repo_root
          ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.value_exn ~here:[%here])
          ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+       : [ `Present of Vcs.File_contents.t | `Absent ] Vcs.Result.t)];
   [%expect {| (Ok (Present "Hello World!\n")) |}];
   print_s
     [%sexp
-      (Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+      (Vcs.Result.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
+       : [ `Present of Vcs.File_contents.t | `Absent ] Vcs.Result.t)];
   [%expect {| (Ok (Present "Hello World!\n")) |}];
   ()
 ;;
