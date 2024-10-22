@@ -9,7 +9,6 @@
 ### Changed
 
 - Provider interfaces now uses `Vcs.Result` type instead of `Or_error` (#34, @mbarbin).
-- Moved `Vcs.raise_s` to `Vcs.Exn.raise_s` to group exn related helpers (#34, @mbarbin).
 - Rename what was `Vcs.Result` to `Vcs.Rresult` and introduce `Vcs.Result` whose type is simpler (#33, @mbarbin).
 - Moved `ocaml-vcs more-tests` commands at top-level (#28, @mbarbin).
 
@@ -17,8 +16,11 @@
 
 ### Fixed
 
+- Changed some exceptions raised by the `vcs` related libraries to the `Vcs.E` exception (#34, @mbarbin).
+
 ### Removed
 
+- Removed `Vcs.Exn.raise_s` since it is causing `bisect_ppx` unvisitable points (#34, @mbarbin).
 - Removed package `vcs-arg` and inline what's needed directly in `vcs-command` (#28, @mbarbin).
 
 ## 0.0.8 (2024-09-30)

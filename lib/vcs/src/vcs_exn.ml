@@ -23,10 +23,6 @@ let reraise_with_context err bt ~step =
   Stdlib.Printexc.raise_with_backtrace (Exn0.E (Err.add_context err ~step)) bt
 ;;
 
-let raise_s msg sexp =
-  raise (Exn0.E (Err.create_s [%sexp (msg : string), (sexp : Sexp.t)]))
-;;
-
 module Private = struct
   let try_with f =
     match f () with

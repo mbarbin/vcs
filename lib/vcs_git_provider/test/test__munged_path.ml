@@ -26,26 +26,25 @@ let%expect_test "parse" =
   require_does_raise [%here] (fun () -> test "");
   [%expect
     {|
-    (Vcs_git_provider.Munged_path.parse_exn
-     "invalid path"
-     ""
-     (Invalid_argument "\"\": invalid path"))
+    (Vcs.E (
+      (steps ((Vcs_git_provider.Munged_path.parse_exn ((path "")))))
+      (error (Invalid_argument "\"\": invalid path"))))
     |}];
   require_does_raise [%here] (fun () -> test "/tmp => /tmp");
   [%expect
     {|
-    (Vcs_git_provider.Munged_path.parse_exn
-     "invalid path"
-     "/tmp => /tmp"
-     (Invalid_argument "\"/tmp\": not a relative path"))
+    (Vcs.E (
+      (steps ((Vcs_git_provider.Munged_path.parse_exn ((path "/tmp => /tmp")))))
+      (error (Invalid_argument "\"/tmp\": not a relative path"))))
     |}];
   require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
   [%expect
     {|
-    (Vcs_git_provider.Munged_path.parse_exn
-     "invalid path"
-     "tmp => tmp2 => tmp3"
-     "Too many '=>'") |}];
+    (Vcs.E (
+      (steps ((
+        Vcs_git_provider.Munged_path.parse_exn ((path "tmp => tmp2 => tmp3")))))
+      (error "Too many '=>'")))
+    |}];
   test "a/simple/path";
   [%expect {| (One_file a/simple/path) |}];
   test "a/simple/path => another/path";

@@ -78,14 +78,24 @@ let%expect_test "invalid lines" =
       (parent1 aff8c9c8601e68a41a3bb695ea4a276e2446061f)
       (parent2 d3a24cbfad0a681280ecfe021d40b69fb0b9c589)) |}];
   require_does_raise [%here] (fun () -> test "");
-  [%expect {| (Invalid_argument "\"\": invalid rev") |}];
+  [%expect
+    {|
+    (Vcs.E (
+      (steps ((Vcs_git_provider.Log.parse_log_line_exn ((line "")))))
+      (error (Invalid_argument "\"\": invalid rev"))))
+    |}];
   require_does_raise [%here] (fun () ->
     test
       "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f \
        d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b");
   [%expect
     {|
-    ("Invalid log line"
-     "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b") |}];
+    (Vcs.E (
+      (steps ((
+        Vcs_git_provider.Log.parse_log_line_exn ((
+          line
+          "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b")))))
+      (error "Too many words (expected 1, 2, or 3)")))
+    |}];
   ()
 ;;

@@ -45,10 +45,6 @@
     ]} *)
 val reraise_with_context : Err.t -> Stdlib.Printexc.raw_backtrace -> step:Sexp.t -> _
 
-(** Build an err payload from the supplied message and data and raise it as a
-    {!exception:Vcs.E} exception. *)
-val raise_s : string -> Sexp.t -> _
-
 module Private : sig
   (** [try_with f] runs [f] and wraps any exception it raises into an
       {!type:Err.t} error. Because this catches all exceptions, including

@@ -46,7 +46,7 @@ module Diff_status = struct
 
   let parse_exn str : t =
     if String.is_empty str
-    then raise_s [%sexp "Unexpected empty diff status"] [@coverage off];
+    then raise (Vcs.E (Vcs.Err.error_string "Unexpected empty diff status"));
     match str.[0] with
     | 'A' -> `A
     | 'D' -> `D
@@ -64,30 +64,42 @@ module Diff_status = struct
 end
 
 let parse_line_exn ~line : Vcs.Name_status.Change.t =
-  match String.split line ~on:'\t' with
-  | [] -> assert false
-  | [ _ ] -> raise_s [%sexp "Unexpected output from git status", (line : string)]
-  | status :: path :: rest ->
-    (match Diff_status.parse_exn status with
-     | `A -> Added (Vcs.Path_in_repo.v path)
-     | `D -> Removed (Vcs.Path_in_repo.v path)
-     | `M -> Modified (Vcs.Path_in_repo.v path)
-     | (`R | `C) as diff_status ->
-       let similarity =
-         String.sub status ~pos:1 ~len:(String.length status - 1) |> Int.of_string
-       in
-       let path2 =
-         match List.hd rest with
-         | Some hd -> Vcs.Path_in_repo.v hd
-         | None ->
-           raise_s
-             [%sexp "Unexpected output from git status", (line : string)] [@coverage off]
-       in
-       (match diff_status with
-        | `R -> Renamed { src = Vcs.Path_in_repo.v path; dst = path2; similarity }
-        | `C -> Copied { src = Vcs.Path_in_repo.v path; dst = path2; similarity })
-     | other ->
-       raise_s [%sexp "Unexpected status", (status : string), (other : Diff_status.t)])
+  match
+    Vcs.Exn.Private.try_with (fun () ->
+      match String.split line ~on:'\t' with
+      | [] -> assert false
+      | [ _ ] -> raise (Vcs.E (Vcs.Err.error_string "Unexpected output from git status"))
+      | status :: path :: rest ->
+        (match Diff_status.parse_exn status with
+         | `A -> Vcs.Name_status.Change.Added (Vcs.Path_in_repo.v path)
+         | `D -> Removed (Vcs.Path_in_repo.v path)
+         | `M -> Modified (Vcs.Path_in_repo.v path)
+         | (`R | `C) as diff_status ->
+           let similarity =
+             String.sub status ~pos:1 ~len:(String.length status - 1) |> Int.of_string
+           in
+           let path2 =
+             match List.hd rest with
+             | Some hd -> Vcs.Path_in_repo.v hd
+             | None ->
+               raise (Vcs.E (Vcs.Err.error_string "Unexpected output from git status"))
+           in
+           (match diff_status with
+            | `R -> Renamed { src = Vcs.Path_in_repo.v path; dst = path2; similarity }
+            | `C -> Copied { src = Vcs.Path_in_repo.v path; dst = path2; similarity })
+         | other ->
+           raise
+             (Vcs.E
+                (Vcs.Err.create_s
+                   [%sexp "Unexpected status", (status : string), (other : Diff_status.t)]))))
+  with
+  | Ok t -> t
+  | Error err ->
+    raise
+      (Vcs.E
+         (Vcs.Err.add_context
+            err
+            ~step:[%sexp "Vcs_git_provider.Name_status.parse_line_exn", { line : string }]))
 ;;
 
 let parse_lines_exn ~lines = List.map lines ~f:(fun line -> parse_line_exn ~line)

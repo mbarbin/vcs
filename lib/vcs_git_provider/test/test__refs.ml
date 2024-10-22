@@ -55,11 +55,25 @@ let%expect_test "parse_exn" =
 
 let%expect_test "parse_ref_kind_exn" =
   let test_ref_kind str =
-    print_s
-      [%sexp (Vcs_git_provider.Refs.Dereferenced.parse_ref_kind_exn str : Vcs.Ref_kind.t)]
+    print_s [%sexp (Vcs_git_provider.Refs.parse_ref_kind_exn str : Vcs.Ref_kind.t)]
   in
   require_does_raise [%here] (fun () -> test_ref_kind "blah");
-  [%expect {| (Invalid_argument "String.chop_prefix_exn \"blah\" \"refs/\"") |}];
+  [%expect
+    {|
+    (Vcs.E (
+      (steps ((Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind blah)))))
+      (error (Invalid_argument "String.chop_prefix_exn \"blah\" \"refs/\""))))
+    |}];
+  require_does_raise [%here] (fun () -> test_ref_kind "non-refs/tags/0.0.1");
+  [%expect
+    {|
+    (Vcs.E (
+      (steps ((
+        Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind non-refs/tags/0.0.1)))))
+      (error (
+        Invalid_argument
+        "String.chop_prefix_exn \"non-refs/tags/0.0.1\" \"refs/\""))))
+    |}];
   test_ref_kind "refs/blah";
   [%expect {| (Other (name blah)) |}];
   test_ref_kind "refs/blah/blah";
@@ -67,7 +81,13 @@ let%expect_test "parse_ref_kind_exn" =
   test_ref_kind "refs/heads/blah";
   [%expect {| (Local_branch (branch_name blah)) |}];
   require_does_raise [%here] (fun () -> test_ref_kind "refs/remotes/blah");
-  [%expect {| (Invalid_argument "\"blah\": invalid remote_branch_name") |}];
+  [%expect
+    {|
+    (Vcs.E (
+      (steps ((
+        Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind refs/remotes/blah)))))
+      (error (Invalid_argument "\"blah\": invalid remote_branch_name"))))
+    |}];
   test_ref_kind "refs/remotes/origin/main";
   [%expect
     {|
@@ -88,7 +108,12 @@ let%expect_test "dereferenced" =
          : Vcs_git_provider.Refs.Dereferenced.t)]
   in
   require_does_raise [%here] (fun () -> test "");
-  [%expect {| ("Invalid ref line" "") |}];
+  [%expect
+    {|
+    (Vcs.E (
+      (steps ((Vcs_git_provider.Refs.Dereferenced.parse_exn ((line "")))))
+      (error "Invalid ref line")))
+    |}];
   test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main";
   [%expect
     {|

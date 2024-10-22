@@ -21,6 +21,31 @@
 
 open! Import
 
+let parse_ref_kind_exn str : Vcs.Ref_kind.t =
+  match
+    Vcs.Exn.Private.try_with (fun () ->
+      let str = String.chop_prefix_exn str ~prefix:"refs/" in
+      match String.lsplit2 str ~on:'/' with
+      | None -> Vcs.Ref_kind.Other { name = str }
+      | Some (kind, name) ->
+        (match kind with
+         | "heads" -> Local_branch { branch_name = Vcs.Branch_name.v name }
+         | "remotes" ->
+           Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v name }
+         | "tags" -> Tag { tag_name = Vcs.Tag_name.v name }
+         | _ -> Other { name = str }))
+  with
+  | Ok t -> t
+  | Error err ->
+    raise
+      (Vcs.E
+         (Vcs.Err.add_context
+            err
+            ~step:
+              [%sexp
+                "Vcs_git_provider.Refs.parse_ref_kind_exn", { ref_kind = (str : string) }]))
+;;
+
 module Dereferenced = struct
   module T = struct
     [@@@coverage off]
@@ -48,27 +73,34 @@ module Dereferenced = struct
 
   include T
 
-  let parse_ref_kind_exn str : Vcs.Ref_kind.t =
-    let str = String.chop_prefix_exn str ~prefix:"refs/" in
-    match String.lsplit2 str ~on:'/' with
-    | None -> Other { name = str }
-    | Some (kind, name) ->
-      (match kind with
-       | "heads" -> Local_branch { branch_name = Vcs.Branch_name.v name }
-       | "remotes" -> Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v name }
-       | "tags" -> Tag { tag_name = Vcs.Tag_name.v name }
-       | _ -> Other { name = str })
-  ;;
-
   let parse_exn ~line:str =
-    match String.lsplit2 str ~on:' ' with
-    | None -> raise_s [%sexp "Invalid ref line", (str : string)]
-    | Some (rev, ref_) ->
-      (match String.chop_suffix ref_ ~suffix:"^{}" with
-       | Some ref_ ->
-         { rev = Vcs.Rev.v rev; ref_kind = parse_ref_kind_exn ref_; dereferenced = true }
-       | None ->
-         { rev = Vcs.Rev.v rev; ref_kind = parse_ref_kind_exn ref_; dereferenced = false })
+    match
+      Vcs.Exn.Private.try_with (fun () ->
+        match String.lsplit2 str ~on:' ' with
+        | None -> raise (Vcs.E (Vcs.Err.error_string "Invalid ref line"))
+        | Some (rev, ref_) ->
+          (match String.chop_suffix ref_ ~suffix:"^{}" with
+           | Some ref_ ->
+             { rev = Vcs.Rev.v rev
+             ; ref_kind = parse_ref_kind_exn ref_
+             ; dereferenced = true
+             }
+           | None ->
+             { rev = Vcs.Rev.v rev
+             ; ref_kind = parse_ref_kind_exn ref_
+             ; dereferenced = false
+             }))
+    with
+    | Ok t -> t
+    | Error err ->
+      raise
+        (Vcs.E
+           (Vcs.Err.add_context
+              err
+              ~step:
+                [%sexp
+                  "Vcs_git_provider.Refs.Dereferenced.parse_exn"
+                  , { line = (str : string) }]))
   ;;
 end
 

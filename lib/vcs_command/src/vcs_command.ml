@@ -39,9 +39,12 @@ let find_enclosing_repo_root vcs ~from =
   match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fsegment.dot_git, `Git ] with
   | Some (`Git, repo_root) -> repo_root
   | None ->
-    Vcs.Exn.raise_s
-      "Failed to locate enclosing repo root from directory"
-      [%sexp { from : Absolute_path.t }]
+    raise
+      (Vcs.E
+         (Vcs.Err.create_s
+            [%sexp
+              "Failed to locate enclosing repo root from directory"
+              , { from : Absolute_path.t }]))
 ;;
 
 let initialize ~env =
@@ -57,7 +60,9 @@ let relativize ~repo_root ~cwd ~path =
     Absolute_path.chop_prefix path ~prefix:(repo_root |> Vcs.Repo_root.to_absolute_path)
   with
   | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
-  | None -> Vcs.Exn.raise_s "Path is not in repo" [%sexp { path : Absolute_path.t }]
+  | None ->
+    raise
+      (Vcs.E (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }]))
 ;;
 
 let add_cmd =
@@ -463,13 +468,10 @@ let branch_revision_cmd =
        with
        | Some ref -> ref.rev
        | None ->
-         (* This line is covered in tests, but we need to disable coverage
-            reporting here. The reason is that bisect_ppx inserts an unvisitable
-            coverage point at the out-edge of this raising call, which would
-            otherwise result in a false negative in our test coverage. *)
-         Vcs.Exn.raise_s
-           "Branch not found"
-           [%sexp { branch_name : Vcs.Branch_name.t }] [@coverage off]
+         raise
+           (Vcs.E
+              (Vcs.Err.create_s
+                 [%sexp "Branch not found", { branch_name : Vcs.Branch_name.t }]))
      in
      print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
@@ -492,7 +494,8 @@ let greatest_common_ancestors_cmd =
        List.map revs ~f:(fun rev ->
          match Vcs.Graph.find_rev graph ~rev with
          | Some node -> node
-         | None -> Vcs.Exn.raise_s "Rev not found" [%sexp { rev : Vcs.Rev.t }])
+         | None ->
+           raise (Vcs.E (Vcs.Err.create_s [%sexp "Rev not found", { rev : Vcs.Rev.t }])))
      in
      let gca =
        Vcs.Graph.greatest_common_ancestors graph nodes

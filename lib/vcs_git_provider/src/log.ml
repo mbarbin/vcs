@@ -22,14 +22,29 @@
 open! Import
 
 let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
-  match String.split (String.strip str) ~on:' ' with
-  | [ rev ] -> Root { rev = Vcs.Rev.v rev }
-  | [ rev; parent ] -> Commit { rev = Vcs.Rev.v rev; parent = Vcs.Rev.v parent }
-  | [ rev; parent1; parent2 ] ->
-    Merge
-      { rev = Vcs.Rev.v rev; parent1 = Vcs.Rev.v parent1; parent2 = Vcs.Rev.v parent2 }
-  | [] -> assert false
-  | _ :: _ :: _ :: _ -> raise_s [%sexp "Invalid log line", (str : string)]
+  match
+    Vcs.Exn.Private.try_with (fun () ->
+      match String.split (String.strip str) ~on:' ' with
+      | [ rev ] -> Vcs.Log.Line.Root { rev = Vcs.Rev.v rev }
+      | [ rev; parent ] -> Commit { rev = Vcs.Rev.v rev; parent = Vcs.Rev.v parent }
+      | [ rev; parent1; parent2 ] ->
+        Merge
+          { rev = Vcs.Rev.v rev
+          ; parent1 = Vcs.Rev.v parent1
+          ; parent2 = Vcs.Rev.v parent2
+          }
+      | [] -> assert false
+      | _ :: _ :: _ :: _ ->
+        raise (Vcs.E (Vcs.Err.error_string "Too many words (expected 1, 2, or 3)")))
+  with
+  | Ok t -> t
+  | Error err ->
+    raise
+      (Vcs.E
+         (Vcs.Err.add_context
+            err
+            ~step:
+              [%sexp "Vcs_git_provider.Log.parse_log_line_exn", { line = (str : string) }]))
 ;;
 
 module Make (Runtime : Runtime.S) = struct
