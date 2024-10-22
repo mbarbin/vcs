@@ -8,8 +8,8 @@
 
 ### Changed
 
-- Added more labels to the `Vcs.Graph` signature (#37, @mbarbin).
-- Rename `tips` to `leaves` to designate nodes without children (#37, @mbarbin).
+- Added more labels to the `Vcs.Graph` signature (#38, @mbarbin).
+- Rename `tips` to `leaves` to designate nodes without children (#38, @mbarbin).
 - Remove `base` dependency from `vcs` and provider libraries (#36, @mbarbin).
 - Moved `Or_error` related modules to `Vcs_base` (#35, @mbarbin).
 - Provider interfaces now uses `Vcs.Result` type instead of `Or_error` (#34, @mbarbin).
@@ -20,12 +20,12 @@
 
 ### Fixed
 
-- Fixed some odoc warnings related to `Vcs_base` (#37, @mbarbin).
+- Fixed some odoc warnings related to `Vcs_base` (#38, @mbarbin).
 - Changed some exceptions raised by the `vcs` related libraries to the `Vcs.E` exception (#34, @mbarbin).
 
 ### Removed
 
-- Removed `Vcs.For_test` and merged it into `Vcs_test_helpers` (#37, @mbarbin).
+- Removed `Vcs.For_test` and merged it into `Vcs_test_helpers` (#38, @mbarbin).
 - Removed `Vcs.Exn.raise_s` since it is causing `bisect_ppx` unvisitable points (#34, @mbarbin).
 - Removed package `vcs-arg` and inline what's needed directly in `vcs-command` (#28, @mbarbin).
 
