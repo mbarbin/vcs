@@ -499,8 +499,8 @@ let greatest_common_ancestors_cmd =
            raise (Vcs.E (Vcs.Err.create_s [%sexp "Rev not found", { rev : Vcs.Rev.t }])))
      in
      let gca =
-       Vcs.Graph.greatest_common_ancestors graph nodes
-       |> List.map ~f:(fun node -> Vcs.Graph.rev graph node)
+       Vcs.Graph.greatest_common_ancestors graph ~nodes
+       |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
      in
      print_sexp [%sexp (gca : Vcs.Rev.t list)];
      ())

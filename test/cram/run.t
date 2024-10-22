@@ -196,7 +196,7 @@ Graph.
   $ ocaml-vcs graph | stabilize_output
   ((refs (($REV2 refs/heads/main)))
    (roots ($REV0))
-   (tips (($REV2 (refs/heads/main)))))
+   (leaves (($REV2 (refs/heads/main)))))
 
 Greatest common ancestors.
 

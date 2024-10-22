@@ -150,31 +150,31 @@ let create () =
 ;;
 
 let node_count t = Array.length t.nodes
-let node_kind t node = t.nodes.(node)
-let ( .$() ) = node_kind
-let rev t node = Node_kind.rev t.$(node)
+let node_kind t ~node = t.nodes.(node)
+let ( .$() ) t node = node_kind t ~node
+let rev t ~node = Node_kind.rev t.$(node)
 
-let parents t node =
+let parents t ~node =
   match t.$(node) with
   | Node_kind.Root _ -> []
   | Commit { parent; _ } -> [ parent ]
   | Merge { parent1; parent2; _ } -> [ parent1; parent2 ]
 ;;
 
-let prepend_parents t node list =
+let prepend_parents t ~node ~prepend_to:list =
   match t.$(node) with
   | Node_kind.Root _ -> list
   | Commit { parent; _ } -> parent :: list
   | Merge { parent1; parent2; _ } -> parent1 :: parent2 :: list
 ;;
 
-let node_refs t node =
+let node_refs t ~node =
   Int_table.find t.reverse_refs node
   |> Option.value ~default:[]
   |> List.sort ~compare:Ref_kind.compare
 ;;
 
-let log_line t node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.rev t.$(i))
+let log_line t ~node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.rev t.$(i))
 
 (* Helper function to iter over all ancestors of a given node, itself included.
    [visited] is taken as an input so we can re-use the same array multiple
@@ -191,14 +191,14 @@ let iter_ancestors t ~visited node ~f =
         else (
           Bit_vector.set visited node true;
           f node;
-          prepend_parents t node to_visit)
+          prepend_parents t ~node ~prepend_to:to_visit)
       in
       loop to_visit
   in
   loop [ node ]
 ;;
 
-let greatest_common_ancestors t nodes =
+let greatest_common_ancestors t ~nodes =
   match nodes with
   | [] -> []
   | [ node ] -> [ node ]
@@ -353,7 +353,7 @@ let is_strict_ancestor_internal t ~ancestor ~descendant =
            then to_visit
            else (
              Bit_vector.set visited visited_index true;
-             prepend_parents t node to_visit)
+             prepend_parents t ~node ~prepend_to:to_visit)
          in
          loop to_visit)
   in
@@ -397,7 +397,7 @@ let descendance t a b : Descendance.t =
     else Other
 ;;
 
-let tips t =
+let leaves t =
   let has_children = Bit_vector.create ~len:(node_count t) false in
   Array.iter t.nodes ~f:(fun node ->
     match (node : Node_kind.t) with
@@ -411,7 +411,7 @@ let tips t =
   |> Array.to_list
 ;;
 
-let log t = Array.mapi t.nodes ~f:(fun node _ -> log_line t node) |> Array.to_list
+let log t = Array.mapi t.nodes ~f:(fun node _ -> log_line t ~node) |> Array.to_list
 
 module Subgraph = struct
   module T = struct
@@ -475,7 +475,7 @@ let subgraphs t =
   let refs = Array.init num_id ~f:(fun _ -> Queue.create ()) in
   Array.iteri components ~f:(fun i cell ->
     let id = cell.contents in
-    Queue.enqueue logs.(id) (log_line t i));
+    Queue.enqueue logs.(id) (log_line t ~node:i));
   Ref_kind_table.iter t.refs ~f:(fun ~key:ref_kind ~data:index ->
     let id = components.(index).contents in
     Queue.enqueue refs.(id) { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind });
@@ -491,7 +491,7 @@ module Summary = struct
   type t =
     { refs : (Rev.t * string) list
     ; roots : Rev.t list
-    ; tips : (Rev.t * string list) list
+    ; leaves : (Rev.t * string list) list
     ; subgraphs : t list [@sexp_drop_if List.is_empty]
     }
   [@@deriving sexp_of]
@@ -502,16 +502,20 @@ let rec summary t =
     List.map (refs t) ~f:(fun { Refs.Line.rev; ref_kind } ->
       rev, Ref_kind.to_string ref_kind)
   in
-  let tips =
-    List.map (tips t) ~f:(fun node ->
-      rev t node, node_refs t node |> List.map ~f:Ref_kind.to_string)
+  let leaves =
+    List.map (leaves t) ~f:(fun node ->
+      rev t ~node, node_refs t ~node |> List.map ~f:Ref_kind.to_string)
   in
   let subgraphs =
     match subgraphs t with
     | [] | [ _ ] -> []
     | subgraphs -> List.map subgraphs ~f:(fun subgraph -> summary (of_subgraph subgraph))
   in
-  { Summary.refs; roots = roots t |> List.map ~f:(fun id -> rev t id); tips; subgraphs }
+  { Summary.refs
+  ; roots = roots t |> List.map ~f:(fun id -> rev t ~node:id)
+  ; leaves
+  ; subgraphs
+  }
 ;;
 
 let check_index_exn t ~index =

@@ -274,7 +274,7 @@ module Git = Git
     Some helpers are provided by the module {!module:Git} to help you build the
     [f] parameter. Non-raising modules are also included in the [Git] module
     dedicated to their respective result type (see for example
-    {!module:Vcs_base.Vcs.Git.Or_error}).
+    [Vcs_base.Vcs.Git.Or_error]).
 
     The expectation is that you should be using the [Git] module of the API you
     are using to access the [git] function, and not mix and match.
@@ -306,10 +306,6 @@ val git
   -> args:string list
   -> f:(Git.Output.t -> 'a)
   -> 'a
-
-(** {1 Test utils} *)
-
-module For_test = For_test
 
 (** {1:non_raising_apis Non-raising APIs}
 

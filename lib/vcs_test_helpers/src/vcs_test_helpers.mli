@@ -21,6 +21,16 @@
 
 (** Helper library to write tests using vcs. *)
 
+(** This takes care of setting the user config with dummy values, so that you
+    can use [Vcs.commit] without having to worry about your user config on
+    your machine. This isolates the test from your local settings, and also
+    makes things work when running in the GitHub Actions environment, where no
+    default user config exists. *)
+val init
+  :  [> Vcs.Trait.config | Vcs.Trait.init ] Vcs.t
+  -> path:Absolute_path.t
+  -> Vcs.Repo_root.t
+
 type 'a env = 'a
   constraint
     'a =
