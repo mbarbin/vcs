@@ -10,8 +10,8 @@
   -open
   Base
   -open
-  Fpath_base)
- (libraries base fpath fpath-base provider)
+  Fpath_sexp0)
+ (libraries base fpath fpath-sexp0 provider)
  (instrumentation
   (backend bisect_ppx))
  (lint

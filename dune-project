@@ -29,25 +29,9 @@
     (< v0.18)))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.2.2))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
    (and
     (>= v0.17)
     (< v0.18)))
@@ -139,26 +123,6 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -188,26 +152,6 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -238,26 +182,6 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -290,26 +214,6 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (ppx_sexp_conv
    (and
     (>= v0.17)
