@@ -104,24 +104,24 @@ module Node_kind : sig
 end
 
 (** Access the revision of a node. *)
-val rev : t -> Node.t -> Rev.t
+val rev : t -> node:Node.t -> Rev.t
 
 (** Return 0 parents for root nodes, 1 parent for commits, and 2 parents for
     merge nodes. *)
-val parents : t -> Node.t -> Node.t list
+val parents : t -> node:Node.t -> Node.t list
 
-(** [prepend_parents graph node nodes] is an equivalent but more efficient
-    version of [parents graph node @ nodes]. It may be useful for recursive
-    traversal algorithms. *)
-val prepend_parents : t -> Node.t -> Node.t list -> Node.t list
+(** [prepend_parents graph ~node ~prepend_to:nodes] is an equivalent but more
+    efficient version of [parents graph ~node @ nodes]. It may be useful for
+    recursive traversal algorithms. *)
+val prepend_parents : t -> node:Node.t -> prepend_to:Node.t list -> Node.t list
 
 (** Access the given node from the graph and return its node kind. *)
-val node_kind : t -> Node.t -> Node_kind.t
+val node_kind : t -> node:Node.t -> Node_kind.t
 
 (** If the graph has refs (such as tags or branches) attached to this node, they
-    will all be returned by [node_refs graph node]. The order of the refs in
+    will all be returned by [node_refs graph ~node]. The order of the refs in
     the resulting list is not specified. *)
-val node_refs : t -> Node.t -> Ref_kind.t list
+val node_refs : t -> node:Node.t -> Ref_kind.t list
 
 (** Return the number of nodes the graph currently holds. *)
 val node_count : t -> int
@@ -149,7 +149,7 @@ val mem_rev : t -> rev:Rev.t -> bool
 val roots : t -> Node.t list
 
 (** Return the list of nodes that do not have any children. *)
-val tips : t -> Node.t list
+val leaves : t -> Node.t list
 
 (** {1 Ancestors & Descendance}
 
@@ -168,7 +168,7 @@ val is_strict_ancestor : t -> ancestor:Node.t -> descendant:Node.t -> bool
     [a] is a strict ancestor of [b] or if [a] is equal to [b]. *)
 val is_ancestor_or_equal : t -> ancestor:Node.t -> descendant:Node.t -> bool
 
-(** [greatest_common_ancestors t nodes] returns the list of nodes that are the
+(** [greatest_common_ancestors t ~nodes] returns the list of nodes that are the
     greatest common ancestors of the nodes in the list [nodes] in the graph [t].
 
     A greatest common ancestor of a set of nodes is a node that is an ancestor
@@ -181,7 +181,7 @@ val is_ancestor_or_equal : t -> ancestor:Node.t -> descendant:Node.t -> bool
 
     Multiple nodes may have multiple greatest common ancestors, especially in
     cases of complex merge histories, hence the list return type. *)
-val greatest_common_ancestors : t -> Node.t list -> Node.t list
+val greatest_common_ancestors : t -> nodes:Node.t list -> Node.t list
 
 module Descendance : sig
   (** Given two nodes we can determine whether one is an ancestor of the other.
@@ -228,7 +228,7 @@ val descendance : t -> Node.t -> Node.t -> Descendance.t
 
 (** Rebuild the log line that represented this node in the git log. This is
     mainly used for tests and display purposes. *)
-val log_line : t -> Node.t -> Log.Line.t
+val log_line : t -> node:Node.t -> Log.Line.t
 
 (** Rebuild the entire log. *)
 val log : t -> Log.t

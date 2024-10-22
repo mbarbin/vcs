@@ -44,11 +44,13 @@ let%expect_test "graph" =
   let refs = Vcs.Graph.refs graph in
   List.iter refs ~f:(fun { rev; ref_kind } ->
     let node = Vcs.Graph.find_ref graph ~ref_kind |> Option.value_exn ~here:[%here] in
-    let rev' = Vcs.Graph.rev graph node in
+    let rev' = Vcs.Graph.rev graph ~node in
     require_equal [%here] (module Vcs.Rev) rev rev';
     let node' = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
     require_equal [%here] (module Vcs.Graph.Node) node node';
-    let parents = Vcs.Graph.parents graph node |> List.map ~f:(Vcs.Graph.rev graph) in
+    let parents =
+      Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
+    in
     print_s
       [%sexp { ref_kind : Vcs.Ref_kind.t; rev : Vcs.Rev.t; parents : Vcs.Rev.t list }]);
   [%expect
@@ -130,7 +132,7 @@ let%expect_test "graph" =
      (roots (
        da46f0d60bfbb9dc9340e95f5625c10815c24af7
        35760b109070be51b9deb61c8fdc79c0b2d9065d))
-     (tips (
+     (leaves (
        (a2cc521adbc8dcbd4855968698176e8af54f6550 (
          refs/remotes/origin/progress-bar))
        (8e0e6821261f8baaff7bf4d6820c41417bab91eb (
@@ -157,7 +159,7 @@ let%expect_test "graph" =
           (fc8e67fbc47302b7da682e9a7da626790bb59eaa refs/tags/0.0.3)
           (1887c81ebf9b84c548bc35038f7af82a18eb77bf refs/tags/0.0.3-preview.1)))
         (roots (da46f0d60bfbb9dc9340e95f5625c10815c24af7))
-        (tips (
+        (leaves (
           (2e4fbeae154ec896262decf1ab3bee5687b93f21 (
             refs/heads/main refs/heads/subrepo refs/remotes/origin/main))
           (7500919364fb176946e7598051ca7247addc3d15 (
@@ -170,9 +172,10 @@ let%expect_test "graph" =
           (7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages)
           (7135b7f4790562e94d9122365478f0d39f5ffead refs/remotes/origin/gh-pages)))
         (roots (35760b109070be51b9deb61c8fdc79c0b2d9065d))
-        (tips ((
+        (leaves ((
           7135b7f4790562e94d9122365478f0d39f5ffead (
-            refs/heads/gh-pages refs/remotes/origin/gh-pages)))))))) |}];
+            refs/heads/gh-pages refs/remotes/origin/gh-pages))))))))
+    |}];
   let main =
     Vcs.Graph.find_ref
       graph
@@ -208,8 +211,8 @@ let%expect_test "graph" =
   List.iter [ main; subrepo; progress_bar; tag_0_0_1; tag_0_0_2 ] ~f:(fun node ->
     print_s
       [%sexp
-        { node = (Vcs.Graph.rev graph node : Vcs.Rev.t)
-        ; refs = (Vcs.Graph.node_refs graph node : Vcs.Ref_kind.t list)
+        { node = (Vcs.Graph.rev graph ~node : Vcs.Rev.t)
+        ; refs = (Vcs.Graph.node_refs graph ~node : Vcs.Ref_kind.t list)
         }]);
   [%expect
     {|
@@ -271,7 +274,7 @@ let%expect_test "graph" =
   let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
   let ref_kind rev =
     let node = node_exn rev in
-    let line = Vcs.Graph.log_line graph node in
+    let line = Vcs.Graph.log_line graph ~node in
     print_s [%sexp (line : Vcs.Log.Line.t)]
   in
   ref_kind tip;
@@ -293,7 +296,7 @@ let%expect_test "graph" =
   let parents rev =
     let node = node_exn rev in
     let parents =
-      Vcs.Graph.parents graph node |> List.map ~f:(fun node -> Vcs.Graph.rev graph node)
+      Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
     in
     print_s [%sexp (parents : Vcs.Rev.t list)]
   in
@@ -333,9 +336,10 @@ let%expect_test "empty summary" =
   let graph = Vcs.Graph.create () in
   print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
   [%expect {|
-    ((refs  ())
-     (roots ())
-     (tips  ())) |}];
+    ((refs   ())
+     (roots  ())
+     (leaves ()))
+    |}];
   ()
 ;;
 
@@ -481,15 +485,17 @@ let%expect_test "greatest_common_ancestors" =
   in
   let gcas revs =
     let gcas =
-      Vcs.Graph.greatest_common_ancestors graph (List.map revs ~f:(fun rev -> node ~rev))
+      Vcs.Graph.greatest_common_ancestors
+        graph
+        ~nodes:(List.map revs ~f:(fun rev -> node ~rev))
       |> List.map ~f:(fun node ->
-        match Vcs.Graph.node_refs graph node with
+        match Vcs.Graph.node_refs graph ~node with
         | ref :: _ -> Vcs.Ref_kind.to_string ref
         | [] ->
           (* This branch is kept for debug if it is executed by mistake but we
              shouldn't exercise this case since this makes the tests results
              harder to understand. *)
-          (Vcs.Graph.rev graph node |> Vcs.Rev.to_string) [@coverage off])
+          (Vcs.Graph.rev graph ~node |> Vcs.Rev.to_string) [@coverage off])
     in
     print_s [%sexp { gcas : string list }]
   in
@@ -555,7 +561,10 @@ let ancestors graph node =
     | node :: to_visit ->
       if Set.mem acc node
       then loop acc to_visit
-      else loop (Set.add acc node) (Vcs.Graph.prepend_parents graph node to_visit)
+      else
+        loop
+          (Set.add acc node)
+          (Vcs.Graph.prepend_parents graph ~node ~prepend_to:to_visit)
   in
   loop (Set.empty (module Vcs_base.Vcs.Graph.Node)) [ node ]
 ;;
@@ -640,7 +649,7 @@ let%expect_test "debug graph" =
   (* node_kind *)
   let node_kind rev =
     let node = node ~rev in
-    print_s [%sexp (Vcs.Graph.node_kind graph node : Vcs.Graph.Node_kind.t)]
+    print_s [%sexp (Vcs.Graph.node_kind graph ~node : Vcs.Graph.Node_kind.t)]
   in
   node_kind r1;
   [%expect {| (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
