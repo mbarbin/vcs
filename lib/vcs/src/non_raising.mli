@@ -22,9 +22,9 @@
 (** A functor to build non raising interfaces for [Vcs] based on a custom result
     type.
 
-    In addition to {!module:Vcs.Or_error} and {!module:Vcs.Result}, we provide
-    this functor to create a [Vcs] interface based on a custom result type of
-    your choice. See also {!module:Vcs.Git.Non_raising.Make}. *)
+    In addition to {!module:Vcs_base.Vcs.Or_error} and {!module:Vcs.Result}, we
+    provide this functor to create a [Vcs] interface based on a custom error
+    type of your choice. See also {!module:Vcs.Git.Non_raising.Make}. *)
 
 module type M = Vcs_interface.Error_S
 module type S = Vcs_interface.S

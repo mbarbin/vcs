@@ -21,8 +21,6 @@
 
 module Vcs = Vcs_base.Vcs
 
-(* [Vcs.Git.Or_error] *)
-
 let%expect_test "exit0" =
   let test output = print_s [%sexp (Vcs.Git.Or_error.exit0 output : unit Or_error.t)] in
   test { exit_code = 0; stdout = ""; stderr = "" };
