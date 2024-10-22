@@ -45,14 +45,14 @@ Only keep sexp related ppx that have no runtime dependency on `base`, such as `s
 
 ### Stage 6 - Remove base dependency from `Vcs`
 
-- [ ] Pending
+- [x] Completed: Oct. 2024
 
 Use `vcs/src/import` to make a local mini-stdlib with utils required to remove `base` dependency.
 
 Do this for the other libraries:
 
-- [ ] vcs
-- [ ] vcs_command
-- [ ] vcs_git_blocking
-- [ ] vcs_git_eio
-- [ ] vcs_git_provider
+- [x] vcs
+- [x] vcs_command
+- [x] vcs_git_blocking
+- [x] vcs_git_eio
+- [x] vcs_git_provider
