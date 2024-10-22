@@ -13,7 +13,9 @@
   -open
   Fpath_sexp0
   -open
-  Expect_test_helpers_base)
+  Expect_test_helpers_base
+  -open
+  Vcs_base)
  (libraries
   base
   eio
@@ -22,6 +24,7 @@
   fpath
   fpath-sexp0
   vcs
+  vcs_base
   vcs_git_eio
   vcs_test_helpers)
  (instrumentation

@@ -22,4 +22,4 @@
 type err = Vcs_or_error0.t [@@deriving sexp_of]
 type 'a t = ('a, err) Result.t [@@deriving sexp_of]
 
-include Non_raising.Make (Vcs_or_error0)
+include Vcs.Non_raising.Make (Vcs_or_error0)

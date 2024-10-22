@@ -19,44 +19,47 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Author = Author
-module Branch_name = Branch_name
-module Commit_message = Commit_message
-module Err = Err
-module Exn = Vcs_exn
-module File_contents = File_contents
-module For_test = For_test
-module Git = Git
-module Graph = Graph
-module Log = Log
-module Mock_rev_gen = Mock_rev_gen
-module Mock_revs = Mock_revs
-module Name_status = Name_status
-module Non_raising = Non_raising
-module Num_status = Num_status
-module Num_lines_in_diff = Num_lines_in_diff
-module Path_in_repo = Path_in_repo
-module Platform = Platform
-module Ref_kind = Ref_kind
-module Refs = Refs
-module Remote_branch_name = Remote_branch_name
-module Remote_name = Remote_name
-module Repo_name = Repo_name
-module Repo_root = Repo_root
-module Result = Vcs_result
-module Rresult = Vcs_rresult
-module Rev = Rev
-module Tag_name = Tag_name
-module Trait = Trait
-module Url = Url
-module User_email = User_email
-module User_handle = User_handle
-module User_name = User_name
-include Exn0
-include Vcs0
+module Vcs = Vcs_base.Vcs
 
-module Private = struct
-  module Bit_vector = Bit_vector
-  module Import = Import
-  module Validated_string = Validated_string
-end
+(* [Vcs.Git.Or_error] *)
+
+let%expect_test "exit0" =
+  let test output = print_s [%sexp (Vcs.Git.Or_error.exit0 output : unit Or_error.t)] in
+  test { exit_code = 0; stdout = ""; stderr = "" };
+  [%expect {| (Ok ()) |}];
+  (* The error does not contain the stdout or stderr, as this is already handled
+     by the code that interprets the result of the user function supplied to
+     [Vcs.Or_error.git]. *)
+  test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
+  [%expect {| (Error "expected exit code 0") |}];
+  ()
+;;
+
+let%expect_test "exit0_and_stdout" =
+  let test output =
+    print_s [%sexp (Vcs.Git.Or_error.exit0_and_stdout output : string Or_error.t)]
+  in
+  test { exit_code = 0; stdout = "stdout"; stderr = "" };
+  [%expect {| (Ok stdout) |}];
+  (* Same remark as in [exit0] regarding the error trace. *)
+  test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
+  [%expect {| (Error "expected exit code 0") |}];
+  ()
+;;
+
+let%expect_test "exit_code" =
+  let test output =
+    print_s
+      [%sexp
+        (Vcs.Git.Or_error.exit_code output ~accept:[ 0, "ok"; 42, "other" ]
+         : string Or_error.t)]
+  in
+  test { exit_code = 0; stdout = ""; stderr = "" };
+  [%expect {| (Ok ok) |}];
+  test { exit_code = 42; stdout = ""; stderr = "" };
+  [%expect {| (Ok other) |}];
+  (* Same remark as in [exit0] regarding the error trace. *)
+  test { exit_code = 1; stdout = ""; stderr = "" };
+  [%expect {| (Error ("unexpected exit code" ((accepted_codes (0 42))))) |}];
+  ()
+;;

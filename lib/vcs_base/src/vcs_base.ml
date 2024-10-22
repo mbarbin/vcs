@@ -25,6 +25,7 @@ module Vcs = struct
   module Commit_message = Commit_message
   module Err = Err
   module File_contents = File_contents
+  module Git = Git
   module Graph = Graph
   module Name_status = Name_status
   module Num_lines_in_diff = Num_lines_in_diff
@@ -51,6 +52,7 @@ module Vcs = struct
        and module Commit_message := Vcs.Commit_message
        and module Err := Vcs.Err
        and module File_contents := Vcs.File_contents
+       and module Git := Vcs.Git
        and module Graph := Vcs.Graph
        and module Name_status := Vcs.Name_status
        and module Num_lines_in_diff := Vcs.Num_lines_in_diff
@@ -68,4 +70,6 @@ module Vcs = struct
        and module User_email := Vcs.User_email
        and module User_handle := Vcs.User_handle
        and module User_name := Vcs.User_name)
+
+  module Or_error = Vcs_or_error
 end

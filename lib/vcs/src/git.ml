@@ -83,6 +83,5 @@ let exit0 output = Result_impl.exit0 output |> err_exn
 let exit0_and_stdout output = Result_impl.exit0_and_stdout output |> err_exn
 let exit_code output ~accept = Result_impl.exit_code output ~accept |> err_exn
 
-module Or_error = Non_raising.Make (Vcs_or_error0)
 module Rresult = Non_raising.Make (Vcs_rresult0)
 module Result = Result_impl

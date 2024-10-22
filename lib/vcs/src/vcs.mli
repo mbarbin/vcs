@@ -317,7 +317,6 @@ module For_test = For_test
     strategies, [Vcs] exports non-raising APIs. The functions there return
     [Result.t]s instead of raising. *)
 
-module Or_error = Vcs_or_error
 module Result = Vcs_result
 module Rresult = Vcs_rresult
 module Non_raising = Non_raising

@@ -39,9 +39,9 @@ Only keep sexp related ppx that have no runtime dependency on `base`, such as `s
 
 - [x] Completed: Oct. 2024
 
-### Stage 5 - Move `Or_error` module into `Vcs_base`.
+### Stage 5 - Move modules related to `Or_error` into `Vcs_base`.
 
-- [ ] Pending
+- [x] Completed: Oct. 2024
 
 ### Stage 6 - Remove base dependency from `Vcs`
 

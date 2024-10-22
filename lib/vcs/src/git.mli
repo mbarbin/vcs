@@ -59,6 +59,5 @@ module Non_raising : sig
   module Make (M : M) : S with type 'a result := ('a, M.t) Result.t
 end
 
-module Or_error : S with type 'a result := ('a, Vcs_or_error0.t) Result.t
 module Rresult : S with type 'a result := ('a, Vcs_rresult0.t) Result.t
 module Result : S with type 'a result := ('a, Err.t) Result.t
