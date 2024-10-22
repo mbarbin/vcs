@@ -39,7 +39,7 @@ let next (t : t) =
   let i = t.counter in
   t.counter <- i + 1;
   let seed = Printf.sprintf "%d virtual-rev %s %d" i t.name i in
-  let hex = seed |> Stdlib.Digest.string |> Stdlib.Digest.to_hex in
-  let rev = String.init 40 ~f:(fun i -> hex.[i % String.length hex]) in
+  let hex = seed |> Digest.string |> Digest.to_hex in
+  let rev = String.init 40 ~f:(fun i -> hex.[i mod String.length hex]) in
   Rev.v rev
 ;;

@@ -32,7 +32,7 @@ type t =
 
 let compare =
   (fun a__001_ b__002_ ->
-     if Stdlib.( == ) a__001_ b__002_
+     if a__001_ == b__002_
      then 0
      else (
        match a__001_, b__002_ with
@@ -56,7 +56,7 @@ let compare =
 
 let equal =
   (fun a__011_ b__012_ ->
-     if Stdlib.( == ) a__011_ b__012_
+     if a__011_ == b__012_
      then true
      else (
        match a__011_, b__012_ with
@@ -75,8 +75,8 @@ let equal =
    : t -> t -> bool)
 ;;
 
-let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
-let hash = (Stdlib.Hashtbl.hash : t -> int)
+let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
+let hash = (Hashtbl.hash : t -> int)
 
 let to_string = function
   | Local_branch { branch_name } -> "refs/heads/" ^ Branch_name.to_string branch_name

@@ -79,7 +79,7 @@ let%expect_test "to_string_hum" =
   test { insertions = 0; deletions = 15 };
   [%expect {| -15 |}];
   test { insertions = 1999; deletions = 13898 };
-  [%expect {| +1,999, -13,898 |}];
+  [%expect {| +1_999, -13_898 |}];
   ()
 ;;
 

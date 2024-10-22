@@ -20,17 +20,3 @@
 (*******************************************************************************)
 
 include Vcs.Num_lines_in_diff
-
-let to_string_hum { insertions; deletions } =
-  let int_hum i = Int.to_string_hum ~delimiter:',' i in
-  match
-    [ (if insertions > 0 then Some ("+" ^ int_hum insertions) else None)
-    ; (if deletions > 0 then Some ("-" ^ int_hum deletions) else None)
-    ]
-    |> List.filter_opt
-  with
-  | [] -> "0"
-  | [ hd ] -> hd
-  | [ a; b ] -> a ^ ", " ^ b
-  | _ :: _ :: _ :: _ -> assert false
-;;

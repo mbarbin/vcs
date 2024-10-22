@@ -26,8 +26,8 @@ module Node = struct
 
   let compare = Int.compare
   let equal = Int.equal
-  let hash = Stdlib.Int.hash
-  let seeded_hash = Stdlib.Int.seeded_hash
+  let hash = Int.hash
+  let seeded_hash = Int.seeded_hash
   let sexp_of_t i = Sexp.Atom ("#" ^ Int.to_string_hum i)
 end
 
@@ -50,7 +50,7 @@ module Node_kind = struct
 
     let equal =
       (fun a__001_ b__002_ ->
-         if Stdlib.( == ) a__001_ b__002_
+         if a__001_ == b__002_
          then true
          else (
            match a__001_, b__002_ with
@@ -58,17 +58,14 @@ module Node_kind = struct
            | Root _, _ -> false
            | _, Root _ -> false
            | Commit _a__005_, Commit _b__006_ ->
-             Stdlib.( && )
-               (Rev.equal _a__005_.rev _b__006_.rev)
-               (Node.equal _a__005_.parent _b__006_.parent)
+             Rev.equal _a__005_.rev _b__006_.rev
+             && Node.equal _a__005_.parent _b__006_.parent
            | Commit _, _ -> false
            | _, Commit _ -> false
            | Merge _a__007_, Merge _b__008_ ->
-             Stdlib.( && )
-               (Rev.equal _a__007_.rev _b__008_.rev)
-               (Stdlib.( && )
-                  (Node.equal _a__007_.parent1 _b__008_.parent1)
-                  (Node.equal _a__007_.parent2 _b__008_.parent2)))
+             Rev.equal _a__007_.rev _b__008_.rev
+             && Node.equal _a__007_.parent1 _b__008_.parent1
+             && Node.equal _a__007_.parent2 _b__008_.parent2)
        : t -> t -> bool)
     ;;
   end
@@ -104,10 +101,10 @@ module T = struct
   end
 
   module Revs = struct
-    type t = int Hashtbl.M(Rev).t
+    type t = int Rev_table.t
 
     let sexp_of_t (t : t) =
-      let revs = Hashtbl.to_alist t |> Array.of_list in
+      let revs = Rev_table.to_seq t |> Array.of_seq in
       Array.sort revs ~compare:(fun (_, n1) (_, n2) -> Int.compare n2 n1);
       revs
       |> Array.map ~f:(fun (rev, index) -> index, rev)
@@ -116,10 +113,14 @@ module T = struct
   end
 
   module Reverse_refs = struct
-    type t = Ref_kind.t list Hashtbl.M(Int).t
+    type t = Ref_kind.t list Int_table.t
 
     let sexp_of_t (t : t) =
-      let revs = Hashtbl.to_alist t |> Array.of_list in
+      let revs =
+        Int_table.to_seq t
+        |> Array.of_seq
+        |> Array.map ~f:(fun (n, refs) -> n, List.sort refs ~compare:Ref_kind.compare)
+      in
       Array.sort revs ~compare:(fun (n1, _) (n2, _) -> Int.compare n2 n1);
       revs |> [%sexp_of: (Node.t * Ref_kind.t list) array]
     ;;
@@ -127,9 +128,9 @@ module T = struct
 
   type t =
     { mutable nodes : Nodes.t
-    ; revs : int Hashtbl.M(Rev).t
-    ; refs : int Hashtbl.M(Ref_kind).t
-    ; reverse_refs : Ref_kind.t list Hashtbl.M(Int).t
+    ; revs : int Rev_table.t
+    ; refs : int Ref_kind_table.t
+    ; reverse_refs : Ref_kind.t list Int_table.t
     }
 
   let sexp_of_t { nodes; revs; refs = _; reverse_refs } =
@@ -140,10 +141,11 @@ end
 include T
 
 let create () =
+  let init = 37 in
   { nodes = [||]
-  ; revs = Hashtbl.create (module Rev)
-  ; refs = Hashtbl.create (module Ref_kind)
-  ; reverse_refs = Hashtbl.create (module Int)
+  ; revs = Rev_table.create init
+  ; refs = Ref_kind_table.create init
+  ; reverse_refs = Int_table.create init
   }
 ;;
 
@@ -167,7 +169,7 @@ let prepend_parents t node list =
 ;;
 
 let node_refs t node =
-  Hashtbl.find t.reverse_refs node
+  Int_table.find t.reverse_refs node
   |> Option.value ~default:[]
   |> List.sort ~compare:Ref_kind.compare
 ;;
@@ -221,80 +223,98 @@ let greatest_common_ancestors t nodes =
 ;;
 
 let refs t =
-  Hashtbl.to_alist t.refs
+  Ref_kind_table.to_seq t.refs
+  |> List.of_seq
   |> List.sort ~compare:(fun (r1, _) (r2, _) -> Ref_kind.compare r1 r2)
   |> List.map ~f:(fun (ref_kind, index) ->
     { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind })
 ;;
 
 let set_ref t ~rev ~ref_kind =
-  match Hashtbl.find t.revs rev with
+  match Rev_table.find t.revs rev with
   | None -> raise (Exn0.E (Err.create_s [%sexp "Rev not found", (rev : Rev.t)]))
   | Some index ->
-    Hashtbl.set t.refs ~key:ref_kind ~data:index;
-    Hashtbl.add_multi t.reverse_refs ~key:index ~data:ref_kind
+    Ref_kind_table.set t.refs ~key:ref_kind ~data:index;
+    Int_table.add_multi t.reverse_refs ~key:index ~data:ref_kind
 ;;
 
 let set_refs t ~refs =
   List.iter refs ~f:(fun { Refs.Line.rev; ref_kind } -> set_ref t ~rev ~ref_kind)
 ;;
 
-let find_ref t ~ref_kind = Hashtbl.find t.refs ref_kind
-let mem_rev t ~rev = Hashtbl.mem t.revs rev
-let find_rev t ~rev = Hashtbl.find t.revs rev
+let find_ref t ~ref_kind = Ref_kind_table.find t.refs ref_kind
+let mem_rev t ~rev = Rev_table.mem t.revs rev
+let find_rev t ~rev = Rev_table.find t.revs rev
 
 let add_nodes t ~log =
+  let line_count = List.length log in
   let nodes_table =
-    let table = Hashtbl.create (module Rev) in
+    let table = Rev_table.create line_count in
     List.iter log ~f:(fun line ->
-      Hashtbl.add_exn table ~key:(Log.Line.rev line) ~data:line);
+      Rev_table.add_exn table ~key:(Log.Line.rev line) ~data:line);
     table
   in
-  let new_nodes = Queue.create ~capacity:(List.length log) () in
-  let visited = Hash_set.create (module Rev) in
+  let new_nodes = Queue.create () in
+  let visited = Rev_table.create line_count in
   let is_visited rev =
-    if Hash_set.mem visited rev
+    if Rev_table.mem visited rev
     then true
     else if mem_rev t ~rev
     then (
-      Hash_set.add visited rev;
+      Rev_table.add visited ~key:rev ~data:();
       true)
     else false
   in
   let rec visit (line : Log.Line.t) =
+    let find_parent parent =
+      match Rev_table.find nodes_table parent with
+      | Some node -> node
+      | None ->
+        raise
+          (Exn0.E (Err.create_s [%sexp "Parent not found", (line : Log.Line.t)]))
+        [@coverage off]
+    in
     match (line : Log.Line.t) with
     | Root { rev } ->
       if not (is_visited rev)
       then (
-        Hash_set.add visited rev;
+        Rev_table.add visited ~key:rev ~data:();
         Queue.enqueue new_nodes line)
     | Commit { rev; parent } ->
       if not (is_visited rev)
       then (
-        Hash_set.add visited rev;
-        if not (Hashtbl.mem t.revs parent)
-        then visit (Hashtbl.find_exn nodes_table parent);
+        Rev_table.add visited ~key:rev ~data:();
+        if not (Rev_table.mem t.revs parent) then visit (find_parent parent);
         Queue.enqueue new_nodes line)
     | Merge { rev; parent1; parent2 } ->
       if not (is_visited rev)
       then (
-        Hash_set.add visited rev;
-        if not (Hashtbl.mem t.revs parent1)
-        then visit (Hashtbl.find_exn nodes_table parent1);
-        if not (Hashtbl.mem t.revs parent2)
-        then visit (Hashtbl.find_exn nodes_table parent2);
+        Rev_table.add visited ~key:rev ~data:();
+        if not (Rev_table.mem t.revs parent1) then visit (find_parent parent1);
+        if not (Rev_table.mem t.revs parent2) then visit (find_parent parent2);
         Queue.enqueue new_nodes line)
   in
   (* We iter in reverse order to makes the depth of visited path shorter. *)
   List.iter (List.rev log) ~f:visit;
   let new_index = Array.length t.nodes in
   let new_nodes =
-    let find_node_exn rev = Hashtbl.find_exn t.revs rev in
-    Queue.to_array new_nodes
+    let find_node_exn rev =
+      match Rev_table.find t.revs rev with
+      | Some node -> node
+      | None ->
+        raise
+          (Exn0.E
+             (Err.create_s
+                [%sexp
+                  "Node not found during the building of new nodes (internal error)"
+                  , { rev : Rev.t }])) [@coverage off]
+    in
+    Queue.to_seq new_nodes
+    |> Array.of_seq
     |> Array.mapi ~f:(fun i node ->
       let index = new_index + i in
       let rev = Log.Line.rev node in
-      Hashtbl.add_exn t.revs ~key:rev ~data:index;
+      Rev_table.add_exn t.revs ~key:rev ~data:index;
       match node with
       | Root _ -> Node_kind.Root { rev }
       | Commit { rev; parent; _ } ->
@@ -358,10 +378,10 @@ module Descendance = struct
     | Other
   [@@deriving enumerate, sexp_of]
 
-  let compare = (Stdlib.compare : t -> t -> int)
-  let equal = (Stdlib.( = ) : t -> t -> bool)
-  let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
-  let hash = (Stdlib.Hashtbl.hash : t -> int)
+  let compare = (compare : t -> t -> int)
+  let equal = (( = ) : t -> t -> bool)
+  let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
+  let hash = (Hashtbl.hash : t -> int)
 end
 
 let descendance t a b : Descendance.t =
@@ -380,7 +400,7 @@ let descendance t a b : Descendance.t =
 let tips t =
   let has_children = Bit_vector.create ~len:(node_count t) false in
   Array.iter t.nodes ~f:(fun node ->
-    match node with
+    match (node : Node_kind.t) with
     | Root _ -> ()
     | Commit { parent; _ } -> Bit_vector.set has_children parent true
     | Merge { parent1; parent2; _ } ->
@@ -430,7 +450,7 @@ let subgraphs t =
   let component_id = ref 0 in
   Array.iteri t.nodes ~f:(fun i node ->
     let representative =
-      match node with
+      match (node : Node_kind.t) with
       | Root { rev = _ } ->
         (* Mint a new representative. *)
         let id = component_id.contents in
@@ -456,13 +476,13 @@ let subgraphs t =
   Array.iteri components ~f:(fun i cell ->
     let id = cell.contents in
     Queue.enqueue logs.(id) (log_line t i));
-  Hashtbl.iteri t.refs ~f:(fun ~key:ref_kind ~data:index ->
+  Ref_kind_table.iter t.refs ~f:(fun ~key:ref_kind ~data:index ->
     let id = components.(index).contents in
     Queue.enqueue refs.(id) { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind });
-  Array.map2_exn logs refs ~f:(fun log refs ->
+  Array.map2 logs refs ~f:(fun log refs ->
     { Subgraph.log = Queue.to_list log; refs = Queue.to_list refs })
-  |> Array.filter ~f:(fun subgraph -> not (Subgraph.is_empty subgraph))
   |> Array.to_list
+  |> List.filter ~f:(fun subgraph -> not (Subgraph.is_empty subgraph))
 ;;
 
 module Summary = struct

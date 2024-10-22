@@ -8,12 +8,12 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Fpath_sexp0
   -open
-  Or_error.Let_syntax)
- (libraries base fpath fpath-sexp0 vcs)
+  Sexplib0
+  -open
+  Sexplib0.Sexp_conv)
+ (libraries astring fpath fpath-sexp0 sexplib0 vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

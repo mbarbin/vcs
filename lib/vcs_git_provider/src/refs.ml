@@ -24,7 +24,12 @@ open! Import
 let parse_ref_kind_exn str : Vcs.Ref_kind.t =
   match
     Vcs.Exn.Private.try_with (fun () ->
-      let str = String.chop_prefix_exn str ~prefix:"refs/" in
+      let str =
+        match String.chop_prefix str ~prefix:"refs/" with
+        | Some str -> str
+        | None ->
+          raise (Vcs.E (Vcs.Err.error_string "Expected ref to start with 'refs/'"))
+      in
       match String.lsplit2 str ~on:'/' with
       | None -> Vcs.Ref_kind.Other { name = str }
       | Some (kind, name) ->
@@ -59,14 +64,12 @@ module Dereferenced = struct
 
     let equal =
       (fun a__001_ b__002_ ->
-         if Stdlib.( == ) a__001_ b__002_
+         if a__001_ == b__002_
          then true
          else
-           Stdlib.( && )
-             (Vcs.Rev.equal a__001_.rev b__002_.rev)
-             (Stdlib.( && )
-                (Vcs.Ref_kind.equal a__001_.ref_kind b__002_.ref_kind)
-                (equal_bool a__001_.dereferenced b__002_.dereferenced))
+           Vcs.Rev.equal a__001_.rev b__002_.rev
+           && Vcs.Ref_kind.equal a__001_.ref_kind b__002_.ref_kind
+           && equal_bool a__001_.dereferenced b__002_.dereferenced
        : t -> t -> bool)
     ;;
   end
@@ -104,16 +107,18 @@ module Dereferenced = struct
   ;;
 end
 
+module Ref_kind_table = Vcs.Private.Ref_kind_table
+
 let parse_lines_exn ~lines =
   let lines = List.map lines ~f:(fun line -> Dereferenced.parse_exn ~line) in
   let dereferenced_refs =
-    let refs = Hash_set.create (module Vcs.Ref_kind) in
-    List.iter lines ~f:(fun line ->
-      if line.dereferenced then Hash_set.add refs line.ref_kind);
+    let refs = Ref_kind_table.create (List.length lines) in
+    List.iter lines ~f:(fun (line : Dereferenced.t) ->
+      if line.dereferenced then Ref_kind_table.add refs ~key:line.ref_kind ~data:());
     refs
   in
   List.filter_map lines ~f:(fun { Dereferenced.rev; ref_kind; dereferenced } ->
-    if Hash_set.mem dereferenced_refs ref_kind && not dereferenced
+    if Ref_kind_table.mem dereferenced_refs ref_kind && not dereferenced
     then None
     else Some { Vcs.Refs.Line.rev; ref_kind })
 ;;

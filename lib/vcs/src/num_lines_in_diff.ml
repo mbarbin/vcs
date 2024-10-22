@@ -30,7 +30,7 @@ module T = struct
 
   let compare =
     (fun a__001_ b__002_ ->
-       if Stdlib.( == ) a__001_ b__002_
+       if a__001_ == b__002_
        then 0
        else (
          match compare_int a__001_.insertions b__002_.insertions with
@@ -41,12 +41,11 @@ module T = struct
 
   let equal =
     (fun a__003_ b__004_ ->
-       if Stdlib.( == ) a__003_ b__004_
+       if a__003_ == b__004_
        then true
        else
-         Stdlib.( && )
-           (equal_int a__003_.insertions b__004_.insertions)
-           (equal_int a__003_.deletions b__004_.deletions)
+         equal_int a__003_.insertions b__004_.insertions
+         && equal_int a__003_.deletions b__004_.deletions
      : t -> t -> bool)
   ;;
 
@@ -61,10 +60,10 @@ end
 
 include T
 
-let sum ts = List.sum (module T) ts ~f:Fn.id
+let sum ts = List.fold ts ~init:T.zero ~f:T.( + )
 
 let to_string_hum { insertions; deletions } =
-  let int_hum i = Int.to_string_hum ~delimiter:',' i in
+  let int_hum i = Int.to_string_hum i in
   match
     [ (if insertions > 0 then Some ("+" ^ int_hum insertions) else None)
     ; (if deletions > 0 then Some ("-" ^ int_hum deletions) else None)
@@ -77,5 +76,5 @@ let to_string_hum { insertions; deletions } =
   | _ :: _ :: _ :: _ -> assert false
 ;;
 
-let total { insertions; deletions } = Int.( + ) insertions deletions
+let total { insertions; deletions } = Int.add insertions deletions
 let is_zero { insertions; deletions } = insertions = 0 && deletions = 0

@@ -39,7 +39,7 @@ module Line = struct
 
   let equal =
     (fun a__001_ b__002_ ->
-       if Stdlib.( == ) a__001_ b__002_
+       if a__001_ == b__002_
        then true
        else (
          match a__001_, b__002_ with
@@ -47,17 +47,14 @@ module Line = struct
          | Root _, _ -> false
          | _, Root _ -> false
          | Commit _a__005_, Commit _b__006_ ->
-           Stdlib.( && )
-             (Rev.equal _a__005_.rev _b__006_.rev)
-             (Rev.equal _a__005_.parent _b__006_.parent)
+           Rev.equal _a__005_.rev _b__006_.rev
+           && Rev.equal _a__005_.parent _b__006_.parent
          | Commit _, _ -> false
          | _, Commit _ -> false
          | Merge _a__007_, Merge _b__008_ ->
-           Stdlib.( && )
-             (Rev.equal _a__007_.rev _b__008_.rev)
-             (Stdlib.( && )
-                (Rev.equal _a__007_.parent1 _b__008_.parent1)
-                (Rev.equal _a__007_.parent2 _b__008_.parent2)))
+           Rev.equal _a__007_.rev _b__008_.rev
+           && Rev.equal _a__007_.parent1 _b__008_.parent1
+           && Rev.equal _a__007_.parent2 _b__008_.parent2)
      : t -> t -> bool)
   ;;
 
@@ -77,9 +74,8 @@ end
 include T
 
 let roots (t : t) =
-  let queue = Queue.create () in
-  List.iter t ~f:(function
-    | Root { rev } -> Queue.enqueue queue rev
-    | Commit _ | Merge _ -> ());
-  Queue.to_list queue
+  List.filter_map t ~f:(fun line ->
+    match (line : Line.t) with
+    | Root { rev } -> Some rev
+    | Commit _ | Merge _ -> None)
 ;;

@@ -8,10 +8,12 @@
   -warn-error
   +a
   -open
-  Base
+  Fpath_sexp0
   -open
-  Fpath_sexp0)
- (libraries base fpath fpath-sexp0 provider)
+  Sexplib0
+  -open
+  Sexplib0.Sexp_conv)
+ (libraries fpath fpath-sexp0 provider)
  (instrumentation
   (backend bisect_ppx))
  (lint

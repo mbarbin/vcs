@@ -45,8 +45,9 @@ let%expect_test "mock revs" =
     Vcs.Mock_revs.add_exn t ~rev:rev0 ~mock_rev:mock_rev1);
   [%expect
     {|
-    ("Hashtbl.add_exn got key already present"
-     dd5aabd331a75b90cd61725223964e47dd5aabd3) |}];
+    ("Hashtbl.add_exn: key already present" ((
+      key dd5aabd331a75b90cd61725223964e47dd5aabd3)))
+    |}];
   (* Finally, as a convenience we can generate mock revision on the fly with
      [to_mock]. *)
   let rev1 = Vcs.Mock_revs.next t in

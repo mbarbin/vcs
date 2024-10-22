@@ -27,35 +27,33 @@ let create () = ()
 
 let load_file () ~path =
   Vcs.Exn.Private.try_with (fun () ->
-    Stdlib.In_channel.with_open_bin
-      (Absolute_path.to_string path)
-      Stdlib.In_channel.input_all
+    In_channel.with_open_bin (Absolute_path.to_string path) In_channel.input_all
     |> Vcs.File_contents.create)
 ;;
 
 let save_file ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
   Vcs.Exn.Private.try_with (fun () ->
     let oc =
-      Stdlib.open_out_gen
+      open_out_gen
         [ Open_wronly; Open_creat; Open_trunc; Open_binary ]
         perms
         (Absolute_path.to_string path)
     in
-    Stdlib.Fun.protect
-      ~finally:(fun () -> Stdlib.close_out_noerr oc)
-      (fun () -> Stdlib.Out_channel.output_string oc (file_contents :> string)))
+    Fun.protect
+      ~finally:(fun () -> close_out_noerr oc)
+      (fun () -> Out_channel.output_string oc (file_contents :> string)))
 ;;
 
 let read_dir () ~dir =
   Vcs.Exn.Private.try_with (fun () ->
-    let entries = Stdlib.Sys.readdir (Absolute_path.to_string dir) in
+    let entries = Sys.readdir (Absolute_path.to_string dir) in
     Array.sort entries ~compare:String.compare;
     entries |> Array.map ~f:Fsegment.v |> Array.to_list)
 ;;
 
 let with_cwd ~cwd ~f =
   let old_cwd = Unix.getcwd () in
-  Stdlib.Fun.protect
+  Fun.protect
     ~finally:(fun () -> Unix.chdir old_cwd)
     (fun () ->
       Unix.chdir (Absolute_path.to_string cwd);
@@ -87,7 +85,7 @@ module Lines = struct
   let create string : t = String.split_lines string
 end
 
-exception Uncaught_user_exn of exn * Stdlib.Printexc.raw_backtrace
+exception Uncaught_user_exn of exn * Printexc.raw_backtrace
 
 let git ?env () ~cwd ~args ~f =
   let prog = "git" in
@@ -105,9 +103,9 @@ let git ?env () ~cwd ~args ~f =
         let ((stdout, _, stderr) as process_full) =
           Unix.open_process_args_full prog (Array.of_list (prog :: args)) env
         in
-        let stdout = Stdlib.In_channel.input_all stdout in
+        let stdout = In_channel.input_all stdout in
         stdout_r := stdout;
-        let stderr = Stdlib.In_channel.input_all stderr in
+        let stderr = In_channel.input_all stderr in
         stderr_r := stderr;
         let process_status = Unix.close_process_full process_full in
         process_status, stdout, stderr)
@@ -123,7 +121,7 @@ let git ?env () ~cwd ~args ~f =
       match exit_status with
       | `Exited n -> n
       | (`Signaled _ | `Stopped _) as exit_status ->
-        Stdlib.raise_notrace
+        raise_notrace
           (Vcs.E
              (Vcs.Err.create_s
                 [%sexp
@@ -143,12 +141,12 @@ let git ?env () ~cwd ~args ~f =
     *)
     match f { Vcs.Git.Output.exit_code; stdout; stderr } with
     | Ok _ as ok -> ok
-    | Error err -> Stdlib.raise_notrace (Vcs.E err) [@coverage off]
+    | Error err -> raise_notrace (Vcs.E err) [@coverage off]
     | exception exn ->
-      let bt = Stdlib.Printexc.get_raw_backtrace () in
-      (Stdlib.raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off])
+      let bt = Printexc.get_raw_backtrace () in
+      (raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off])
   with
-  | Uncaught_user_exn (exn, bt) -> Stdlib.Printexc.raise_with_backtrace exn bt
+  | Uncaught_user_exn (exn, bt) -> Printexc.raise_with_backtrace exn bt
   | exn ->
     let err =
       match exn with

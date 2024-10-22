@@ -37,6 +37,6 @@ module String_impl = struct
   let compare = compare_string
   let equal = equal_string
   let hash = hash_string
-  let seeded_hash = Stdlib.String.seeded_hash
+  let seeded_hash = String.seeded_hash
   let sexp_of_t = sexp_of_string
 end

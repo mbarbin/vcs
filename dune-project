@@ -23,10 +23,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -103,10 +99,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (cmdlang
    (>= 0.0.5))
   (cmdlang-cmdliner-runner
@@ -133,6 +125,10 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
+  (sexplib0
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (vcs
    (= :version))
   (vcs-git-eio
@@ -144,10 +140,8 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
+  (astring
+   (>= 0.8.5))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -162,6 +156,10 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
+  (sexplib0
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (vcs
    (= :version))))
 
@@ -172,10 +170,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (eio
    (>= 1.0))
   (fpath
@@ -194,6 +188,10 @@
    (>= 0.33))
   (provider
    (>= 0.0.8))
+  (sexplib0
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (vcs
    (= :version))
   (vcs-git-provider
@@ -206,10 +204,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -226,6 +220,10 @@
    (>= 0.33))
   (provider
    (>= 0.0.8))
+  (sexplib0
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (vcs
    (= :version))
   (vcs-git-provider

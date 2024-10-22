@@ -25,7 +25,7 @@ open! Import
    the name the associated function has in the [V.S] interface, prepending the
    suffix "_cmd". *)
 
-let print_sexp sexp = Stdlib.print_endline (Sexp.to_string_hum sexp)
+let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
   type t =
@@ -155,7 +155,7 @@ let find_enclosing_repo_root_cmd =
      match Vcs.find_enclosing_repo_root vcs ~from ~store with
      | None -> ()
      | Some (`Store store, repo_root) ->
-       Stdlib.Printf.printf
+       Printf.printf
          "%s: %s\n"
          (Fsegment.to_string store)
          (Vcs.Repo_root.to_string repo_root))
@@ -171,11 +171,11 @@ let git_cmd =
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let { Vcs.Git.Output.exit_code; stdout; stderr } =
-       Vcs.git vcs ~repo_root ~args ~f:Fn.id
+       Vcs.git vcs ~repo_root ~args ~f:Fun.id
      in
-     Stdlib.print_string stdout;
-     Stdlib.prerr_string stderr;
-     if exit_code <> 0 then Stdlib.exit exit_code)
+     print_string stdout;
+     prerr_string stderr;
+     if exit_code <> 0 then exit exit_code)
 ;;
 
 let init_cmd =
@@ -214,7 +214,7 @@ let load_file_cmd =
      let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
      let path = Absolute_path.relativize ~root:cwd path in
      let contents = Vcs.load_file vcs ~path in
-     Stdlib.print_string (contents :> string);
+     print_string (contents :> string);
      ())
 ;;
 
@@ -237,8 +237,7 @@ let ls_files_cmd =
        | Some path -> relativize ~repo_root ~cwd ~path
      in
      let files = Vcs.ls_files vcs ~repo_root ~below in
-     List.iter files ~f:(fun file ->
-       Stdlib.print_endline (Vcs.Path_in_repo.to_string file));
+     List.iter files ~f:(fun file -> print_endline (Vcs.Path_in_repo.to_string file));
      ())
 ;;
 
@@ -421,9 +420,9 @@ let show_file_at_rev_cmd =
      let path = relativize ~repo_root ~cwd ~path in
      let result = Vcs.show_file_at_rev vcs ~repo_root ~rev ~path in
      (match result with
-      | `Present contents -> Stdlib.print_string (contents :> string)
+      | `Present contents -> print_string (contents :> string)
       | `Absent ->
-        Stdlib.Printf.eprintf
+        Printf.eprintf
           "Path '%s' does not exist in '%s'"
           (Vcs.Path_in_repo.to_string path)
           (Vcs.Rev.to_string rev));
