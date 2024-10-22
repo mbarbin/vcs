@@ -131,12 +131,22 @@ let git ?env () ~cwd ~args ~f =
                   , { exit_status : [ `Signaled of int | `Stopped of int ] }]))
         [@coverage off]
     in
+    (* A note regarding the [raise_notrace] below. These cases are indeed
+       exercised in the test suite, however bisect_ppx inserts a coverage point
+       on the outer edge of the calls, defeating the coverage reports. Thus we
+       have to manually disable coverage.
+
+       Illustrating what the inserted unvisitable coverage point looks like:
+       {[
+         ___bisect_post_visit___ 36 (raise_notrace (Vcs.E err))
+       ]}
+    *)
     match f { Vcs.Git.Output.exit_code; stdout; stderr } with
     | Ok _ as ok -> ok
-    | Error err -> Stdlib.raise_notrace (Vcs.E err)
+    | Error err -> Stdlib.raise_notrace (Vcs.E err) [@coverage off]
     | exception exn ->
       let bt = Stdlib.Printexc.get_raw_backtrace () in
-      Stdlib.raise_notrace (Uncaught_user_exn (exn, bt))
+      (Stdlib.raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off])
   with
   | Uncaught_user_exn (exn, bt) -> Stdlib.Printexc.raise_with_backtrace exn bt
   | exn ->

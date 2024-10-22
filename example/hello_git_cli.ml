@@ -19,8 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(** In this example, we show that when we're using a provider based on a Git
-    CLI, we can use it to manually run git commands. *)
+(* In this example, we show that when we're using a provider based on a Git
+   CLI, we can use it to manually run git commands. *)
 
 let%expect_test "hello cli" =
   (* We're inside a [Eio] main, that's our chosen runtime for the examples. *)
@@ -216,10 +216,10 @@ let%expect_test "hello cli" =
      behavior. *)
   print_s [%sexp (abbrev_ref "HEAD" : string Or_error.t)];
   [%expect {| (Ok main) |}];
-  (* However, note that the call can still raise. *)
+  (* However, note that the call can still raise, despite its [Result] return type. *)
   let () =
     match abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" with
-    | _ -> assert false [@coverage off]
+    | Ok (_ : string) | Error (_ : Error.t) -> assert false [@coverage off]
     | exception Vcs.E err ->
       print_s (Vcs_test_helpers.redact_sexp [%sexp (err : Vcs.Err.t)] ~fields:[ "error" ])
   in
@@ -235,12 +235,12 @@ let%expect_test "hello cli" =
         (stderr      ""))))
      (error <REDACTED>))
     |}];
-  (* Another difference is that you do not get the context when the helper
+  (* Another difference is that you do not get the context when the [f] helper
      returns an error. *)
   print_s [%sexp (abbrev_ref "/bogus" : string Or_error.t)];
   [%expect {| (Error "expected exit code 0") |}];
-  (* If you are using a non-raising handler [f], you probably mean to use
-     [Vcs.Or_error.git]. *)
+  (* If you are using a non-raising handler [f], you probably meant to use
+     [Vcs.Or_error.git]. The type of [abbrev_ref] is the same. *)
   let abbrev_ref ?(repo_root = repo_root) ref_ =
     Vcs.Or_error.git
       vcs
@@ -329,11 +329,11 @@ let%expect_test "hello cli" =
          (stderr      ""))))
       (error <REDACTED>)))
     |}];
-  (* However when your handler raises, the function will raise too, and you
+  (* However when your handler [f] raises, the function will raise too, and you
      won't get the context in this case. *)
   require_does_raise [%here] (fun () : string Or_error.t -> abbrev_ref "/bogus");
   [%expect {| (Failure "Unexpected error code") |}];
-  (* If you use a raising handler [f], you probably mean to use [Vcs.git]. *)
+  (* If you use a raising handler [f], you probably meant to use [Vcs.git]. *)
   let abbrev_ref ?(repo_root = repo_root) ref_ =
     Vcs.git
       vcs
