@@ -100,7 +100,7 @@ let to_string t =
 ;;
 
 let of_string (s : string) : (t, [ `Msg of string ]) Result.t =
-  let ( let* ) = Stdlib.Result.bind in
+  let open Result.Monad_syntax in
   match
     List.find_map Platform.all ~f:(fun platform ->
       List.find_map Protocol.all ~f:(fun protocol ->

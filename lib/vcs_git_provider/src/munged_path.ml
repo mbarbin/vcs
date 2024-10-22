@@ -22,15 +22,15 @@
 open! Import
 
 module T = struct
-  [@@@coverage off]
-
   type t = Vcs.Num_status.Key.t =
     | One_file of Vcs.Path_in_repo.t
     | Two_files of
         { src : Vcs.Path_in_repo.t
         ; dst : Vcs.Path_in_repo.t
         }
-  [@@deriving equal, sexp_of]
+
+  let equal = Vcs.Num_status.Key.equal
+  let sexp_of_t = Vcs.Num_status.Key.sexp_of_t
 end
 
 include T
@@ -38,27 +38,29 @@ include T
 let arrow = lazy (String.Search_pattern.create " => ")
 
 let parse_exn str =
-  try
-    match String.Search_pattern.split_on (force arrow) str with
-    | [ str ] -> One_file (Vcs.Path_in_repo.v str)
-    | [ left; right ] ->
-      (match String.rsplit2 left ~on:'{' with
-       | None ->
-         Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }
-       | Some (prefix, left_of_arrow) ->
-         let right_of_arrow, suffix = String.lsplit2_exn right ~on:'}' in
-         Two_files
-           { src = Vcs.Path_in_repo.v (prefix ^ left_of_arrow ^ suffix)
-           ; dst = Vcs.Path_in_repo.v (prefix ^ right_of_arrow ^ suffix)
-           })
-    | _ :: _ :: _ -> raise_s [%sexp "Too many '=>'"] [@coverage off]
-    | [] -> assert false
+  match
+    Vcs.Exn.Private.try_with (fun () ->
+      match String.Search_pattern.split_on (force arrow) str with
+      | [ str ] -> One_file (Vcs.Path_in_repo.v str)
+      | [ left; right ] ->
+        (match String.rsplit2 left ~on:'{' with
+         | None ->
+           Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }
+         | Some (prefix, left_of_arrow) ->
+           let right_of_arrow, suffix = String.lsplit2_exn right ~on:'}' in
+           Two_files
+             { src = Vcs.Path_in_repo.v (prefix ^ left_of_arrow ^ suffix)
+             ; dst = Vcs.Path_in_repo.v (prefix ^ right_of_arrow ^ suffix)
+             })
+      | _ :: _ :: _ -> raise (Vcs.E (Vcs.Err.error_string "Too many '=>'"))
+      | [] -> assert false)
   with
-  | exn ->
-    raise_s
-      [%sexp
-        "Vcs_git_provider.Munged_path.parse_exn"
-        , "invalid path"
-        , (str : string)
-        , (exn : Exn.t)]
+  | Ok t -> t
+  | Error err ->
+    raise
+      (Vcs.E
+         (Vcs.Err.add_context
+            err
+            ~step:
+              [%sexp "Vcs_git_provider.Munged_path.parse_exn", { path = (str : string) }]))
 ;;

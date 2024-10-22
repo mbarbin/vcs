@@ -22,3 +22,12 @@
 let reraise_with_context err bt ~step =
   Stdlib.Printexc.raise_with_backtrace (Exn0.E (Err.add_context err ~step)) bt
 ;;
+
+module Private = struct
+  let try_with f =
+    match f () with
+    | ok -> Ok ok
+    | exception Exn0.E err -> Error err
+    | exception exn -> Error (Err.of_exn exn)
+  ;;
+end

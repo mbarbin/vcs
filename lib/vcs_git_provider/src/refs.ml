@@ -21,6 +21,31 @@
 
 open! Import
 
+let parse_ref_kind_exn str : Vcs.Ref_kind.t =
+  match
+    Vcs.Exn.Private.try_with (fun () ->
+      let str = String.chop_prefix_exn str ~prefix:"refs/" in
+      match String.lsplit2 str ~on:'/' with
+      | None -> Vcs.Ref_kind.Other { name = str }
+      | Some (kind, name) ->
+        (match kind with
+         | "heads" -> Local_branch { branch_name = Vcs.Branch_name.v name }
+         | "remotes" ->
+           Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v name }
+         | "tags" -> Tag { tag_name = Vcs.Tag_name.v name }
+         | _ -> Other { name = str }))
+  with
+  | Ok t -> t
+  | Error err ->
+    raise
+      (Vcs.E
+         (Vcs.Err.add_context
+            err
+            ~step:
+              [%sexp
+                "Vcs_git_provider.Refs.parse_ref_kind_exn", { ref_kind = (str : string) }]))
+;;
+
 module Dereferenced = struct
   module T = struct
     [@@@coverage off]
@@ -30,32 +55,52 @@ module Dereferenced = struct
       ; ref_kind : Vcs.Ref_kind.t
       ; dereferenced : bool
       }
-    [@@deriving equal, sexp_of]
+    [@@deriving sexp_of]
+
+    let equal =
+      (fun a__001_ b__002_ ->
+         if Stdlib.( == ) a__001_ b__002_
+         then true
+         else
+           Stdlib.( && )
+             (Vcs.Rev.equal a__001_.rev b__002_.rev)
+             (Stdlib.( && )
+                (Vcs.Ref_kind.equal a__001_.ref_kind b__002_.ref_kind)
+                (equal_bool a__001_.dereferenced b__002_.dereferenced))
+       : t -> t -> bool)
+    ;;
   end
 
   include T
 
-  let parse_ref_kind_exn str : Vcs.Ref_kind.t =
-    let str = String.chop_prefix_exn str ~prefix:"refs/" in
-    match String.lsplit2 str ~on:'/' with
-    | None -> Other { name = str }
-    | Some (kind, name) ->
-      (match kind with
-       | "heads" -> Local_branch { branch_name = Vcs.Branch_name.v name }
-       | "remotes" -> Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v name }
-       | "tags" -> Tag { tag_name = Vcs.Tag_name.v name }
-       | _ -> Other { name = str })
-  ;;
-
   let parse_exn ~line:str =
-    match String.lsplit2 str ~on:' ' with
-    | None -> raise_s [%sexp "Invalid ref line", (str : string)]
-    | Some (rev, ref_) ->
-      (match String.chop_suffix ref_ ~suffix:"^{}" with
-       | Some ref_ ->
-         { rev = Vcs.Rev.v rev; ref_kind = parse_ref_kind_exn ref_; dereferenced = true }
-       | None ->
-         { rev = Vcs.Rev.v rev; ref_kind = parse_ref_kind_exn ref_; dereferenced = false })
+    match
+      Vcs.Exn.Private.try_with (fun () ->
+        match String.lsplit2 str ~on:' ' with
+        | None -> raise (Vcs.E (Vcs.Err.error_string "Invalid ref line"))
+        | Some (rev, ref_) ->
+          (match String.chop_suffix ref_ ~suffix:"^{}" with
+           | Some ref_ ->
+             { rev = Vcs.Rev.v rev
+             ; ref_kind = parse_ref_kind_exn ref_
+             ; dereferenced = true
+             }
+           | None ->
+             { rev = Vcs.Rev.v rev
+             ; ref_kind = parse_ref_kind_exn ref_
+             ; dereferenced = false
+             }))
+    with
+    | Ok t -> t
+    | Error err ->
+      raise
+        (Vcs.E
+           (Vcs.Err.add_context
+              err
+              ~step:
+                [%sexp
+                  "Vcs_git_provider.Refs.Dereferenced.parse_exn"
+                  , { line = (str : string) }]))
   ;;
 end
 
@@ -82,7 +127,9 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "show-ref"; "--dereference" ]
       ~f:(fun output ->
-        let%bind output = Vcs.Git.Or_error.exit0_and_stdout output in
-        Or_error.try_with (fun () -> parse_lines_exn ~lines:(String.split_lines output)))
+        let open Result.Monad_syntax in
+        let* output = Vcs.Git.Result.exit0_and_stdout output in
+        Vcs.Exn.Private.try_with (fun () ->
+          parse_lines_exn ~lines:(String.split_lines output)))
   ;;
 end

@@ -26,7 +26,7 @@ type t = unit
 let create () = ()
 
 let load_file () ~path =
-  Or_error.try_with (fun () ->
+  Vcs.Exn.Private.try_with (fun () ->
     Stdlib.In_channel.with_open_bin
       (Absolute_path.to_string path)
       Stdlib.In_channel.input_all
@@ -34,7 +34,7 @@ let load_file () ~path =
 ;;
 
 let save_file ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
-  Or_error.try_with (fun () ->
+  Vcs.Exn.Private.try_with (fun () ->
     let oc =
       Stdlib.open_out_gen
         [ Open_wronly; Open_creat; Open_trunc; Open_binary ]
@@ -47,7 +47,7 @@ let save_file ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
 ;;
 
 let read_dir () ~dir =
-  Or_error.try_with (fun () ->
+  Vcs.Exn.Private.try_with (fun () ->
     let entries = Stdlib.Sys.readdir (Absolute_path.to_string dir) in
     Array.sort entries ~compare:String.compare;
     entries |> Array.map ~f:Fsegment.v |> Array.to_list)
@@ -62,8 +62,6 @@ let with_cwd ~cwd ~f =
       f ())
 ;;
 
-exception User_error of Error.t
-
 module Exit_status = struct
   [@@@coverage off]
 
@@ -77,16 +75,19 @@ module Exit_status = struct
 end
 
 module Lines = struct
-  type t = Lines of string list
+  type t = string list
 
-  let sexp_of_t t =
+  let sexp_of_t (t : t) =
     match t with
-    | Lines [] -> [%sexp ""]
-    | Lines lines -> [%sexp (lines : string list)]
+    | [] -> [%sexp ""]
+    | [ hd ] -> [%sexp (hd : string)]
+    | _ :: _ :: _ as lines -> [%sexp (lines : string list)]
   ;;
 
-  let create string = Lines (String.split_lines string)
+  let create string : t = String.split_lines string
 end
+
+exception Uncaught_user_exn of exn * Stdlib.Printexc.raw_backtrace
 
 let git ?env () ~cwd ~args ~f =
   let prog = "git" in
@@ -122,32 +123,48 @@ let git ?env () ~cwd ~args ~f =
       match exit_status with
       | `Exited n -> n
       | (`Signaled _ | `Stopped _) as exit_status ->
-        raise
-          (User_error
-             (Error.create_s
+        Stdlib.raise_notrace
+          (Vcs.E
+             (Vcs.Err.create_s
                 [%sexp
                   "git process terminated abnormally"
                   , { exit_status : [ `Signaled of int | `Stopped of int ] }]))
         [@coverage off]
     in
+    (* A note regarding the [raise_notrace] below. These cases are indeed
+       exercised in the test suite, however bisect_ppx inserts a coverage point
+       on the outer edge of the calls, defeating the coverage reports. Thus we
+       have to manually disable coverage.
+
+       Illustrating what the inserted unvisitable coverage point looks like:
+       {[
+         ___bisect_post_visit___ 36 (raise_notrace (Vcs.E err))
+       ]}
+    *)
     match f { Vcs.Git.Output.exit_code; stdout; stderr } with
     | Ok _ as ok -> ok
-    | Error err -> raise (User_error err)
+    | Error err -> Stdlib.raise_notrace (Vcs.E err) [@coverage off]
+    | exception exn ->
+      let bt = Stdlib.Printexc.get_raw_backtrace () in
+      (Stdlib.raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off])
   with
+  | Uncaught_user_exn (exn, bt) -> Stdlib.Printexc.raise_with_backtrace exn bt
   | exn ->
-    let error =
+    let err =
       match exn with
-      | User_error error -> error
-      | exn -> Error.of_exn exn
+      | Vcs.E err -> err
+      | _ -> Vcs.Err.of_exn exn
     in
-    Or_error.error_s
-      [%sexp
-        { prog : string
-        ; args : string list
-        ; exit_status = (!exit_status_r : Exit_status.t)
-        ; cwd : Absolute_path.t
-        ; stdout = (Lines.create !stdout_r : Lines.t)
-        ; stderr = (Lines.create !stderr_r : Lines.t)
-        ; error : Error.t
-        }]
+    Error
+      (Vcs.Err.add_context
+         err
+         ~step:
+           [%sexp
+             { prog : string
+             ; args : string list
+             ; exit_status = (!exit_status_r : Exit_status.t)
+             ; cwd : Absolute_path.t
+             ; stdout = (Lines.create !stdout_r : Lines.t)
+             ; stderr = (Lines.create !stderr_r : Lines.t)
+             }])
 ;;

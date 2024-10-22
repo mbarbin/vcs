@@ -30,10 +30,11 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "rev-parse"; "--abbrev-ref"; "HEAD" ]
       ~f:(fun output ->
-        let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
+        let open Result.Monad_syntax in
+        let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         match Vcs.Branch_name.of_string (String.strip stdout) with
         | Ok _ as ok -> ok
-        | Error (`Msg m) -> Or_error.error_string m [@coverage off])
+        | Error (`Msg m) -> Error (Vcs.Err.error_string m) [@coverage off])
   ;;
 
   let current_revision t ~repo_root =
@@ -42,9 +43,10 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "rev-parse"; "--verify"; "HEAD^{commit}" ]
       ~f:(fun output ->
-        let%bind stdout = Vcs.Git.Or_error.exit0_and_stdout output in
+        let open Result.Monad_syntax in
+        let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         match Vcs.Rev.of_string (String.strip stdout) with
         | Ok _ as ok -> ok
-        | Error (`Msg m) -> Or_error.error_string m [@coverage off])
+        | Error (`Msg m) -> Error (Vcs.Err.error_string m) [@coverage off])
   ;;
 end

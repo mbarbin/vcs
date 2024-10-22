@@ -99,16 +99,14 @@ module Make (M : M) :
   let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
     match
       Vcs0.Private.git ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
-        f output
-        |> Result.map_error ~f:(fun err_m ->
-          Err.Private.Vcs_base.to_error (M.to_err err_m)))
+        f output |> Result.map_error ~f:M.to_err)
     with
     | Ok t -> Ok t
-    | Error error ->
+    | Error err ->
       Error
         (M.of_err
-           (Err.init
-              (Error.sexp_of_t error)
+           (Err.add_context
+              err
               ~step:
                 (Vcs0.Private.make_git_err_step ?env ?run_in_subdir ~repo_root ~args ())))
   ;;

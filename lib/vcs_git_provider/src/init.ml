@@ -25,9 +25,8 @@ module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
   let init t ~path =
-    let%bind () =
-      Runtime.git t ~cwd:path ~args:[ "init"; "." ] ~f:Vcs.Git.Or_error.exit0
-    in
-    return (path |> Vcs.Repo_root.of_absolute_path)
+    let open Result.Monad_syntax in
+    let* () = Runtime.git t ~cwd:path ~args:[ "init"; "." ] ~f:Vcs.Git.Result.exit0 in
+    Result.return (path |> Vcs.Repo_root.of_absolute_path)
   ;;
 end

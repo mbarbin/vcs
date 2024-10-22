@@ -35,18 +35,18 @@ let create ~env =
 
 let load_file t ~path =
   let path = Eio.Path.(t.fs / Absolute_path.to_string path) in
-  Or_error.try_with (fun () -> Vcs.File_contents.create (Eio.Path.load path))
+  Vcs.Exn.Private.try_with (fun () -> Vcs.File_contents.create (Eio.Path.load path))
 ;;
 
 let save_file ?(perms = 0o666) t ~path ~(file_contents : Vcs.File_contents.t) =
   let path = Eio.Path.(t.fs / Absolute_path.to_string path) in
-  Or_error.try_with (fun () ->
+  Vcs.Exn.Private.try_with (fun () ->
     Eio.Path.save ~create:(`Or_truncate perms) path (file_contents :> string))
 ;;
 
 let read_dir t ~dir =
   let dir = Eio.Path.(t.fs / Absolute_path.to_string dir) in
-  Or_error.try_with (fun () -> Eio.Path.read_dir dir |> List.map ~f:Fsegment.v)
+  Vcs.Exn.Private.try_with (fun () -> Eio.Path.read_dir dir |> List.map ~f:Fsegment.v)
 ;;
 
 (* The modules [Exit_status], [Lines] and the function [git] below are derived
@@ -115,7 +115,7 @@ module Lines = struct
   let create string : t = String.split_lines string
 end
 
-exception User_error of Error.t
+exception Uncaught_user_exn of exn * Stdlib.Printexc.raw_backtrace
 
 let git ?env t ~cwd ~args ~f =
   let cwd = Eio.Path.(t.fs / Absolute_path.to_string cwd) in
@@ -153,31 +153,46 @@ let git ?env t ~cwd ~args ~f =
     exit_status_r := (exit_status :> [ Exit_status.t | `Unknown ]);
     match exit_status with
     | `Signaled signal ->
-      raise
-        (User_error
-           (Error.create_s
+      Stdlib.raise_notrace
+        (Vcs.E
+           (Vcs.Err.create_s
               [%sexp "process exited abnormally", { signal : int }] [@coverage off]))
       [@coverage off]
     | `Exited exit_code ->
+      (* A note regarding the [raise_notrace] below. These cases are indeed
+         exercised in the test suite, however bisect_ppx inserts a coverage point
+         on the outer edge of the calls, defeating the coverage reports. Thus we
+         have to manually disable coverage.
+
+         Illustrating what the inserted unvisitable coverage point looks like:
+         {[
+           ___bisect_post_visit___ 36 (raise_notrace (Vcs.E err))
+         ]}
+      *)
       (match f { Vcs.Git.Output.exit_code; stdout; stderr } with
        | Ok _ as ok -> ok
-       | Error err -> raise (User_error err))
+       | Error err -> Stdlib.raise_notrace (Vcs.E err) [@coverage off]
+       | exception exn ->
+         let bt = Stdlib.Printexc.get_raw_backtrace () in
+         (Stdlib.raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off]))
   with
-  | (Eio.Exn.Io _ | User_error _) as exn ->
-    let error =
+  | Uncaught_user_exn (exn, bt) -> Stdlib.Printexc.raise_with_backtrace exn bt
+  | exn ->
+    let err =
       match exn with
-      | Eio.Exn.Io _ -> Error.of_exn exn
-      | User_error error -> error
-      | _ -> assert false
+      | Vcs.E err -> err
+      | _ -> Vcs.Err.of_exn exn
     in
-    Or_error.error_s
-      [%sexp
-        { prog : string
-        ; args : string list
-        ; exit_status = (!exit_status_r : [ Exit_status.t | `Unknown ])
-        ; cwd = (snd cwd : string)
-        ; stdout = (Lines.create !stdout_r : Lines.t)
-        ; stderr = (Lines.create !stderr_r : Lines.t)
-        ; error : Error.t
-        }]
+    Error
+      (Vcs.Err.add_context
+         err
+         ~step:
+           [%sexp
+             { prog : string
+             ; args : string list
+             ; exit_status = (!exit_status_r : [ Exit_status.t | `Unknown ])
+             ; cwd = (snd cwd : string)
+             ; stdout = (Lines.create !stdout_r : Lines.t)
+             ; stderr = (Lines.create !stderr_r : Lines.t)
+             }])
 ;;

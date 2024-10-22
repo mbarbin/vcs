@@ -31,15 +31,17 @@ end
 
     This is exposed for tests and low-level usage. *)
 
+val parse_ref_kind_exn : string -> Vcs.Ref_kind.t
+
 module Dereferenced : sig
   type t =
     { rev : Vcs.Rev.t
     ; ref_kind : Vcs.Ref_kind.t
     ; dereferenced : bool
     }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
 
-  val parse_ref_kind_exn : string -> Vcs.Ref_kind.t
+  val equal : t -> t -> bool
   val parse_exn : line:string -> t
 end
 

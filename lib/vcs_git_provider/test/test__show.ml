@@ -24,7 +24,7 @@ let%expect_test "show" =
     print_s
       [%sexp
         (Vcs_git_provider.Show.interpret_output output
-         : [ `Absent | `Present of Vcs.File_contents.t ] Or_error.t)]
+         : [ `Absent | `Present of Vcs.File_contents.t ] Vcs.Result.t)]
   in
   test { exit_code = 0; stdout = "contents"; stderr = "" };
   [%expect {| (Ok (Present contents)) |}];

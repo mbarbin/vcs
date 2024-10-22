@@ -26,5 +26,5 @@ module type S = sig
     :  t
     -> repo_root:Repo_root.t
     -> below:Path_in_repo.t
-    -> Path_in_repo.t list Or_error.t
+    -> (Path_in_repo.t list, Err.t) Result.t
 end

@@ -191,8 +191,7 @@ let%expect_test "Diff_status" =
     (Z Not_supported) |}];
   require_does_raise [%here] (fun () ->
     Vcs_git_provider.Name_status.Diff_status.parse_exn "");
-  [%expect {|
-    "Unexpected empty diff status" |}];
+  [%expect {| (Vcs.E "Unexpected empty diff status") |}];
   ()
 ;;
 
@@ -224,32 +223,91 @@ let%expect_test "parse_lines_exn" =
     print_s [%sexp (line : string), (result : Vcs.Name_status.Change.t Or_error.t)]);
   [%expect
     {|
-    ("" (Error ("Unexpected output from git status" "")))
-    (file (Error ("Unexpected output from git status" file)))
+    ("" (
+      Error (
+        Vcs.E (
+          (steps ((Vcs_git_provider.Name_status.parse_line_exn ((line "")))))
+          (error "Unexpected output from git status")))))
+    (file (
+      Error (
+        Vcs.E (
+          (steps ((Vcs_git_provider.Name_status.parse_line_exn ((line file)))))
+          (error "Unexpected output from git status")))))
     ("A\tfile1" (Ok (Added file1)))
     ("D\tfile2" (Ok (Removed file2)))
     ("M\tfile3" (Ok (Modified file3)))
-    ("U\tfile4" (Error ("Unexpected status" U U)))
-    ("Q\tfile5" (Error ("Unexpected status" Q Q)))
-    ("I\tfile6" (Error ("Unexpected status" I I)))
-    ("?\tfile7" (Error ("Unexpected status" ? Question_mark)))
-    ("!\tfile8" (Error ("Unexpected status" ! Bang)))
-    ("X\tfile9" (Error ("Unexpected status" X X)))
-    ("R\tfile10" (Error (Failure "Int.of_string: \"\"")))
-    ("R35\tfile10" (Error ("Unexpected output from git status" "R35\tfile10")))
+    ("U\tfile4" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "U\tfile4")))))
+          (error ("Unexpected status" U U))))))
+    ("Q\tfile5" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "Q\tfile5")))))
+          (error ("Unexpected status" Q Q))))))
+    ("I\tfile6" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "I\tfile6")))))
+          (error ("Unexpected status" I I))))))
+    ("?\tfile7" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "?\tfile7")))))
+          (error ("Unexpected status" ? Question_mark))))))
+    ("!\tfile8" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "!\tfile8")))))
+          (error ("Unexpected status" ! Bang))))))
+    ("X\tfile9" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "X\tfile9")))))
+          (error ("Unexpected status" X X))))))
+    ("R\tfile10" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "R\tfile10")))))
+          (error (Failure "Int.of_string: \"\""))))))
+    ("R35\tfile10" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "R35\tfile10")))))
+          (error "Unexpected output from git status")))))
     ("R35\tfile1\tfile2" (
       Ok (
         Renamed
         (src        file1)
         (dst        file2)
         (similarity 35))))
-    ("C\tfile11" (Error (Failure "Int.of_string: \"\"")))
+    ("C\tfile11" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "C\tfile11")))))
+          (error (Failure "Int.of_string: \"\""))))))
     ("C75\tfile1\tfile2" (
       Ok (
         Copied
         (src        file1)
         (dst        file2)
         (similarity 75))))
-    ("Z\tfile12" (Error ("Unexpected status" Z Not_supported))) |}];
+    ("Z\tfile12" (
+      Error (
+        Vcs.E (
+          (steps ((
+            Vcs_git_provider.Name_status.parse_line_exn ((line "Z\tfile12")))))
+          (error ("Unexpected status" Z Not_supported))))))
+    |}];
   ()
 ;;

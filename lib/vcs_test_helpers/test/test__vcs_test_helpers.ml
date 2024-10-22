@@ -72,33 +72,43 @@ let%expect_test "redact_sexp" =
     | exception Vcs.E err -> [%sexp (err : Vcs.Err.t)]
   in
   print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error" ]);
-  [%expect {| ((steps ((Vcs.init ((path /invalid/path))))) (error <REDACTED>)) |}];
-  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error/error" ]);
   [%expect
     {|
-    ((steps ((Vcs.init ((path /invalid/path)))))
-     (error (
-       (prog git)
-       (args (init .))
-       (exit_status Unknown)
-       (cwd         /invalid/path)
-       (stdout      "")
-       (stderr      "")
-       (error       <REDACTED>))))
+    ((steps (
+       (Vcs.init ((path /invalid/path)))
+       ((prog git)
+        (args (init .))
+        (exit_status Unknown)
+        (cwd         /invalid/path)
+        (stdout      "")
+        (stderr      ""))))
+     (error <REDACTED>))
     |}];
-  print_s
-    (Vcs_test_helpers.redact_sexp error ~fields:[ "error/error"; "error/stderr"; "cwd" ]);
+  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "steps/cwd" ]);
   [%expect
     {|
-    ((steps ((Vcs.init ((path /invalid/path)))))
-     (error (
-       (prog git)
-       (args (init .))
-       (exit_status Unknown)
-       (cwd         <REDACTED>)
-       (stdout      "")
-       (stderr      <REDACTED>)
-       (error       <REDACTED>))))
+    ((steps (
+       (Vcs.init ((path /invalid/path)))
+       ((prog git)
+        (args (init .))
+        (exit_status Unknown)
+        (cwd         <REDACTED>)
+        (stdout      "")
+        (stderr      ""))))
+     (error <REDACTED>))
+    |}];
+  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "steps/stderr"; "cwd" ]);
+  [%expect
+    {|
+    ((steps (
+       (Vcs.init ((path /invalid/path)))
+       ((prog git)
+        (args (init .))
+        (exit_status Unknown)
+        (cwd         <REDACTED>)
+        (stdout      "")
+        (stderr      <REDACTED>))))
+     (error <REDACTED>))
     |}];
   (* Adding corner cases, such as empty nested fields. *)
   let sexp =

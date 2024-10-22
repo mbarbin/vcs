@@ -24,11 +24,10 @@ open! Import
 type 'a t = 'a Provider.t
 
 let create provider = provider
-let ( let* ) = Stdlib.Result.bind
 
 let of_result ~step = function
   | Ok r -> r
-  | Error error -> raise (Exn0.E (Err.init (Error.sexp_of_t error) ~step:(force step)))
+  | Error err -> raise (Exn0.E (Err.add_context err ~step:(Lazy.force step)))
 ;;
 
 let load_file (Provider.T { t; handler }) ~path =
@@ -107,7 +106,8 @@ let current_revision (Provider.T { t; handler }) ~repo_root =
 let commit (Provider.T { t; handler }) ~repo_root ~commit_message =
   let module R = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
   let module C = (val Provider.Handler.lookup handler ~trait:Trait.Commit) in
-  (let* () = C.commit t ~repo_root ~commit_message in
+  (let open Result.Monad_syntax in
+   let* () = C.commit t ~repo_root ~commit_message in
    R.current_revision t ~repo_root)
   |> of_result ~step:(lazy [%sexp "Vcs.commit", { repo_root : Repo_root.t }])
 ;;
@@ -168,7 +168,8 @@ let graph (Provider.T { t; handler }) ~repo_root =
   let module L = (val Provider.Handler.lookup handler ~trait:Trait.Log) in
   let module R = (val Provider.Handler.lookup handler ~trait:Trait.Refs) in
   let graph = Graph.create () in
-  (let* log = L.all t ~repo_root in
+  (let open Result.Monad_syntax in
+   let* log = L.all t ~repo_root in
    let* refs = R.show_ref t ~repo_root in
    Graph.add_nodes graph ~log;
    Graph.set_refs graph ~refs;
@@ -217,28 +218,26 @@ let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
       }]
 ;;
 
-let git ?env ?run_in_subdir (Provider.T { t; handler }) ~repo_root ~args ~f =
+let non_raising_git
+  ?env
+  ?(run_in_subdir = Path_in_repo.root)
+  (Provider.T { t; handler })
+  ~repo_root
+  ~args
+  ~f
+  =
   let module M = (val Provider.Handler.lookup handler ~trait:Trait.Git) in
-  let cwd =
-    Repo_root.append repo_root (Option.value run_in_subdir ~default:Path_in_repo.root)
-  in
-  M.git ?env t ~cwd ~args ~f:(fun output -> Or_error.try_with (fun () -> f output))
+  let cwd = Repo_root.append repo_root run_in_subdir in
+  M.git ?env t ~cwd ~args ~f
+;;
+
+let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
+  non_raising_git ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
+    Vcs_exn.Private.try_with (fun () -> f output))
   |> of_result ~step:(lazy (make_git_err_step ?env ?run_in_subdir ~repo_root ~args ()))
 ;;
 
 module Private = struct
-  let git
-    ?env
-    ?(run_in_subdir = Path_in_repo.root)
-    (Provider.T { t; handler })
-    ~repo_root
-    ~args
-    ~f
-    =
-    let module M = (val Provider.Handler.lookup handler ~trait:Trait.Git) in
-    let cwd = Repo_root.append repo_root run_in_subdir in
-    M.git ?env t ~cwd ~args ~f
-  ;;
-
+  let git = non_raising_git
   let make_git_err_step = make_git_err_step
 end

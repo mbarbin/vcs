@@ -33,4 +33,4 @@ end
 
 val interpret_output
   :  Vcs.Git.Output.t
-  -> [ `Absent | `Present of Vcs.File_contents.t ] Or_error.t
+  -> [ `Absent | `Present of Vcs.File_contents.t ] Vcs.Result.t

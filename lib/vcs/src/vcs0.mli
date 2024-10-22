@@ -34,8 +34,8 @@ module Private : sig
     -> [> Trait.git ] t
     -> repo_root:Repo_root.t
     -> args:string list
-    -> f:(Git.Output.t -> 'a Or_error.t)
-    -> 'a Or_error.t
+    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
+    -> ('a, Err.t) Result.t
 
   (** Build the context for errors happening during [git]. *)
   val make_git_err_step

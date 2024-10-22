@@ -229,7 +229,7 @@ let refs t =
 
 let set_ref t ~rev ~ref_kind =
   match Hashtbl.find t.revs rev with
-  | None -> raise_s [%sexp "Rev not found", (rev : Rev.t)]
+  | None -> raise (Exn0.E (Err.create_s [%sexp "Rev not found", (rev : Rev.t)]))
   | Some index ->
     Hashtbl.set t.refs ~key:ref_kind ~data:index;
     Hashtbl.add_multi t.reverse_refs ~key:index ~data:ref_kind
@@ -497,7 +497,11 @@ let rec summary t =
 let check_index_exn t ~index =
   let node_count = node_count t in
   if index < 0 || index >= node_count
-  then raise_s [%sexp "Node index out of bounds", { index : int; node_count : int }]
+  then
+    raise
+      (Exn0.E
+         (Err.create_s
+            [%sexp "Node index out of bounds", { index : int; node_count : int }]))
 ;;
 
 let get_node_exn t ~index =

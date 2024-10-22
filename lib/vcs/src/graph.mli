@@ -61,13 +61,13 @@ val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
 
 (** {1 Nodes}
 
-    The node itself doesn't carry much information, rather it is simply a
-    pointer to a location in the graph. Thus the functions operating on nodes
-    typically also require to be supplied the graph.
+    A node doesn't carry much information, rather it is simply a pointer to a
+    location in the graph. The functions operating on nodes typically require to
+    be supplied the graph in order to access what the node is pointing to.
 
     For convenience to users writing algorithms on git graphs, the type [t]
     exposes an efficient comparable signature, meaning you can e.g. manipulate
-    containers indexed by nodes.
+    containers indexed by nodes (maps, sets, etc.).
 
     {2:ordering_invariant Ordering invariant}
 
@@ -118,8 +118,8 @@ val prepend_parents : t -> Node.t -> Node.t list -> Node.t list
 (** Access the given node from the graph and return its node kind. *)
 val node_kind : t -> Node.t -> Node_kind.t
 
-(** If the graph has refs (such as tags or branches) attached to this node,
-    they will all be returned by [refs graph node]. The order of the refs in
+(** If the graph has refs (such as tags or branches) attached to this node, they
+    will all be returned by [node_refs graph node]. The order of the refs in
     the resulting list is not specified. *)
 val node_refs : t -> Node.t -> Ref_kind.t list
 
@@ -136,10 +136,11 @@ val find_ref : t -> ref_kind:Ref_kind.t -> Node.t option
 
 (** {1 Revisions} *)
 
-(** Find the node pointed by the rev if any. *)
+(** Find the node at the given revision if it exists in the graph. *)
 val find_rev : t -> rev:Rev.t -> Node.t option
 
-(** Tell if a revision points to a valid node of the graph. *)
+(** Tell if a graph contains a revision. [mem_rev graph ~rev = true] iif
+    [find_rev graph ~rev = Some _]. *)
 val mem_rev : t -> rev:Rev.t -> bool
 
 (** {1 Roots & Tips} *)

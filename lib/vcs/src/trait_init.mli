@@ -24,5 +24,5 @@ module type S = sig
 
   (** Initialize a git repository at the given path. This errors out if a
       repository is already initialized there. *)
-  val init : t -> path:Absolute_path.t -> Repo_root.t Or_error.t
+  val init : t -> path:Absolute_path.t -> (Repo_root.t, Err.t) Result.t
 end

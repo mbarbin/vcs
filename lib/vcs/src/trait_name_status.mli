@@ -26,5 +26,5 @@ module type S = sig
     :  t
     -> repo_root:Repo_root.t
     -> changed:Name_status.Changed.t
-    -> Name_status.t Or_error.t
+    -> (Name_status.t, Err.t) Result.t
 end

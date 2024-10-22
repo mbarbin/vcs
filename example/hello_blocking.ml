@@ -72,15 +72,15 @@ let%expect_test "hello commit" =
   in
   [%expect
     {|
-    ((steps ((Vcs.git ((repo_root /invalid/path) (args ())))))
-     (error (
-       (prog git)
-       (args ())
-       (exit_status Unknown)
-       (cwd         /invalid/path/)
-       (stdout      "")
-       (stderr      "")
-       (error ("Unix.Unix_error(Unix.ENOENT, \"chdir\", \"/invalid/path/\")")))))
+    ((steps (
+       (Vcs.git ((repo_root /invalid/path) (args ())))
+       ((prog git)
+        (args ())
+        (exit_status Unknown)
+        (cwd         /invalid/path/)
+        (stdout      "")
+        (stderr      ""))))
+     (error ("Unix.Unix_error(Unix.ENOENT, \"chdir\", \"/invalid/path/\")")))
     |}];
   (* Let's also show a case where the command fails due to a user error. *)
   let () =
@@ -99,15 +99,15 @@ let%expect_test "hello commit" =
   in
   [%expect
     {|
-    ((steps ((Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))))
-     (error (
-       (prog git)
-       (args        (rev-parse INVALID-REF))
-       (exit_status (Exited    128))
-       (cwd <REDACTED>)
-       (stdout (INVALID-REF))
-       (stderr <REDACTED>)
-       (error  "Hello invalid exit code"))))
+    ((steps (
+       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       ((prog git)
+        (args        (rev-parse INVALID-REF))
+        (exit_status (Exited    128))
+        (cwd    <REDACTED>)
+        (stdout INVALID-REF)
+        (stderr <REDACTED>))))
+     (error "Hello invalid exit code"))
     |}];
   (* Here we only use [Eio] to clean up the temporary repo, because [rmtree] is
      a convenient function to use in this test. But the point is that the rest

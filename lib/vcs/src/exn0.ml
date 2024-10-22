@@ -19,6 +19,10 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-exception E of Err.t [@@deriving sexp_of]
+exception E of Err.t
 
-let raise_s msg sexp = raise (E (Err.create_s [%sexp (msg : string), (sexp : Sexp.t)]))
+let () =
+  Sexplib0.Sexp_conv.Exn_converter.add [%extension_constructor E] (function
+    | E err -> Sexp.List [ Atom "Vcs.E"; Err.sexp_of_t err ]
+    | _ -> assert false)
+;;
