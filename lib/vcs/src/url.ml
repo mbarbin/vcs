@@ -29,13 +29,13 @@ module Protocol = struct
     | Https
   [@@deriving enumerate, sexp_of]
 
-  let compare = (Stdlib.compare : t -> t -> int)
-  let equal = (Stdlib.( = ) : t -> t -> bool)
+  let compare = (compare : t -> t -> int)
+  let equal = (( = ) : t -> t -> bool)
 
   [@@@coverage on]
 
-  let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
-  let hash = (Stdlib.Hashtbl.hash : t -> int)
+  let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
+  let hash = (Hashtbl.hash : t -> int)
 
   let to_string t ~(platform : Platform.t) =
     match platform, t with
@@ -56,7 +56,7 @@ type t =
 
 let compare =
   (fun a__005_ b__006_ ->
-     if Stdlib.( == ) a__005_ b__006_
+     if a__005_ == b__006_
      then 0
      else (
        match Platform.compare a__005_.platform b__006_.platform with
@@ -73,23 +73,20 @@ let compare =
 
 let equal =
   (fun a__007_ b__008_ ->
-     if Stdlib.( == ) a__007_ b__008_
+     if a__007_ == b__008_
      then true
      else
-       Stdlib.( && )
-         (Platform.equal a__007_.platform b__008_.platform)
-         (Stdlib.( && )
-            (Protocol.equal a__007_.protocol b__008_.protocol)
-            (Stdlib.( && )
-               (User_handle.equal a__007_.user_handle b__008_.user_handle)
-               (Repo_name.equal a__007_.repo_name b__008_.repo_name)))
+       Platform.equal a__007_.platform b__008_.platform
+       && Protocol.equal a__007_.protocol b__008_.protocol
+       && User_handle.equal a__007_.user_handle b__008_.user_handle
+       && Repo_name.equal a__007_.repo_name b__008_.repo_name
    : t -> t -> bool)
 ;;
 
 [@@@coverage on]
 
-let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
-let hash = (Stdlib.Hashtbl.hash : t -> int)
+let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
+let hash = (Hashtbl.hash : t -> int)
 
 let to_string t =
   let { platform; protocol; user_handle; repo_name } = t in

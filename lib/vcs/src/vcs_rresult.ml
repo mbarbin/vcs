@@ -27,7 +27,7 @@ type 'a result = 'a t
 
 include Non_raising.Make (Vcs_rresult0)
 
-let pp_error fmt (`Vcs err) = Stdlib.Format.pp_print_string fmt (Err.to_string_hum err)
+let pp_error fmt (`Vcs err) = Format.pp_print_string fmt (Err.to_string_hum err)
 
 let open_error = function
   | Ok _ as r -> r

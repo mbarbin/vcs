@@ -66,7 +66,7 @@ module Change = struct
 
   let equal =
     (fun a__001_ b__002_ ->
-       if Stdlib.( == ) a__001_ b__002_
+       if a__001_ == b__002_
        then true
        else (
          match a__001_, b__002_ with
@@ -80,19 +80,15 @@ module Change = struct
          | Modified _, _ -> false
          | _, Modified _ -> false
          | Copied _a__009_, Copied _b__010_ ->
-           Stdlib.( && )
-             (Path_in_repo.equal _a__009_.src _b__010_.src)
-             (Stdlib.( && )
-                (Path_in_repo.equal _a__009_.dst _b__010_.dst)
-                (equal_int _a__009_.similarity _b__010_.similarity))
+           Path_in_repo.equal _a__009_.src _b__010_.src
+           && Path_in_repo.equal _a__009_.dst _b__010_.dst
+           && equal_int _a__009_.similarity _b__010_.similarity
          | Copied _, _ -> false
          | _, Copied _ -> false
          | Renamed _a__011_, Renamed _b__012_ ->
-           Stdlib.( && )
-             (Path_in_repo.equal _a__011_.src _b__012_.src)
-             (Stdlib.( && )
-                (Path_in_repo.equal _a__011_.dst _b__012_.dst)
-                (equal_int _a__011_.similarity _b__012_.similarity)))
+           Path_in_repo.equal _a__011_.src _b__012_.src
+           && Path_in_repo.equal _a__011_.dst _b__012_.dst
+           && equal_int _a__011_.similarity _b__012_.similarity)
      : t -> t -> bool)
   ;;
 end
@@ -146,14 +142,12 @@ module Changed = struct
 
   let equal =
     (fun a__034_ b__035_ ->
-       if Stdlib.( == ) a__034_ b__035_
+       if a__034_ == b__035_
        then true
        else (
          match a__034_, b__035_ with
          | Between _a__036_, Between _b__037_ ->
-           Stdlib.( && )
-             (Rev.equal _a__036_.src _b__037_.src)
-             (Rev.equal _a__036_.dst _b__037_.dst))
+           Rev.equal _a__036_.src _b__037_.src && Rev.equal _a__036_.dst _b__037_.dst)
      : t -> t -> bool)
   ;;
 end

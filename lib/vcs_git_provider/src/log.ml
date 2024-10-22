@@ -25,6 +25,7 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
   match
     Vcs.Exn.Private.try_with (fun () ->
       match String.split (String.strip str) ~on:' ' with
+      | [] -> assert false (* [String.split] never returns the empty list. *)
       | [ rev ] -> Vcs.Log.Line.Root { rev = Vcs.Rev.v rev }
       | [ rev; parent ] -> Commit { rev = Vcs.Rev.v rev; parent = Vcs.Rev.v parent }
       | [ rev; parent1; parent2 ] ->
@@ -33,7 +34,6 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
           ; parent1 = Vcs.Rev.v parent1
           ; parent2 = Vcs.Rev.v parent2
           }
-      | [] -> assert false
       | _ :: _ :: _ :: _ ->
         raise (Vcs.E (Vcs.Err.error_string "Too many words (expected 1, 2, or 3)")))
   with

@@ -19,15 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
+include Import.Hashtbl.Make (struct
+    include Int
 
-type t = GitHub [@@deriving enumerate, sexp_of]
-
-let compare = (compare : t -> t -> int)
-let equal = (( = ) : t -> t -> bool)
-let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
-let hash = (Hashtbl.hash : t -> int)
-
-let to_string = function
-  | GitHub -> "GitHub"
-;;
+    let sexp_of_t t = Sexp.Atom (Import.Int.to_string_hum t)
+  end)

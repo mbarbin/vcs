@@ -32,7 +32,7 @@ type 'a result = 'a t
     {{:https://erratique.ch/software/rresult/doc/Rresult/index.html#usage} Rresult}
     usage design guidelines. *)
 
-val pp_error : Stdlib.Format.formatter -> [ `Vcs of Err.t ] -> unit
+val pp_error : Format.formatter -> [ `Vcs of Err.t ] -> unit
 val open_error : 'a result -> ('a, [> `Vcs of Err.t ]) Result.t
 val error_to_msg : 'a result -> ('a, [ `Msg of string ]) Result.t
 

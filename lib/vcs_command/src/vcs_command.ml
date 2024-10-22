@@ -25,7 +25,7 @@ open! Import
    the name the associated function has in the [V.S] interface, prepending the
    suffix "_cmd". *)
 
-let print_sexp sexp = Stdlib.print_endline (Sexp.to_string_hum sexp)
+let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
   type t =
@@ -65,10 +65,12 @@ let relativize ~repo_root ~cwd ~path =
       (Vcs.E (Vcs.Err.create_s [%sexp "Path is not in repo", { path : Absolute_path.t }]))
 ;;
 
+open Command.Std
+
 let add_cmd =
   Command.make
     ~summary:"add a file to the index"
-    (let%map_open.Command path =
+    (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
@@ -86,13 +88,13 @@ let add_cmd =
 let commit_cmd =
   Command.make
     ~summary:"commit a file"
-    (let%map_open.Command commit_message =
+    (let+ commit_message =
        Arg.named
          [ "message"; "m" ]
          (Param.validated_string (module Vcs.Commit_message))
          ~docv:"MSG"
          ~doc:"commit message"
-     and quiet = Arg.flag [ "quiet"; "q" ] ~doc:"suppress output on success" in
+     and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"suppress output on success" in
      Eio_main.run
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
@@ -104,7 +106,7 @@ let commit_cmd =
 let current_branch_cmd =
   Command.make
     ~summary:"current branch"
-    (let%map_open.Command () = Arg.return () in
+    (let+ () = Arg.return () in
      Eio_main.run
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
@@ -116,7 +118,7 @@ let current_branch_cmd =
 let current_revision_cmd =
   Command.make
     ~summary:"revision of HEAD"
-    (let%map_open.Command () = Arg.return () in
+    (let+ () = Arg.return () in
      Eio_main.run
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
@@ -128,13 +130,13 @@ let current_revision_cmd =
 let find_enclosing_repo_root_cmd =
   Command.make
     ~summary:"find enclosing repo root"
-    (let%map_open.Command from =
+    (let+ from =
        Arg.named_opt
          [ "from" ]
          (Param.validated_string (module Fpath))
          ~docv:"path/to/dir"
          ~doc:"walk up from the supplied directory (default is cwd)"
-     and store =
+     and+ store =
        Arg.named_opt
          [ "store" ]
          (Param.comma_separated (Param.validated_string (module Fsegment)))
@@ -153,7 +155,7 @@ let find_enclosing_repo_root_cmd =
      match Vcs.find_enclosing_repo_root vcs ~from ~store with
      | None -> ()
      | Some (`Store store, repo_root) ->
-       Stdlib.Printf.printf
+       Printf.printf
          "%s: %s\n"
          (Fsegment.to_string store)
          (Vcs.Repo_root.to_string repo_root))
@@ -162,30 +164,30 @@ let find_enclosing_repo_root_cmd =
 let git_cmd =
   Command.make
     ~summary:"run the git cli"
-    (let%map_open.Command args =
+    (let+ args =
        Arg.pos_all Param.string ~docv:"ARG" ~doc:"pass the remaining args to git"
      in
      Eio_main.run
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
      let { Vcs.Git.Output.exit_code; stdout; stderr } =
-       Vcs.git vcs ~repo_root ~args ~f:Fn.id
+       Vcs.git vcs ~repo_root ~args ~f:Fun.id
      in
-     Stdlib.print_string stdout;
-     Stdlib.prerr_string stderr;
-     if exit_code <> 0 then Stdlib.exit exit_code)
+     print_string stdout;
+     prerr_string stderr;
+     if exit_code <> 0 then exit exit_code)
 ;;
 
 let init_cmd =
   Command.make
     ~summary:"initialize a new repository"
-    (let%map_open.Command path =
+    (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"path/to/root"
          ~doc:"where to initialize the repository"
-     and quiet =
+     and+ quiet =
        Arg.flag [ "quiet"; "q" ] ~doc:"do not print the initialized repo root"
      in
      Eio_main.run
@@ -200,7 +202,7 @@ let init_cmd =
 let load_file_cmd =
   Command.make
     ~summary:"print a file from the filesystem (aka cat)"
-    (let%map_open.Command path =
+    (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
@@ -212,14 +214,14 @@ let load_file_cmd =
      let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
      let path = Absolute_path.relativize ~root:cwd path in
      let contents = Vcs.load_file vcs ~path in
-     Stdlib.print_string (contents :> string);
+     print_string (contents :> string);
      ())
 ;;
 
 let ls_files_cmd =
   Command.make
     ~summary:"list file"
-    (let%map_open.Command below =
+    (let+ below =
        Arg.named_opt
          [ "below" ]
          (Param.validated_string (module Fpath))
@@ -235,15 +237,14 @@ let ls_files_cmd =
        | Some path -> relativize ~repo_root ~cwd ~path
      in
      let files = Vcs.ls_files vcs ~repo_root ~below in
-     List.iter files ~f:(fun file ->
-       Stdlib.print_endline (Vcs.Path_in_repo.to_string file));
+     List.iter files ~f:(fun file -> print_endline (Vcs.Path_in_repo.to_string file));
      ())
 ;;
 
 let log_cmd =
   Command.make
     ~summary:"show the log of current repo"
-    (let%map_open.Command () = Arg.return () in
+    (let+ () = Arg.return () in
      Eio_main.run
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
@@ -255,13 +256,13 @@ let log_cmd =
 let name_status_cmd =
   Command.make
     ~summary:"show a summary of the diff between 2 revs"
-    (let%map_open.Command src =
+    (let+ src =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Vcs.Rev))
          ~docv:"BASE"
          ~doc:"base revision"
-     and dst =
+     and+ dst =
        Arg.pos
          ~pos:1
          (Param.validated_string (module Vcs.Rev))
@@ -279,13 +280,13 @@ let name_status_cmd =
 let num_status_cmd =
   Command.make
     ~summary:"show a summary of the number of lines of diff between 2 revs"
-    (let%map_open.Command src =
+    (let+ src =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Vcs.Rev))
          ~docv:"BASE"
          ~doc:"base revision"
-     and dst =
+     and+ dst =
        Arg.pos
          ~pos:1
          (Param.validated_string (module Vcs.Rev))
@@ -303,7 +304,7 @@ let num_status_cmd =
 let read_dir_cmd =
   Command.make
     ~summary:"print the list of files in a directory"
-    (let%map_open.Command dir =
+    (let+ dir =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
@@ -322,7 +323,7 @@ let read_dir_cmd =
 let rename_current_branch_cmd =
   Command.make
     ~summary:"move/rename a branch to a new name"
-    (let%map_open.Command branch_name =
+    (let+ branch_name =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Vcs.Branch_name))
@@ -339,7 +340,7 @@ let rename_current_branch_cmd =
 let refs_cmd =
   Command.make
     ~summary:"show the refs of current repo"
-    (let%map_open.Command () = Arg.return () in
+    (let+ () = Arg.return () in
      Eio_main.run
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
@@ -351,7 +352,7 @@ let refs_cmd =
 let save_file_cmd =
   Command.make
     ~summary:"save stdin to a file from the filesystem (aka tee)"
-    (let%map_open.Command path =
+    (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
@@ -376,13 +377,13 @@ let save_file_cmd =
 let set_user_config_cmd =
   Command.make
     ~summary:"set the user config"
-    (let%map_open.Command user_name =
+    (let+ user_name =
        Arg.named
          [ "user.name" ]
          (Param.validated_string (module Vcs.User_name))
          ~docv:"USER"
          ~doc:"user name"
-     and user_email =
+     and+ user_email =
        Arg.named
          [ "user.email" ]
          (Param.validated_string (module Vcs.User_email))
@@ -400,13 +401,13 @@ let set_user_config_cmd =
 let show_file_at_rev_cmd =
   Command.make
     ~summary:"show the contents of file at a given revision"
-    (let%map_open.Command rev =
+    (let+ rev =
        Arg.named
          [ "rev"; "r" ]
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"
          ~doc:"revision to show"
-     and path =
+     and+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
@@ -419,9 +420,9 @@ let show_file_at_rev_cmd =
      let path = relativize ~repo_root ~cwd ~path in
      let result = Vcs.show_file_at_rev vcs ~repo_root ~rev ~path in
      (match result with
-      | `Present contents -> Stdlib.print_string (contents :> string)
+      | `Present contents -> print_string (contents :> string)
       | `Absent ->
-        Stdlib.Printf.eprintf
+        Printf.eprintf
           "Path '%s' does not exist in '%s'"
           (Vcs.Path_in_repo.to_string path)
           (Vcs.Rev.to_string rev));
@@ -431,7 +432,7 @@ let show_file_at_rev_cmd =
 let graph_cmd =
   Command.make
     ~summary:"compute graph of current repo"
-    (let%map_open.Command () = Arg.return () in
+    (let+ () = Arg.return () in
      Eio_main.run
      @@ fun env ->
      let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
@@ -445,7 +446,7 @@ let graph_cmd =
 let branch_revision_cmd =
   Command.make
     ~summary:"revision of a branch"
-    (let%map_open.Command branch_name =
+    (let+ branch_name =
        Arg.pos_opt
          ~pos:0
          (Param.validated_string (module Vcs.Branch_name))
@@ -480,7 +481,7 @@ let branch_revision_cmd =
 let greatest_common_ancestors_cmd =
   Command.make
     ~summary:"print greatest common ancestors of revisions"
-    (let%map_open.Command revs =
+    (let+ revs =
        Arg.pos_all
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"

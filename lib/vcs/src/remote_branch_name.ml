@@ -31,7 +31,7 @@ type t =
 
 let compare =
   (fun a__001_ b__002_ ->
-     if Stdlib.( == ) a__001_ b__002_
+     if a__001_ == b__002_
      then 0
      else (
        match Remote_name.compare a__001_.remote_name b__002_.remote_name with
@@ -42,19 +42,18 @@ let compare =
 
 let equal =
   (fun a__003_ b__004_ ->
-     if Stdlib.( == ) a__003_ b__004_
+     if a__003_ == b__004_
      then true
      else
-       Stdlib.( && )
-         (Remote_name.equal a__003_.remote_name b__004_.remote_name)
-         (Branch_name.equal a__003_.branch_name b__004_.branch_name)
+       Remote_name.equal a__003_.remote_name b__004_.remote_name
+       && Branch_name.equal a__003_.branch_name b__004_.branch_name
    : t -> t -> bool)
 ;;
 
 [@@@coverage on]
 
-let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
-let hash = (Stdlib.Hashtbl.hash : t -> int)
+let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
+let hash = (Hashtbl.hash : t -> int)
 
 let to_string { remote_name; branch_name } =
   Printf.sprintf

@@ -23,8 +23,8 @@ open! Import
 include Container_key.String_impl
 
 let invariant t =
-  Int.(String.length t = 40)
-  && String.for_all t ~f:(fun c -> Char.is_alphanum c || Char.(c = '-'))
+  Int.equal (String.length t) 40
+  && String.for_all t ~f:(fun c -> Char.is_alphanum c || Char.equal c '-')
 ;;
 
 include Validated_string.Make (struct

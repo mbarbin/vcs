@@ -62,7 +62,7 @@ let%expect_test "parse_ref_kind_exn" =
     {|
     (Vcs.E (
       (steps ((Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind blah)))))
-      (error (Invalid_argument "String.chop_prefix_exn \"blah\" \"refs/\""))))
+      (error "Expected ref to start with 'refs/'")))
     |}];
   require_does_raise [%here] (fun () -> test_ref_kind "non-refs/tags/0.0.1");
   [%expect
@@ -70,9 +70,7 @@ let%expect_test "parse_ref_kind_exn" =
     (Vcs.E (
       (steps ((
         Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind non-refs/tags/0.0.1)))))
-      (error (
-        Invalid_argument
-        "String.chop_prefix_exn \"non-refs/tags/0.0.1\" \"refs/\""))))
+      (error "Expected ref to start with 'refs/'")))
     |}];
   test_ref_kind "refs/blah";
   [%expect {| (Other (name blah)) |}];

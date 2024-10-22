@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
+        "alphanum",
+        "astring",
         "chdir",
         "ENOENT",
         "fpath",
@@ -12,6 +14,8 @@
         "raise_notrace",
         "rmtree",
         "rresult",
+        "rsplit",
+        "Sexp_conv",
         "Stdenv",
         "subdir",
         "worktree",

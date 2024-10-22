@@ -19,9 +19,4 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type t = Vcs.Num_lines_in_diff.t =
-  { insertions : int
-  ; deletions : int
-  }
-
-include module type of Vcs.Num_lines_in_diff with type t := t
+include Import.Hashtbl.S_extended with type key = Rev.t

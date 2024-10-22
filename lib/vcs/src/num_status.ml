@@ -34,7 +34,7 @@ module Key = struct
 
   let compare =
     (fun a__001_ b__002_ ->
-       if Stdlib.( == ) a__001_ b__002_
+       if a__001_ == b__002_
        then 0
        else (
          match a__001_, b__002_ with
@@ -50,7 +50,7 @@ module Key = struct
 
   let equal =
     (fun a__007_ b__008_ ->
-       if Stdlib.( == ) a__007_ b__008_
+       if a__007_ == b__008_
        then true
        else (
          match a__007_, b__008_ with
@@ -58,14 +58,13 @@ module Key = struct
          | One_file _, _ -> false
          | _, One_file _ -> false
          | Two_files _a__011_, Two_files _b__012_ ->
-           Stdlib.( && )
-             (Path_in_repo.equal _a__011_.src _b__012_.src)
-             (Path_in_repo.equal _a__011_.dst _b__012_.dst))
+           Path_in_repo.equal _a__011_.src _b__012_.src
+           && Path_in_repo.equal _a__011_.dst _b__012_.dst)
      : t -> t -> bool)
   ;;
 
-  let seeded_hash = (Stdlib.Hashtbl.seeded_hash : int -> t -> int)
-  let hash = (Stdlib.Hashtbl.hash : t -> int)
+  let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
+  let hash = (Hashtbl.hash : t -> int)
 end
 
 module Change = struct
@@ -79,7 +78,7 @@ module Change = struct
 
     let equal =
       (fun a__008_ b__009_ ->
-         if Stdlib.( == ) a__008_ b__009_
+         if a__008_ == b__009_
          then true
          else (
            match a__008_, b__009_ with
@@ -100,12 +99,11 @@ module Change = struct
 
   let equal =
     (fun a__014_ b__015_ ->
-       if Stdlib.( == ) a__014_ b__015_
+       if a__014_ == b__015_
        then true
        else
-         Stdlib.( && )
-           (Key.equal a__014_.key b__015_.key)
-           (Num_stat.equal a__014_.num_stat b__015_.num_stat)
+         Key.equal a__014_.key b__015_.key
+         && Num_stat.equal a__014_.num_stat b__015_.num_stat
      : t -> t -> bool)
   ;;
 end
@@ -128,14 +126,12 @@ module Changed = struct
 
   let equal =
     (fun a__022_ b__023_ ->
-       if Stdlib.( == ) a__022_ b__023_
+       if a__022_ == b__023_
        then true
        else (
          match a__022_, b__023_ with
          | Between _a__024_, Between _b__025_ ->
-           Stdlib.( && )
-             (Rev.equal _a__024_.src _b__025_.src)
-             (Rev.equal _a__024_.dst _b__025_.dst))
+           Rev.equal _a__024_.src _b__025_.src && Rev.equal _a__024_.dst _b__025_.dst)
      : t -> t -> bool)
   ;;
 end

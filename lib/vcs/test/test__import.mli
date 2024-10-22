@@ -18,10 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-type t = Vcs.Num_lines_in_diff.t =
-  { insertions : int
-  ; deletions : int
-  }
-
-include module type of Vcs.Num_lines_in_diff with type t := t

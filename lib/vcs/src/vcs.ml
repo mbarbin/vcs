@@ -58,5 +58,8 @@ include Vcs0
 module Private = struct
   module Bit_vector = Bit_vector
   module Import = Import
+  module Int_table = Int_table
+  module Ref_kind_table = Ref_kind_table
+  module Rev_table = Rev_table
   module Validated_string = Validated_string
 end

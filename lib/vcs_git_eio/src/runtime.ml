@@ -115,7 +115,7 @@ module Lines = struct
   let create string : t = String.split_lines string
 end
 
-exception Uncaught_user_exn of exn * Stdlib.Printexc.raw_backtrace
+exception Uncaught_user_exn of exn * Printexc.raw_backtrace
 
 let git ?env t ~cwd ~args ~f =
   let cwd = Eio.Path.(t.fs / Absolute_path.to_string cwd) in
@@ -153,7 +153,7 @@ let git ?env t ~cwd ~args ~f =
     exit_status_r := (exit_status :> [ Exit_status.t | `Unknown ]);
     match exit_status with
     | `Signaled signal ->
-      Stdlib.raise_notrace
+      raise_notrace
         (Vcs.E
            (Vcs.Err.create_s
               [%sexp "process exited abnormally", { signal : int }] [@coverage off]))
@@ -171,12 +171,12 @@ let git ?env t ~cwd ~args ~f =
       *)
       (match f { Vcs.Git.Output.exit_code; stdout; stderr } with
        | Ok _ as ok -> ok
-       | Error err -> Stdlib.raise_notrace (Vcs.E err) [@coverage off]
+       | Error err -> raise_notrace (Vcs.E err) [@coverage off]
        | exception exn ->
-         let bt = Stdlib.Printexc.get_raw_backtrace () in
-         (Stdlib.raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off]))
+         let bt = Printexc.get_raw_backtrace () in
+         (raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off]))
   with
-  | Uncaught_user_exn (exn, bt) -> Stdlib.Printexc.raise_with_backtrace exn bt
+  | Uncaught_user_exn (exn, bt) -> Printexc.raise_with_backtrace exn bt
   | exn ->
     let err =
       match exn with

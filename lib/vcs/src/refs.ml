@@ -32,12 +32,11 @@ module Line = struct
 
   let equal =
     (fun a__001_ b__002_ ->
-       if Stdlib.( == ) a__001_ b__002_
+       if a__001_ == b__002_
        then true
        else
-         Stdlib.( && )
-           (Rev.equal a__001_.rev b__002_.rev)
-           (Ref_kind.equal a__001_.ref_kind b__002_.ref_kind)
+         Rev.equal a__001_.rev b__002_.rev
+         && Ref_kind.equal a__001_.ref_kind b__002_.ref_kind
      : t -> t -> bool)
   ;;
 end
@@ -54,21 +53,21 @@ include T
 
 let tags (t : t) =
   List.filter_map t ~f:(function
-    | { rev = _; ref_kind = Tag { tag_name } } -> Some tag_name
+    | { Line.rev = _; ref_kind = Tag { tag_name } } -> Some tag_name
     | _ -> None)
   |> List.sort ~compare:Tag_name.compare
 ;;
 
 let local_branches (t : t) =
   List.filter_map t ~f:(function
-    | { rev = _; ref_kind = Local_branch { branch_name } } -> Some branch_name
+    | { Line.rev = _; ref_kind = Local_branch { branch_name } } -> Some branch_name
     | _ -> None)
   |> List.sort ~compare:Branch_name.compare
 ;;
 
 let remote_branches (t : t) =
   List.filter_map t ~f:(function
-    | { rev = _; ref_kind = Remote_branch { remote_branch_name } } ->
+    | { Line.rev = _; ref_kind = Remote_branch { remote_branch_name } } ->
       Some remote_branch_name
     | _ -> None)
   |> List.sort ~compare:Remote_branch_name.compare

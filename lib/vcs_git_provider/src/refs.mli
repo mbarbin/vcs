@@ -34,6 +34,28 @@ end
 val parse_ref_kind_exn : string -> Vcs.Ref_kind.t
 
 module Dereferenced : sig
+  (** A [ref_kind] may appear several times in the lines, in which case it will
+      be present both dereferenced and non-dereferenced. Because we want to
+      retrieve the revisions each ref is pointed to, we only want to keep the
+      dereferenced occurrences.
+
+      We test for this case using the data from [super-master-mind.refs] which
+      contains the following lines:
+
+      {v
+        f4875717f6cd5481f690c88baad1fb1eff4e1a22 refs/tags/0.0.2
+        0d4750ff594236a4bd970e1c90b8bbad80fcadff refs/tags/0.0.2^{}
+        d5d13aaed2bd0c2f4a37217a21d703c73b8f38d6 refs/tags/0.0.3
+        fc8e67fbc47302b7da682e9a7da626790bb59eaa refs/tags/0.0.3^{}
+      v}
+
+      In this input, [0.0.2] and [0.0.3] are non-dereferenced items. The sha
+      associated with them are identifiers for the tag objects, rather than the
+      commit revisions they point to.
+
+      The dereferenced items are [0.0.2^{}] and [0.0.3^{}], and their sha are
+      the commit revisions. *)
+
   type t =
     { rev : Vcs.Rev.t
     ; ref_kind : Vcs.Ref_kind.t

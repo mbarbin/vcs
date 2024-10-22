@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 let reraise_with_context err bt ~step =
-  Stdlib.Printexc.raise_with_backtrace (Exn0.E (Err.add_context err ~step)) bt
+  Printexc.raise_with_backtrace (Exn0.E (Err.add_context err ~step)) bt
 ;;
 
 module Private = struct
