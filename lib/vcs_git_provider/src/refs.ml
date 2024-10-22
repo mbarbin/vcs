@@ -30,7 +30,20 @@ module Dereferenced = struct
       ; ref_kind : Vcs.Ref_kind.t
       ; dereferenced : bool
       }
-    [@@deriving equal, sexp_of]
+    [@@deriving sexp_of]
+
+    let equal =
+      (fun a__001_ b__002_ ->
+         if Stdlib.( == ) a__001_ b__002_
+         then true
+         else
+           Stdlib.( && )
+             (Vcs.Rev.equal a__001_.rev b__002_.rev)
+             (Stdlib.( && )
+                (Vcs.Ref_kind.equal a__001_.ref_kind b__002_.ref_kind)
+                (equal_bool a__001_.dereferenced b__002_.dereferenced))
+       : t -> t -> bool)
+    ;;
   end
 
   include T

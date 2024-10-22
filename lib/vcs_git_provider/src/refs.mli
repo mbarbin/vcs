@@ -37,8 +37,9 @@ module Dereferenced : sig
     ; ref_kind : Vcs.Ref_kind.t
     ; dereferenced : bool
     }
-  [@@deriving equal, sexp_of]
+  [@@deriving sexp_of]
 
+  val equal : t -> t -> bool
   val parse_ref_kind_exn : string -> Vcs.Ref_kind.t
   val parse_exn : line:string -> t
 end

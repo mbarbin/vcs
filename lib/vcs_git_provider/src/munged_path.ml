@@ -22,15 +22,15 @@
 open! Import
 
 module T = struct
-  [@@@coverage off]
-
   type t = Vcs.Num_status.Key.t =
     | One_file of Vcs.Path_in_repo.t
     | Two_files of
         { src : Vcs.Path_in_repo.t
         ; dst : Vcs.Path_in_repo.t
         }
-  [@@deriving equal, sexp_of]
+
+  let equal = Vcs.Num_status.Key.equal
+  let sexp_of_t = Vcs.Num_status.Key.sexp_of_t
 end
 
 include T
