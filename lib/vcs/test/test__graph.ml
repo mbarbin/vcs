@@ -739,17 +739,9 @@ let%expect_test "debug graph" =
     print_s [%sexp (Vcs.Graph.node_refs graph ~node:(node ~rev) : Vcs.Ref_kind.t list)]
   in
   (* There are no longer any refs pointing to [r1]. *)
-  (* CR mbarbin: This shows the issue - see how the information attached to [r1] is stale. *)
   show_refs r1;
-  [%expect
-    {|
-    ((
-      Remote_branch (
-        remote_branch_name (
-          (remote_name origin)
-          (branch_name main)))))
-    |}];
-  (* Both [main] and [origin/main] points to [r4]. *)
+  [%expect {| () |}];
+  (* Both [main] and [origin/main] now point to [r4]. *)
   show_refs r4;
   [%expect
     {|
@@ -774,8 +766,6 @@ let%expect_test "debug graph" =
      ((rev 7216231cd107946841cc3eebe5da287b7216231c)
       (ref_kind (Tag (tag_name 0.1.0)))))
     |}];
-  (* CR mbarbin: This shows the issue also - see how the information attached
-     to [r1] in the field [refs] is stale. *)
   print_s [%sexp (graph : Vcs.Graph.t)];
   [%expect
     {|
@@ -804,19 +794,14 @@ let%expect_test "debug graph" =
        (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
        (#1 f453b802f640c6888df978c712057d17f453b802)
        (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
-     (refs (
-       (#4 (
+     (refs ((
+       #4 (
          (Local_branch (branch_name main))
          (Remote_branch (
            remote_branch_name (
              (remote_name origin)
              (branch_name main))))
-         (Tag (tag_name 0.1.0))))
-       (#1 ((
-         Remote_branch (
-           remote_branch_name (
-             (remote_name origin)
-             (branch_name main)))))))))
+         (Tag (tag_name 0.1.0)))))))
     |}];
   ()
 ;;

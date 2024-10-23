@@ -234,6 +234,16 @@ let set_ref t ~rev ~ref_kind =
   match Rev_table.find t.revs rev with
   | None -> raise (Exn0.E (Err.create_s [%sexp "Rev not found", (rev : Rev.t)]))
   | Some index ->
+    (match Ref_kind_table.find t.refs ref_kind with
+     | None -> ()
+     | Some previous_node ->
+       (match Int_table.find t.reverse_refs previous_node with
+        | None -> assert false (* Inconsistency between [t.refs] and [t.reverse_refs]. *)
+        | Some refs ->
+          let refs = List.filter refs ~f:(fun r -> not (Ref_kind.equal r ref_kind)) in
+          if List.is_empty refs
+          then Int_table.remove t.reverse_refs previous_node
+          else Int_table.set t.reverse_refs ~key:previous_node ~data:refs));
     Ref_kind_table.set t.refs ~key:ref_kind ~data:index;
     Int_table.add_multi t.reverse_refs ~key:index ~data:ref_kind
 ;;
