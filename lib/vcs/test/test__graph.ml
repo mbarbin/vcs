@@ -803,5 +803,20 @@ let%expect_test "debug graph" =
              (branch_name main))))
          (Tag (tag_name 0.1.0)))))))
     |}];
+  (* We also test a case where [set_ref] leaves at least one ref at the previous
+     location. *)
+  let custom_A = Vcs.Ref_kind.Other { name = "custom-A" } in
+  Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:custom_A;
+  Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:(Other { name = "custom-B" });
+  show_refs r0;
+  [%expect {|
+    ((Other (name custom-A))
+     (Other (name custom-B)))
+    |}];
+  Vcs.Graph.set_ref graph ~rev:r1 ~ref_kind:custom_A;
+  show_refs r0;
+  [%expect {| ((Other (name custom-B))) |}];
+  show_refs r1;
+  [%expect {| ((Other (name custom-A))) |}];
   ()
 ;;
