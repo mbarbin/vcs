@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 (* In this test we run a function from the Vcs API, let it raise an exception
-   and show out to catch it. This allows for a basic coverage of the raising
+   and show how to catch it. This allows for a basic coverage of the raising
    case of the API too. *)
 
 let%expect_test "hello error" =

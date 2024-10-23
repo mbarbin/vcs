@@ -36,7 +36,7 @@ let%expect_test "hello commit" =
     let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
     Vcs_test_helpers.init vcs ~path:(Absolute_path.v path)
   in
-  (* Ok, we are all set, we are now inside a Git repo and we can start using
+  (* Ok, we are all set, [repo_root] points to a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it
      to the repository, and query it from the store afterwards. *)
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in

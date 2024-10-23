@@ -4,11 +4,9 @@ This directory contains some files that are used by tests.
 
 ## Repos source
 
-Data files are the result of git commands run inside a clone of different repos,
-keeping the repo name as basename for the files.
+Data files are the result of git commands run inside a clone of different repos, keeping the repo name as basename for the files.
 
-The repos were chosen somewhat arbitrarily, or given as part of a bug report,
-etc. We can add more files from other repos as needed.
+The repos were chosen somewhat arbitrarily, or given as part of a bug report, etc. We can add more files from other repos as needed.
 
 - [super-master-mind](https://github.com/mbarbin/super-master-mind)
 - [eio](https://github.com/ocaml-multicore/eio.git)
