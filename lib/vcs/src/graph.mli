@@ -49,8 +49,8 @@ val create : unit -> t
     simply operations that needs to be called to feed to [t] the information
     that already exists in the git log. *)
 
-(** [add t ~log] add to [t] all the nodes from the log. This is idempotent
-    this doesn't add the nodes that if [t] already knows.*)
+(** [add t ~log] add to [t] all the nodes from the log. This is idempotent -
+    this doesn't add the nodes that [t] already knows. *)
 val add_nodes : t -> log:Log.t -> unit
 
 (** [set_refs t ~refs] add to [t] all the refs from the log. *)
@@ -119,8 +119,8 @@ val prepend_parents : t -> node:Node.t -> prepend_to:Node.t list -> Node.t list
 val node_kind : t -> node:Node.t -> Node_kind.t
 
 (** If the graph has refs (such as tags or branches) attached to this node, they
-    will all be returned by [node_refs graph ~node]. The order of the refs in
-    the resulting list is not specified. *)
+    will all be returned by [node_refs graph ~node]. The refs are returned
+    ordered increasingly according to [Ref_kind.compare]. *)
 val node_refs : t -> node:Node.t -> Ref_kind.t list
 
 (** Return the number of nodes the graph currently holds. *)
@@ -128,7 +128,7 @@ val node_count : t -> int
 
 (** {1 Refs} *)
 
-(** List known refs. *)
+(** List known refs, ordered increasingly according to [Ref_kind.compare]. *)
 val refs : t -> Refs.t
 
 (** Find a ref if it is present. *)
@@ -143,7 +143,7 @@ val find_rev : t -> rev:Rev.t -> Node.t option
     [find_rev graph ~rev = Some _]. *)
 val mem_rev : t -> rev:Rev.t -> bool
 
-(** {1 Roots & Tips} *)
+(** {1 Roots & Leaves} *)
 
 (** Return the list of nodes that do not have any parents. *)
 val roots : t -> Node.t list
@@ -175,12 +175,12 @@ val is_ancestor_or_equal : t -> ancestor:Node.t -> descendant:Node.t -> bool
     of all the nodes in the set and is not a strict ancestor of any other common
     ancestor of the nodes.
 
-    If the nodes in [nodes] are unrelated, the function returns an empty list. If
-    there are multiple greatest common ancestors, all of them are included in
-    the returned list.
+    If the nodes in [nodes] do not have common ancestors, the function returns
+    an empty list. If there are multiple greatest common ancestors, all of them
+    are included in the returned list.
 
-    Multiple nodes may have multiple greatest common ancestors, especially in
-    cases of complex merge histories, hence the list return type. *)
+    A set of nodes may have multiple greatest common ancestors, especially in
+    cases of complex merge histories, hence the list returned type. *)
 val greatest_common_ancestors : t -> nodes:Node.t list -> Node.t list
 
 module Descendance : sig
