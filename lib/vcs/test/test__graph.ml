@@ -718,5 +718,105 @@ let%expect_test "debug graph" =
         (index      -1)
         (node_count 5))))
     |}];
+  (* Here we monitor for a regression of a bug where [set_ref] would not
+     properly update pre-existing bindings. *)
+  let upstream =
+    Vcs.Ref_kind.Remote_branch
+      { remote_branch_name = Vcs.Remote_branch_name.v "origin/main" }
+  in
+  let show_upstream () =
+    print_s
+      [%sexp (Vcs.Graph.find_ref graph ~ref_kind:upstream : Vcs.Graph.Node.t option)]
+  in
+  show_upstream ();
+  [%expect {| (#1) |}];
+  (* We are now simulating that we pushed [main] and thus upstream [origin/main]
+     has advanced to [r4]. *)
+  Vcs.Graph.set_ref graph ~rev:r4 ~ref_kind:upstream;
+  show_upstream ();
+  [%expect {| (#4) |}];
+  let show_refs rev =
+    print_s [%sexp (Vcs.Graph.node_refs graph ~node:(node ~rev) : Vcs.Ref_kind.t list)]
+  in
+  (* There are no longer any refs pointing to [r1]. *)
+  (* CR mbarbin: This shows the issue - see how the information attached to [r1] is stale. *)
+  show_refs r1;
+  [%expect
+    {|
+    ((
+      Remote_branch (
+        remote_branch_name (
+          (remote_name origin)
+          (branch_name main)))))
+    |}];
+  (* Both [main] and [origin/main] points to [r4]. *)
+  show_refs r4;
+  [%expect
+    {|
+    ((Local_branch (branch_name main))
+     (Remote_branch (
+       remote_branch_name (
+         (remote_name origin)
+         (branch_name main))))
+     (Tag (tag_name 0.1.0)))
+    |}];
+  print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
+  [%expect
+    {|
+    (((rev 7216231cd107946841cc3eebe5da287b7216231c)
+      (ref_kind (Local_branch (branch_name main))))
+     ((rev 7216231cd107946841cc3eebe5da287b7216231c)
+      (ref_kind (
+        Remote_branch (
+          remote_branch_name (
+            (remote_name origin)
+            (branch_name main))))))
+     ((rev 7216231cd107946841cc3eebe5da287b7216231c)
+      (ref_kind (Tag (tag_name 0.1.0)))))
+    |}];
+  (* CR mbarbin: This shows the issue also - see how the information attached
+     to [r1] in the field [refs] is stale. *)
+  print_s [%sexp (graph : Vcs.Graph.t)];
+  [%expect
+    {|
+    ((nodes (
+       (#4 (
+         Commit
+         (rev    7216231cd107946841cc3eebe5da287b7216231c)
+         (parent #3)))
+       (#3 (
+         Merge
+         (rev     9a81fba7a18f740120f1141b1ed109bb9a81fba7)
+         (parent1 #1)
+         (parent2 #2)))
+       (#2 (
+         Commit
+         (rev    5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+         (parent #0)))
+       (#1 (
+         Commit
+         (rev    f453b802f640c6888df978c712057d17f453b802)
+         (parent #0)))
+       (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
+     (revs (
+       (#4 7216231cd107946841cc3eebe5da287b7216231c)
+       (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
+       (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+       (#1 f453b802f640c6888df978c712057d17f453b802)
+       (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
+     (refs (
+       (#4 (
+         (Local_branch (branch_name main))
+         (Remote_branch (
+           remote_branch_name (
+             (remote_name origin)
+             (branch_name main))))
+         (Tag (tag_name 0.1.0))))
+       (#1 ((
+         Remote_branch (
+           remote_branch_name (
+             (remote_name origin)
+             (branch_name main)))))))))
+    |}];
   ()
 ;;
