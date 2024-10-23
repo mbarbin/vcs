@@ -18,7 +18,7 @@
 
 ### Fixed
 
-- Fixed stale refs information leaked by `Vcs.Graph.set_ref` (#40, @mbarbin).
+- Fixed stale refs information leaked by `Vcs.Graph.set_ref` (#41, @mbarbin).
 - Fixed some odoc warnings related to `Vcs_base` (#38, @mbarbin).
 - Changed some exceptions raised by the `vcs` related libraries to the `Vcs.E` exception (#34, @mbarbin).
 
