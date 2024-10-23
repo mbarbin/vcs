@@ -590,15 +590,15 @@ let%expect_test "debug graph" =
     Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
     rev
   in
-  let r1 = root () in
-  let r2 = commit ~parent:r1 in
-  let r3 = commit ~parent:r1 in
-  let m1 = merge ~parent1:r2 ~parent2:r3 in
+  let r0 = root () in
+  let r1 = commit ~parent:r0 in
+  let r2 = commit ~parent:r0 in
+  let m1 = merge ~parent1:r1 ~parent2:r2 in
   let r4 = commit ~parent:m1 in
   Vcs.Graph.set_refs
     graph
     ~refs:
-      [ { rev = r2
+      [ { rev = r1
         ; ref_kind =
             Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v "origin/main" }
         }
@@ -651,9 +651,9 @@ let%expect_test "debug graph" =
     let node = node ~rev in
     print_s [%sexp (Vcs.Graph.node_kind graph ~node : Vcs.Graph.Node_kind.t)]
   in
-  node_kind r1;
+  node_kind r0;
   [%expect {| (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
-  node_kind r2;
+  node_kind r1;
   [%expect
     {|
     (Commit
@@ -679,11 +679,11 @@ let%expect_test "debug graph" =
   let print_ancestors rev =
     print_s [%sexp (ancestors graph (node ~rev) : Set.M(Vcs.Graph.Node).t)]
   in
-  print_ancestors r1;
+  print_ancestors r0;
   [%expect {| (#0) |}];
-  print_ancestors r2;
+  print_ancestors r1;
   [%expect {| (#0 #1) |}];
-  print_ancestors r3;
+  print_ancestors r2;
   [%expect {| (#0 #2) |}];
   print_ancestors m1;
   [%expect {| (#0 #1 #2 #3) |}];
@@ -691,7 +691,7 @@ let%expect_test "debug graph" =
   [%expect {| (#0 #1 #2 #3 #4) |}];
   (* Low level int indexing. *)
   let node_index node = print_s [%sexp (Vcs.Graph.node_index node : int)] in
-  node_index (node ~rev:r1);
+  node_index (node ~rev:r0);
   [%expect {| 0 |}];
   node_index (node ~rev:r4);
   [%expect {| 4 |}];
@@ -718,5 +718,105 @@ let%expect_test "debug graph" =
         (index      -1)
         (node_count 5))))
     |}];
+  (* Here we monitor for a regression of a bug where [set_ref] would not
+     properly update pre-existing bindings. *)
+  let upstream =
+    Vcs.Ref_kind.Remote_branch
+      { remote_branch_name = Vcs.Remote_branch_name.v "origin/main" }
+  in
+  let show_upstream () =
+    print_s
+      [%sexp (Vcs.Graph.find_ref graph ~ref_kind:upstream : Vcs.Graph.Node.t option)]
+  in
+  show_upstream ();
+  [%expect {| (#1) |}];
+  (* We are now simulating that we pushed [main] and thus upstream [origin/main]
+     has advanced to [r4]. *)
+  Vcs.Graph.set_ref graph ~rev:r4 ~ref_kind:upstream;
+  show_upstream ();
+  [%expect {| (#4) |}];
+  let show_refs rev =
+    print_s [%sexp (Vcs.Graph.node_refs graph ~node:(node ~rev) : Vcs.Ref_kind.t list)]
+  in
+  (* There are no longer any refs pointing to [r1]. *)
+  show_refs r1;
+  [%expect {| () |}];
+  (* Both [main] and [origin/main] now point to [r4]. *)
+  show_refs r4;
+  [%expect
+    {|
+    ((Local_branch (branch_name main))
+     (Remote_branch (
+       remote_branch_name (
+         (remote_name origin)
+         (branch_name main))))
+     (Tag (tag_name 0.1.0)))
+    |}];
+  print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
+  [%expect
+    {|
+    (((rev 7216231cd107946841cc3eebe5da287b7216231c)
+      (ref_kind (Local_branch (branch_name main))))
+     ((rev 7216231cd107946841cc3eebe5da287b7216231c)
+      (ref_kind (
+        Remote_branch (
+          remote_branch_name (
+            (remote_name origin)
+            (branch_name main))))))
+     ((rev 7216231cd107946841cc3eebe5da287b7216231c)
+      (ref_kind (Tag (tag_name 0.1.0)))))
+    |}];
+  print_s [%sexp (graph : Vcs.Graph.t)];
+  [%expect
+    {|
+    ((nodes (
+       (#4 (
+         Commit
+         (rev    7216231cd107946841cc3eebe5da287b7216231c)
+         (parent #3)))
+       (#3 (
+         Merge
+         (rev     9a81fba7a18f740120f1141b1ed109bb9a81fba7)
+         (parent1 #1)
+         (parent2 #2)))
+       (#2 (
+         Commit
+         (rev    5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+         (parent #0)))
+       (#1 (
+         Commit
+         (rev    f453b802f640c6888df978c712057d17f453b802)
+         (parent #0)))
+       (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
+     (revs (
+       (#4 7216231cd107946841cc3eebe5da287b7216231c)
+       (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
+       (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+       (#1 f453b802f640c6888df978c712057d17f453b802)
+       (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
+     (refs ((
+       #4 (
+         (Local_branch (branch_name main))
+         (Remote_branch (
+           remote_branch_name (
+             (remote_name origin)
+             (branch_name main))))
+         (Tag (tag_name 0.1.0)))))))
+    |}];
+  (* We also test a case where [set_ref] leaves at least one ref at the previous
+     location. *)
+  let custom_A = Vcs.Ref_kind.Other { name = "custom-A" } in
+  Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:custom_A;
+  Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:(Other { name = "custom-B" });
+  show_refs r0;
+  [%expect {|
+    ((Other (name custom-A))
+     (Other (name custom-B)))
+    |}];
+  Vcs.Graph.set_ref graph ~rev:r1 ~ref_kind:custom_A;
+  show_refs r0;
+  [%expect {| ((Other (name custom-B))) |}];
+  show_refs r1;
+  [%expect {| ((Other (name custom-A))) |}];
   ()
 ;;

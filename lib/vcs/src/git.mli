@@ -19,8 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Manipulating the output of process run by vcs and providers - typically the
-    ["git"] command. *)
+(** Manipulating the output of processes run by vcs and providers - typically
+    the ["git"] command. *)
 
 module Output : sig
   type t = Git_output0.t =

@@ -1,4 +1,4 @@
-## 0.0.9 (unreleased)
+## 0.0.9 (2024-10-23)
 
 ### Added
 
@@ -16,10 +16,9 @@
 - Rename what was `Vcs.Result` to `Vcs.Rresult` and introduce `Vcs.Result` whose type is simpler (#33, @mbarbin).
 - Moved `ocaml-vcs more-tests` commands at top-level (#28, @mbarbin).
 
-### Deprecated
-
 ### Fixed
 
+- Fixed stale refs information leaked by `Vcs.Graph.set_ref` (#40, @mbarbin).
 - Fixed some odoc warnings related to `Vcs_base` (#38, @mbarbin).
 - Changed some exceptions raised by the `vcs` related libraries to the `Vcs.E` exception (#34, @mbarbin).
 

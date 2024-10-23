@@ -21,20 +21,23 @@
 
 (** The type of errors raised by [Vcs].
 
-    Under the hood, it is lazily constructed human-readable information which
-    also carry some context (a sort of a high level stack trace manipulated by
-    the programmers of Vcs).
+    Under the hood, it is human-readable information which also carries some
+    context (a sort of a high level stack trace manipulated by the programmers
+    of Vcs).
 
     It is not meant to be matched on, but rather to be printed on stderr (or
     perhaps logged). *)
 type t
 
-(** [sexp_of_t t] forces the lazy message, and allow printing the information
-    contained by [t]. *)
+(** {1 Printing} *)
+
+(** [sexp_of_t t] allows printing the information contained by [t]. *)
 val sexp_of_t : t -> Sexp.t
 
 (** [to_string_hum t] is a convenience wrapper around [t |> sexp_of_t |> Sexp.to_string_hum]. *)
 val to_string_hum : t -> string
+
+(** {1 Building} *)
 
 val error_string : string -> t
 val create_s : Sexp.t -> t

@@ -19,6 +19,46 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(** An extension of the Vcs library for use with Base.
+
+    [Vcs_base] is a library that extends the [Vcs] library with additional
+    modules and functionalities, aimed to improve the compatibility of [Vcs] for
+    programs using [Base].
+
+    For example, it adds [Comparable.S] to all container keys modules so that
+    they can be used with Base-style containers:
+
+    {[
+      let create_path_in_repo_table () = Hashtbl.create (module Vcs.Path_in_repo)
+    ]}
+
+    There's also a new module [Vcs.Or_error] which allows using [Vcs] with the
+    [Or_error] monad.
+
+    The library is designed to be used as a drop-in replacement for [Vcs]. For
+    this, it includes a single module named [Vcs] which must be setup to shadow
+    the regular [Vcs] module.
+
+    You may do so by defining the following module alias in a place that's
+    available to your scope:
+
+    {[
+      module Vcs = Vcs_base.Vcs
+    ]}
+
+    Another way to achieve this is to open [Vcs_base] via dune flags. When doing
+    that, all the files in your library will use [Vcs_base.Vcs] consistently.
+
+    {v
+      (library
+        (name my_library)
+        (flags (:standard -open Vcs_base))
+        (libraries vcs-base))
+    v}
+
+    This pattern is Vcs's authors favorite way of using [Vcs_base] and is the
+    way we're setting up [Vcs_base] in the examples of the Vcs repository. *)
+
 module Vcs : sig
   (** {1 Extended Vcs API} *)
 

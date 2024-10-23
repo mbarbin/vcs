@@ -340,6 +340,8 @@
     (< v0.18)))
   (vcs
    (= :version))
+  (vcs-base
+   (= :version))
   (vcs-command
    (= :version))
   (vcs-git-blocking
