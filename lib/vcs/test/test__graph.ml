@@ -590,15 +590,15 @@ let%expect_test "debug graph" =
     Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
     rev
   in
-  let r1 = root () in
-  let r2 = commit ~parent:r1 in
-  let r3 = commit ~parent:r1 in
-  let m1 = merge ~parent1:r2 ~parent2:r3 in
+  let r0 = root () in
+  let r1 = commit ~parent:r0 in
+  let r2 = commit ~parent:r0 in
+  let m1 = merge ~parent1:r1 ~parent2:r2 in
   let r4 = commit ~parent:m1 in
   Vcs.Graph.set_refs
     graph
     ~refs:
-      [ { rev = r2
+      [ { rev = r1
         ; ref_kind =
             Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v "origin/main" }
         }
@@ -651,9 +651,9 @@ let%expect_test "debug graph" =
     let node = node ~rev in
     print_s [%sexp (Vcs.Graph.node_kind graph ~node : Vcs.Graph.Node_kind.t)]
   in
-  node_kind r1;
+  node_kind r0;
   [%expect {| (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
-  node_kind r2;
+  node_kind r1;
   [%expect
     {|
     (Commit
@@ -679,11 +679,11 @@ let%expect_test "debug graph" =
   let print_ancestors rev =
     print_s [%sexp (ancestors graph (node ~rev) : Set.M(Vcs.Graph.Node).t)]
   in
-  print_ancestors r1;
+  print_ancestors r0;
   [%expect {| (#0) |}];
-  print_ancestors r2;
+  print_ancestors r1;
   [%expect {| (#0 #1) |}];
-  print_ancestors r3;
+  print_ancestors r2;
   [%expect {| (#0 #2) |}];
   print_ancestors m1;
   [%expect {| (#0 #1 #2 #3) |}];
@@ -691,7 +691,7 @@ let%expect_test "debug graph" =
   [%expect {| (#0 #1 #2 #3 #4) |}];
   (* Low level int indexing. *)
   let node_index node = print_s [%sexp (Vcs.Graph.node_index node : int)] in
-  node_index (node ~rev:r1);
+  node_index (node ~rev:r0);
   [%expect {| 0 |}];
   node_index (node ~rev:r4);
   [%expect {| 4 |}];
