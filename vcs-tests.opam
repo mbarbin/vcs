@@ -17,7 +17,7 @@ depends: [
   "cmdlang" {>= "0.0.5"}
   "cmdlang-cmdliner-runner" {>= "0.0.5"}
   "cmdlang-to-cmdliner" {>= "0.0.5"}
-  "cmdliner" {= "1.3.0"}
+  "cmdliner" {>= "1.3.0"}
   "core" {>= "v0.17" & < "v0.18"}
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}

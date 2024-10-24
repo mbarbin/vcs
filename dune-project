@@ -104,7 +104,7 @@
   (cmdlang-cmdliner-runner
    (>= 0.0.5))
   (cmdliner
-   (= 1.3.0))
+   (>= 1.3.0))
   (eio
    (>= 1.0))
   (eio_main
@@ -258,7 +258,7 @@
   (cmdlang-to-cmdliner
    (>= 0.0.5))
   (cmdliner
-   (= 1.3.0))
+   (>= 1.3.0))
   (core
    (and
     (>= v0.17)
