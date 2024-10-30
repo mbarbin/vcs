@@ -1,3 +1,17 @@
+## 0.0.10 (unreleased)
+
+### Added
+
+### Changed
+
+- Abstract the trait type constructors (PR, @mbarbin).
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.9 (2024-10-23)
 
 ### Added

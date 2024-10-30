@@ -32,9 +32,9 @@ module Trait = Trait
 (** At its core, a ['a Vcs.t] is a value encapsulating the functionalities
     implemented by a set of traits, represented by the ['a] parameter. It is a
     phantom type used to provide compiler guidance on which functions from the
-    API you can use with such a [vcs]. The type is contravariant by its
-    parameter : indeed, if you need a set of traits, having more makes it
-    compatible. *)
+    API you can use with such a [vcs]. The type is contravariant in its
+    parameter : indeed, if you need a set of traits, having access to a
+    provider implementing more traits makes it compatible. *)
 type -'a t = 'a Vcs0.t
 
 (** [create provider] returns a [vcs] that implements a given set of traits.
