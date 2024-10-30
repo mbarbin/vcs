@@ -31,13 +31,13 @@ let of_result ~step = function
 ;;
 
 let load_file (Provider.T { t; handler }) ~path =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system.t) in
   M.load_file t ~path
   |> of_result ~step:(lazy [%sexp "Vcs.load_file", { path : Absolute_path.t }])
 ;;
 
 let save_file ?perms (Provider.T { t; handler }) ~path ~file_contents =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system.t) in
   M.save_file ?perms t ~path ~file_contents
   |> of_result
        ~step:
@@ -45,20 +45,20 @@ let save_file ?perms (Provider.T { t; handler }) ~path ~file_contents =
 ;;
 
 let read_dir (Provider.T { t; handler }) ~dir =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.File_system.t) in
   M.read_dir t ~dir
   |> of_result ~step:(lazy [%sexp "Vcs.read_dir", { dir : Absolute_path.t }])
 ;;
 
 let add (Provider.T { t; handler }) ~repo_root ~path =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Add) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Add.t) in
   M.add t ~repo_root ~path
   |> of_result
        ~step:(lazy [%sexp "Vcs.add", { repo_root : Repo_root.t; path : Path_in_repo.t }])
 ;;
 
 let init (Provider.T { t; handler }) ~path =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Init) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Init.t) in
   M.init t ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
 ;;
 
@@ -92,20 +92,20 @@ let find_enclosing_git_repo_root t ~from =
 ;;
 
 let current_branch (Provider.T { t; handler }) ~repo_root =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse.t) in
   M.current_branch t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
 ;;
 
 let current_revision (Provider.T { t; handler }) ~repo_root =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse.t) in
   M.current_revision t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_revision", { repo_root : Repo_root.t }])
 ;;
 
 let commit (Provider.T { t; handler }) ~repo_root ~commit_message =
-  let module R = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse) in
-  let module C = (val Provider.Handler.lookup handler ~trait:Trait.Commit) in
+  let module R = (val Provider.Handler.lookup handler ~trait:Trait.Rev_parse.t) in
+  let module C = (val Provider.Handler.lookup handler ~trait:Trait.Commit.t) in
   (let open Result.Monad_syntax in
    let* () = C.commit t ~repo_root ~commit_message in
    R.current_revision t ~repo_root)
@@ -113,7 +113,7 @@ let commit (Provider.T { t; handler }) ~repo_root ~commit_message =
 ;;
 
 let ls_files (Provider.T { t; handler }) ~repo_root ~below =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Ls_files) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Ls_files.t) in
   M.ls_files t ~repo_root ~below
   |> of_result
        ~step:
@@ -122,7 +122,7 @@ let ls_files (Provider.T { t; handler }) ~repo_root ~below =
 ;;
 
 let rename_current_branch (Provider.T { t; handler }) ~repo_root ~to_ =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Branch) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Branch.t) in
   M.rename_current_branch t ~repo_root ~to_
   |> of_result
        ~step:
@@ -132,7 +132,7 @@ let rename_current_branch (Provider.T { t; handler }) ~repo_root ~to_ =
 ;;
 
 let name_status (Provider.T { t; handler }) ~repo_root ~changed =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Name_status) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Name_status.t) in
   M.diff t ~repo_root ~changed
   |> of_result
        ~step:
@@ -143,7 +143,7 @@ let name_status (Provider.T { t; handler }) ~repo_root ~changed =
 ;;
 
 let num_status (Provider.T { t; handler }) ~repo_root ~changed =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Num_status) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Num_status.t) in
   M.diff t ~repo_root ~changed
   |> of_result
        ~step:
@@ -153,20 +153,20 @@ let num_status (Provider.T { t; handler }) ~repo_root ~changed =
 ;;
 
 let log (Provider.T { t; handler }) ~repo_root =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Log) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Log.t) in
   M.all t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.log", { repo_root : Repo_root.t }])
 ;;
 
 let refs (Provider.T { t; handler }) ~repo_root =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Refs) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Refs.t) in
   M.show_ref t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.refs", { repo_root : Repo_root.t }])
 ;;
 
 let graph (Provider.T { t; handler }) ~repo_root =
-  let module L = (val Provider.Handler.lookup handler ~trait:Trait.Log) in
-  let module R = (val Provider.Handler.lookup handler ~trait:Trait.Refs) in
+  let module L = (val Provider.Handler.lookup handler ~trait:Trait.Log.t) in
+  let module R = (val Provider.Handler.lookup handler ~trait:Trait.Refs.t) in
   let graph = Graph.create () in
   (let open Result.Monad_syntax in
    let* log = L.all t ~repo_root in
@@ -178,7 +178,7 @@ let graph (Provider.T { t; handler }) ~repo_root =
 ;;
 
 let set_user_name (Provider.T { t; handler }) ~repo_root ~user_name =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Config) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Config.t) in
   M.set_user_name t ~repo_root ~user_name
   |> of_result
        ~step:
@@ -188,7 +188,7 @@ let set_user_name (Provider.T { t; handler }) ~repo_root ~user_name =
 ;;
 
 let set_user_email (Provider.T { t; handler }) ~repo_root ~user_email =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Config) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Config.t) in
   M.set_user_email t ~repo_root ~user_email
   |> of_result
        ~step:
@@ -198,7 +198,7 @@ let set_user_email (Provider.T { t; handler }) ~repo_root ~user_email =
 ;;
 
 let show_file_at_rev (Provider.T { t; handler }) ~repo_root ~rev ~path =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Show) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Show.t) in
   M.show_file_at_rev t ~repo_root ~rev ~path
   |> of_result
        ~step:
@@ -226,7 +226,7 @@ let non_raising_git
   ~args
   ~f
   =
-  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Git) in
+  let module M = (val Provider.Handler.lookup handler ~trait:Trait.Git.t) in
   let cwd = Repo_root.append repo_root run_in_subdir in
   M.git ?env t ~cwd ~args ~f
 ;;
