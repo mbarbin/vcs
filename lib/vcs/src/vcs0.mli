@@ -21,7 +21,7 @@
 
 type -'a t
 
-val create : 'a Provider.t -> 'a t
+val create : 'a Provider.packed -> 'a t
 
 include Vcs_interface.S with type 'a t := 'a t and type 'a result := 'a
 

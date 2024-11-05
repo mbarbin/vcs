@@ -28,5 +28,5 @@ module Impl = struct
 end
 
 let create ~env =
-  Vcs.create (Provider.T { t = Impl.create ~env; handler = Impl.handler () })
+  Vcs.create (Provider.T { t = Impl.create ~env; provider = Impl.provider () })
 ;;

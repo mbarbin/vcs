@@ -27,4 +27,6 @@ module Impl = struct
   include Vcs_git_provider.Make (Runtime)
 end
 
-let create () = Vcs.create (Provider.T { t = Impl.create (); handler = Impl.handler () })
+let create () =
+  Vcs.create (Provider.T { t = Impl.create (); provider = Impl.provider () })
+;;
