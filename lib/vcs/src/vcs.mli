@@ -40,7 +40,7 @@ type -'a t = 'a Vcs0.t
 (** [create provider] returns a [vcs] that implements a given set of traits.
     Typical users do not use [create] directly, but rather will rely on an
     actual provider. See for example [Vcs_git_eio.create]. *)
-val create : 'a Provider.t -> 'a t
+val create : 'a Provider.packed -> 'a t
 
 (** {1 Error handling}
 

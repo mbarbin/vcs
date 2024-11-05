@@ -4,7 +4,8 @@
 
 ### Changed
 
-- Abstract the trait type constructors (PR, @mbarbin).
+- Upgrade to `provider.0.0.11` with breaking changes (PR, @mbarbin).
+- Abstract the trait type constructors (#42, @mbarbin).
 
 ### Deprecated
 
