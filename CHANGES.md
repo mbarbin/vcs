@@ -1,17 +1,9 @@
-## 0.0.10 (unreleased)
-
-### Added
+## 0.0.10 (2024-11-05)
 
 ### Changed
 
-- Upgrade to `provider.0.0.11` with breaking changes (PR, @mbarbin).
+- Upgrade to `provider.0.0.11` with breaking changes (#43, @mbarbin).
 - Abstract the trait type constructors (#42, @mbarbin).
-
-### Deprecated
-
-### Fixed
-
-### Removed
 
 ## 0.0.9 (2024-10-23)
 
