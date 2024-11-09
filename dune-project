@@ -109,12 +109,12 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (err
-   (>= 0.0.5))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp-log
+   (>= 0.0.1))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -267,8 +267,6 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (err
-   (>= 0.0.5))
   (expect_test_helpers_core
    (and
     (>= v0.17)
@@ -283,6 +281,8 @@
    (and
     :with-doc
     (>= 2.4)))
+  (pp-log
+   (>= 0.0.1))
   (ppx_compare
    (and
     (>= v0.17)
