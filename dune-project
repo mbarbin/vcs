@@ -100,9 +100,9 @@
   (ocaml
    (>= 5.2))
   (cmdlang
-   (>= 0.0.5))
+   (>= 0.0.8))
   (cmdlang-cmdliner-runner
-   (>= 0.0.5))
+   (>= 0.0.8))
   (cmdliner
    (>= 1.3.0))
   (eio
@@ -114,7 +114,7 @@
   (fpath-sexp0
    (>= 0.2.2))
   (pp-log
-   (>= 0.0.7))
+   (>= 0.0.8))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -252,11 +252,11 @@
     :with-dev-setup
     (>= 2.8.3)))
   (cmdlang
-   (>= 0.0.5))
+   (>= 0.0.8))
   (cmdlang-cmdliner-runner
-   (>= 0.0.5))
+   (>= 0.0.8))
   (cmdlang-to-cmdliner
-   (>= 0.0.5))
+   (>= 0.0.8))
   (cmdliner
    (>= 1.3.0))
   (core
@@ -282,7 +282,7 @@
     :with-doc
     (>= 2.4)))
   (pp-log
-   (>= 0.0.7))
+   (>= 0.0.8))
   (ppx_compare
    (and
     (>= v0.17)
