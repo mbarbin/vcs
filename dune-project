@@ -100,7 +100,7 @@
   (ocaml
    (>= 5.2))
   (cmdlang
-   (>= 0.0.8))
+   (>= 0.0.9))
   (cmdlang-cmdliner-runner
    (>= 0.0.8))
   (cmdliner
@@ -252,11 +252,11 @@
     :with-dev-setup
     (>= 2.8.3)))
   (cmdlang
-   (>= 0.0.8))
+   (>= 0.0.9))
   (cmdlang-cmdliner-runner
    (>= 0.0.8))
   (cmdlang-to-cmdliner
-   (>= 0.0.8))
+   (>= 0.0.9))
   (cmdliner
    (>= 1.3.0))
   (core
