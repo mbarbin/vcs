@@ -8,7 +8,7 @@ homepage: "https://github.com/mbarbin/vcs"
 doc: "https://mbarbin.github.io/vcs/"
 bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
-  "dune" {>= "3.16"}
+  "dune" {>= "3.17"}
   "ocaml" {>= "5.2"}
   "astring" {>= "0.8.5"}
   "fpath" {>= "0.7.3"}

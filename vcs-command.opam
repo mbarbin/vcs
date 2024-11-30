@@ -8,7 +8,7 @@ homepage: "https://github.com/mbarbin/vcs"
 doc: "https://mbarbin.github.io/vcs/"
 bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
-  "dune" {>= "3.16"}
+  "dune" {>= "3.17"}
   "ocaml" {>= "5.2"}
   "cmdlang" {>= "0.0.9"}
   "cmdlang-cmdliner-runner" {>= "0.0.8"}
