@@ -41,7 +41,7 @@
  * Changes: This has similarities with the module [Hg.Status]. We added support
  * for renames, removed support for [Changed_by Rev.t], added [similarity] values
  * which are available in Git.
- *)
+*)
 
 open! Import
 

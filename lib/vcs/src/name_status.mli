@@ -40,7 +40,7 @@
  *
  * The file [name_status.ml] contains a detailed description of the changes made
  * to the original file.
- *)
+*)
 
 module Change : sig
   type t =

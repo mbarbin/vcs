@@ -53,7 +53,8 @@ let%expect_test "init_temp_repo" =
     ~f:(fun { exit_code; stdout; stderr = _ } ->
       print_endline (Printf.sprintf "exit code: %d" exit_code);
       print_endline (Printf.sprintf "stdout:\n%s%s" stdout (String.make 15 '-')));
-  [%expect {|
+  [%expect
+    {|
     exit code: 0
     stdout:
     Hello World!
@@ -122,7 +123,8 @@ let%expect_test "redact_sexp" =
   print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[]);
   [%expect {| (("" empty) ("" ("" empty)) (error error)) |}];
   print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[ "" ]);
-  [%expect {|
+  [%expect
+    {|
     ((""    <REDACTED>)
      (""    <REDACTED>)
      (error error))

@@ -40,7 +40,7 @@
  *
  * The file [path_in_repo.ml] contains a detailed description of the changes made
  * to the original file.
- *)
+*)
 
 (** A path for a file versioned in a repository.
 

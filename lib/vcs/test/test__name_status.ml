@@ -92,13 +92,16 @@ let%expect_test "files" =
     |> Set.of_list (module Vcs_base.Vcs.Path_in_repo)
   in
   print_s [%sexp (files_at_dst : Set.M(Vcs.Path_in_repo).t)];
-  [%expect {|
+  [%expect
+    {|
   (added_file modified_file new_copied_file new_renamed_file) |}];
   print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Vcs.Path_in_repo).t)];
-  [%expect {|
+  [%expect
+    {|
   (added_file new_copied_file new_renamed_file) |}];
   print_s [%sexp (Set.diff files_at_src files_at_dst : Set.M(Vcs.Path_in_repo).t)];
-  [%expect {|
+  [%expect
+    {|
    (original_copied_file original_renamed_file removed_file) |}];
   ()
 ;;

@@ -256,15 +256,18 @@ let%expect_test "graph" =
         }]
   in
   is_ancestor tag_0_0_1 tag_0_0_2;
-  [%expect {|
+  [%expect
+    {|
     ((is_ancestor_or_equal true)
      (is_strict_ancestor   true)) |}];
   is_ancestor tag_0_0_2 tag_0_0_1;
-  [%expect {|
+  [%expect
+    {|
     ((is_ancestor_or_equal false)
      (is_strict_ancestor   false)) |}];
   is_ancestor main main;
-  [%expect {|
+  [%expect
+    {|
     ((is_ancestor_or_equal true)
      (is_strict_ancestor   false)) |}];
   let merge_node = Vcs.Rev.v "93280971041e0e6a64894400061392b1c702baa7" in
@@ -335,7 +338,8 @@ let%expect_test "graph" =
 let%expect_test "empty summary" =
   let graph = Vcs.Graph.create () in
   print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
-  [%expect {|
+  [%expect
+    {|
     ((refs   ())
      (roots  ())
      (leaves ()))
@@ -809,7 +813,8 @@ let%expect_test "debug graph" =
   Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:custom_A;
   Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:(Other { name = "custom-B" });
   show_refs r0;
-  [%expect {|
+  [%expect
+    {|
     ((Other (name custom-A))
      (Other (name custom-B)))
     |}];

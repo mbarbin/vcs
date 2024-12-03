@@ -82,10 +82,10 @@ let handler (handler_scenario : Handler_scenario.t) =
 ;;
 
 let test_current_branch
-  (type a)
-  (module Runtime : Vcs.Trait.Git.S with type t = a)
-  (vcs : a)
-  ~repo_root
+      (type a)
+      (module Runtime : Vcs.Trait.Git.S with type t = a)
+      (vcs : a)
+      ~repo_root
   =
   let cwd = Vcs.Repo_root.to_absolute_path repo_root in
   let args = [ "rev-parse"; "--abbrev-ref"; "HEAD" ] in

@@ -56,8 +56,8 @@ let with_cwd ~cwd ~f =
   Fun.protect
     ~finally:(fun () -> Unix.chdir old_cwd)
     (fun () ->
-      Unix.chdir (Absolute_path.to_string cwd);
-      f ())
+       Unix.chdir (Absolute_path.to_string cwd);
+       f ())
 ;;
 
 module Exit_status = struct
@@ -126,7 +126,7 @@ let git ?env () ~cwd ~args ~f =
              (Vcs.Err.create_s
                 [%sexp
                   "git process terminated abnormally"
-                  , { exit_status : [ `Signaled of int | `Stopped of int ] }]))
+                , { exit_status : [ `Signaled of int | `Stopped of int ] }]))
         [@coverage off]
     in
     (* A note regarding the [raise_notrace] below. These cases are indeed

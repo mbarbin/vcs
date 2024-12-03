@@ -30,7 +30,8 @@ let%expect_test "of_string" =
   [%expect {| (Error "\"\": invalid commit_message") |}];
   (* Currently all characters are currently accepted. *)
   test "\\ including _ spaces and \n newlines";
-  [%expect {|
+  [%expect
+    {|
     \ including _ spaces and
      newlines |}];
   (* However we reject entries that are too long. The limit may change later, TBD. *)

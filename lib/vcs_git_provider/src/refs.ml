@@ -103,7 +103,7 @@ module Dereferenced = struct
               ~step:
                 [%sexp
                   "Vcs_git_provider.Refs.Dereferenced.parse_exn"
-                  , { line = (str : string) }]))
+                , { line = (str : string) }]))
   ;;
 end
 

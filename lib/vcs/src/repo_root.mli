@@ -40,7 +40,7 @@
  *
  * The file [repo_root.ml] contains a detailed description of the changes made
  * to the original file.
- *)
+*)
 
 (** The root of a version control repository that is expected to exists on the
     local file system.

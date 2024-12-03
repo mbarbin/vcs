@@ -41,17 +41,19 @@ let parse_exn str =
       match Astring.String.cuts ~empty:false ~sep:" => " str with
       | [] -> raise (Vcs.E (Vcs.Err.error_string "Unexpected empty path"))
       | [ str ] ->
-        if String.exists str ~f:(function
-             | '{' | '}' -> true
-             | _ -> false)
+        if
+          String.exists str ~f:(function
+            | '{' | '}' -> true
+            | _ -> false)
         then raise (Vcs.E (Vcs.Err.error_string "Unexpected '{' or '}' in simple path"))
         else One_file (Vcs.Path_in_repo.v str)
       | [ left; right ] ->
         (match String.rsplit2 left ~on:'{' with
          | None ->
-           if String.exists str ~f:(function
-                | '}' -> true
-                | _ -> false)
+           if
+             String.exists str ~f:(function
+               | '}' -> true
+               | _ -> false)
            then raise (Vcs.E (Vcs.Err.error_string "Matching '{' not found"))
            else
              Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }

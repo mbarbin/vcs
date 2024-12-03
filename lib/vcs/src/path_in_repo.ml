@@ -41,7 +41,7 @@
  * Changes: We removed the part related to the [Stable] serialization. The logic
  * is based on a different module for [Relative_path]. We removed the part that
  * related to [.fe] files.
- *)
+*)
 
 open! Import
 include Relative_path

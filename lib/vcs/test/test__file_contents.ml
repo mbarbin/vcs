@@ -25,7 +25,8 @@ let%expect_test "create" =
   require_equal [%here] (module String) (Vcs.File_contents.to_string c) (c :> string);
   [%expect {||}];
   print_string (c :> string);
-  [%expect {|
+  [%expect
+    {|
     raw contents
     of file |}];
   ()

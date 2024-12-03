@@ -317,7 +317,7 @@ let add_nodes t ~log =
              (Err.create_s
                 [%sexp
                   "Node not found during the building of new nodes (internal error)"
-                  , { rev : Rev.t }])) [@coverage off]
+                , { rev : Rev.t }])) [@coverage off]
     in
     Queue.to_seq new_nodes
     |> Array.of_seq

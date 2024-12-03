@@ -76,7 +76,8 @@ let%expect_test "parse" =
   test "a/simple/path";
   [%expect {| (One_file a/simple/path) |}];
   test "a/simple/path => another/path";
-  [%expect {|
+  [%expect
+    {|
     (Two_files
       (src a/simple/path)
       (dst another/path)) |}];

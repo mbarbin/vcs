@@ -55,7 +55,7 @@ module Result_impl = struct
         (Err.create_s
            [%sexp
              "unexpected exit code"
-             , { accepted_codes : int list = List.map accept ~f:fst }])
+           , { accepted_codes : int list = List.map accept ~f:fst }])
   ;;
 end
 

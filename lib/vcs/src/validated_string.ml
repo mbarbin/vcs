@@ -41,7 +41,7 @@ module Make (X : X) = struct
       in
       Error
         (`Msg
-          (Printf.sprintf "%S: invalid %s" shown_s (String.uncapitalize X.module_name))))
+            (Printf.sprintf "%S: invalid %s" shown_s (String.uncapitalize X.module_name))))
   ;;
 
   let v s =

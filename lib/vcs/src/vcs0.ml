@@ -139,7 +139,7 @@ let name_status (Provider.T { t; provider }) ~repo_root ~changed =
          (lazy
            [%sexp
              "Vcs.name_status"
-             , { repo_root : Repo_root.t; changed : Name_status.Changed.t }])
+           , { repo_root : Repo_root.t; changed : Name_status.Changed.t }])
 ;;
 
 let num_status (Provider.T { t; provider }) ~repo_root ~changed =
@@ -205,26 +205,26 @@ let show_file_at_rev (Provider.T { t; provider }) ~repo_root ~rev ~path =
          (lazy
            [%sexp
              "Vcs.show_file_at_rev"
-             , { repo_root : Repo_root.t; rev : Rev.t; path : Path_in_repo.t }])
+           , { repo_root : Repo_root.t; rev : Rev.t; path : Path_in_repo.t }])
 ;;
 
 let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
   [%sexp
     "Vcs.git"
-    , { repo_root : Repo_root.t
-      ; run_in_subdir : (Path_in_repo.t option[@sexp.option])
-      ; env : (string array option[@sexp.option])
-      ; args : string list
-      }]
+  , { repo_root : Repo_root.t
+    ; run_in_subdir : (Path_in_repo.t option[@sexp.option])
+    ; env : (string array option[@sexp.option])
+    ; args : string list
+    }]
 ;;
 
 let non_raising_git
-  ?env
-  ?(run_in_subdir = Path_in_repo.root)
-  (Provider.T { t; provider })
-  ~repo_root
-  ~args
-  ~f
+      ?env
+      ?(run_in_subdir = Path_in_repo.root)
+      (Provider.T { t; provider })
+      ~repo_root
+      ~args
+      ~f
   =
   let module M = (val Provider.lookup provider ~trait:Trait.Git.t) in
   let cwd = Repo_root.append repo_root run_in_subdir in

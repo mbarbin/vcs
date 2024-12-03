@@ -57,7 +57,8 @@ let%expect_test "hello cli" =
     ~f:(fun { exit_code; stdout; stderr = _ } ->
       print_endline (Printf.sprintf "exit code: %d" exit_code);
       print_endline (Printf.sprintf "stdout:\n%s%s" stdout (String.make 15 '-')));
-  [%expect {|
+  [%expect
+    {|
     exit code: 0
     stdout:
     Hello World!

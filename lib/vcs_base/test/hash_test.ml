@@ -28,10 +28,10 @@ module type H = sig
 end
 
 let run
-  (type a)
-  (module V : H with type t = a)
-  (module V_base : Ppx_hash_lib.Hashable.S with type t = a)
-  values
+      (type a)
+      (module V : H with type t = a)
+      (module V_base : Ppx_hash_lib.Hashable.S with type t = a)
+      values
   =
   let test_hash (t : a) =
     let stdlib_hash = Stdlib.Hashtbl.hash t in
@@ -48,7 +48,7 @@ let run
     print_s
       [%sexp
         { value = (t : V.t); seed : int }
-        , { stdlib_hash : int; vcs_hash : int; vcs_base_hash : int }]
+      , { stdlib_hash : int; vcs_hash : int; vcs_base_hash : int }]
   in
   List.iter values ~f:(fun t ->
     test_hash t;

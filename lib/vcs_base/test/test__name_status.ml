@@ -63,13 +63,16 @@ let%expect_test "files" =
   (modified_file original_copied_file original_renamed_file removed_file) |}];
   let files_at_dst = Vcs.Name_status.files_at_dst name_status in
   print_s [%sexp (files_at_dst : Set.M(Vcs.Path_in_repo).t)];
-  [%expect {|
+  [%expect
+    {|
   (added_file modified_file new_copied_file new_renamed_file) |}];
   print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Vcs.Path_in_repo).t)];
-  [%expect {|
+  [%expect
+    {|
   (added_file new_copied_file new_renamed_file) |}];
   print_s [%sexp (Set.diff files_at_src files_at_dst : Set.M(Vcs.Path_in_repo).t)];
-  [%expect {|
+  [%expect
+    {|
    (original_copied_file original_renamed_file removed_file) |}];
   ()
 ;;

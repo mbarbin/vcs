@@ -44,7 +44,7 @@ let find_enclosing_repo_root vcs ~from =
          (Vcs.Err.create_s
             [%sexp
               "Failed to locate enclosing repo root from directory"
-              , { from : Absolute_path.t }]))
+            , { from : Absolute_path.t }]))
 ;;
 
 let initialize ~env =

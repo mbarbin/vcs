@@ -63,7 +63,7 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
                     (Vcs.Err.create_s
                        [%sexp
                          "Unexpected output from git diff"
-                         , { insertions : Status_code.t; deletions : Status_code.t }])))
+                       , { insertions : Status_code.t; deletions : Status_code.t }])))
         })
   with
   | Ok t -> t

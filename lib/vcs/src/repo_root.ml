@@ -40,7 +40,7 @@
  *
  * Changes: We removed the [human_readable] fields and related parts. We
  * removed the logic pertaining to the repo root in which the program started.
- *)
+*)
 
 open! Import
 include Absolute_path
