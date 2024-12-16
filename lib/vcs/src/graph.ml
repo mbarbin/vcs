@@ -131,26 +131,27 @@ Called from Base__Exn.handle_uncaught_aux in file "src/exn.ml", line 126, charac
       [@@deriving_inline equal]
 
       let equal =
-        (fun a__016_ b__017_ ->
-           if Stdlib.( == ) a__016_ b__017_
+        (fun a__001_ ->
+           fun b__002_ ->
+           if Stdlib.( == ) a__001_ b__002_
            then true
            else (
-             match a__016_, b__017_ with
-             | Root _a__018_, Root _b__019_ -> Rev.equal _a__018_.rev _b__019_.rev
+             match a__001_, b__002_ with
+             | Root _a__003_, Root _b__004_ -> Rev.equal _a__003_.rev _b__004_.rev
              | Root _, _ -> false
              | _, Root _ -> false
-             | Commit _a__020_, Commit _b__021_ ->
+             | Commit _a__005_, Commit _b__006_ ->
                Stdlib.( && )
-                 (Rev.equal _a__020_.rev _b__021_.rev)
-                 (Node.equal _a__020_.parent _b__021_.parent)
+                 (Rev.equal _a__005_.rev _b__006_.rev)
+                 (Node.equal _a__005_.parent _b__006_.parent)
              | Commit _, _ -> false
              | _, Commit _ -> false
-             | Merge _a__022_, Merge _b__023_ ->
+             | Merge _a__007_, Merge _b__008_ ->
                Stdlib.( && )
-                 (Rev.equal _a__022_.rev _b__023_.rev)
+                 (Rev.equal _a__007_.rev _b__008_.rev)
                  (Stdlib.( && )
-                    (Node.equal _a__022_.parent1 _b__023_.parent1)
-                    (Node.equal _a__022_.parent2 _b__023_.parent2)))
+                    (Node.equal _a__007_.parent1 _b__008_.parent1)
+                    (Node.equal _a__007_.parent2 _b__008_.parent2)))
          : t -> t -> bool)
       ;;
 
