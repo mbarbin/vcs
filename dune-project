@@ -23,6 +23,8 @@
  (depends
   (ocaml
    (>= 5.2))
+  (astring
+   (>= 0.8.5))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -156,6 +158,8 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
+  (provider
+   (>= 0.0.11))
   (sexplib0
    (and
     (>= v0.17)
@@ -239,6 +243,8 @@
    (and
     :with-dev-setup
     (= 0.27.0)))
+  (astring
+   (>= 0.8.5))
   (base
    (and
     (>= v0.17)
