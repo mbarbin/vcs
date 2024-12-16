@@ -48,75 +48,28 @@ module Node_kind = struct
           }
     [@@deriving sexp_of]
 
-    (* CR mbarbin: I wish to be able to use `deriving_inline` on additional ppx
-       without adding then as build dependency, nor adding a runtime dependency
-       into their runtime lib.
+    (* CR mbarbin: This almost works now with [NathanReb/improve-deriving-inline].
 
-       Currently, I cannot do that, without disabling ppx entirely for this
-       directory. I don't want to do that, because I want to keep the [ppx] for
-       the other ppx that are used in this directory, such as [sexp_of]. Also, I
-       need the ppx for constructions such as `[%sexp]`, for which there doesn't
-       exist a `deriving_inline` equivalent. *)
+       Building Works!
+
+       {v
+          $ dune build @all
+          [0]
+       v}
+
+       However, the linter shows small mismatch in ocamlformatting. For example,
+       it wants to add parenthesis around certain tuple below:
+
+       {[
+        match (a__001_, b__002_) with
+        | (Root _a__003_, Root _b__004_) -> Rev.equal _a__003_.rev _b__004_.rev
+        | (Root _, _) -> false
+        | (_, Root _) -> false
+       ]}
+    *)
 
     include (
     struct
-      (* CR mbarbin: Here is a sequence that produces some issue for me:
-
-         1, Starting from a build in watch mode: `dune build @all @lint -w`
-
-         2. After everything stabilizes, I get the "Success, waiting for
-            filesystem changes..." output from dune.
-
-         Then I try the following:
-
-         3. Replace the `@@deriving` by a `@@deriving_inline`, and add an additional
-            line after it: `[@@@deriving.end]`.
-
-         4. Save the file.
-
-         This triggers a rebuild, and a promotion error that shows the code to be inserted.
-
-         5. I run: `dune promote`.
-
-         This creates the following error:
-
-         {v
-          Error: ppxlib: the corrected code doesn't round-trip.
-          This is probably a bug in the OCaml printer:
-          <no differences produced by diff>
-          diff: /tmp/build_2c6e2f_dune/ppxlib6f4ca1: No such file or directory
-          diff: /tmp/build_2c6e2f_dune/ppxlibaf673d: No such file or directory
-          Had 2 errors, waiting for filesystem changes...
-         v}
-
-         6. If I save the file again, the code gets reformatted but the error
-            does not go away.
-
-         {v
-          Error: ppxlib: the corrected code doesn't round-trip.
-          This is probably a bug in the OCaml printer:
-          <no differences produced by diff>
-          Had 1 error, waiting for filesystem changes...
-         v}
-
-         7. If I kill the build, and restart it the error is now different (looks worse):
-
-         {v
-Error: ppxlib: the corrected code doesn't round-trip.
-This is probably a bug in the OCaml printer:
-<no differences produced by diff>
-Uncaught exception:
-
-  (Failure
-   "Both files, /tmp/build_f345a9_dune/ppxlib7c84c6 and /tmp/build_f345a9_dune/ppxlibe07aed, do not exist")
-
-Raised at Stdlib.failwith in file "stdlib.ml", line 29, characters 17-33
-Called from Dune__exe__Compare.compare_main in file "bin/compare.ml", line 129, characters 7-77
-Called from Dune__exe__Compare.main in file "bin/compare.ml", line 174, characters 13-38
-Called from Command.For_unix.run.(fun) in file "command/src/command.ml", lines 3388-3399, characters 8-31
-Called from Base__Exn.handle_uncaught_aux in file "src/exn.ml", line 126, characters 6-10
-         v}
-      *)
       type nonrec t = t =
         | Root of { rev : Rev.t }
         | Commit of
