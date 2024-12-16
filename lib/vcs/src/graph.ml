@@ -48,26 +48,39 @@ module Node_kind = struct
           }
     [@@deriving sexp_of]
 
-    let equal =
-      (fun a__001_ b__002_ ->
-         if a__001_ == b__002_
-         then true
-         else (
-           match a__001_, b__002_ with
-           | Root _a__003_, Root _b__004_ -> Rev.equal _a__003_.rev _b__004_.rev
-           | Root _, _ -> false
-           | _, Root _ -> false
-           | Commit _a__005_, Commit _b__006_ ->
-             Rev.equal _a__005_.rev _b__006_.rev
-             && Node.equal _a__005_.parent _b__006_.parent
-           | Commit _, _ -> false
-           | _, Commit _ -> false
-           | Merge _a__007_, Merge _b__008_ ->
-             Rev.equal _a__007_.rev _b__008_.rev
-             && Node.equal _a__007_.parent1 _b__008_.parent1
-             && Node.equal _a__007_.parent2 _b__008_.parent2)
-       : t -> t -> bool)
-    ;;
+    (* CR mbarbin: I wish to be able to use `deriving_inline` on additional ppx
+       without adding then as build dependency, nor adding a runtime dependency
+       into their runtime lib.
+
+       Currently, I cannot do that, without disabling ppx entirely for this
+       directory. I don't want to do that, because I want to keep the [ppx] for
+       the other ppx that are used in this directory, such as [sexp_of]. Also, I
+       need the ppx for constructions such as `[%sexp]`, for which there doesn't
+       exist a `deriving_inline` equivalent. *)
+
+    include (
+    struct
+      type nonrec t = t =
+        | Root of { rev : Rev.t }
+        | Commit of
+            { rev : Rev.t
+            ; parent : Node.t
+            }
+        | Merge of
+            { rev : Rev.t
+            ; parent1 : Node.t
+            ; parent2 : Node.t
+            }
+      [@@deriving_inline equal]
+
+      [%%ocaml.error
+        "Ppxlib.Deriving: 'equal' is not a supported type deriving generator"]
+
+      [@@@deriving.end]
+    end :
+    sig
+      val equal : t -> t -> bool
+    end)
   end
 
   include T
