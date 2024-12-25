@@ -72,6 +72,10 @@ module Make (Runtime : Runtime.S) : sig
 
   val provider : unit -> (t, [> Trait.t ]) Provider.t
 
+  class c : t -> object
+    inherit Vcs.Trait.Add.t
+  end
+
   (** {1 Individual implementations} *)
 
   module Add : Vcs.Trait.Add.S with type t = t

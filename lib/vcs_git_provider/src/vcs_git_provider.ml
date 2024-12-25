@@ -95,5 +95,14 @@ module Make (Runtime : Runtime.S) = struct
       ]
   ;;
 
+  module Class = struct
+    module Add = Vcs.Trait.Add.Make (Impl.Add)
+  end
+
+  class c t =
+    object
+      inherit Class.Add.c t
+    end
+
   include Impl
 end

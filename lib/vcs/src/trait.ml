@@ -23,7 +23,7 @@ type add = [ `Add of add_ty ]
 and add_ty
 
 module Add = struct
-  module type S = Trait_add.S
+  include Trait_add
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)

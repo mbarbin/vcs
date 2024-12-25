@@ -33,7 +33,9 @@ type add = [ `Add of add_ty ]
 and add_ty
 
 module Add : sig
-  module type S = Trait_add.S
+  include module type of struct
+    include Trait_add
+  end
 
   val t : ('t, (module S with type t = 't), [> add ]) Provider.Trait.t
 end

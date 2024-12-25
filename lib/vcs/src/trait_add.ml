@@ -25,9 +25,18 @@ module type S = sig
   val add : t -> repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method
-      virtual add
-      : repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
-  end
+class type t = object
+  method add : repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method add ~repo_root ~path = X.add t ~repo_root ~path
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;
