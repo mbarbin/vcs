@@ -28,3 +28,8 @@ module type S = sig
     -> below:Path_in_repo.t
     -> (Path_in_repo.t list, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual ls_files :
+    repo_root:Repo_root.t -> below:Path_in_repo.t -> (Path_in_repo.t list, Err.t) Result.t
+end

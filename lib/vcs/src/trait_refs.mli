@@ -24,3 +24,7 @@ module type S = sig
 
   val show_ref : t -> repo_root:Repo_root.t -> (Refs.t, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual show_ref : repo_root:Repo_root.t -> (Refs.t, Err.t) Result.t
+end

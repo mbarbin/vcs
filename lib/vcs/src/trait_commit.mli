@@ -28,3 +28,8 @@ module type S = sig
     -> commit_message:Commit_message.t
     -> (unit, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual commit :
+    repo_root:Repo_root.t -> commit_message:Commit_message.t -> (unit, Err.t) Result.t
+end

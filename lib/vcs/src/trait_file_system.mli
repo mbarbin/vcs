@@ -49,3 +49,15 @@ module type S = sig
       ".." shall not be included in the result. *)
   val read_dir : t -> dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual load_file : path:Absolute_path.t -> (File_contents.t, Err.t) Result.t
+
+  method virtual save_file :
+    ?perms:int
+    -> path:Absolute_path.t
+    -> file_contents:File_contents.t
+    -> (unit, Err.t) Result.t
+
+  method virtual read_dir : dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
+end

@@ -30,3 +30,8 @@ module type S = sig
     -> to_:Branch_name.t
     -> (unit, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual rename_current_branch :
+    repo_root:Repo_root.t -> to_:Branch_name.t -> (unit, Err.t) Result.t
+end

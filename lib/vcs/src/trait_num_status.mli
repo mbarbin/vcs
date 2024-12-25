@@ -22,9 +22,16 @@
 module type S = sig
   type t
 
-  val diff
+  val num_status
     :  t
     -> repo_root:Repo_root.t
+    -> changed:Num_status.Changed.t
+    -> (Num_status.t, Err.t) Result.t
+end
+
+class virtual t : object
+  method virtual num_status :
+    repo_root:Repo_root.t
     -> changed:Num_status.Changed.t
     -> (Num_status.t, Err.t) Result.t
 end

@@ -133,7 +133,7 @@ let rename_current_branch (Provider.T { t; provider }) ~repo_root ~to_ =
 
 let name_status (Provider.T { t; provider }) ~repo_root ~changed =
   let module M = (val Provider.lookup provider ~trait:Trait.Name_status.t) in
-  M.diff t ~repo_root ~changed
+  M.name_status t ~repo_root ~changed
   |> of_result
        ~step:
          (lazy
@@ -144,7 +144,7 @@ let name_status (Provider.T { t; provider }) ~repo_root ~changed =
 
 let num_status (Provider.T { t; provider }) ~repo_root ~changed =
   let module M = (val Provider.lookup provider ~trait:Trait.Num_status.t) in
-  M.diff t ~repo_root ~changed
+  M.num_status t ~repo_root ~changed
   |> of_result
        ~step:
          (lazy

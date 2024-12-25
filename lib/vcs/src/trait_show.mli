@@ -29,3 +29,11 @@ module type S = sig
     -> path:Path_in_repo.t
     -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual show_file_at_rev :
+    repo_root:Repo_root.t
+    -> rev:Rev.t
+    -> path:Path_in_repo.t
+    -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
+end

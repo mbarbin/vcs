@@ -34,3 +34,11 @@ module type S = sig
     -> user_email:User_email.t
     -> (unit, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual set_user_name :
+    repo_root:Repo_root.t -> user_name:User_name.t -> (unit, Err.t) Result.t
+
+  method virtual set_user_email :
+    repo_root:Repo_root.t -> user_email:User_email.t -> (unit, Err.t) Result.t
+end

@@ -25,3 +25,8 @@ module type S = sig
   val current_branch : t -> repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
   val current_revision : t -> repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual current_branch : repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
+  method virtual current_revision : repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+end

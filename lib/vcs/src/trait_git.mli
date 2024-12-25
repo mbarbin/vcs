@@ -30,3 +30,13 @@ module type S = sig
     -> f:(Git_output0.t -> ('a, Err.t) Result.t)
     -> ('a, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual git :
+    'a.
+    ?env:string array
+    -> cwd:Absolute_path.t
+    -> args:string list
+    -> f:(Git_output0.t -> ('a, Err.t) Result.t)
+    -> ('a, Err.t) Result.t
+end

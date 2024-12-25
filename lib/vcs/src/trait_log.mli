@@ -24,3 +24,7 @@ module type S = sig
 
   val all : t -> repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
 end
+
+class virtual t : object
+  method virtual all : repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+end
