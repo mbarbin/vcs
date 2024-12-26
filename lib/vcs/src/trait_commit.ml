@@ -29,9 +29,19 @@ module type S = sig
     -> (unit, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method
-      virtual commit
-      : repo_root:Repo_root.t -> commit_message:Commit_message.t -> (unit, Err.t) Result.t
-  end
+class type t = object
+  method commit :
+    repo_root:Repo_root.t -> commit_message:Commit_message.t -> (unit, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method commit ~repo_root ~commit_message = X.commit t ~repo_root ~commit_message
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

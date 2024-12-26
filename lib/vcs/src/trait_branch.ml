@@ -29,9 +29,20 @@ module type S = sig
     -> (unit, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method
-      virtual rename_current_branch
-      : repo_root:Repo_root.t -> to_:Branch_name.t -> (unit, Err.t) Result.t
-  end
+class type t = object
+  method rename_current_branch :
+    repo_root:Repo_root.t -> to_:Branch_name.t -> (unit, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method rename_current_branch ~repo_root ~to_ =
+        X.rename_current_branch t ~repo_root ~to_
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

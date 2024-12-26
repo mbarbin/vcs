@@ -34,7 +34,7 @@ type branch = [ `Branch of branch_ty ]
 and branch_ty
 
 module Branch = struct
-  module type S = Trait_branch.S
+  include Trait_branch
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -45,7 +45,7 @@ type commit = [ `Commit of commit_ty ]
 and commit_ty
 
 module Commit = struct
-  module type S = Trait_commit.S
+  include Trait_commit
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -56,7 +56,7 @@ type config = [ `Config of config_ty ]
 and config_ty
 
 module Config = struct
-  module type S = Trait_config.S
+  include Trait_config
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -67,7 +67,7 @@ type file_system = [ `File_system of file_system_ty ]
 and file_system_ty
 
 module File_system = struct
-  module type S = Trait_file_system.S
+  include Trait_file_system
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -78,7 +78,7 @@ type git = [ `Git of git_ty ]
 and git_ty
 
 module Git = struct
-  module type S = Trait_git.S
+  include Trait_git
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -89,7 +89,7 @@ type init = [ `Init of init_ty ]
 and init_ty
 
 module Init = struct
-  module type S = Trait_init.S
+  include Trait_init
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -100,7 +100,7 @@ type log = [ `Log of log_ty ]
 and log_ty
 
 module Log = struct
-  module type S = Trait_log.S
+  include Trait_log
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -111,7 +111,7 @@ type ls_files = [ `Ls_files of ls_files_ty ]
 and ls_files_ty
 
 module Ls_files = struct
-  module type S = Trait_ls_files.S
+  include Trait_ls_files
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -122,7 +122,7 @@ type name_status = [ `Name_status of name_status_ty ]
 and name_status_ty
 
 module Name_status = struct
-  module type S = Trait_name_status.S
+  include Trait_name_status
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -133,7 +133,7 @@ type num_status = [ `Num_status of num_status_ty ]
 and num_status_ty
 
 module Num_status = struct
-  module type S = Trait_num_status.S
+  include Trait_num_status
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -144,7 +144,7 @@ type refs = [ `Refs of refs_ty ]
 and refs_ty
 
 module Refs = struct
-  module type S = Trait_refs.S
+  include Trait_refs
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -155,7 +155,7 @@ type rev_parse = [ `Rev_parse of rev_parse_ty ]
 and rev_parse_ty
 
 module Rev_parse = struct
-  module type S = Trait_rev_parse.S
+  include Trait_rev_parse
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)
@@ -166,7 +166,7 @@ type show = [ `Show of show_ty ]
 and show_ty
 
 module Show = struct
-  module type S = Trait_show.S
+  include Trait_show
 
   include Provider.Trait.Create (struct
       type 'a module_type = (module S with type t = 'a)

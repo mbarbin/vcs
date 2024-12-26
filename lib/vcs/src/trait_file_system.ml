@@ -34,16 +34,32 @@ module type S = sig
   val read_dir : t -> dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method virtual load_file : path:Absolute_path.t -> (File_contents.t, Err.t) Result.t
+class type t = object
+  method load_file : path:Absolute_path.t -> (File_contents.t, Err.t) Result.t
 
-    method
-      virtual save_file
-      : ?perms:int
-        -> path:Absolute_path.t
-        -> file_contents:File_contents.t
-        -> (unit, Err.t) Result.t
+  method save_file :
+    ?perms:int
+    -> unit
+    -> path:Absolute_path.t
+    -> file_contents:File_contents.t
+    -> (unit, Err.t) Result.t
 
-    method virtual read_dir : dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
-  end
+  method read_dir : dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method load_file ~path = X.load_file t ~path
+
+      method save_file ?perms () ~path ~file_contents =
+        X.save_file t ?perms ~path ~file_contents
+
+      method read_dir ~dir = X.read_dir t ~dir
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

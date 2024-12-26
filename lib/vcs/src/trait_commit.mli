@@ -29,7 +29,15 @@ module type S = sig
     -> (unit, Err.t) Result.t
 end
 
-class virtual t : object
-  method virtual commit :
+class type t = object
+  method commit :
     repo_root:Repo_root.t -> commit_message:Commit_message.t -> (unit, Err.t) Result.t
+end
+
+val make : (module S with type t = 'a) -> 'a -> t
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

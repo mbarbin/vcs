@@ -33,9 +33,7 @@ type add = [ `Add of add_ty ]
 and add_ty
 
 module Add : sig
-  include module type of struct
-    include Trait_add
-  end
+  include module type of Trait_add
 
   val t : ('t, (module S with type t = 't), [> add ]) Provider.Trait.t
 end
@@ -44,7 +42,7 @@ type branch = [ `Branch of branch_ty ]
 and branch_ty
 
 module Branch : sig
-  module type S = Trait_branch.S
+  include module type of Trait_branch
 
   val t : ('t, (module S with type t = 't), [> branch ]) Provider.Trait.t
 end
@@ -53,7 +51,7 @@ type commit = [ `Commit of commit_ty ]
 and commit_ty
 
 module Commit : sig
-  module type S = Trait_commit.S
+  include module type of Trait_commit
 
   val t : ('t, (module S with type t = 't), [> commit ]) Provider.Trait.t
 end
@@ -62,7 +60,7 @@ type config = [ `Config of config_ty ]
 and config_ty
 
 module Config : sig
-  module type S = Trait_config.S
+  include module type of Trait_config
 
   val t : ('t, (module S with type t = 't), [> config ]) Provider.Trait.t
 end
@@ -71,7 +69,7 @@ type file_system = [ `File_system of file_system_ty ]
 and file_system_ty
 
 module File_system : sig
-  module type S = Trait_file_system.S
+  include module type of Trait_file_system
 
   val t : ('t, (module S with type t = 't), [> file_system ]) Provider.Trait.t
 end
@@ -80,7 +78,7 @@ type git = [ `Git of git_ty ]
 and git_ty
 
 module Git : sig
-  module type S = Trait_git.S
+  include module type of Trait_git
 
   val t : ('t, (module S with type t = 't), [> git ]) Provider.Trait.t
 end
@@ -89,7 +87,7 @@ type init = [ `Init of init_ty ]
 and init_ty
 
 module Init : sig
-  module type S = Trait_init.S
+  include module type of Trait_init
 
   val t : ('t, (module S with type t = 't), [> init ]) Provider.Trait.t
 end
@@ -98,7 +96,7 @@ type log = [ `Log of log_ty ]
 and log_ty
 
 module Log : sig
-  module type S = Trait_log.S
+  include module type of Trait_log
 
   val t : ('t, (module S with type t = 't), [> log ]) Provider.Trait.t
 end
@@ -107,7 +105,7 @@ type ls_files = [ `Ls_files of ls_files_ty ]
 and ls_files_ty
 
 module Ls_files : sig
-  module type S = Trait_ls_files.S
+  include module type of Trait_ls_files
 
   val t : ('t, (module S with type t = 't), [> ls_files ]) Provider.Trait.t
 end
@@ -116,7 +114,7 @@ type name_status = [ `Name_status of name_status_ty ]
 and name_status_ty
 
 module Name_status : sig
-  module type S = Trait_name_status.S
+  include module type of Trait_name_status
 
   val t : ('t, (module S with type t = 't), [> name_status ]) Provider.Trait.t
 end
@@ -125,7 +123,7 @@ type num_status = [ `Num_status of num_status_ty ]
 and num_status_ty
 
 module Num_status : sig
-  module type S = Trait_num_status.S
+  include module type of Trait_num_status
 
   val t : ('t, (module S with type t = 't), [> num_status ]) Provider.Trait.t
 end
@@ -134,7 +132,7 @@ type refs = [ `Refs of refs_ty ]
 and refs_ty
 
 module Refs : sig
-  module type S = Trait_refs.S
+  include module type of Trait_refs
 
   val t : ('t, (module S with type t = 't), [> refs ]) Provider.Trait.t
 end
@@ -143,7 +141,7 @@ type rev_parse = [ `Rev_parse of rev_parse_ty ]
 and rev_parse_ty
 
 module Rev_parse : sig
-  module type S = Trait_rev_parse.S
+  include module type of Trait_rev_parse
 
   val t : ('t, (module S with type t = 't), [> rev_parse ]) Provider.Trait.t
 end
@@ -152,7 +150,7 @@ type show = [ `Show of show_ty ]
 and show_ty
 
 module Show : sig
-  module type S = Trait_show.S
+  include module type of Trait_show
 
   val t : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
 end

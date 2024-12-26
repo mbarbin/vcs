@@ -35,13 +35,25 @@ module type S = sig
     -> (unit, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method
-      virtual set_user_name
-      : repo_root:Repo_root.t -> user_name:User_name.t -> (unit, Err.t) Result.t
+class type t = object
+  method set_user_name :
+    repo_root:Repo_root.t -> user_name:User_name.t -> (unit, Err.t) Result.t
 
-    method
-      virtual set_user_email
-      : repo_root:Repo_root.t -> user_email:User_email.t -> (unit, Err.t) Result.t
-  end
+  method set_user_email :
+    repo_root:Repo_root.t -> user_email:User_email.t -> (unit, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method set_user_name ~repo_root ~user_name = X.set_user_name t ~repo_root ~user_name
+
+      method set_user_email ~repo_root ~user_email =
+        X.set_user_email t ~repo_root ~user_email
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;
