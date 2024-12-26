@@ -26,11 +26,20 @@ module type S = sig
   val current_revision : t -> repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method
-      virtual current_branch
-      : repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
+class type t = object
+  method current_branch : repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
+  method current_revision : repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+end
 
-    method virtual current_revision : repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
-  end
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method current_branch = X.current_branch t
+      method current_revision = X.current_revision t
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

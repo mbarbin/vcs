@@ -25,6 +25,14 @@ module type S = sig
   val all : t -> repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
 end
 
-class virtual t : object
-  method virtual all : repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+class type t = object
+  method all : repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+end
+
+val make : (module S with type t = 'a) -> 'a -> t
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

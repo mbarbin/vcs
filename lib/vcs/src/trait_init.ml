@@ -25,7 +25,18 @@ module type S = sig
   val init : t -> path:Absolute_path.t -> (Repo_root.t, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method virtual init : path:Absolute_path.t -> (Repo_root.t, Err.t) Result.t
-  end
+class type t = object
+  method init : path:Absolute_path.t -> (Repo_root.t, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method init = X.init t
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

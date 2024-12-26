@@ -31,12 +31,21 @@ module type S = sig
     -> ('a, Err.t) Result.t
 end
 
-class virtual t : object
-  method virtual git :
+class type t = object
+  method git :
     'a.
     ?env:string array
+    -> unit
     -> cwd:Absolute_path.t
     -> args:string list
     -> f:(Git_output0.t -> ('a, Err.t) Result.t)
     -> ('a, Err.t) Result.t
+end
+
+val make : (module S with type t = 'a) -> 'a -> t
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

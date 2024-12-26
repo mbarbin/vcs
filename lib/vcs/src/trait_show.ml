@@ -30,12 +30,22 @@ module type S = sig
     -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method
-      virtual show_file_at_rev
-      : repo_root:Repo_root.t
-        -> rev:Rev.t
-        -> path:Path_in_repo.t
-        -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
-  end
+class type t = object
+  method show_file_at_rev :
+    repo_root:Repo_root.t
+    -> rev:Rev.t
+    -> path:Path_in_repo.t
+    -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method show_file_at_rev = X.show_file_at_rev t
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

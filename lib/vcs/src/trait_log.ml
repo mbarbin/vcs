@@ -25,7 +25,18 @@ module type S = sig
   val all : t -> repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method virtual all : repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
-  end
+class type t = object
+  method all : repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method all = X.all t
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

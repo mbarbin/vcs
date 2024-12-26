@@ -95,15 +95,39 @@ module Make (Runtime : Runtime.S) = struct
       ]
   ;;
 
-  (* CR mbarbin: Complete with all traits below. *)
-
   module Class = struct
     module Add = Vcs.Trait.Add.Make (Impl.Add)
+    module Branch = Vcs.Trait.Branch.Make (Impl.Branch)
+    module Commit = Vcs.Trait.Commit.Make (Impl.Commit)
+    module Config = Vcs.Trait.Config.Make (Impl.Config)
+    module File_system = Vcs.Trait.File_system.Make (Impl.File_system)
+    module Git = Vcs.Trait.Git.Make (Impl.Git)
+    module Init = Vcs.Trait.Init.Make (Impl.Init)
+    module Log = Vcs.Trait.Log.Make (Impl.Log)
+    module Ls_files = Vcs.Trait.Ls_files.Make (Impl.Ls_files)
+    module Name_status = Vcs.Trait.Name_status.Make (Impl.Name_status)
+    module Num_status = Vcs.Trait.Num_status.Make (Impl.Num_status)
+    module Refs = Vcs.Trait.Refs.Make (Impl.Refs)
+    module Rev_parse = Vcs.Trait.Rev_parse.Make (Impl.Rev_parse)
+    module Show = Vcs.Trait.Show.Make (Impl.Show)
   end
 
   class c t =
     object
       inherit Class.Add.c t
+      inherit Class.Branch.c t
+      inherit Class.Commit.c t
+      inherit Class.Config.c t
+      inherit Class.File_system.c t
+      inherit Class.Git.c t
+      inherit Class.Init.c t
+      inherit Class.Log.c t
+      inherit Class.Ls_files.c t
+      inherit Class.Name_status.c t
+      inherit Class.Num_status.c t
+      inherit Class.Refs.c t
+      inherit Class.Rev_parse.c t
+      inherit Class.Show.c t
     end
 
   include Impl

@@ -74,6 +74,20 @@ module Make (Runtime : Runtime.S) : sig
 
   class c : t -> object
     inherit Vcs.Trait.Add.t
+    inherit Vcs.Trait.Add.t
+    inherit Vcs.Trait.Branch.t
+    inherit Vcs.Trait.Commit.t
+    inherit Vcs.Trait.Config.t
+    inherit Vcs.Trait.File_system.t
+    inherit Vcs.Trait.Git.t
+    inherit Vcs.Trait.Init.t
+    inherit Vcs.Trait.Log.t
+    inherit Vcs.Trait.Ls_files.t
+    inherit Vcs.Trait.Name_status.t
+    inherit Vcs.Trait.Num_status.t
+    inherit Vcs.Trait.Refs.t
+    inherit Vcs.Trait.Rev_parse.t
+    inherit Vcs.Trait.Show.t
   end
 
   (** {1 Individual implementations} *)

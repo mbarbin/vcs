@@ -29,7 +29,15 @@ module type S = sig
     -> (Path_in_repo.t list, Err.t) Result.t
 end
 
-class virtual t : object
-  method virtual ls_files :
+class type t = object
+  method ls_files :
     repo_root:Repo_root.t -> below:Path_in_repo.t -> (Path_in_repo.t list, Err.t) Result.t
+end
+
+val make : (module S with type t = 'a) -> 'a -> t
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

@@ -29,11 +29,21 @@ module type S = sig
     -> (Num_status.t, Err.t) Result.t
 end
 
-class virtual t =
-  object
-    method
-      virtual num_status
-      : repo_root:Repo_root.t
-        -> changed:Num_status.Changed.t
-        -> (Num_status.t, Err.t) Result.t
-  end
+class type t = object
+  method num_status :
+    repo_root:Repo_root.t
+    -> changed:Num_status.Changed.t
+    -> (Num_status.t, Err.t) Result.t
+end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method num_status = X.num_status t
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;
