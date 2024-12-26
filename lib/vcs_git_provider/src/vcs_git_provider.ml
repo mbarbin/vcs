@@ -40,7 +40,6 @@ end
 module Trait = struct
   class type t = object
     inherit Vcs.Trait.Add.t
-    inherit Vcs.Trait.Add.t
     inherit Vcs.Trait.Branch.t
     inherit Vcs.Trait.Commit.t
     inherit Vcs.Trait.Config.t

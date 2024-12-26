@@ -11,7 +11,7 @@
   Base
   -open
   Fpath_base)
- (libraries base fpath fpath-base provider vcs)
+ (libraries base fpath fpath-base vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

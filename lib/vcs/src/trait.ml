@@ -19,173 +19,34 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type add = [ `Add of add_ty ]
-and add_ty
+module Add = Trait_add
+module Branch = Trait_branch
+module Commit = Trait_commit
+module Config = Trait_config
+module File_system = Trait_file_system
+module Git = Trait_git
+module Init = Trait_init
+module Log = Trait_log
+module Ls_files = Trait_ls_files
+module Name_status = Trait_name_status
+module Num_status = Trait_num_status
+module Refs = Trait_refs
+module Rev_parse = Trait_rev_parse
+module Show = Trait_show
 
-module Add = struct
-  include Trait_add
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
+class type t = object
+  inherit Add.t
+  inherit Branch.t
+  inherit Commit.t
+  inherit Config.t
+  inherit File_system.t
+  inherit Git.t
+  inherit Init.t
+  inherit Log.t
+  inherit Ls_files.t
+  inherit Name_status.t
+  inherit Num_status.t
+  inherit Refs.t
+  inherit Rev_parse.t
+  inherit Show.t
 end
-
-type branch = [ `Branch of branch_ty ]
-and branch_ty
-
-module Branch = struct
-  include Trait_branch
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type commit = [ `Commit of commit_ty ]
-and commit_ty
-
-module Commit = struct
-  include Trait_commit
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type config = [ `Config of config_ty ]
-and config_ty
-
-module Config = struct
-  include Trait_config
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type file_system = [ `File_system of file_system_ty ]
-and file_system_ty
-
-module File_system = struct
-  include Trait_file_system
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type git = [ `Git of git_ty ]
-and git_ty
-
-module Git = struct
-  include Trait_git
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type init = [ `Init of init_ty ]
-and init_ty
-
-module Init = struct
-  include Trait_init
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type log = [ `Log of log_ty ]
-and log_ty
-
-module Log = struct
-  include Trait_log
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type ls_files = [ `Ls_files of ls_files_ty ]
-and ls_files_ty
-
-module Ls_files = struct
-  include Trait_ls_files
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type name_status = [ `Name_status of name_status_ty ]
-and name_status_ty
-
-module Name_status = struct
-  include Trait_name_status
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type num_status = [ `Num_status of num_status_ty ]
-and num_status_ty
-
-module Num_status = struct
-  include Trait_num_status
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type refs = [ `Refs of refs_ty ]
-and refs_ty
-
-module Refs = struct
-  include Trait_refs
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type rev_parse = [ `Rev_parse of rev_parse_ty ]
-and rev_parse_ty
-
-module Rev_parse = struct
-  include Trait_rev_parse
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type show = [ `Show of show_ty ]
-and show_ty
-
-module Show = struct
-  include Trait_show
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type t =
-  [ add
-  | branch
-  | commit
-  | config
-  | file_system
-  | git
-  | init
-  | log
-  | ls_files
-  | name_status
-  | num_status
-  | refs
-  | rev_parse
-  | show
-  ]
