@@ -37,8 +37,7 @@ end
 module Make (X : S) = struct
   class c (t : X.t) =
     object
-      method rename_current_branch ~repo_root ~to_ =
-        X.rename_current_branch t ~repo_root ~to_
+      method rename_current_branch = X.rename_current_branch t
     end
 end
 

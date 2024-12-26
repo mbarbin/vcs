@@ -95,6 +95,8 @@ module Make (Runtime : Runtime.S) = struct
       ]
   ;;
 
+  (* CR mbarbin: Complete with all traits below. *)
+
   module Class = struct
     module Add = Vcs.Trait.Add.Make (Impl.Add)
   end

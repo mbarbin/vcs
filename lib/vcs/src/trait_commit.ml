@@ -37,7 +37,7 @@ end
 module Make (X : S) = struct
   class c (t : X.t) =
     object
-      method commit ~repo_root ~commit_message = X.commit t ~repo_root ~commit_message
+      method commit = X.commit t
     end
 end
 

@@ -32,7 +32,7 @@ end
 module Make (X : S) = struct
   class c (t : X.t) =
     object
-      method add ~repo_root ~path = X.add t ~repo_root ~path
+      method add = X.add t
     end
 end
 

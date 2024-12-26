@@ -50,12 +50,12 @@ end
 module Make (X : S) = struct
   class c (t : X.t) =
     object
-      method load_file ~path = X.load_file t ~path
+      method load_file = X.load_file t
 
       method save_file ?perms () ~path ~file_contents =
-        X.save_file t ?perms ~path ~file_contents
+        X.save_file ?perms t ~path ~file_contents
 
-      method read_dir ~dir = X.read_dir t ~dir
+      method read_dir = X.read_dir t
     end
 end
 

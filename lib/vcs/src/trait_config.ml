@@ -46,10 +46,8 @@ end
 module Make (X : S) = struct
   class c (t : X.t) =
     object
-      method set_user_name ~repo_root ~user_name = X.set_user_name t ~repo_root ~user_name
-
-      method set_user_email ~repo_root ~user_email =
-        X.set_user_email t ~repo_root ~user_email
+      method set_user_name = X.set_user_name t
+      method set_user_email = X.set_user_email t
     end
 end
 
