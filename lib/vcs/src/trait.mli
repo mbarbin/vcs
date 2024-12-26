@@ -45,19 +45,19 @@ module Rev_parse = Trait_rev_parse
 module Show = Trait_show
 
 (** The union of all traits defined in Vcs. *)
-class type t = object
-  inherit Add.t
-  inherit Branch.t
-  inherit Commit.t
-  inherit Config.t
-  inherit File_system.t
-  inherit Git.t
-  inherit Init.t
-  inherit Log.t
-  inherit Ls_files.t
-  inherit Name_status.t
-  inherit Num_status.t
-  inherit Refs.t
-  inherit Rev_parse.t
-  inherit Show.t
+class type ['a] t = object
+  inherit ['a] Add.t
+  inherit ['a] Branch.t
+  inherit ['a] Commit.t
+  inherit ['a] Config.t
+  inherit ['a] File_system.t
+  inherit ['a] Git.t
+  inherit ['a] Init.t
+  inherit ['a] Log.t
+  inherit ['a] Ls_files.t
+  inherit ['a] Name_status.t
+  inherit ['a] Num_status.t
+  inherit ['a] Refs.t
+  inherit ['a] Rev_parse.t
+  inherit ['a] Show.t
 end

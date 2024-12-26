@@ -50,23 +50,14 @@ module type S = sig
   val read_dir : t -> dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
 end
 
-class type t = object
-  method load_file : path:Absolute_path.t -> (File_contents.t, Err.t) Result.t
-
-  method save_file :
-    ?perms:int
-    -> unit
-    -> path:Absolute_path.t
-    -> file_contents:File_contents.t
-    -> (unit, Err.t) Result.t
-
-  method read_dir : dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
+class type ['a] t = object
+  method file_system : (module S with type t = 'a)
 end
 
-val make : (module S with type t = 'a) -> 'a -> t
+val make : (module S with type t = 'a) -> 'a t
 
 module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
+  class c : object
+    inherit [X.t] t
   end
 end

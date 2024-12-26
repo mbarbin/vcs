@@ -37,6 +37,7 @@ module Trait = Trait
 
     Typical users do not use create vcs objects directly directly, but rather
     will rely on helper library. See for example [Vcs_git_eio.create]. *)
+type ('a, 'b) t = 'a * (< 'a Trait.t ; .. > as 'b)
 
 (** {1 Error handling}
 
@@ -77,7 +78,7 @@ module Url = Url
 
 (** Initialize a Git repository at the given path. This errors out if a
     repository is already initialized there. *)
-val init : < Trait.Init.t ; .. > -> path:Absolute_path.t -> Repo_root.t
+val init : 'a * < 'a Trait.Init.t ; .. > -> path:Absolute_path.t -> Repo_root.t
 
 (** [find_enclosing_repo_root vcs ~from:dir ~store] walks up the path from
     the given directory [dir] and stops when at the root of a repository. If no
@@ -99,7 +100,7 @@ val init : < Trait.Init.t ; .. > -> path:Absolute_path.t -> Repo_root.t
     If you know you are in a Git repository you may want to use the wrapper
     {!val:find_enclosing_git_repo_root} instead. *)
 val find_enclosing_repo_root
-  :  < Trait.File_system.t ; .. >
+  :  'a * < 'a Trait.File_system.t ; .. >
   -> from:Absolute_path.t
   -> store:(Fsegment.t * 'store) list
   -> ('store * Repo_root.t) option
@@ -109,7 +110,7 @@ val find_enclosing_repo_root
     the deepest directory containing a [".git"] entry, starting from [dir] and
     walking up. *)
 val find_enclosing_git_repo_root
-  :  < Trait.File_system.t ; .. >
+  :  'a * < 'a Trait.File_system.t ; .. >
   -> from:Absolute_path.t
   -> Repo_root.t option
 
@@ -124,11 +125,15 @@ module Mock_revs = Mock_revs
 module Commit_message = Commit_message
 module Path_in_repo = Path_in_repo
 
-val add : < Trait.Add.t ; .. > -> repo_root:Repo_root.t -> path:Path_in_repo.t -> unit
+val add
+  :  'a * < 'a Trait.Add.t ; .. >
+  -> repo_root:Repo_root.t
+  -> path:Path_in_repo.t
+  -> unit
 
 (** When this succeeds, this returns the revision of the commit that was just created. *)
 val commit
-  :  < Trait.Rev_parse.t ; Trait.Commit.t ; .. >
+  :  'a * < 'a Trait.Rev_parse.t ; 'a Trait.Commit.t ; .. >
   -> repo_root:Repo_root.t
   -> commit_message:Commit_message.t
   -> Rev.t
@@ -138,13 +143,13 @@ val commit
 module File_contents = File_contents
 
 val ls_files
-  :  < Trait.Ls_files.t ; .. >
+  :  'a * < 'a Trait.Ls_files.t ; .. >
   -> repo_root:Repo_root.t
   -> below:Path_in_repo.t
   -> Path_in_repo.t list
 
 val show_file_at_rev
-  :  < Trait.Show.t ; .. >
+  :  'a * < 'a Trait.Show.t ; .. >
   -> repo_root:Repo_root.t
   -> rev:Rev.t
   -> path:Path_in_repo.t
@@ -157,12 +162,15 @@ val show_file_at_rev
     without committing to a particular implementation. If the [Vcs] provider used at
     runtime is based on [Eio], these functions will use [Eio.Path] underneath. *)
 
-val load_file : < Trait.File_system.t ; .. > -> path:Absolute_path.t -> File_contents.t
+val load_file
+  :  'a * < 'a Trait.File_system.t ; .. >
+  -> path:Absolute_path.t
+  -> File_contents.t
 
 (** Create a new file, or truncate an existing one. *)
 val save_file
   :  ?perms:int (** defaults to [0o666]. *)
-  -> < Trait.File_system.t ; .. >
+  -> 'a * < 'a Trait.File_system.t ; .. >
   -> path:Absolute_path.t
   -> file_contents:File_contents.t
   -> unit
@@ -170,7 +178,10 @@ val save_file
 (** Returns the entries of the supplied directory, ordered increasingly
     according to [String.compare]. The result does not include the unix entries
     ".", "..". *)
-val read_dir : < Trait.File_system.t ; .. > -> dir:Absolute_path.t -> Fsegment.t list
+val read_dir
+  :  'a * < 'a Trait.File_system.t ; .. >
+  -> dir:Absolute_path.t
+  -> Fsegment.t list
 
 (** {1 Branches & Tags} *)
 
@@ -183,7 +194,7 @@ module Tag_name = Tag_name
     name of a default branch during tests. If the current branch already has
     this name, this has no further effect. *)
 val rename_current_branch
-  :  < Trait.Branch.t ; .. >
+  :  'a * < 'a Trait.Branch.t ; .. >
   -> repo_root:Repo_root.t
   -> to_:Branch_name.t
   -> unit
@@ -195,13 +206,13 @@ module Num_status = Num_status
 module Num_lines_in_diff = Num_lines_in_diff
 
 val name_status
-  :  < Trait.Name_status.t ; .. >
+  :  'a * < 'a Trait.Name_status.t ; .. >
   -> repo_root:Repo_root.t
   -> changed:Name_status.Changed.t
   -> Name_status.t
 
 val num_status
-  :  < Trait.Num_status.t ; .. >
+  :  'a * < 'a Trait.Num_status.t ; .. >
   -> repo_root:Repo_root.t
   -> changed:Num_status.Changed.t
   -> Num_status.t
@@ -213,14 +224,25 @@ module Ref_kind = Ref_kind
 module Refs = Refs
 module Graph = Graph
 
-val log : < Trait.Log.t ; .. > -> repo_root:Repo_root.t -> Log.t
-val refs : < Trait.Refs.t ; .. > -> repo_root:Repo_root.t -> Refs.t
-val graph : < Trait.Log.t ; Trait.Refs.t ; .. > -> repo_root:Repo_root.t -> Graph.t
+val log : 'a * < 'a Trait.Log.t ; .. > -> repo_root:Repo_root.t -> Log.t
+val refs : 'a * < 'a Trait.Refs.t ; .. > -> repo_root:Repo_root.t -> Refs.t
+
+val graph
+  :  'a * < 'a Trait.Log.t ; 'a Trait.Refs.t ; .. >
+  -> repo_root:Repo_root.t
+  -> Graph.t
 
 (** {1 Rev parse utils} *)
 
-val current_branch : < Trait.Rev_parse.t ; .. > -> repo_root:Repo_root.t -> Branch_name.t
-val current_revision : < Trait.Rev_parse.t ; .. > -> repo_root:Repo_root.t -> Rev.t
+val current_branch
+  :  'a * < 'a Trait.Rev_parse.t ; .. >
+  -> repo_root:Repo_root.t
+  -> Branch_name.t
+
+val current_revision
+  :  'a * < 'a Trait.Rev_parse.t ; .. >
+  -> repo_root:Repo_root.t
+  -> Rev.t
 
 (** {1 User config} *)
 
@@ -235,13 +257,13 @@ module User_name = User_name
     invocations. *)
 
 val set_user_name
-  :  < Trait.Config.t ; .. >
+  :  'a * < 'a Trait.Config.t ; .. >
   -> repo_root:Repo_root.t
   -> user_name:User_name.t
   -> unit
 
 val set_user_email
-  :  < Trait.Config.t ; .. >
+  :  'a * < 'a Trait.Config.t ; .. >
   -> repo_root:Repo_root.t
   -> user_email:User_email.t
   -> unit
@@ -297,7 +319,7 @@ module Git = Git
 val git
   :  ?env:string array
   -> ?run_in_subdir:Path_in_repo.t
-  -> < Trait.Git.t ; .. >
+  -> 'v * < 'v Trait.Git.t ; .. >
   -> repo_root:Repo_root.t
   -> args:string list
   -> f:(Git.Output.t -> 'a)

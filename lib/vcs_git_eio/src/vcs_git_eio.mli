@@ -28,14 +28,6 @@
     results with [Vcs_git_provider]. Note that [git] must be found in the PATH of the
     running environment. *)
 
-(** This is a convenient type alias that may be used to designate a provider
-    with the exact list of traits supported by this implementation. *)
-type t = Vcs_git_provider.Trait.t
-
-(** [create ~env] creates a [vcs] value that can be used by the {!module:Vcs}
-    library. *)
-val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
-
 (** The implementation of the provider is exported for convenience and tests.
     Casual users should prefer using [Vcs] directly. *)
 module Impl : sig
@@ -60,3 +52,11 @@ module Impl : sig
   module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
   module Show : Vcs.Trait.Show.S with type t = t
 end
+
+(** This is a convenient type alias that may be used to designate a provider
+    with the exact list of traits supported by this implementation. *)
+type t = Impl.t * Impl.t Vcs_git_provider.Trait.t
+
+(** [create ~env] creates a [vcs] value that can be used by the {!module:Vcs}
+        library. *)
+val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t

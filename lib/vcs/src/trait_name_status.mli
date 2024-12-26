@@ -29,17 +29,14 @@ module type S = sig
     -> (Name_status.t, Err.t) Result.t
 end
 
-class type t = object
-  method name_status :
-    repo_root:Repo_root.t
-    -> changed:Name_status.Changed.t
-    -> (Name_status.t, Err.t) Result.t
+class type ['a] t = object
+  method name_status : (module S with type t = 'a)
 end
 
-val make : (module S with type t = 'a) -> 'a -> t
+val make : (module S with type t = 'a) -> 'a t
 
 module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
+  class c : object
+    inherit [X.t] t
   end
 end

@@ -38,21 +38,21 @@ module Private = struct
 end
 
 module Trait = struct
-  class type t = object
-    inherit Vcs.Trait.Add.t
-    inherit Vcs.Trait.Branch.t
-    inherit Vcs.Trait.Commit.t
-    inherit Vcs.Trait.Config.t
-    inherit Vcs.Trait.File_system.t
-    inherit Vcs.Trait.Git.t
-    inherit Vcs.Trait.Init.t
-    inherit Vcs.Trait.Log.t
-    inherit Vcs.Trait.Ls_files.t
-    inherit Vcs.Trait.Name_status.t
-    inherit Vcs.Trait.Num_status.t
-    inherit Vcs.Trait.Refs.t
-    inherit Vcs.Trait.Rev_parse.t
-    inherit Vcs.Trait.Show.t
+  class type ['a] t = object
+    inherit ['a] Vcs.Trait.Add.t
+    inherit ['a] Vcs.Trait.Branch.t
+    inherit ['a] Vcs.Trait.Commit.t
+    inherit ['a] Vcs.Trait.Config.t
+    inherit ['a] Vcs.Trait.File_system.t
+    inherit ['a] Vcs.Trait.Git.t
+    inherit ['a] Vcs.Trait.Init.t
+    inherit ['a] Vcs.Trait.Log.t
+    inherit ['a] Vcs.Trait.Ls_files.t
+    inherit ['a] Vcs.Trait.Name_status.t
+    inherit ['a] Vcs.Trait.Num_status.t
+    inherit ['a] Vcs.Trait.Refs.t
+    inherit ['a] Vcs.Trait.Rev_parse.t
+    inherit ['a] Vcs.Trait.Show.t
   end
 end
 
@@ -93,22 +93,22 @@ module Make (Runtime : Runtime.S) = struct
     module Show = Vcs.Trait.Show.Make (Impl.Show)
   end
 
-  class c t =
+  class c =
     object
-      inherit Class.Add.c t
-      inherit Class.Branch.c t
-      inherit Class.Commit.c t
-      inherit Class.Config.c t
-      inherit Class.File_system.c t
-      inherit Class.Git.c t
-      inherit Class.Init.c t
-      inherit Class.Log.c t
-      inherit Class.Ls_files.c t
-      inherit Class.Name_status.c t
-      inherit Class.Num_status.c t
-      inherit Class.Refs.c t
-      inherit Class.Rev_parse.c t
-      inherit Class.Show.c t
+      inherit Class.Add.c
+      inherit Class.Branch.c
+      inherit Class.Commit.c
+      inherit Class.Config.c
+      inherit Class.File_system.c
+      inherit Class.Git.c
+      inherit Class.Init.c
+      inherit Class.Log.c
+      inherit Class.Ls_files.c
+      inherit Class.Name_status.c
+      inherit Class.Num_status.c
+      inherit Class.Refs.c
+      inherit Class.Rev_parse.c
+      inherit Class.Show.c
     end
 
   include Impl

@@ -21,36 +21,49 @@
 
 open! Import
 
+type ('a, 'b) t = 'a * (< 'a Trait.t ; .. > as 'b)
+
 let of_result ~step = function
   | Ok r -> r
   | Error err -> raise (Exn0.E (Err.add_context err ~step:(Lazy.force step)))
 ;;
 
-let load_file (t : < Trait.File_system.t ; .. >) ~path =
-  t#load_file ~path
+let load_file (type a) (t, (ops : < a Trait.File_system.t ; .. >)) ~path =
+  let module M = (val ops#file_system) in
+  M.load_file t ~path
   |> of_result ~step:(lazy [%sexp "Vcs.load_file", { path : Absolute_path.t }])
 ;;
 
-let save_file ?perms (t : < Trait.File_system.t ; .. >) ~path ~file_contents =
-  t#save_file ?perms () ~path ~file_contents
+let save_file
+      (type a)
+      ?perms
+      (t, (ops : < a Trait.File_system.t ; .. >))
+      ~path
+      ~file_contents
+  =
+  let module M = (val ops#file_system) in
+  M.save_file ?perms t ~path ~file_contents
   |> of_result
        ~step:
          (lazy [%sexp "Vcs.save_file", { perms : int option; path : Absolute_path.t }])
 ;;
 
-let read_dir (t : < Trait.File_system.t ; .. >) ~dir =
-  t#read_dir ~dir
+let read_dir (type a) (t, (ops : < a Trait.File_system.t ; .. >)) ~dir =
+  let module M = (val ops#file_system) in
+  M.read_dir t ~dir
   |> of_result ~step:(lazy [%sexp "Vcs.read_dir", { dir : Absolute_path.t }])
 ;;
 
-let add (t : < Trait.Add.t ; .. >) ~repo_root ~path =
-  t#add ~repo_root ~path
+let add (type a) (t, (ops : < a Trait.Add.t ; .. >)) ~repo_root ~path =
+  let module M = (val ops#add) in
+  M.add t ~repo_root ~path
   |> of_result
        ~step:(lazy [%sexp "Vcs.add", { repo_root : Repo_root.t; path : Path_in_repo.t }])
 ;;
 
-let init (t : < Trait.Init.t ; .. >) ~path =
-  t#init ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
+let init (type a) (t, (ops : < a Trait.Init.t ; .. >)) ~path =
+  let module M = (val ops#init) in
+  M.init t ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
 ;;
 
 let find_enclosing_repo_root t ~from ~store =
@@ -82,33 +95,44 @@ let find_enclosing_git_repo_root t ~from =
   | Some (`Git, repo_root) -> Some repo_root
 ;;
 
-let current_branch (t : < Trait.Rev_parse.t ; .. >) ~repo_root =
-  t#current_branch ~repo_root
+let current_branch (type a) (t, (ops : < a Trait.Rev_parse.t ; .. >)) ~repo_root =
+  let module M = (val ops#rev_parse) in
+  M.current_branch t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
 ;;
 
-let current_revision (t : < Trait.Rev_parse.t ; .. >) ~repo_root =
-  t#current_revision ~repo_root
+let current_revision (type a) (t, (ops : < a Trait.Rev_parse.t ; .. >)) ~repo_root =
+  let module M = (val ops#rev_parse) in
+  M.current_revision t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_revision", { repo_root : Repo_root.t }])
 ;;
 
-let commit (t : < Trait.Rev_parse.t ; Trait.Commit.t ; .. >) ~repo_root ~commit_message =
+let commit
+      (type a)
+      (t, (ops : < a Trait.Rev_parse.t ; a Trait.Commit.t ; .. >))
+      ~repo_root
+      ~commit_message
+  =
+  let module R = (val ops#rev_parse) in
+  let module C = (val ops#commit) in
   (let open Result.Monad_syntax in
-   let* () = t#commit ~repo_root ~commit_message in
-   t#current_revision ~repo_root)
+   let* () = C.commit t ~repo_root ~commit_message in
+   R.current_revision t ~repo_root)
   |> of_result ~step:(lazy [%sexp "Vcs.commit", { repo_root : Repo_root.t }])
 ;;
 
-let ls_files (t : < Trait.Ls_files.t ; .. >) ~repo_root ~below =
-  t#ls_files ~repo_root ~below
+let ls_files (type a) (t, (ops : < a Trait.Ls_files.t ; .. >)) ~repo_root ~below =
+  let module M = (val ops#ls_files) in
+  M.ls_files t ~repo_root ~below
   |> of_result
        ~step:
          (lazy
            [%sexp "Vcs.ls_files", { repo_root : Repo_root.t; below : Path_in_repo.t }])
 ;;
 
-let rename_current_branch (t : < Trait.Branch.t ; .. >) ~repo_root ~to_ =
-  t#rename_current_branch ~repo_root ~to_
+let rename_current_branch (type a) (t, (ops : < a Trait.Branch.t ; .. >)) ~repo_root ~to_ =
+  let module M = (val ops#branch) in
+  M.rename_current_branch t ~repo_root ~to_
   |> of_result
        ~step:
          (lazy
@@ -116,8 +140,9 @@ let rename_current_branch (t : < Trait.Branch.t ; .. >) ~repo_root ~to_ =
              "Vcs.rename_current_branch", { repo_root : Repo_root.t; to_ : Branch_name.t }])
 ;;
 
-let name_status (t : < Trait.Name_status.t ; .. >) ~repo_root ~changed =
-  t#name_status ~repo_root ~changed
+let name_status (type a) (t, (ops : < a Trait.Name_status.t ; .. >)) ~repo_root ~changed =
+  let module M = (val ops#name_status) in
+  M.name_status t ~repo_root ~changed
   |> of_result
        ~step:
          (lazy
@@ -126,8 +151,9 @@ let name_status (t : < Trait.Name_status.t ; .. >) ~repo_root ~changed =
            , { repo_root : Repo_root.t; changed : Name_status.Changed.t }])
 ;;
 
-let num_status (t : < Trait.Num_status.t ; .. >) ~repo_root ~changed =
-  t#num_status ~repo_root ~changed
+let num_status (type a) (t, (ops : < a Trait.Num_status.t ; .. >)) ~repo_root ~changed =
+  let module M = (val ops#num_status) in
+  M.num_status t ~repo_root ~changed
   |> of_result
        ~step:
          (lazy
@@ -135,29 +161,34 @@ let num_status (t : < Trait.Num_status.t ; .. >) ~repo_root ~changed =
              "Vcs.num_status", { repo_root : Repo_root.t; changed : Num_status.Changed.t }])
 ;;
 
-let log (t : < Trait.Log.t ; .. >) ~repo_root =
-  t#all ~repo_root
+let log (type a) (t, (ops : < a Trait.Log.t ; .. >)) ~repo_root =
+  let module M = (val ops#log) in
+  M.all t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.log", { repo_root : Repo_root.t }])
 ;;
 
-let refs (t : < Trait.Refs.t ; .. >) ~repo_root =
-  t#show_ref ~repo_root
+let refs (type a) (t, (ops : < a Trait.Refs.t ; .. >)) ~repo_root =
+  let module M = (val ops#refs) in
+  M.show_ref t ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.refs", { repo_root : Repo_root.t }])
 ;;
 
-let graph (t : < Trait.Log.t ; Trait.Refs.t ; .. >) ~repo_root =
+let graph (type a) (t, (ops : < a Trait.Log.t ; a Trait.Refs.t ; .. >)) ~repo_root =
+  let module L = (val ops#log) in
+  let module R = (val ops#refs) in
   let graph = Graph.create () in
   (let open Result.Monad_syntax in
-   let* log = t#all ~repo_root in
-   let* refs = t#show_ref ~repo_root in
+   let* log = L.all t ~repo_root in
+   let* refs = R.show_ref t ~repo_root in
    Graph.add_nodes graph ~log;
    Graph.set_refs graph ~refs;
    Result.return graph)
   |> of_result ~step:(lazy [%sexp "Vcs.graph", { repo_root : Repo_root.t }])
 ;;
 
-let set_user_name (t : < Trait.Config.t ; .. >) ~repo_root ~user_name =
-  t#set_user_name ~repo_root ~user_name
+let set_user_name (type a) (t, (ops : < a Trait.Config.t ; .. >)) ~repo_root ~user_name =
+  let module M = (val ops#config) in
+  M.set_user_name t ~repo_root ~user_name
   |> of_result
        ~step:
          (lazy
@@ -165,8 +196,9 @@ let set_user_name (t : < Trait.Config.t ; .. >) ~repo_root ~user_name =
              "Vcs.set_user_name", { repo_root : Repo_root.t; user_name : User_name.t }])
 ;;
 
-let set_user_email (t : < Trait.Config.t ; .. >) ~repo_root ~user_email =
-  t#set_user_email ~repo_root ~user_email
+let set_user_email (type a) (t, (ops : < a Trait.Config.t ; .. >)) ~repo_root ~user_email =
+  let module M = (val ops#config) in
+  M.set_user_email t ~repo_root ~user_email
   |> of_result
        ~step:
          (lazy
@@ -174,8 +206,9 @@ let set_user_email (t : < Trait.Config.t ; .. >) ~repo_root ~user_email =
              "Vcs.set_user_email", { repo_root : Repo_root.t; user_email : User_email.t }])
 ;;
 
-let show_file_at_rev (t : < Trait.Show.t ; .. >) ~repo_root ~rev ~path =
-  t#show_file_at_rev ~repo_root ~rev ~path
+let show_file_at_rev (type a) (t, (ops : < a Trait.Show.t ; .. >)) ~repo_root ~rev ~path =
+  let module M = (val ops#show) in
+  M.show_file_at_rev t ~repo_root ~rev ~path
   |> of_result
        ~step:
          (lazy
@@ -195,15 +228,17 @@ let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
 ;;
 
 let non_raising_git
+      (type a)
       ?env
       ?(run_in_subdir = Path_in_repo.root)
-      (t : < Trait.Git.t ; .. >)
+      (t, (ops : < a Trait.Git.t ; .. >))
       ~repo_root
       ~args
       ~f
   =
+  let module M = (val ops#git) in
   let cwd = Repo_root.append repo_root run_in_subdir in
-  t#git ?env () ~cwd ~args ~f
+  M.git ?env t ~cwd ~args ~f
 ;;
 
 let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =

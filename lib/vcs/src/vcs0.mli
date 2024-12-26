@@ -19,6 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type ('a, 'b) t = 'a * (< 'a Trait.t ; .. > as 'b)
+
 include Vcs_interface.S with type 'a result := 'a
 
 module Private : sig
@@ -27,7 +29,7 @@ module Private : sig
   val git
     :  ?env:string array
     -> ?run_in_subdir:Path_in_repo.t
-    -> < Trait.Git.t ; .. >
+    -> 'v * < 'v Trait.Git.t ; .. >
     -> repo_root:Repo_root.t
     -> args:string list
     -> f:(Git.Output.t -> ('a, Err.t) Result.t)

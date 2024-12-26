@@ -49,21 +49,21 @@ module Runtime = Runtime
 module Trait : sig
   (** The list of traits that are implemented in [Vcs_git_provider]. *)
 
-  class type t = object
-    inherit Vcs.Trait.Add.t
-    inherit Vcs.Trait.Branch.t
-    inherit Vcs.Trait.Commit.t
-    inherit Vcs.Trait.Config.t
-    inherit Vcs.Trait.File_system.t
-    inherit Vcs.Trait.Git.t
-    inherit Vcs.Trait.Init.t
-    inherit Vcs.Trait.Log.t
-    inherit Vcs.Trait.Ls_files.t
-    inherit Vcs.Trait.Name_status.t
-    inherit Vcs.Trait.Num_status.t
-    inherit Vcs.Trait.Refs.t
-    inherit Vcs.Trait.Rev_parse.t
-    inherit Vcs.Trait.Show.t
+  class type ['a] t = object
+    inherit ['a] Vcs.Trait.Add.t
+    inherit ['a] Vcs.Trait.Branch.t
+    inherit ['a] Vcs.Trait.Commit.t
+    inherit ['a] Vcs.Trait.Config.t
+    inherit ['a] Vcs.Trait.File_system.t
+    inherit ['a] Vcs.Trait.Git.t
+    inherit ['a] Vcs.Trait.Init.t
+    inherit ['a] Vcs.Trait.Log.t
+    inherit ['a] Vcs.Trait.Ls_files.t
+    inherit ['a] Vcs.Trait.Name_status.t
+    inherit ['a] Vcs.Trait.Num_status.t
+    inherit ['a] Vcs.Trait.Refs.t
+    inherit ['a] Vcs.Trait.Rev_parse.t
+    inherit ['a] Vcs.Trait.Show.t
   end
 end
 
@@ -71,7 +71,7 @@ end
 module Make (Runtime : Runtime.S) : sig
   type t = Runtime.t
 
-  class c : t -> Trait.t
+  class c : [t] Trait.t
 
   (** {1 Individual implementations} *)
 

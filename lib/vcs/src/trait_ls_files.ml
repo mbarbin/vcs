@@ -29,19 +29,18 @@ module type S = sig
     -> (Path_in_repo.t list, Err.t) Result.t
 end
 
-class type t = object
-  method ls_files :
-    repo_root:Repo_root.t -> below:Path_in_repo.t -> (Path_in_repo.t list, Err.t) Result.t
+class type ['a] t = object
+  method ls_files : (module S with type t = 'a)
 end
 
 module Make (X : S) = struct
-  class c (t : X.t) =
+  class c =
     object
-      method ls_files = X.ls_files t
+      method ls_files = (module X : S with type t = X.t)
     end
 end
 
-let make (type a) (module X : S with type t = a) (t : a) =
+let make (type a) (module X : S with type t = a) =
   let module M = Make (X) in
-  new M.c t
+  new M.c
 ;;

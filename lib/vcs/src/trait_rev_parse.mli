@@ -26,15 +26,14 @@ module type S = sig
   val current_revision : t -> repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
 end
 
-class type t = object
-  method current_branch : repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
-  method current_revision : repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+class type ['a] t = object
+  method rev_parse : (module S with type t = 'a)
 end
 
-val make : (module S with type t = 'a) -> 'a -> t
+val make : (module S with type t = 'a) -> 'a t
 
 module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
+  class c : object
+    inherit [X.t] t
   end
 end

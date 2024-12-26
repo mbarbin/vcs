@@ -26,20 +26,18 @@ module type S = sig
   val current_revision : t -> repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
 end
 
-class type t = object
-  method current_branch : repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
-  method current_revision : repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+class type ['a] t = object
+  method rev_parse : (module S with type t = 'a)
 end
 
 module Make (X : S) = struct
-  class c (t : X.t) =
+  class c =
     object
-      method current_branch = X.current_branch t
-      method current_revision = X.current_revision t
+      method rev_parse = (module X : S with type t = X.t)
     end
 end
 
-let make (type a) (module X : S with type t = a) (t : a) =
+let make (type a) (module X : S with type t = a) =
   let module M = Make (X) in
-  new M.c t
+  new M.c
 ;;

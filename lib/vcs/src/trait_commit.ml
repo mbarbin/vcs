@@ -29,19 +29,18 @@ module type S = sig
     -> (unit, Err.t) Result.t
 end
 
-class type t = object
-  method commit :
-    repo_root:Repo_root.t -> commit_message:Commit_message.t -> (unit, Err.t) Result.t
+class type ['a] t = object
+  method commit : (module S with type t = 'a)
 end
 
 module Make (X : S) = struct
-  class c (t : X.t) =
+  class c =
     object
-      method commit = X.commit t
+      method commit = (module X : S with type t = X.t)
     end
 end
 
-let make (type a) (module X : S with type t = a) (t : a) =
+let make (type a) (module X : S with type t = a) =
   let module M = Make (X) in
-  new M.c t
+  new M.c
 ;;

@@ -35,23 +35,18 @@ module type S = sig
     -> (unit, Err.t) Result.t
 end
 
-class type t = object
-  method set_user_name :
-    repo_root:Repo_root.t -> user_name:User_name.t -> (unit, Err.t) Result.t
-
-  method set_user_email :
-    repo_root:Repo_root.t -> user_email:User_email.t -> (unit, Err.t) Result.t
+class type ['a] t = object
+  method config : (module S with type t = 'a)
 end
 
 module Make (X : S) = struct
-  class c (t : X.t) =
+  class c =
     object
-      method set_user_name = X.set_user_name t
-      method set_user_email = X.set_user_email t
+      method config = (module X : S with type t = X.t)
     end
 end
 
-let make (type a) (module X : S with type t = a) (t : a) =
+let make (type a) (module X : S with type t = a) =
   let module M = Make (X) in
-  new M.c t
+  new M.c
 ;;

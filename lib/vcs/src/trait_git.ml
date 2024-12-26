@@ -31,33 +31,18 @@ module type S = sig
     -> ('a, Err.t) Result.t
 end
 
-class type t = object
-  method git :
-    'a.
-    ?env:string array
-    -> unit
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git_output0.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
+class type ['a] t = object
+  method git : (module S with type t = 'a)
 end
 
 module Make (X : S) = struct
-  class c (t : X.t) =
+  class c =
     object
-      method git
-        :  'a.
-           ?env:string array
-        -> unit
-        -> cwd:Absolute_path.t
-        -> args:string list
-        -> f:(Git_output0.t -> ('a, Err.t) Result.t)
-        -> ('a, Err.t) Result.t =
-        fun ?env () ~cwd ~args ~f -> X.git ?env t ~cwd ~args ~f
+      method git = (module X : S with type t = X.t)
     end
 end
 
-let make (type a) (module X : S with type t = a) (t : a) =
+let make (type a) (module X : S with type t = a) =
   let module M = Make (X) in
-  new M.c t
+  new M.c
 ;;

@@ -19,11 +19,11 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t = Vcs_git_provider.Trait.t
-
 module Impl = struct
   include Runtime
   include Vcs_git_provider.Make (Runtime)
 end
 
-let create ~env = new Impl.c (Impl.create ~env)
+type t = Impl.t * Impl.t Vcs_git_provider.Trait.t
+
+let create ~env = Impl.create ~env, (new Impl.c :> Impl.t Vcs_git_provider.Trait.t)

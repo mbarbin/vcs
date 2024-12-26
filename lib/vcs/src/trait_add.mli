@@ -25,14 +25,14 @@ module type S = sig
   val add : t -> repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
 end
 
-class type t = object
-  method add : repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
+class type ['a] t = object
+  method add : (module S with type t = 'a)
 end
 
-val make : (module S with type t = 'a) -> 'a -> t
+val make : (module S with type t = 'a) -> 'a t
 
 module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
+  class c : object
+    inherit [X.t] t
   end
 end

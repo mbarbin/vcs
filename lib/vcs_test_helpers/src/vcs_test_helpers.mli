@@ -27,7 +27,7 @@
     makes things work when running in the GitHub Actions environment, where no
     default user config exists. *)
 val init
-  :  < Vcs.Trait.Config.t ; Vcs.Trait.Init.t ; .. >
+  :  'a * < 'a Vcs.Trait.Config.t ; 'a Vcs.Trait.Init.t ; .. >
   -> path:Absolute_path.t
   -> Vcs.Repo_root.t
 
@@ -44,7 +44,7 @@ type 'a env = 'a
 val init_temp_repo
   :  env:_ env
   -> sw:Eio.Switch.t
-  -> vcs:< Vcs.Trait.Config.t ; Vcs.Trait.Init.t ; .. >
+  -> vcs:'a * < 'a Vcs.Trait.Config.t ; 'a Vcs.Trait.Init.t ; .. >
   -> Vcs.Repo_root.t
 
 (** This helper allows to filter out unstable and brittle parts of errors before
