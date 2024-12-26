@@ -13,7 +13,7 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries astring fpath fpath-sexp0 provider sexplib0 vcs)
+ (libraries astring fpath fpath-sexp0 sexplib0 vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

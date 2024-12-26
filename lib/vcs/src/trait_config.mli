@@ -34,3 +34,19 @@ module type S = sig
     -> user_email:User_email.t
     -> (unit, Err.t) Result.t
 end
+
+class type t = object
+  method set_user_name :
+    repo_root:Repo_root.t -> user_name:User_name.t -> (unit, Err.t) Result.t
+
+  method set_user_email :
+    repo_root:Repo_root.t -> user_email:User_email.t -> (unit, Err.t) Result.t
+end
+
+val make : (module S with type t = 'a) -> 'a -> t
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
+end

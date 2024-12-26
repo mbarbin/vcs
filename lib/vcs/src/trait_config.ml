@@ -19,34 +19,39 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Add = Trait_add
-module Branch = Trait_branch
-module Commit = Trait_commit
-module Config = Trait_config
-module File_system = Trait_file_system
-module Git = Trait_git
-module Init = Trait_init
-module Log = Trait_log
-module Ls_files = Trait_ls_files
-module Name_status = Trait_name_status
-module Num_status = Trait_num_status
-module Refs = Trait_refs
-module Rev_parse = Trait_rev_parse
-module Show = Trait_show
+module type S = sig
+  type t
+
+  val set_user_name
+    :  t
+    -> repo_root:Repo_root.t
+    -> user_name:User_name.t
+    -> (unit, Err.t) Result.t
+
+  val set_user_email
+    :  t
+    -> repo_root:Repo_root.t
+    -> user_email:User_email.t
+    -> (unit, Err.t) Result.t
+end
 
 class type t = object
-  inherit Add.t
-  inherit Branch.t
-  inherit Commit.t
-  inherit Config.t
-  inherit File_system.t
-  inherit Git.t
-  inherit Init.t
-  inherit Log.t
-  inherit Ls_files.t
-  inherit Name_status.t
-  inherit Num_status.t
-  inherit Refs.t
-  inherit Rev_parse.t
-  inherit Show.t
+  method set_user_name :
+    repo_root:Repo_root.t -> user_name:User_name.t -> (unit, Err.t) Result.t
+
+  method set_user_email :
+    repo_root:Repo_root.t -> user_email:User_email.t -> (unit, Err.t) Result.t
 end
+
+module Make (X : S) = struct
+  class c (t : X.t) =
+    object
+      method set_user_name = X.set_user_name t
+      method set_user_email = X.set_user_email t
+    end
+end
+
+let make (type a) (module X : S with type t = a) (t : a) =
+  let module M = Make (X) in
+  new M.c t
+;;

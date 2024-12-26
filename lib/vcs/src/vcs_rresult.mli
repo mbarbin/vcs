@@ -40,4 +40,4 @@ val error_to_msg : 'a result -> ('a, [ `Msg of string ]) Result.t
 
     The individual functions are documented the {!module:Vcs} module. *)
 
-include Non_raising.S with type 'a t := 'a Vcs0.t and type 'a result := 'a result
+include Non_raising.S with type 'a result := 'a result
