@@ -29,7 +29,7 @@ let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
   type t =
-    { vcs : Vcs_git_eio.t'
+    { vcs : Vcs_git_eio.t
     ; repo_root : Vcs.Repo_root.t
     ; cwd : Absolute_path.t
     }

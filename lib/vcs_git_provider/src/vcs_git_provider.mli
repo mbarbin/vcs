@@ -48,31 +48,8 @@ module Runtime = Runtime
 
 module Trait : sig
   (** The list of traits that are implemented in [Vcs_git_provider]. *)
-  type t =
-    [ Vcs.Trait.add
-    | Vcs.Trait.branch
-    | Vcs.Trait.commit
-    | Vcs.Trait.config
-    | Vcs.Trait.file_system
-    | Vcs.Trait.git
-    | Vcs.Trait.init
-    | Vcs.Trait.log
-    | Vcs.Trait.ls_files
-    | Vcs.Trait.name_status
-    | Vcs.Trait.num_status
-    | Vcs.Trait.refs
-    | Vcs.Trait.rev_parse
-    | Vcs.Trait.show
-    ]
-end
 
-(** Create a provider based on a runtime. *)
-module Make (Runtime : Runtime.S) : sig
-  type t = Runtime.t
-
-  val provider : unit -> (t, [> Trait.t ]) Provider.t
-
-  class c : t -> object
+  class type t = object
     inherit Vcs.Trait.Add.t
     inherit Vcs.Trait.Add.t
     inherit Vcs.Trait.Branch.t
@@ -89,6 +66,13 @@ module Make (Runtime : Runtime.S) : sig
     inherit Vcs.Trait.Rev_parse.t
     inherit Vcs.Trait.Show.t
   end
+end
+
+(** Create a provider based on a runtime. *)
+module Make (Runtime : Runtime.S) : sig
+  type t = Runtime.t
+
+  class c : t -> Trait.t
 
   (** {1 Individual implementations} *)
 

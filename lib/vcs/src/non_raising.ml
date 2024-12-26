@@ -24,8 +24,7 @@ open! Import
 module type M = Vcs_interface.Error_S
 module type S = Vcs_interface.S
 
-module Make (M : M) :
-  S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.t) Result.t = struct
+module Make (M : M) : S with type 'a result := ('a, M.t) Result.t = struct
   let try_with f =
     match f () with
     | r -> Ok r

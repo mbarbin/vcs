@@ -38,22 +38,23 @@ module Private = struct
 end
 
 module Trait = struct
-  type t =
-    [ Vcs.Trait.add
-    | Vcs.Trait.branch
-    | Vcs.Trait.commit
-    | Vcs.Trait.config
-    | Vcs.Trait.file_system
-    | Vcs.Trait.git
-    | Vcs.Trait.init
-    | Vcs.Trait.log
-    | Vcs.Trait.ls_files
-    | Vcs.Trait.name_status
-    | Vcs.Trait.num_status
-    | Vcs.Trait.refs
-    | Vcs.Trait.rev_parse
-    | Vcs.Trait.show
-    ]
+  class type t = object
+    inherit Vcs.Trait.Add.t
+    inherit Vcs.Trait.Add.t
+    inherit Vcs.Trait.Branch.t
+    inherit Vcs.Trait.Commit.t
+    inherit Vcs.Trait.Config.t
+    inherit Vcs.Trait.File_system.t
+    inherit Vcs.Trait.Git.t
+    inherit Vcs.Trait.Init.t
+    inherit Vcs.Trait.Log.t
+    inherit Vcs.Trait.Ls_files.t
+    inherit Vcs.Trait.Name_status.t
+    inherit Vcs.Trait.Num_status.t
+    inherit Vcs.Trait.Refs.t
+    inherit Vcs.Trait.Rev_parse.t
+    inherit Vcs.Trait.Show.t
+  end
 end
 
 module Make (Runtime : Runtime.S) = struct
@@ -75,25 +76,6 @@ module Make (Runtime : Runtime.S) = struct
     module Rev_parse = Rev_parse.Make (Runtime)
     module Show = Show.Make (Runtime)
   end
-
-  let provider () : (t, [> Trait.t ]) Provider.t =
-    Provider.make
-      [ Provider.implement Vcs.Trait.Add.t ~impl:(module Impl.Add)
-      ; Provider.implement Vcs.Trait.Branch.t ~impl:(module Impl.Branch)
-      ; Provider.implement Vcs.Trait.Commit.t ~impl:(module Impl.Commit)
-      ; Provider.implement Vcs.Trait.Config.t ~impl:(module Impl.Config)
-      ; Provider.implement Vcs.Trait.File_system.t ~impl:(module Impl.File_system)
-      ; Provider.implement Vcs.Trait.Git.t ~impl:(module Impl.Git)
-      ; Provider.implement Vcs.Trait.Init.t ~impl:(module Impl.Init)
-      ; Provider.implement Vcs.Trait.Log.t ~impl:(module Impl.Log)
-      ; Provider.implement Vcs.Trait.Ls_files.t ~impl:(module Impl.Ls_files)
-      ; Provider.implement Vcs.Trait.Name_status.t ~impl:(module Impl.Name_status)
-      ; Provider.implement Vcs.Trait.Num_status.t ~impl:(module Impl.Num_status)
-      ; Provider.implement Vcs.Trait.Refs.t ~impl:(module Impl.Refs)
-      ; Provider.implement Vcs.Trait.Rev_parse.t ~impl:(module Impl.Rev_parse)
-      ; Provider.implement Vcs.Trait.Show.t ~impl:(module Impl.Show)
-      ]
-  ;;
 
   module Class = struct
     module Add = Vcs.Trait.Add.Make (Impl.Add)

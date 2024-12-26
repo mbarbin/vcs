@@ -29,5 +29,4 @@
 module type M = Vcs_interface.Error_S
 module type S = Vcs_interface.S
 
-module Make (M : M) :
-  S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.t) Result.t
+module Make (M : M) : S with type 'a result := ('a, M.t) Result.t
