@@ -28,3 +28,15 @@ module type S = sig
     -> below:Path_in_repo.t
     -> (Path_in_repo.t list, Err.t) Result.t
 end
+
+class type ['a] t = object
+  method ls_files : (module S with type t = 'a)
+end
+
+val make : (module S with type t = 'a) -> 'a t
+
+module Make (X : S) : sig
+  class c : object
+    inherit [X.t] t
+  end
+end

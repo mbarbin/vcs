@@ -107,7 +107,7 @@ let parse_lines_exn ~lines = List.map lines ~f:(fun line -> parse_line_exn ~line
 module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
-  let diff t ~repo_root ~(changed : Vcs.Name_status.Changed.t) =
+  let name_status t ~repo_root ~(changed : Vcs.Name_status.Changed.t) =
     let changed_param =
       match changed with
       | Between { src; dst } ->

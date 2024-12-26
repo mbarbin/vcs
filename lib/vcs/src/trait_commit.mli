@@ -28,3 +28,15 @@ module type S = sig
     -> commit_message:Commit_message.t
     -> (unit, Err.t) Result.t
 end
+
+class type ['a] t = object
+  method commit : (module S with type t = 'a)
+end
+
+val make : (module S with type t = 'a) -> 'a t
+
+module Make (X : S) : sig
+  class c : object
+    inherit [X.t] t
+  end
+end

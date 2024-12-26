@@ -49,3 +49,15 @@ module type S = sig
       ".." shall not be included in the result. *)
   val read_dir : t -> dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
 end
+
+class type ['a] t = object
+  method file_system : (module S with type t = 'a)
+end
+
+val make : (module S with type t = 'a) -> 'a t
+
+module Make (X : S) : sig
+  class c : object
+    inherit [X.t] t
+  end
+end

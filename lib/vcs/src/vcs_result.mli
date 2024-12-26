@@ -28,4 +28,4 @@ type 'a t = ('a, err) Result.t [@@deriving sexp_of]
 
     The individual functions are documented the {!module:Vcs} module. *)
 
-include Non_raising.S with type 'a t := 'a Vcs0.t and type 'a result := 'a t
+include Non_raising.S with type 'a result := 'a t

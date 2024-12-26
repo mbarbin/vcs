@@ -30,3 +30,15 @@ module type S = sig
     -> f:(Git_output0.t -> ('a, Err.t) Result.t)
     -> ('a, Err.t) Result.t
 end
+
+class type ['a] t = object
+  method git : (module S with type t = 'a)
+end
+
+val make : (module S with type t = 'a) -> 'a t
+
+module Make (X : S) : sig
+  class c : object
+    inherit [X.t] t
+  end
+end

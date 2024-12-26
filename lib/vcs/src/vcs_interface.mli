@@ -51,98 +51,107 @@ module type S = sig
 
       The individual functions are documented in the {!module:Vcs} module. *)
 
-  type 'a t
   type 'a result
 
-  val init : [> Trait.init ] t -> path:Absolute_path.t -> Repo_root.t result
+  val init : 'a * < 'a Trait.Init.t ; .. > -> path:Absolute_path.t -> Repo_root.t result
 
   val find_enclosing_git_repo_root
-    :  [> Trait.file_system ] t
+    :  'a * < 'a Trait.File_system.t ; .. >
     -> from:Absolute_path.t
     -> Repo_root.t option result
 
   val find_enclosing_repo_root
-    :  [> Trait.file_system ] t
+    :  'a * < 'a Trait.File_system.t ; .. >
     -> from:Absolute_path.t
     -> store:(Fsegment.t * 'store) list
     -> ('store * Repo_root.t) option result
 
   val add
-    :  [> Trait.add ] t
+    :  'a * < 'a Trait.Add.t ; .. >
     -> repo_root:Repo_root.t
     -> path:Path_in_repo.t
     -> unit result
 
   val commit
-    :  [> Trait.rev_parse | Trait.commit ] t
+    :  'a * < 'a Trait.Rev_parse.t ; 'a Trait.Commit.t ; .. >
     -> repo_root:Repo_root.t
     -> commit_message:Commit_message.t
     -> Rev.t result
 
   val current_branch
-    :  [> Trait.rev_parse ] t
+    :  'a * < 'a Trait.Rev_parse.t ; .. >
     -> repo_root:Repo_root.t
     -> Branch_name.t result
 
-  val current_revision : [> Trait.rev_parse ] t -> repo_root:Repo_root.t -> Rev.t result
+  val current_revision
+    :  'a * < 'a Trait.Rev_parse.t ; .. >
+    -> repo_root:Repo_root.t
+    -> Rev.t result
 
   val ls_files
-    :  [> Trait.ls_files ] t
+    :  'a * < 'a Trait.Ls_files.t ; .. >
     -> repo_root:Repo_root.t
     -> below:Path_in_repo.t
     -> Path_in_repo.t list result
 
   val show_file_at_rev
-    :  [> Trait.show ] t
+    :  'a * < 'a Trait.Show.t ; .. >
     -> repo_root:Repo_root.t
     -> rev:Rev.t
     -> path:Path_in_repo.t
     -> [ `Present of File_contents.t | `Absent ] result
 
   val load_file
-    :  [> Trait.file_system ] t
+    :  'a * < 'a Trait.File_system.t ; .. >
     -> path:Absolute_path.t
     -> File_contents.t result
 
   val save_file
     :  ?perms:int
-    -> [> Trait.file_system ] t
+    -> 'a * < 'a Trait.File_system.t ; .. >
     -> path:Absolute_path.t
     -> file_contents:File_contents.t
     -> unit result
 
-  val read_dir : [> Trait.file_system ] t -> dir:Absolute_path.t -> Fsegment.t list result
+  val read_dir
+    :  'a * < 'a Trait.File_system.t ; .. >
+    -> dir:Absolute_path.t
+    -> Fsegment.t list result
 
   val rename_current_branch
-    :  [> Trait.branch ] t
+    :  'a * < 'a Trait.Branch.t ; .. >
     -> repo_root:Repo_root.t
     -> to_:Branch_name.t
     -> unit result
 
   val name_status
-    :  [> Trait.name_status ] t
+    :  'a * < 'a Trait.Name_status.t ; .. >
     -> repo_root:Repo_root.t
     -> changed:Name_status.Changed.t
     -> Name_status.t result
 
   val num_status
-    :  [> Trait.num_status ] t
+    :  'a * < 'a Trait.Num_status.t ; .. >
     -> repo_root:Repo_root.t
     -> changed:Num_status.Changed.t
     -> Num_status.t result
 
-  val log : [> Trait.log ] t -> repo_root:Repo_root.t -> Log.t result
-  val refs : [> Trait.refs ] t -> repo_root:Repo_root.t -> Refs.t result
-  val graph : [> Trait.log | Trait.refs ] t -> repo_root:Repo_root.t -> Graph.t result
+  val log : 'a * < 'a Trait.Log.t ; .. > -> repo_root:Repo_root.t -> Log.t result
+  val refs : 'a * < 'a Trait.Refs.t ; .. > -> repo_root:Repo_root.t -> Refs.t result
+
+  val graph
+    :  'a * < 'a Trait.Log.t ; 'a Trait.Refs.t ; .. >
+    -> repo_root:Repo_root.t
+    -> Graph.t result
 
   val set_user_name
-    :  [> Trait.config ] t
+    :  'a * < 'a Trait.Config.t ; .. >
     -> repo_root:Repo_root.t
     -> user_name:User_name.t
     -> unit result
 
   val set_user_email
-    :  [> Trait.config ] t
+    :  'a * < 'a Trait.Config.t ; .. >
     -> repo_root:Repo_root.t
     -> user_email:User_email.t
     -> unit result
@@ -156,7 +165,7 @@ module type S = sig
   val git
     :  ?env:string array
     -> ?run_in_subdir:Path_in_repo.t
-    -> [> Trait.git ] t
+    -> 'v * < 'v Trait.Git.t ; .. >
     -> repo_root:Repo_root.t
     -> args:string list
     -> f:(Git_output0.t -> 'a result)

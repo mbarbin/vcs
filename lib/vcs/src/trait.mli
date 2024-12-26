@@ -29,146 +29,35 @@
     Casual users of [Vcs] are not expected to use this module directly. Rather
     this is used by implementers of providers for the [Vcs] library. *)
 
-type add = [ `Add of add_ty ]
-and add_ty
-
-module Add : sig
-  module type S = Trait_add.S
-
-  val t : ('t, (module S with type t = 't), [> add ]) Provider.Trait.t
-end
-
-type branch = [ `Branch of branch_ty ]
-and branch_ty
-
-module Branch : sig
-  module type S = Trait_branch.S
-
-  val t : ('t, (module S with type t = 't), [> branch ]) Provider.Trait.t
-end
-
-type commit = [ `Commit of commit_ty ]
-and commit_ty
-
-module Commit : sig
-  module type S = Trait_commit.S
-
-  val t : ('t, (module S with type t = 't), [> commit ]) Provider.Trait.t
-end
-
-type config = [ `Config of config_ty ]
-and config_ty
-
-module Config : sig
-  module type S = Trait_config.S
-
-  val t : ('t, (module S with type t = 't), [> config ]) Provider.Trait.t
-end
-
-type file_system = [ `File_system of file_system_ty ]
-and file_system_ty
-
-module File_system : sig
-  module type S = Trait_file_system.S
-
-  val t : ('t, (module S with type t = 't), [> file_system ]) Provider.Trait.t
-end
-
-type git = [ `Git of git_ty ]
-and git_ty
-
-module Git : sig
-  module type S = Trait_git.S
-
-  val t : ('t, (module S with type t = 't), [> git ]) Provider.Trait.t
-end
-
-type init = [ `Init of init_ty ]
-and init_ty
-
-module Init : sig
-  module type S = Trait_init.S
-
-  val t : ('t, (module S with type t = 't), [> init ]) Provider.Trait.t
-end
-
-type log = [ `Log of log_ty ]
-and log_ty
-
-module Log : sig
-  module type S = Trait_log.S
-
-  val t : ('t, (module S with type t = 't), [> log ]) Provider.Trait.t
-end
-
-type ls_files = [ `Ls_files of ls_files_ty ]
-and ls_files_ty
-
-module Ls_files : sig
-  module type S = Trait_ls_files.S
-
-  val t : ('t, (module S with type t = 't), [> ls_files ]) Provider.Trait.t
-end
-
-type name_status = [ `Name_status of name_status_ty ]
-and name_status_ty
-
-module Name_status : sig
-  module type S = Trait_name_status.S
-
-  val t : ('t, (module S with type t = 't), [> name_status ]) Provider.Trait.t
-end
-
-type num_status = [ `Num_status of num_status_ty ]
-and num_status_ty
-
-module Num_status : sig
-  module type S = Trait_num_status.S
-
-  val t : ('t, (module S with type t = 't), [> num_status ]) Provider.Trait.t
-end
-
-type refs = [ `Refs of refs_ty ]
-and refs_ty
-
-module Refs : sig
-  module type S = Trait_refs.S
-
-  val t : ('t, (module S with type t = 't), [> refs ]) Provider.Trait.t
-end
-
-type rev_parse = [ `Rev_parse of rev_parse_ty ]
-and rev_parse_ty
-
-module Rev_parse : sig
-  module type S = Trait_rev_parse.S
-
-  val t : ('t, (module S with type t = 't), [> rev_parse ]) Provider.Trait.t
-end
-
-type show = [ `Show of show_ty ]
-and show_ty
-
-module Show : sig
-  module type S = Trait_show.S
-
-  val t : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
-end
+module Add = Trait_add
+module Branch = Trait_branch
+module Commit = Trait_commit
+module Config = Trait_config
+module File_system = Trait_file_system
+module Git = Trait_git
+module Init = Trait_init
+module Log = Trait_log
+module Ls_files = Trait_ls_files
+module Name_status = Trait_name_status
+module Num_status = Trait_num_status
+module Refs = Trait_refs
+module Rev_parse = Trait_rev_parse
+module Show = Trait_show
 
 (** The union of all traits defined in Vcs. *)
-type t =
-  [ add
-  | branch
-  | commit
-  | config
-  | file_system
-  | git
-  | init
-  | log
-  | ls_files
-  | name_status
-  | num_status
-  | refs
-  | rev_parse
-  | show
-  ]
+class type ['a] t = object
+  inherit ['a] Add.t
+  inherit ['a] Branch.t
+  inherit ['a] Commit.t
+  inherit ['a] Config.t
+  inherit ['a] File_system.t
+  inherit ['a] Git.t
+  inherit ['a] Init.t
+  inherit ['a] Log.t
+  inherit ['a] Ls_files.t
+  inherit ['a] Name_status.t
+  inherit ['a] Num_status.t
+  inherit ['a] Refs.t
+  inherit ['a] Rev_parse.t
+  inherit ['a] Show.t
+end

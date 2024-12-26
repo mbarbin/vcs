@@ -19,11 +19,28 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Impl = struct
-  include Runtime
-  include Vcs_git_provider.Make (Runtime)
+module type S = sig
+  type t
+
+  val ls_files
+    :  t
+    -> repo_root:Repo_root.t
+    -> below:Path_in_repo.t
+    -> (Path_in_repo.t list, Err.t) Result.t
 end
 
-type t = Impl.t * Impl.t Vcs_git_provider.Trait.t
+class type ['a] t = object
+  method ls_files : (module S with type t = 'a)
+end
 
-let create ~env = Impl.create ~env, (new Impl.c :> Impl.t Vcs_git_provider.Trait.t)
+module Make (X : S) = struct
+  class c =
+    object
+      method ls_files = (module X : S with type t = X.t)
+    end
+end
+
+let make (type a) (module X : S with type t = a) =
+  let module M = Make (X) in
+  new M.c
+;;

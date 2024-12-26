@@ -29,3 +29,15 @@ module type S = sig
     -> path:Path_in_repo.t
     -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
 end
+
+class type ['a] t = object
+  method show : (module S with type t = 'a)
+end
+
+val make : (module S with type t = 'a) -> 'a t
+
+module Make (X : S) : sig
+  class c : object
+    inherit [X.t] t
+  end
+end

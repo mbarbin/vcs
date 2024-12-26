@@ -48,29 +48,30 @@ module Runtime = Runtime
 
 module Trait : sig
   (** The list of traits that are implemented in [Vcs_git_provider]. *)
-  type t =
-    [ Vcs.Trait.add
-    | Vcs.Trait.branch
-    | Vcs.Trait.commit
-    | Vcs.Trait.config
-    | Vcs.Trait.file_system
-    | Vcs.Trait.git
-    | Vcs.Trait.init
-    | Vcs.Trait.log
-    | Vcs.Trait.ls_files
-    | Vcs.Trait.name_status
-    | Vcs.Trait.num_status
-    | Vcs.Trait.refs
-    | Vcs.Trait.rev_parse
-    | Vcs.Trait.show
-    ]
+
+  class type ['a] t = object
+    inherit ['a] Vcs.Trait.Add.t
+    inherit ['a] Vcs.Trait.Branch.t
+    inherit ['a] Vcs.Trait.Commit.t
+    inherit ['a] Vcs.Trait.Config.t
+    inherit ['a] Vcs.Trait.File_system.t
+    inherit ['a] Vcs.Trait.Git.t
+    inherit ['a] Vcs.Trait.Init.t
+    inherit ['a] Vcs.Trait.Log.t
+    inherit ['a] Vcs.Trait.Ls_files.t
+    inherit ['a] Vcs.Trait.Name_status.t
+    inherit ['a] Vcs.Trait.Num_status.t
+    inherit ['a] Vcs.Trait.Refs.t
+    inherit ['a] Vcs.Trait.Rev_parse.t
+    inherit ['a] Vcs.Trait.Show.t
+  end
 end
 
 (** Create a provider based on a runtime. *)
 module Make (Runtime : Runtime.S) : sig
   type t = Runtime.t
 
-  val provider : unit -> (t, [> Trait.t ]) Provider.t
+  class c : [t] Trait.t
 
   (** {1 Individual implementations} *)
 

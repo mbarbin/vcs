@@ -182,7 +182,12 @@ module Option = struct
 end
 
 module Ordering = struct
-  include Provider.Private.Import.Ordering
+  type t =
+    | Less
+    | Equal
+    | Greater
+
+  let of_int i = if i < 0 then Less else if i = 0 then Equal else Greater
 end
 
 module Queue = struct

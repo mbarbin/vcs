@@ -18,15 +18,11 @@
 (*  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
-
-type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
-type t' = Vcs_git_provider.Trait.t t
-
 module Impl = struct
   include Runtime
   include Vcs_git_provider.Make (Runtime)
 end
 
-let create () =
-  Vcs.create (Provider.T { t = Impl.create (); provider = Impl.provider () })
-;;
+type t = Impl.t * Impl.t Vcs_git_provider.Trait.t
+
+let create () = Impl.create (), (new Impl.c :> Impl.t Vcs_git_provider.Trait.t)
