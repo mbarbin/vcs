@@ -30,3 +30,5 @@ end
 let create () =
   Vcs.create (Provider.T { t = Impl.create (); provider = Impl.provider () })
 ;;
+
+module Runtime = Runtime

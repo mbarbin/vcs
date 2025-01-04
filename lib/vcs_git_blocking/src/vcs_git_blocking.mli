@@ -60,3 +60,9 @@ module Impl : sig
   module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
   module Show : Vcs.Trait.Show.S with type t = t
 end
+
+(** {1 Runtime}
+
+    Exposed if you need to extend it. *)
+
+module Runtime = Runtime
