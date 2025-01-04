@@ -5,6 +5,7 @@
         "chdir",
         "ENOENT",
         "fpath",
+        "intf",
         "janestreet",
         "lsplit",
         "mkdirs",
