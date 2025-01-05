@@ -13,6 +13,8 @@ dirs=(
     "lib/vcs_git_blocking/test"
     "lib/vcs_git_eio/src"
     "lib/vcs_git_eio/test"
+    "lib/vcs_git_miou/src"
+    "lib/vcs_git_miou/test"
     "lib/vcs_git_provider/src"
     "lib/vcs_git_provider/test"
     "lib/vcs_test_helpers/src"
