@@ -52,6 +52,8 @@ let%expect_test "hello commit" =
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
   print_s [%sexp (mock_rev : Vcs.Rev.t)];
   [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  (* Making sure the default branch name is deterministic. *)
+  Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   print_s
     [%sexp
       (Vcs.Result.show_file_at_rev
