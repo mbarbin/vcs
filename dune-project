@@ -229,6 +229,42 @@
    (= :version))))
 
 (package
+ (name vcs-git-miou)
+ (synopsis
+  "A Git provider for Vcs based on Vcs_git_provider for Miou programs")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (miou
+   (>= 0.3.0))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.2.2))
+  (ppx_sexp_conv
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_value
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppxlib
+   (>= 0.33))
+  (provider
+   (>= 0.0.11))
+  (sexplib0
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (vcs
+   (= :version))
+  (vcs-git-blocking
+   (= :version))
+  (vcs-git-provider
+   (= :version))))
+
+(package
  (name vcs-test-helpers)
  (synopsis "Helper library to write tests using vcs")
  (depends
