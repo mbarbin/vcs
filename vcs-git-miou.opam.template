@@ -1,0 +1,16 @@
+description: """\
+
+[vcs] is a set of OCaml libraries for interacting with Git
+repositories. It provides a type-safe and direct-style API to
+programmatically perform Git operations, ranging from creating commits
+and branches to loading and navigating commit graphs in memory,
+computing diffs between revisions, and more.
+
+[Vcs_git_miou] implements a Git provider for [vcs] based on [miou]. It
+runs the [git] CLI as a subprocess in a non-blocking fashion.
+
+[miou]: https://github.com/robur-coop/miou
+
+"""
+tags: [ "miou" "git" "vcs" "non-blocking-io" ]
+x-maintenance-intent: [ "(latest)" ]

@@ -27,6 +27,7 @@ depends: [
   "fpath-base" {>= "0.2.2"}
   "fpath-sexp0" {>= "0.2.2"}
   "mdx" {with-doc & >= "2.4"}
+  "miou" {>= "0.3.0"}
   "pp-log" {>= "0.0.8"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}
@@ -48,6 +49,7 @@ depends: [
   "vcs-command" {= version}
   "vcs-git-blocking" {= version}
   "vcs-git-eio" {= version}
+  "vcs-git-miou" {= version}
   "vcs-git-provider" {= version}
   "vcs-test-helpers" {= version}
   "sherlodoc" {with-doc & >= "0.2"}

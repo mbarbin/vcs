@@ -1,0 +1,30 @@
+(library
+ (name vcs_git_miou)
+ (public_name vcs-git-miou)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Fpath_sexp0
+  -open
+  Sexplib0
+  -open
+  Sexplib0.Sexp_conv)
+ (libraries
+  fpath
+  fpath-sexp0
+  miou
+  provider
+  sexplib0
+  vcs
+  vcs-git-blocking
+  vcs-git-provider)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess
+  (pps -unused-code-warnings=force ppx_sexp_conv ppx_sexp_value)))
