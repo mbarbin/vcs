@@ -34,7 +34,8 @@ type t
 (** [sexp_of_t t] allows printing the information contained by [t]. *)
 val sexp_of_t : t -> Sexp.t
 
-(** [to_string_hum t] is a convenience wrapper around [t |> sexp_of_t |> Sexp.to_string_hum]. *)
+(** [to_string_hum t] is a convenience wrapper around
+    [t |> sexp_of_t |> Sexp.to_string_hum]. *)
 val to_string_hum : t -> string
 
 (** {1 Building} *)

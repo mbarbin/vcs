@@ -22,7 +22,8 @@
 module type S = sig
   type t
 
-  (** Given that [t = string] in the implementation, this function is just the identity. *)
+  (** Given that [t = string] in the implementation, this function is just the
+      identity. *)
   val to_string : t -> string
 
   (** [of_string str] returns [Ok str] if [X.invariant str = true], and an error
