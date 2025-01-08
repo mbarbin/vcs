@@ -199,7 +199,7 @@ module Descendance : sig
   include Container_key.S with type t := t
 end
 
-(** [descendance graph a b] characterizes the descendance relationship between
+(** [descendance graph a b] characterizes the descendance relation between
     nodes [a] and [b]. For example, it returns [Strict_ancestor] if
     [is_strict_ancestor graph ~ancestor:a ~descendant:b] holds. Be mindful
     that the order of the arguments [a] and [b] matters.
