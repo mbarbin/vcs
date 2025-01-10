@@ -1,5 +1,5 @@
 (mdx
- (package vcs-tests)
+ (package vcs-dev)
  (deps
   (package vcs)
   (package vcs-command))

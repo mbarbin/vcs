@@ -416,3 +416,134 @@
     :with-doc
     (>= 0.2)))))
 
+(package
+ (name vcs-dev)
+ (synopsis
+  "Package to regroup dev targets for the vcs project, documentation, and more")
+ (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
+ (depends
+  (ocaml
+   (>= 5.2))
+  (ocamlformat
+   (and
+    :with-dev-setup
+    (= 0.27.0)))
+  (astring
+   (>= 0.8.5))
+  (base
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (base_quickcheck
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (bisect_ppx
+   (and
+    :with-dev-setup
+    (>= 2.8.3)))
+  (cmdlang
+   (>= 0.0.9))
+  (cmdlang-cmdliner-runner
+   (>= 0.0.8))
+  (cmdlang-to-cmdliner
+   (>= 0.0.9))
+  (cmdliner
+   (>= 1.3.0))
+  (core
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (eio
+   (>= 1.0))
+  (eio_main
+   (>= 1.0))
+  (expect_test_helpers_core
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (fpath
+   (>= 0.7.3))
+  (fpath-base
+   (>= 0.2.2))
+  (fpath-sexp0
+   (>= 0.2.2))
+  (mdx
+   (>= 2.4))
+  (pp-log
+   (>= 0.0.8))
+  (ppx_compare
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_enumerate
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_expect
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_hash
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_here
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_js_style
+   (and
+    :with-dev-setup
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_let
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_message
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_value
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppxlib
+   (>= 0.33))
+  (provider
+   (>= 0.0.11))
+  (re
+   (>= 1.8.0))
+  (sexp_pretty
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (stdio
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (vcs
+   (= :version))
+  (vcs-base
+   (= :version))
+  (vcs-command
+   (= :version))
+  (vcs-git-blocking
+   (= :version))
+  (vcs-git-eio
+   (= :version))
+  (vcs-git-provider
+   (= :version))
+  (vcs-test-helpers
+   (= :version))
+  (vcs-tests
+   (= :version))
+  (sherlodoc
+   (and
+    :with-doc
+    (>= 0.2)))))
