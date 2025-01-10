@@ -236,6 +236,57 @@
    (= :version))))
 
 (package
+ (name vcs-test-helpers)
+ (synopsis "Helper library to write tests using vcs")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (base
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (eio
+   (>= 1.0))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.2.2))
+  (ppx_compare
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_enumerate
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_hash
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_here
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_let
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_conv
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_value
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppxlib
+   (>= 0.33))
+  (provider
+   (>= 0.0.11))
+  (vcs
+   (= :version))))
+
+(package
  (name vcs-tests)
  (synopsis "Tests & Examples for [Vcs]")
  (depends
@@ -365,53 +416,3 @@
     :with-doc
     (>= 0.2)))))
 
-(package
- (name vcs-test-helpers)
- (synopsis "Helper library to write tests using vcs")
- (depends
-  (ocaml
-   (>= 5.2))
-  (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (eio
-   (>= 1.0))
-  (fpath
-   (>= 0.7.3))
-  (fpath-sexp0
-   (>= 0.2.2))
-  (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (ppxlib
-   (>= 0.33))
-  (provider
-   (>= 0.0.11))
-  (vcs
-   (= :version))))
