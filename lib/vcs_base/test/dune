@@ -23,10 +23,10 @@
   base
   eio
   eio_main
-  pp-log.err
   expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-sexp0
+  pp-log.err
   vcs
   vcs_base
   vcs_git_provider)
