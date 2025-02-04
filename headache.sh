@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 dirs=(
+    # Add new directories below:
     "bin"
     "example"
     "lib/vcs/src"
@@ -18,7 +19,6 @@ dirs=(
     "lib/vcs_test_helpers/src"
     "lib/vcs_test_helpers/test"
     "test/expect"
-    # add more directories here
 )
 
 for dir in "${dirs[@]}"; do
