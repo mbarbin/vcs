@@ -51,15 +51,6 @@ let read_dir () ~dir =
     entries |> Array.map ~f:Fsegment.v |> Array.to_list)
 ;;
 
-let with_cwd ~cwd ~f =
-  let old_cwd = Unix.getcwd () in
-  Fun.protect
-    ~finally:(fun () -> Unix.chdir old_cwd)
-    (fun () ->
-       Unix.chdir (Absolute_path.to_string cwd);
-       f ())
-;;
-
 module Exit_status = struct
   [@@@coverage off]
 
@@ -89,46 +80,38 @@ exception Uncaught_user_exn of exn * Printexc.raw_backtrace
 
 let git ?env () ~cwd ~args ~f =
   let prog = "git" in
-  let env =
+  let unix_env =
     match env with
-    | None -> Unix.environment ()
-    | Some env -> env [@coverage off]
+    | None -> None
+    | Some env ->
+      (let env =
+         Array.map
+           ~f:(fun var ->
+             match String.lsplit2 var ~on:'=' with
+             | None -> var, ""
+             | Some var -> var)
+           env
+         |> Array.to_list
+       in
+       Some env)
+      [@coverage off]
+  in
+  let process =
+    Shexp_process.capture
+      [ Stderr ]
+      (Shexp_process.capture [ Stdout ] (Shexp_process.call_exit_code (prog :: args)))
   in
   let exit_status_r : Exit_status.t ref = ref `Unknown in
   let stdout_r = ref "" in
   let stderr_r = ref "" in
   try
-    let process_status, stdout, stderr =
-      with_cwd ~cwd ~f:(fun () ->
-        let ((stdout, _, stderr) as process_full) =
-          Unix.open_process_args_full prog (Array.of_list (prog :: args)) env
-        in
-        let stdout = In_channel.input_all stdout in
-        stdout_r := stdout;
-        let stderr = In_channel.input_all stderr in
-        stderr_r := stderr;
-        let process_status = Unix.close_process_full process_full in
-        process_status, stdout, stderr)
+    let context =
+      Shexp_process.Context.create ~cwd:(Path (Absolute_path.to_string cwd)) ?unix_env ()
     in
-    let exit_status =
-      match process_status with
-      | Unix.WEXITED n -> `Exited n
-      | Unix.WSIGNALED n -> `Signaled n [@coverage off]
-      | Unix.WSTOPPED n -> `Stopped n [@coverage off]
-    in
-    exit_status_r := exit_status;
-    let exit_code =
-      match exit_status with
-      | `Exited n -> n
-      | (`Signaled _ | `Stopped _) as exit_status ->
-        raise_notrace
-          (Vcs.E
-             (Vcs.Err.create_s
-                [%sexp
-                  "git process terminated abnormally"
-                , { exit_status : [ `Signaled of int | `Stopped of int ] }]))
-        [@coverage off]
-    in
+    let (exit_code, stdout), stderr = Shexp_process.eval ~context process in
+    exit_status_r := `Exited exit_code;
+    stdout_r := stdout;
+    stderr_r := stderr;
     (* A note regarding the [raise_notrace] below. These cases are indeed
        exercised in the test suite, however bisect_ppx inserts a coverage point
        on the outer edge of the calls, defeating the coverage reports. Thus we

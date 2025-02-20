@@ -230,6 +230,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (shexp
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (vcs
    (= :version))
   (vcs-git-provider
