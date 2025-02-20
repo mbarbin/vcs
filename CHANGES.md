@@ -8,6 +8,8 @@
 
 ### Fixed
 
+- Allow `vcs-git-blocking` calls to be run in parallel (#PR, @mbarbin).
+
 ### Removed
 
 ## 0.0.10 (2024-11-05)
