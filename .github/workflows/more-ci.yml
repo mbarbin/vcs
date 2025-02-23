@@ -54,7 +54,7 @@ jobs:
       # the development workflow and as part of the main CI job. These are the
       # tests that are checked for every combination of os and ocaml-compiler.
       - name: Install dependencies
-        run: opam install ./vcs.opam ./vcs-base.opam ./vcs-command.opam ./vcs-git-blocking.opam ./vcs-git-eio.opam ./vcs-git-provider.opam ./vcs-test-helpers.opam ./vcs-tests.opam --deps-only --with-test
+        run: opam install ./vcs.opam ./vcs-base.opam ./vcs-cli.opam ./vcs-git-blocking.opam ./vcs-git-eio.opam ./vcs-git-provider.opam ./vcs-test-helpers.opam ./vcs-tests.opam --deps-only --with-test
 
       - name: Build & Run tests
-        run: opam exec -- dune build @all @runtest -p vcs,vcs-base,vcs-command,vcs-git-blocking,vcs-git-eio,vcs-git-provider,vcs-test-helpers,vcs-tests
+        run: opam exec -- dune build @all @runtest -p vcs,vcs-base,vcs-cli,vcs-git-blocking,vcs-git-eio,vcs-git-provider,vcs-test-helpers,vcs-tests
