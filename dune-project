@@ -98,7 +98,7 @@
    (= :version))))
 
 (package
- (name vcs-command)
+ (name vcs-cli)
  (synopsis "A command line tool for the Vcs library")
  (depends
   (ocaml
@@ -405,7 +405,7 @@
    (= :version))
   (vcs-base
    (= :version))
-  (vcs-command
+  (vcs-cli
    (= :version))
   (vcs-git-blocking
    (= :version))
@@ -535,7 +535,7 @@
    (= :version))
   (vcs-base
    (= :version))
-  (vcs-command
+  (vcs-cli
    (= :version))
   (vcs-git-blocking
    (= :version))

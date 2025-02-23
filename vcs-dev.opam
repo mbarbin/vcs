@@ -46,7 +46,7 @@ depends: [
   "stdio" {>= "v0.17" & < "v0.18"}
   "vcs" {= version}
   "vcs-base" {= version}
-  "vcs-command" {= version}
+  "vcs-cli" {= version}
   "vcs-git-blocking" {= version}
   "vcs-git-eio" {= version}
   "vcs-git-provider" {= version}

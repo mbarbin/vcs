@@ -1,8 +1,8 @@
 (executable
  (name main)
  (public_name ocaml-vcs)
- (package vcs-command)
+ (package vcs-cli)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries cmdlang-cmdliner-runner pp-log.err vcs vcs-command)
+ (libraries cmdlang-cmdliner-runner pp-log.err vcs vcs-cli)
  (instrumentation
   (backend bisect_ppx)))
