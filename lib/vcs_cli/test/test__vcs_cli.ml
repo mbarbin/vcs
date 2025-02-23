@@ -19,5 +19,5 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* Tests for [vcs-command] are done as cram tests running the [ocaml-vcs]
+(* Tests for [vcs-cli] are done as cram tests running the [ocaml-vcs]
    executable. They're located in ["%{project_root}/test/cram/run.t"]. *)

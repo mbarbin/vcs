@@ -21,7 +21,7 @@
 
 let () =
   Cmdlang_cmdliner_runner.run
-    Vcs_command.main
+    Vcs_cli.main
     ~name:"ocaml-vcs"
     ~version:"%%VERSION%%"
     ~exn_handler:(function

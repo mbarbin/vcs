@@ -1,6 +1,6 @@
 (library
- (name vcs_command_test)
- (public_name vcs-tests.vcs_command_test)
+ (name vcs_cli_test)
+ (public_name vcs-tests.vcs_cli_test)
  (inline_tests)
  (flags
   :standard
@@ -12,10 +12,7 @@
   Base
   -open
   Expect_test_helpers_base)
- (libraries
-  base
-  expect_test_helpers_core.expect_test_helpers_base
-  vcs_command)
+ (libraries base expect_test_helpers_core.expect_test_helpers_base vcs_cli)
  (instrumentation
   (backend bisect_ppx))
  (lint

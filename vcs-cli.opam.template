@@ -1,6 +1,6 @@
 description: """\
 
-[vcs-command] is a package from the [vcs] project that provides a
+[vcs-cli] is a package from the [vcs] project that provides a
 command-line interface called [ocaml-vcs]. This interface is
 implemented on top of the other packages from the project.
 

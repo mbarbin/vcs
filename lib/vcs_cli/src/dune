@@ -1,6 +1,6 @@
 (library
- (name vcs_command)
- (public_name vcs-command)
+ (name vcs_cli)
+ (public_name vcs-cli)
  (flags
   :standard
   -w
