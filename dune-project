@@ -105,10 +105,6 @@
    (>= 5.2))
   (cmdlang
    (>= 0.0.9))
-  (cmdlang-cmdliner-runner
-   (>= 0.0.8))
-  (cmdliner
-   (>= 1.3.0))
   (eio
    (>= 1.0))
   (eio_main
@@ -117,8 +113,8 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
-  (pp-log
-   (>= 0.0.8))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -316,12 +312,6 @@
     (>= 2.8.3)))
   (cmdlang
    (>= 0.0.9))
-  (cmdlang-cmdliner-runner
-   (>= 0.0.8))
-  (cmdlang-to-cmdliner
-   (>= 0.0.9))
-  (cmdliner
-   (>= 1.3.0))
   (core
    (and
     (>= v0.17)
@@ -344,8 +334,8 @@
    (and
     :with-doc
     (>= 2.4)))
-  (pp-log
-   (>= 0.0.8))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.17)
@@ -448,12 +438,6 @@
     (>= 2.8.3)))
   (cmdlang
    (>= 0.0.9))
-  (cmdlang-cmdliner-runner
-   (>= 0.0.8))
-  (cmdlang-to-cmdliner
-   (>= 0.0.9))
-  (cmdliner
-   (>= 1.3.0))
   (core
    (and
     (>= v0.17)
@@ -474,8 +458,8 @@
    (>= 0.2.2))
   (mdx
    (>= 2.4))
-  (pp-log
-   (>= 0.0.8))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.17)
