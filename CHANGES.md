@@ -1,19 +1,13 @@
-## 0.0.11 (unreleased)
-
-### Added
+## 0.0.11 (2025-04-13)
 
 ### Changed
 
 - Use dependencies from `pplumbing` (#51, @mbarbin).
 - Rename `_command` to `_cli` in files and packages (e.g. `vcs-cli`) (#50, @mbarbin).
 
-### Deprecated
-
 ### Fixed
 
 - Allow `vcs-git-blocking` calls to be run in parallel (#49, @mbarbin).
-
-### Removed
 
 ## 0.0.10 (2024-11-05)
 
