@@ -4,6 +4,9 @@
 
 ### Changed
 
+- Use dependencies from `pplumbing` (#51, @mbarbin).
+- Rename `_command` to `_cli` in files and packages (e.g. `vcs-cli`) (#50, @mbarbin).
+
 ### Deprecated
 
 ### Fixed
