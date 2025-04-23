@@ -405,6 +405,10 @@
    (= :version))
   (vcs-test-helpers
    (= :version))
+  (shexp
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (sherlodoc
    (and
     :with-doc
@@ -531,6 +535,10 @@
    (= :version))
   (vcs-tests
    (= :version))
+  (shexp
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (sherlodoc
    (and
     :with-doc

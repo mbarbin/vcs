@@ -47,6 +47,7 @@ depends: [
   "vcs-git-eio" {= version}
   "vcs-git-provider" {= version}
   "vcs-test-helpers" {= version}
+  "shexp" {>= "v0.17" & < "v0.18"}
   "sherlodoc" {with-doc & >= "0.2"}
   "odoc" {with-doc}
 ]
