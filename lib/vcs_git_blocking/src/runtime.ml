@@ -152,6 +152,7 @@ let git ?env t ~cwd ~args ~f =
     exit_status_r := `Exited exit_code;
     stdout_r := stdout;
     stderr_r := stderr;
+    Shexp_process.Context.dispose context;
     (* A note regarding the [raise_notrace] below. These cases are indeed
        exercised in the test suite, however bisect_ppx inserts a coverage point
        on the outer edge of the calls, defeating the coverage reports. Thus we
