@@ -24,3 +24,7 @@ type t
 include Vcs_git_provider.Runtime.S with type t := t
 
 val create : unit -> t
+
+module Private : sig
+  val find_executable : path:string -> string option
+end

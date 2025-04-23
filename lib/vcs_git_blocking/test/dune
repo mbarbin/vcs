@@ -13,12 +13,16 @@
   -open
   Fpath_sexp0
   -open
+  Stdio
+  -open
   Expect_test_helpers_base)
  (libraries
   base
   expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-sexp0
+  shexp.process
+  stdio
   unix
   vcs
   vcs_git_blocking

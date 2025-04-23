@@ -68,13 +68,14 @@ let%expect_test "hello commit" =
         ~f:Result.return
     with
     | Ok _ -> assert false
-    | Error err -> print_s (Vcs.Err.sexp_of_t err)
+    | Error err ->
+      print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "prog" ])
   in
   [%expect
     {|
     ((steps (
        (Vcs.git ((repo_root /invalid/path) (args ())))
-       ((prog git)
+       ((prog <REDACTED>)
         (args ())
         (exit_status Unknown)
         (cwd         /invalid/path/)
@@ -95,13 +96,13 @@ let%expect_test "hello commit" =
       print_s
         (Vcs_test_helpers.redact_sexp
            (Vcs.Err.sexp_of_t err)
-           ~fields:[ "cwd"; "repo_root"; "stderr" ])
+           ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in
   [%expect
     {|
     ((steps (
        (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
-       ((prog git)
+       ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
         (cwd    <REDACTED>)
