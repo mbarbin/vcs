@@ -205,11 +205,14 @@ let%expect_test "blocking" =
       (match test () with
        | Ok (_ : Sexp.t) -> assert false
        | Error err ->
-         print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "cwd" ]);
+         print_s
+           (Vcs_test_helpers.redact_sexp
+              (Vcs.Err.sexp_of_t err)
+              ~fields:[ "cwd"; "prog" ]);
          [%expect
            {|
            ((steps ((
-              (prog git)
+              (prog <REDACTED>)
               (args (rev-parse --abbrev-ref HEAD))
               (exit_status (Exited 0))
               (cwd    <REDACTED>)

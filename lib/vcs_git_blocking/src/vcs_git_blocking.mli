@@ -34,6 +34,11 @@ type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
     with the exact list of traits supported by this implementation. *)
 type t' = Vcs_git_provider.Trait.t t
 
+(** When [create] is called, the environment variable ["PATH"] is read to
+    resolve the executable whose basename is "git". Subsequent calls to that
+    [vcs] value will execute that resolved path, unless a ["PATH"] variable is
+    passed as an override to a call in particular, via the [env] variable of
+    [Vcs.git ?env]). *)
 val create : unit -> _ t
 
 (** The implementation of the provider is exported for convenience and tests.

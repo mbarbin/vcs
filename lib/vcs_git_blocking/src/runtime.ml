@@ -21,17 +21,46 @@
 
 open! Import
 
-type t = unit
+let git_executable_basename = "git"
 
-let create () = ()
+module Found_executable = struct
+  type t =
+    { filename : string
+    ; path : string
+    }
+end
 
-let load_file () ~path =
+type t = { git_executable : Found_executable.t option }
+
+let find_executable ~path =
+  let rec loop = function
+    | [] -> None
+    | path :: rest ->
+      let fn = Filename.concat path git_executable_basename in
+      if Sys.file_exists fn then Some fn else loop rest
+  in
+  loop (String.split path ~on:':')
+;;
+
+let create () =
+  let git_executable =
+    match Unix.getenv "PATH" with
+    | exception Stdlib.Not_found -> None [@coverage off]
+    | path ->
+      (match find_executable ~path with
+       | None -> None
+       | Some filename -> Some { Found_executable.filename; path })
+  in
+  { git_executable }
+;;
+
+let load_file (_ : t) ~path =
   Vcs.Exn.Private.try_with (fun () ->
     In_channel.with_open_bin (Absolute_path.to_string path) In_channel.input_all
     |> Vcs.File_contents.create)
 ;;
 
-let save_file ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
+let save_file ?(perms = 0o666) (_ : t) ~path ~(file_contents : Vcs.File_contents.t) =
   Vcs.Exn.Private.try_with (fun () ->
     let oc =
       open_out_gen
@@ -44,7 +73,7 @@ let save_file ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
       (fun () -> Out_channel.output_string oc (file_contents :> string)))
 ;;
 
-let read_dir () ~dir =
+let read_dir (_ : t) ~dir =
   Vcs.Exn.Private.try_with (fun () ->
     let entries = Sys.readdir (Absolute_path.to_string dir) in
     Array.sort entries ~compare:String.compare;
@@ -78,8 +107,7 @@ end
 
 exception Uncaught_user_exn of exn * Printexc.raw_backtrace
 
-let git ?env () ~cwd ~args ~f =
-  let prog = "git" in
+let git ?env t ~cwd ~args ~f =
   let unix_env =
     match env with
     | None -> None
@@ -95,6 +123,18 @@ let git ?env () ~cwd ~args ~f =
        in
        Some env)
       [@coverage off]
+  in
+  let prog =
+    match t.git_executable with
+    | None -> git_executable_basename
+    | Some { filename; path } ->
+      (match unix_env with
+       | None -> filename
+       | Some bindings ->
+         (match List.find bindings ~f:(fun (var, _) -> String.equal var "PATH") with
+          | None -> filename
+          | Some (_, path_override) ->
+            if String.equal path path_override then filename else git_executable_basename))
   in
   let process =
     Shexp_process.capture
@@ -112,6 +152,7 @@ let git ?env () ~cwd ~args ~f =
     exit_status_r := `Exited exit_code;
     stdout_r := stdout;
     stderr_r := stderr;
+    Shexp_process.Context.dispose context;
     (* A note regarding the [raise_notrace] below. These cases are indeed
        exercised in the test suite, however bisect_ppx inserts a coverage point
        on the outer edge of the calls, defeating the coverage reports. Thus we
@@ -149,3 +190,7 @@ let git ?env () ~cwd ~args ~f =
              ; stderr = (Lines.create !stderr_r : Lines.t)
              }])
 ;;
+
+module Private = struct
+  let find_executable = find_executable
+end
