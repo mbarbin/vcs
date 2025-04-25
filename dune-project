@@ -387,6 +387,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (shexp
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (stdio
    (and
     (>= v0.17)
@@ -405,10 +409,6 @@
    (= :version))
   (vcs-test-helpers
    (= :version))
-  (shexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (sherlodoc
    (and
     :with-doc
@@ -515,6 +515,10 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (shexp
+   (and
+    (>= v0.17)
+    (< v0.18)))
   (stdio
    (and
     (>= v0.17)
@@ -535,10 +539,6 @@
    (= :version))
   (vcs-tests
    (= :version))
-  (shexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (sherlodoc
    (and
     :with-doc

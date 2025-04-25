@@ -39,6 +39,7 @@ depends: [
   "provider" {>= "0.0.11"}
   "re" {>= "1.8.0"}
   "sexp_pretty" {>= "v0.17" & < "v0.18"}
+  "shexp" {>= "v0.17" & < "v0.18"}
   "stdio" {>= "v0.17" & < "v0.18"}
   "vcs" {= version}
   "vcs-base" {= version}
@@ -47,7 +48,6 @@ depends: [
   "vcs-git-eio" {= version}
   "vcs-git-provider" {= version}
   "vcs-test-helpers" {= version}
-  "shexp" {>= "v0.17" & < "v0.18"}
   "sherlodoc" {with-doc & >= "0.2"}
   "odoc" {with-doc}
 ]
