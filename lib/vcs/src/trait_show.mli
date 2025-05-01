@@ -19,13 +19,24 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type show_file_at_rev_method =
+  repo_root:Repo_root.t
+  -> rev:Rev.t
+  -> path:Path_in_repo.t
+  -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
+
 module type S = sig
   type t
 
-  val show_file_at_rev
-    :  t
-    -> repo_root:Repo_root.t
-    -> rev:Rev.t
-    -> path:Path_in_repo.t
-    -> ([ `Present of File_contents.t | `Absent ], Err.t) Result.t
+  val show_file_at_rev : t -> show_file_at_rev_method
+end
+
+class type t = object
+  method show_file_at_rev : show_file_at_rev_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

@@ -19,8 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* In this example, we show that when we're using a provider based on a Git
-   CLI, we can use it to manually run git commands. *)
+(* In this example, we show that when we're using a backend based on a Git CLI,
+   we can use it to manually run git commands. *)
 
 let%expect_test "hello cli" =
   (* We're inside a [Eio] main, that's our chosen runtime for the examples. *)

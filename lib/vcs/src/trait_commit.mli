@@ -19,12 +19,21 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type commit_method =
+  repo_root:Repo_root.t -> commit_message:Commit_message.t -> (unit, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val commit
-    :  t
-    -> repo_root:Repo_root.t
-    -> commit_message:Commit_message.t
-    -> (unit, Err.t) Result.t
+  val commit : t -> commit_method
+end
+
+class type t = object
+  method commit : commit_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

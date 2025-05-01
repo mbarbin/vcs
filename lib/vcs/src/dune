@@ -13,28 +13,12 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries astring fpath fpath-sexp0 provider)
+ (libraries astring fpath fpath-sexp0)
  (instrumentation
   (backend bisect_ppx))
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
- (modules_without_implementation
-  trait_add
-  trait_branch
-  trait_commit
-  trait_config
-  trait_file_system
-  trait_git
-  trait_init
-  trait_log
-  trait_ls_files
-  trait_name_status
-  trait_num_status
-  trait_refs
-  trait_rev_parse
-  trait_show
-  validated_string_intf
-  vcs_interface)
+ (modules_without_implementation validated_string_intf vcs_interface)
  (preprocess
   (pps
    -unused-code-warnings=force

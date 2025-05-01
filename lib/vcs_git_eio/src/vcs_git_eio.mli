@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a git provider for the {!module:Vcs} library, based on
+(** Implementation of a git backend for the {!module:Vcs} library, based on
     [Eio] and {!module:Vcs_git_provider}.
 
     This implementation is based on the [git] command line tool. We run it as an
@@ -28,37 +28,20 @@
     results with [Vcs_git_provider]. Note that [git] must be found in the PATH of the
     running environment. *)
 
-type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
-
-(** This is a convenient type alias that may be used to designate a provider
-    with the exact list of traits supported by this implementation. *)
-type t' = Vcs_git_provider.Trait.t t
+(** This is a convenient type alias that may be used to designate a backend with
+    the exact list of traits supported by this implementation. *)
+type t = Vcs_git_provider.Trait.t Vcs.t
 
 (** [create ~env] creates a [vcs] value that can be used by the {!module:Vcs}
     library. *)
-val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> _ t
+val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
 
-(** The implementation of the provider is exported for convenience and tests.
+(** The implementation of the backend is exported for convenience and tests.
     Casual users should prefer using [Vcs] directly. *)
-module Impl : sig
-  type t
+module Impl : Vcs_git_provider.S with type t = Runtime.t
 
-  val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
+(** {1 Runtime}
 
-  (** {1 Provider interfaces} *)
+    Exposed if you need to extend it. *)
 
-  module Add : Vcs.Trait.Add.S with type t = t
-  module Branch : Vcs.Trait.Branch.S with type t = t
-  module Commit : Vcs.Trait.Commit.S with type t = t
-  module Config : Vcs.Trait.Config.S with type t = t
-  module File_system : Vcs.Trait.File_system.S with type t = t
-  module Git : Vcs.Trait.Git.S with type t = t
-  module Init : Vcs.Trait.Init.S with type t = t
-  module Log : Vcs.Trait.Log.S with type t = t
-  module Ls_files : Vcs.Trait.Ls_files.S with type t = t
-  module Name_status : Vcs.Trait.Name_status.S with type t = t
-  module Num_status : Vcs.Trait.Num_status.S with type t = t
-  module Refs : Vcs.Trait.Refs.S with type t = t
-  module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
-  module Show : Vcs.Trait.Show.S with type t = t
-end
+module Runtime = Runtime

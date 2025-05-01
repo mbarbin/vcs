@@ -19,9 +19,9 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type -'a t
+type +'a t constraint 'a = < .. >
 
-val create : 'a Provider.packed -> 'a t
+val create : 'a -> 'a t
 
 include Vcs_interface.S with type 'a t := 'a t and type 'a result := 'a
 
@@ -31,7 +31,7 @@ module Private : sig
   val git
     :  ?env:string array
     -> ?run_in_subdir:Path_in_repo.t
-    -> [> Trait.git ] t
+    -> < Trait.git ; .. > t
     -> repo_root:Repo_root.t
     -> args:string list
     -> f:(Git.Output.t -> ('a, Err.t) Result.t)

@@ -19,12 +19,23 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type name_status_method =
+  repo_root:Repo_root.t
+  -> changed:Name_status.Changed.t
+  -> (Name_status.t, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val diff
-    :  t
-    -> repo_root:Repo_root.t
-    -> changed:Name_status.Changed.t
-    -> (Name_status.t, Err.t) Result.t
+  val name_status : t -> name_status_method
+end
+
+class type t = object
+  method name_status : name_status_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

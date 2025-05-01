@@ -19,8 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type show_ref_method = repo_root:Repo_root.t -> (Refs.t, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val show_ref : t -> repo_root:Repo_root.t -> (Refs.t, Err.t) Result.t
+  val show_ref : t -> show_ref_method
+end
+
+class type t = object
+  method show_ref : show_ref_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

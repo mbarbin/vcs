@@ -60,7 +60,7 @@ let load_file (_ : t) ~path =
     |> Vcs.File_contents.create)
 ;;
 
-let save_file ?(perms = 0o666) (_ : t) ~path ~(file_contents : Vcs.File_contents.t) =
+let save_file (_ : t) ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
   Vcs.Exn.Private.try_with (fun () ->
     let oc =
       open_out_gen

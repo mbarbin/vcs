@@ -27,7 +27,7 @@
     to turn it into a typed result.
 
     [Vcs_git_provider] is not meant to be used directly by a user. Rather it is
-    one of the building blocks involved in creating a git provider for the [Vcs]
+    one of the building blocks involved in creating a git backend for the [Vcs]
     library.
 
     [Vcs_git_provider] has currently two instantiations as part of its
@@ -48,29 +48,31 @@ module Runtime = Runtime
 
 module Trait : sig
   (** The list of traits that are implemented in [Vcs_git_provider]. *)
-  type t =
-    [ Vcs.Trait.add
-    | Vcs.Trait.branch
-    | Vcs.Trait.commit
-    | Vcs.Trait.config
-    | Vcs.Trait.file_system
-    | Vcs.Trait.git
-    | Vcs.Trait.init
-    | Vcs.Trait.log
-    | Vcs.Trait.ls_files
-    | Vcs.Trait.name_status
-    | Vcs.Trait.num_status
-    | Vcs.Trait.refs
-    | Vcs.Trait.rev_parse
-    | Vcs.Trait.show
-    ]
+
+  class type t = object
+    inherit Vcs.Trait.add
+    inherit Vcs.Trait.branch
+    inherit Vcs.Trait.commit
+    inherit Vcs.Trait.config
+    inherit Vcs.Trait.file_system
+    inherit Vcs.Trait.git
+    inherit Vcs.Trait.init
+    inherit Vcs.Trait.log
+    inherit Vcs.Trait.ls_files
+    inherit Vcs.Trait.name_status
+    inherit Vcs.Trait.num_status
+    inherit Vcs.Trait.refs
+    inherit Vcs.Trait.rev_parse
+    inherit Vcs.Trait.show
+  end
 end
 
-(** Create a provider based on a runtime. *)
-module Make (Runtime : Runtime.S) : sig
-  type t = Runtime.t
+(** Create a backend based on a runtime. *)
 
-  val provider : unit -> (t, [> Trait.t ]) Provider.t
+module type S = sig
+  type t
+
+  class c : t -> Trait.t
 
   (** {1 Individual implementations} *)
 
@@ -90,11 +92,13 @@ module Make (Runtime : Runtime.S) : sig
   module Show : Vcs.Trait.Show.S with type t = t
 end
 
+module Make (Runtime : Runtime.S) : S with type t = Runtime.t
+
 (** {2 Individual Providers}
 
     The rest of the modules are functors that are parametrized by your
     [Runtime]. Given the ability to run a git command line, this modules return
-    a provider implementation for each of the traits defined by the [Vcs]
+    a backend implementation for each of the traits defined by the [Vcs]
     library. The individual functors are exposed for convenience. *)
 
 module Add = Add

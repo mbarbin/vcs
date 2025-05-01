@@ -19,16 +19,14 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
-type t' = Vcs_git_provider.Trait.t t
+type t = Vcs_git_provider.Trait.t Vcs.t
 
 module Impl = struct
   include Runtime
   include Vcs_git_provider.Make (Runtime)
 end
 
-let create () =
-  Vcs.create (Provider.T { t = Impl.create (); provider = Impl.provider () })
-;;
+let create_class () = new Impl.c (Impl.create ())
+let create () = Vcs.create (create_class ())
 
 module Runtime = Runtime

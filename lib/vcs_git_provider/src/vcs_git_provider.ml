@@ -38,22 +38,43 @@ module Private = struct
 end
 
 module Trait = struct
-  type t =
-    [ Vcs.Trait.add
-    | Vcs.Trait.branch
-    | Vcs.Trait.commit
-    | Vcs.Trait.config
-    | Vcs.Trait.file_system
-    | Vcs.Trait.git
-    | Vcs.Trait.init
-    | Vcs.Trait.log
-    | Vcs.Trait.ls_files
-    | Vcs.Trait.name_status
-    | Vcs.Trait.num_status
-    | Vcs.Trait.refs
-    | Vcs.Trait.rev_parse
-    | Vcs.Trait.show
-    ]
+  class type t = object
+    inherit Vcs.Trait.add
+    inherit Vcs.Trait.branch
+    inherit Vcs.Trait.commit
+    inherit Vcs.Trait.config
+    inherit Vcs.Trait.file_system
+    inherit Vcs.Trait.git
+    inherit Vcs.Trait.init
+    inherit Vcs.Trait.log
+    inherit Vcs.Trait.ls_files
+    inherit Vcs.Trait.name_status
+    inherit Vcs.Trait.num_status
+    inherit Vcs.Trait.refs
+    inherit Vcs.Trait.rev_parse
+    inherit Vcs.Trait.show
+  end
+end
+
+module type S = sig
+  type t
+
+  class c : t -> Trait.t
+
+  module Add : Vcs.Trait.Add.S with type t = t
+  module Branch : Vcs.Trait.Branch.S with type t = t
+  module Commit : Vcs.Trait.Commit.S with type t = t
+  module Config : Vcs.Trait.Config.S with type t = t
+  module File_system : Vcs.Trait.File_system.S with type t = t
+  module Git : Vcs.Trait.Git.S with type t = t
+  module Init : Vcs.Trait.Init.S with type t = t
+  module Log : Vcs.Trait.Log.S with type t = t
+  module Ls_files : Vcs.Trait.Ls_files.S with type t = t
+  module Name_status : Vcs.Trait.Name_status.S with type t = t
+  module Num_status : Vcs.Trait.Num_status.S with type t = t
+  module Refs : Vcs.Trait.Refs.S with type t = t
+  module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
+  module Show : Vcs.Trait.Show.S with type t = t
 end
 
 module Make (Runtime : Runtime.S) = struct
@@ -76,24 +97,40 @@ module Make (Runtime : Runtime.S) = struct
     module Show = Show.Make (Runtime)
   end
 
-  let provider () : (t, [> Trait.t ]) Provider.t =
-    Provider.make
-      [ Provider.implement Vcs.Trait.Add.t ~impl:(module Impl.Add)
-      ; Provider.implement Vcs.Trait.Branch.t ~impl:(module Impl.Branch)
-      ; Provider.implement Vcs.Trait.Commit.t ~impl:(module Impl.Commit)
-      ; Provider.implement Vcs.Trait.Config.t ~impl:(module Impl.Config)
-      ; Provider.implement Vcs.Trait.File_system.t ~impl:(module Impl.File_system)
-      ; Provider.implement Vcs.Trait.Git.t ~impl:(module Impl.Git)
-      ; Provider.implement Vcs.Trait.Init.t ~impl:(module Impl.Init)
-      ; Provider.implement Vcs.Trait.Log.t ~impl:(module Impl.Log)
-      ; Provider.implement Vcs.Trait.Ls_files.t ~impl:(module Impl.Ls_files)
-      ; Provider.implement Vcs.Trait.Name_status.t ~impl:(module Impl.Name_status)
-      ; Provider.implement Vcs.Trait.Num_status.t ~impl:(module Impl.Num_status)
-      ; Provider.implement Vcs.Trait.Refs.t ~impl:(module Impl.Refs)
-      ; Provider.implement Vcs.Trait.Rev_parse.t ~impl:(module Impl.Rev_parse)
-      ; Provider.implement Vcs.Trait.Show.t ~impl:(module Impl.Show)
-      ]
-  ;;
+  module Class = struct
+    module Add = Vcs.Trait.Add.Make (Impl.Add)
+    module Branch = Vcs.Trait.Branch.Make (Impl.Branch)
+    module Commit = Vcs.Trait.Commit.Make (Impl.Commit)
+    module Config = Vcs.Trait.Config.Make (Impl.Config)
+    module File_system = Vcs.Trait.File_system.Make (Impl.File_system)
+    module Git = Vcs.Trait.Git.Make (Impl.Git)
+    module Init = Vcs.Trait.Init.Make (Impl.Init)
+    module Log = Vcs.Trait.Log.Make (Impl.Log)
+    module Ls_files = Vcs.Trait.Ls_files.Make (Impl.Ls_files)
+    module Name_status = Vcs.Trait.Name_status.Make (Impl.Name_status)
+    module Num_status = Vcs.Trait.Num_status.Make (Impl.Num_status)
+    module Refs = Vcs.Trait.Refs.Make (Impl.Refs)
+    module Rev_parse = Vcs.Trait.Rev_parse.Make (Impl.Rev_parse)
+    module Show = Vcs.Trait.Show.Make (Impl.Show)
+  end
+
+  class c t =
+    object
+      inherit Class.Add.c t
+      inherit Class.Branch.c t
+      inherit Class.Commit.c t
+      inherit Class.Config.c t
+      inherit Class.File_system.c t
+      inherit Class.Git.c t
+      inherit Class.Init.c t
+      inherit Class.Log.c t
+      inherit Class.Ls_files.c t
+      inherit Class.Name_status.c t
+      inherit Class.Num_status.c t
+      inherit Class.Refs.c t
+      inherit Class.Rev_parse.c t
+      inherit Class.Show.c t
+    end
 
   include Impl
 end

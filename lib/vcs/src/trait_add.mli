@@ -19,8 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type add_method = repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val add : t -> repo_root:Repo_root.t -> path:Path_in_repo.t -> (unit, Err.t) Result.t
+  val add : t -> add_method
+end
+
+class type t = object
+  method add : add_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

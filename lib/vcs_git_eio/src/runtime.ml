@@ -38,7 +38,7 @@ let load_file t ~path =
   Vcs.Exn.Private.try_with (fun () -> Vcs.File_contents.create (Eio.Path.load path))
 ;;
 
-let save_file ?(perms = 0o666) t ~path ~(file_contents : Vcs.File_contents.t) =
+let save_file t ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
   let path = Eio.Path.(t.fs / Absolute_path.to_string path) in
   Vcs.Exn.Private.try_with (fun () ->
     Eio.Path.save ~create:(`Or_truncate perms) path (file_contents :> string))

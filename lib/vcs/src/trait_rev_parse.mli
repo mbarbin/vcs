@@ -19,9 +19,23 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type current_branch_method = repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
+type current_revision_method = repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val current_branch : t -> repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
-  val current_revision : t -> repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+  val current_branch : t -> current_branch_method
+  val current_revision : t -> current_revision_method
+end
+
+class type t = object
+  method current_branch : current_branch_method
+  method current_revision : current_revision_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

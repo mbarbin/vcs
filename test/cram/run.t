@@ -228,7 +228,7 @@ Descendance.
   Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
-Vcs allows to run the git command line directly if the provider supports it.
+Vcs allows to run the git command line directly if the backend supports it.
 
   $ ocaml-vcs git rev-parse HEAD | stabilize_output
   $REV2

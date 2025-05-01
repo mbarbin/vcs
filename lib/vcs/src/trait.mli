@@ -21,154 +21,208 @@
 
 (** The traits that [Vcs] depends on to implement its functionality.
 
-    Vcs uses the {{:https://github.com/mbarbin/provider} provider} library in
-    order not to commit to a specific implementation for the low level
-    interaction with git. This works by defining a set of traits that constitute
-    the low level operations needed by [Vcs].
+    [Vcs] is parametrized by a list of specific interfaces and classes that
+    constitute the low level operations needed by [Vcs]. We call them [traits].
 
-    Casual users of [Vcs] are not expected to use this module directly. Rather
-    this is used by implementers of providers for the [Vcs] library. *)
+    The intended usage for a library that requires [Vcs] functionality is to
+    specify via the type of the [vcs] value, the exact list of traits required.
+    Doing this in this way, allows for flexibility, as any backend supplying
+    that list of traits or more will be compatible as a backend to be supplied
+    to your code.
 
-type add = [ `Add of add_ty ]
-and add_ty
+    For example, consider a function that needs to list all the files under
+    version control, and show their contents at some revision. Such
+    functionality will require:
+
+    {[
+      val my_vcs_function
+        : vcs : < Vcs.Trait.ls_files ; Vcs.Trait.show ; .. > Vcs.t
+        -> ..
+        -> ..
+    ]} *)
+
+class type add = Trait_add.t
 
 module Add : sig
   module type S = Trait_add.S
 
-  val t : ('t, (module S with type t = 't), [> add ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit add
+    end
+  end
 end
 
-type branch = [ `Branch of branch_ty ]
-and branch_ty
+class type branch = Trait_branch.t
 
 module Branch : sig
   module type S = Trait_branch.S
 
-  val t : ('t, (module S with type t = 't), [> branch ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit branch
+    end
+  end
 end
 
-type commit = [ `Commit of commit_ty ]
-and commit_ty
+class type commit = Trait_commit.t
 
 module Commit : sig
   module type S = Trait_commit.S
 
-  val t : ('t, (module S with type t = 't), [> commit ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit commit
+    end
+  end
 end
 
-type config = [ `Config of config_ty ]
-and config_ty
+class type config = Trait_config.t
 
 module Config : sig
   module type S = Trait_config.S
 
-  val t : ('t, (module S with type t = 't), [> config ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit config
+    end
+  end
 end
 
-type file_system = [ `File_system of file_system_ty ]
-and file_system_ty
+class type file_system = Trait_file_system.t
 
 module File_system : sig
   module type S = Trait_file_system.S
 
-  val t : ('t, (module S with type t = 't), [> file_system ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit file_system
+    end
+  end
 end
 
-type git = [ `Git of git_ty ]
-and git_ty
+class type git = Trait_git.t
 
 module Git : sig
   module type S = Trait_git.S
 
-  val t : ('t, (module S with type t = 't), [> git ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit git
+    end
+  end
 end
 
-type init = [ `Init of init_ty ]
-and init_ty
+class type init = Trait_init.t
 
 module Init : sig
   module type S = Trait_init.S
 
-  val t : ('t, (module S with type t = 't), [> init ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit init
+    end
+  end
 end
 
-type log = [ `Log of log_ty ]
-and log_ty
+class type log = Trait_log.t
 
 module Log : sig
   module type S = Trait_log.S
 
-  val t : ('t, (module S with type t = 't), [> log ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit log
+    end
+  end
 end
 
-type ls_files = [ `Ls_files of ls_files_ty ]
-and ls_files_ty
+class type ls_files = Trait_ls_files.t
 
 module Ls_files : sig
   module type S = Trait_ls_files.S
 
-  val t : ('t, (module S with type t = 't), [> ls_files ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit ls_files
+    end
+  end
 end
 
-type name_status = [ `Name_status of name_status_ty ]
-and name_status_ty
+class type name_status = Trait_name_status.t
 
 module Name_status : sig
   module type S = Trait_name_status.S
 
-  val t : ('t, (module S with type t = 't), [> name_status ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit name_status
+    end
+  end
 end
 
-type num_status = [ `Num_status of num_status_ty ]
-and num_status_ty
+class type num_status = Trait_num_status.t
 
 module Num_status : sig
   module type S = Trait_num_status.S
 
-  val t : ('t, (module S with type t = 't), [> num_status ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit num_status
+    end
+  end
 end
 
-type refs = [ `Refs of refs_ty ]
-and refs_ty
+class type refs = Trait_refs.t
 
 module Refs : sig
   module type S = Trait_refs.S
 
-  val t : ('t, (module S with type t = 't), [> refs ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit refs
+    end
+  end
 end
 
-type rev_parse = [ `Rev_parse of rev_parse_ty ]
-and rev_parse_ty
+class type rev_parse = Trait_rev_parse.t
 
 module Rev_parse : sig
   module type S = Trait_rev_parse.S
 
-  val t : ('t, (module S with type t = 't), [> rev_parse ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit rev_parse
+    end
+  end
 end
 
-type show = [ `Show of show_ty ]
-and show_ty
+class type show = Trait_show.t
 
 module Show : sig
   module type S = Trait_show.S
 
-  val t : ('t, (module S with type t = 't), [> show ]) Provider.Trait.t
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit show
+    end
+  end
 end
 
 (** The union of all traits defined in Vcs. *)
-type t =
-  [ add
-  | branch
-  | commit
-  | config
-  | file_system
-  | git
-  | init
-  | log
-  | ls_files
-  | name_status
-  | num_status
-  | refs
-  | rev_parse
-  | show
-  ]
+class type t = object
+  inherit add
+  inherit branch
+  inherit commit
+  inherit config
+  inherit file_system
+  inherit git
+  inherit init
+  inherit log
+  inherit ls_files
+  inherit name_status
+  inherit num_status
+  inherit refs
+  inherit rev_parse
+  inherit show
+end

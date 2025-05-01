@@ -26,26 +26,33 @@
     containing simple I/O operations without having to commit to a particular
     backend. *)
 
+type load_file_method = path:Absolute_path.t -> (File_contents.t, Err.t) Result.t
+
+type save_file_method =
+  ?perms:int
+  -> unit
+  -> path:Absolute_path.t
+  -> file_contents:File_contents.t
+  -> (unit, Err.t) Result.t
+
+type read_dir_method = dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
+
 module type S = sig
   type t
 
-  (** Returns the contents of the file at the given path or an error if the file
-      does not exist or is not readable. *)
-  val load_file : t -> path:Absolute_path.t -> (File_contents.t, Err.t) Result.t
+  val load_file : t -> load_file_method
+  val save_file : t -> save_file_method
+  val read_dir : t -> read_dir_method
+end
 
-  (** [save_file] is expected to truncate the file if it already exists. Errors
-      are reserved for other cases, such as trying to write to an non existing
-      directory, not having write permissions, etc. *)
-  val save_file
-    :  ?perms:int (** defaults to [0o666]. *)
-    -> t
-    -> path:Absolute_path.t
-    -> file_contents:File_contents.t
-    -> (unit, Err.t) Result.t
+class type t = object
+  method load_file : load_file_method
+  method save_file : save_file_method
+  method read_dir : read_dir_method
+end
 
-  (** Returns the entries contained in the given directory, ordered increasingly
-      according to [String.compare]. This must error out if [dir] is not a
-      directory, or if we don't have access to it. The unix entries "." and
-      ".." shall not be included in the result. *)
-  val read_dir : t -> dir:Absolute_path.t -> (Fsegment.t list, Err.t) Result.t
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

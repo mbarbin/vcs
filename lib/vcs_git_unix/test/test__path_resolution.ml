@@ -19,8 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* In the blocking backend, we perform a pre-resolution of the executable given
-   the PATH env var, which we characterize in this test. *)
+(* In the [Vcs_git_unix] backend, we perform a pre-resolution of the executable
+   given the PATH env var, which we characterize in this test. *)
 
 module Unix = UnixLabels
 

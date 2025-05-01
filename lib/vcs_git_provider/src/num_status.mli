@@ -19,8 +19,6 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** A provider implementation for {!module:Vcs.Trait.Num_status}. *)
-
 module Make (Runtime : Runtime.S) : sig
   type t = Runtime.t
 

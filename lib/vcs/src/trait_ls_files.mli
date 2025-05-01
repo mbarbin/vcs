@@ -19,12 +19,21 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type ls_files_method =
+  repo_root:Repo_root.t -> below:Path_in_repo.t -> (Path_in_repo.t list, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val ls_files
-    :  t
-    -> repo_root:Repo_root.t
-    -> below:Path_in_repo.t
-    -> (Path_in_repo.t list, Err.t) Result.t
+  val ls_files : t -> ls_files_method
+end
+
+class type t = object
+  method ls_files : ls_files_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

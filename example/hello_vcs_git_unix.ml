@@ -19,13 +19,12 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* This is a simple test to show how to use the blocking interface of [Vcs]. *)
+(* This is a simple test to show how to use the [Vcs_git_unix] backend. *)
 
 let%expect_test "hello commit" =
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
-     provider. We're using [Vcs_git_unix] for this here. It is a provider
-     based on [Stdlib] and running the [git] command line as an external
-     process. *)
+     backend. We're using [Vcs_git_unix] for this here. It is a backend based on
+     [Stdlib] and running the [git] command line as an external process. *)
   let vcs = Vcs_git_unix.create () in
   (* The next step takes care of creating a repository and initializing the git
      users's config with some dummy values so we can use [commit] without having
@@ -42,8 +41,8 @@ let%expect_test "hello commit" =
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   (* Just a quick word about [Vcs.save_file]. This is only a part of Vcs that is
      included for convenience. Indeed, this allows a library that uses Vcs to
-     perform some basic IO while maintaining compatibility with [Eio] and
-     [Blocking] clients. This dispatches to the actual Vcs provider
+     perform some basic IO while maintaining compatibility with [Vcs_git_eio]
+     and [Vcs_git_unix] clients. This dispatches to the actual backend
      implementation, which here uses [Stdlib.Out_channel] under the hood. *)
   Vcs.save_file
     vcs
@@ -112,7 +111,7 @@ let%expect_test "hello commit" =
     |}];
   (* Here we only use [Eio] to clean up the temporary repo, because [rmtree] is
      a convenient function to use in this test. But the point is that the rest
-     of the test used a blocking API. *)
+     of the test used a non-eio API. *)
   Eio_main.run
   @@ fun env ->
   Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / Vcs.Repo_root.to_string repo_root);

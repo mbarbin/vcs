@@ -19,18 +19,26 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type set_user_name_method =
+  repo_root:Repo_root.t -> user_name:User_name.t -> (unit, Err.t) Result.t
+
+type set_user_email_method =
+  repo_root:Repo_root.t -> user_email:User_email.t -> (unit, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val set_user_name
-    :  t
-    -> repo_root:Repo_root.t
-    -> user_name:User_name.t
-    -> (unit, Err.t) Result.t
+  val set_user_name : t -> set_user_name_method
+  val set_user_email : t -> set_user_email_method
+end
 
-  val set_user_email
-    :  t
-    -> repo_root:Repo_root.t
-    -> user_email:User_email.t
-    -> (unit, Err.t) Result.t
+class type t = object
+  method set_user_name : set_user_name_method
+  method set_user_email : set_user_email_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

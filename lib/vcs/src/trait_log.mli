@@ -19,8 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type all_method = repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val all : t -> repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+  val all : t -> all_method
+end
+
+class type t = object
+  method all : all_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end
