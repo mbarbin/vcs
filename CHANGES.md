@@ -4,7 +4,7 @@
 
 ### Changed
 
-- Switch the backend used in `vcs-cli` from `eio` to `blocking` (#<PR>, @mbarbin).
+- Switch the backend used in `vcs-cli` from `eio` to `blocking` (#53, @mbarbin).
 - Pre-locate the git executable in `vcs_git_blocking` (#52, @mbarbin).
 
 ### Deprecated
