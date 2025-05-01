@@ -15,10 +15,10 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries cmdlang eio eio_main fpath-sexp0 sexplib0 unix vcs vcs-git-eio)
+ (libraries cmdlang fpath-sexp0 sexplib0 unix vcs vcs-git-blocking)
  (instrumentation
   (backend bisect_ppx))
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
  (preprocess
-  (pps -unused-code-warnings=force ppx_sexp_conv ppx_sexp_value)))
+  (pps ppx_sexp_value)))

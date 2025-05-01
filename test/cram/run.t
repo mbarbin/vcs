@@ -62,8 +62,8 @@ File system operations.
       ((dir
         $TESTCASE_ROOT/untracked)))))
    (error
-    ( "Eio.Io Fs Not_found Unix_error (No such file or directory, \"openat2\", \"\"),\
-     \n  reading directory <fs:$TESTCASE_ROOT/untracked>")))
+    (Sys_error
+     "$TESTCASE_ROOT/untracked: No such file or directory")))
   [123]
 
   $ mkdir -p untracked
@@ -83,8 +83,8 @@ File system operations.
       ((dir
         $TESTCASE_ROOT/untracked/hello)))))
    (error
-    ( "Eio.Io Unix_error (Not a directory, \"openat2\", \"\"),\
-     \n  reading directory <fs:$TESTCASE_ROOT/untracked/hello>")))
+    (Sys_error
+     "$TESTCASE_ROOT/untracked/hello: Not a directory")))
   [123]
 
   $ ocaml-vcs load-file untracked/hello
@@ -98,8 +98,8 @@ File system operations.
       ((dir
         $TESTCASE_ROOT/untracked)))))
    (error
-    ( "Eio.Io Fs Permission_denied Unix_error (Permission denied, \"openat2\", \"\"),\
-     \n  reading directory <fs:$TESTCASE_ROOT/untracked>")))
+    (Sys_error
+     "$TESTCASE_ROOT/untracked: Permission denied")))
   [123]
 
   $ rm untracked/hello

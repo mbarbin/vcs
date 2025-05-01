@@ -29,7 +29,7 @@ let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
   type t =
-    { vcs : Vcs_git_eio.t'
+    { vcs : Vcs_git_blocking.t'
     ; repo_root : Vcs.Repo_root.t
     ; cwd : Absolute_path.t
     }
@@ -47,8 +47,8 @@ let find_enclosing_repo_root vcs ~from =
             , { from : Absolute_path.t }]))
 ;;
 
-let initialize ~env =
-  let vcs = Vcs_git_eio.create ~env in
+let initialize () =
+  let vcs = Vcs_git_blocking.create () in
   let cwd = Unix.getcwd () |> Absolute_path.v in
   let repo_root = find_enclosing_repo_root vcs ~from:cwd in
   { Initialized.vcs; repo_root; cwd }
@@ -77,9 +77,7 @@ let add_cmd =
          ~docv:"file"
          ~doc:"file to add"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd } = initialize () in
      let path = relativize ~repo_root ~cwd ~path in
      Vcs.add vcs ~repo_root ~path;
      ())
@@ -95,9 +93,7 @@ let commit_cmd =
          ~docv:"MSG"
          ~doc:"commit message"
      and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"suppress output on success" in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.commit vcs ~repo_root ~commit_message in
      if not quiet then print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
@@ -107,9 +103,7 @@ let current_branch_cmd =
   Command.make
     ~summary:"current branch"
     (let+ () = Arg.return () in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let branch = Vcs.current_branch vcs ~repo_root in
      print_sexp [%sexp (branch : Vcs.Branch_name.t)];
      ())
@@ -119,9 +113,7 @@ let current_revision_cmd =
   Command.make
     ~summary:"revision of HEAD"
     (let+ () = Arg.return () in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.current_revision vcs ~repo_root in
      print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
@@ -143,9 +135,7 @@ let find_enclosing_repo_root_cmd =
          ~doc:"stop the search if one of these entries is found (e.g. '.hg')"
        >>| Option.value ~default:[ Fsegment.dot_git ]
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let from =
        match from with
        | None -> cwd
@@ -167,9 +157,7 @@ let git_cmd =
     (let+ args =
        Arg.pos_all Param.string ~docv:"ARG" ~doc:"pass the remaining args to git"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let { Vcs.Git.Output.exit_code; stdout; stderr } =
        Vcs.git vcs ~repo_root ~args ~f:Fun.id
      in
@@ -190,9 +178,7 @@ let init_cmd =
      and+ quiet =
        Arg.flag [ "quiet"; "q" ] ~doc:"do not print the initialized repo root"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
      let repo_root = Vcs.init vcs ~path in
      if not quiet then print_sexp [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
@@ -209,9 +195,7 @@ let load_file_cmd =
          ~docv:"path/to/file"
          ~doc:"file to load"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
      let contents = Vcs.load_file vcs ~path in
      print_string (contents :> string);
@@ -228,9 +212,7 @@ let ls_files_cmd =
          ~docv:"PATH"
          ~doc:"restrict the selection to path/to/subdir"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd } = initialize () in
      let below =
        match below with
        | None -> Vcs.Path_in_repo.root
@@ -245,9 +227,7 @@ let log_cmd =
   Command.make
     ~summary:"show the log of current repo"
     (let+ () = Arg.return () in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let log = Vcs.log vcs ~repo_root in
      print_sexp [%sexp (log : Vcs.Log.t)];
      ())
@@ -269,9 +249,7 @@ let name_status_cmd =
          ~docv:"TIP"
          ~doc:"tip revision"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
      print_sexp [%sexp (name_status : Vcs.Name_status.t)];
      ())
@@ -293,9 +271,7 @@ let num_status_cmd =
          ~docv:"TIP"
          ~doc:"tip revision"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
      print_sexp [%sexp (num_status : Vcs.Num_status.t)];
      ())
@@ -311,9 +287,7 @@ let read_dir_cmd =
          ~docv:"path/to/dir"
          ~doc:"dir to read"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let dir = Absolute_path.relativize ~root:cwd dir in
      let entries = Vcs.read_dir vcs ~dir in
      print_sexp [%sexp (entries : Fsegment.t list)];
@@ -330,9 +304,7 @@ let rename_current_branch_cmd =
          ~docv:"branch"
          ~doc:"new name to rename to"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      Vcs.rename_current_branch vcs ~repo_root ~to_:branch_name;
      ())
 ;;
@@ -341,9 +313,7 @@ let refs_cmd =
   Command.make
     ~summary:"show the refs of current repo"
     (let+ () = Arg.return () in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let refs = Vcs.refs vcs ~repo_root in
      print_sexp [%sexp (refs : Vcs.Refs.t)];
      ())
@@ -359,16 +329,10 @@ let save_file_cmd =
          ~docv:"FILE"
          ~doc:"path to file where to save the contents to"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root = _; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
      let file_contents =
-       Eio.Buf_read.parse_exn
-         Eio.Buf_read.take_all
-         (Eio.Stdenv.stdin env)
-         ~max_size:Int.max_value
-       |> Vcs.File_contents.create
+       In_channel.input_all In_channel.stdin |> Vcs.File_contents.create
      in
      Vcs.save_file vcs ~path ~file_contents;
      ())
@@ -390,9 +354,7 @@ let set_user_config_cmd =
          ~docv:"EMAIL"
          ~doc:"user email"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      Vcs.set_user_name vcs ~repo_root ~user_name;
      Vcs.set_user_email vcs ~repo_root ~user_email;
      ())
@@ -414,9 +376,7 @@ let show_file_at_rev_cmd =
          ~docv:"FILE"
          ~doc:"path to file"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd } = initialize () in
      let path = relativize ~repo_root ~cwd ~path in
      let result = Vcs.show_file_at_rev vcs ~repo_root ~rev ~path in
      (match result with
@@ -433,9 +393,7 @@ let graph_cmd =
   Command.make
     ~summary:"compute graph of current repo"
     (let+ () = Arg.return () in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
      print_sexp [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
      ())
@@ -453,9 +411,7 @@ let branch_revision_cmd =
          ~docv:"BRANCH"
          ~doc:"which branch"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let branch_name =
        match branch_name with
        | Some branch_name -> branch_name
@@ -487,9 +443,7 @@ let greatest_common_ancestors_cmd =
          ~docv:"REV"
          ~doc:"all revisions that must descend from the gcas"
      in
-     Eio_main.run
-     @@ fun env ->
-     let { Initialized.vcs; repo_root; cwd = _ } = initialize ~env in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
      let nodes =
        List.map revs ~f:(fun rev ->
