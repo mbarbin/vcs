@@ -15,7 +15,7 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries cmdlang fpath-sexp0 sexplib0 unix vcs vcs-git-blocking)
+ (libraries cmdlang fpath-sexp0 sexplib0 unix vcs vcs-git-unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

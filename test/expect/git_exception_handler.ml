@@ -181,10 +181,8 @@ let%expect_test "blocking" =
   let vcs = Vcs_git_eio.create ~env in
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   create_first_commit vcs ~repo_root;
-  let runtime = Vcs_git_blocking.Impl.create () in
-  let test () =
-    test_current_branch (module Vcs_git_blocking.Impl.Git) runtime ~repo_root
-  in
+  let runtime = Vcs_git_unix.Impl.create () in
+  let test () = test_current_branch (module Vcs_git_unix.Impl.Git) runtime ~repo_root in
   print_s [%sexp (test () : (Sexp.t, Vcs.Err.t) Result.t)];
   [%expect {| (Ok ((current_branch main))) |}];
   let test_scenario handler_scenario =

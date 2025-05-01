@@ -24,7 +24,7 @@
 
 ### Fixed
 
-- Allow `vcs-git-blocking` calls to be run in parallel (#49, @mbarbin).
+- Allow `vcs-git-unix` calls to be run in parallel (#49, @mbarbin).
 
 ## 0.0.10 (2024-11-05)
 

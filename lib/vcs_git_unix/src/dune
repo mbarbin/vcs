@@ -1,6 +1,6 @@
 (library
- (name vcs_git_blocking)
- (public_name vcs-git-blocking)
+ (name vcs_git_unix)
+ (public_name vcs-git-unix)
  (flags
   :standard
   -w

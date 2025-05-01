@@ -26,7 +26,7 @@ let%expect_test "hello commit" =
      provider. We're using [Vcs_git_blocking] for this here. It is a provider
      based on [Stdlib] and running the [git] command line as an external
      process. *)
-  let vcs = Vcs_git_blocking.create () in
+  let vcs = Vcs_git_unix.create () in
   (* The next step takes care of creating a repository and initializing the git
      users's config with some dummy values so we can use [commit] without having
      to worry about your user config on your machine. This isolates the test
