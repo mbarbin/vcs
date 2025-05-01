@@ -26,8 +26,8 @@
   unix
   vcs
   vcs_base
-  vcs_git_blocking
   vcs_git_eio
+  vcs_git_unix
   vcs_test_helpers)
  (instrumentation
   (backend bisect_ppx))

@@ -45,7 +45,7 @@ let%expect_test "hello path" =
     Stdlib.Filename.temp_dir ~temp_dir:(cwd |> Absolute_path.to_string) "vcs_test" ""
     |> Absolute_path.v
   in
-  let vcs = Vcs_git_blocking.create () in
+  let vcs = Vcs_git_unix.create () in
   let repo_root = Vcs_test_helpers.init vcs ~path:dir in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   Vcs.save_file
@@ -100,7 +100,7 @@ let%expect_test "hello path" =
     |}];
   (* Now let's override the path and monitor which git binary is run. *)
   (* Let's test separately the function that implements the search. *)
-  let find_executable ~path = Vcs_git_blocking.Runtime.Private.find_executable ~path in
+  let find_executable ~path = Vcs_git_unix.Runtime.Private.find_executable ~path in
   let result = find_executable ~path:"" in
   require_equal [%here] (module Executable_in_path) result None;
   [%expect {||}];
@@ -183,7 +183,7 @@ let%expect_test "hello path" =
   (* The initial PATH under which the [vcs] is created is used to pre locate the executable. *)
   let save_path = Stdlib.Sys.getenv_opt "PATH" in
   Unix.putenv "PATH" (Absolute_path.to_string bin);
-  let vcs = Vcs_git_blocking.create () in
+  let vcs = Vcs_git_unix.create () in
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "env"; "prog"; "repo_root" ];
   [%expect
     {|
@@ -201,7 +201,7 @@ let%expect_test "hello path" =
      this case, the [prog] is left as "git" and we rely on the backend process
      library to raise the error. *)
   Unix.putenv "PATH" (Absolute_path.to_string cwd);
-  let vcs = Vcs_git_blocking.create () in
+  let vcs = Vcs_git_unix.create () in
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "env"; "repo_root" ];
   [%expect
     {|

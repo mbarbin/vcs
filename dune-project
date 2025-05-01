@@ -123,7 +123,7 @@
     (< v0.18)))
   (vcs
    (= :version))
-  (vcs-git-blocking
+  (vcs-git-unix
    (= :version))))
 
 (package
@@ -192,9 +192,9 @@
    (= :version))))
 
 (package
- (name vcs-git-blocking)
+ (name vcs-git-unix)
  (synopsis
-  "A Git provider for Vcs based on Vcs_git_provider for blocking programs")
+  "A Git provider for Vcs based on Vcs_git_provider and the Unix library")
  (depends
   (ocaml
    (>= 5.2))
@@ -393,11 +393,11 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-blocking
-   (= :version))
   (vcs-git-eio
    (= :version))
   (vcs-git-provider
+   (= :version))
+  (vcs-git-unix
    (= :version))
   (vcs-test-helpers
    (= :version))
@@ -521,11 +521,11 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-blocking
-   (= :version))
   (vcs-git-eio
    (= :version))
   (vcs-git-provider
+   (= :version))
+  (vcs-git-unix
    (= :version))
   (vcs-test-helpers
    (= :version))

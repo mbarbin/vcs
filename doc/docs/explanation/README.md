@@ -39,7 +39,7 @@ stateDiagram-v2
   commits to a specific provider and concurrency model.
 - **vcs-git-provider**: A IO-free library that parses the output of a `git` cli process.
 - **vcs-git-eio**: An instantiation of `Vcs_git_provider` based on an `Eio` runtime.
-- **vcs-git-blocking**: An instantiation of `Vcs_git_provider` based on the OCaml `Stdlib`.
+- **vcs-git-unix**: An instantiation of `Vcs_git_provider` based on the OCaml `Stdlib`.
 
 ```mermaid
 stateDiagram-v2
@@ -47,7 +47,7 @@ stateDiagram-v2
   user : user-lib *
   vcs_git_provider : vcs-git-provider
   executable : executable (blocking)
-  provider : vcs-git-blocking
+  provider : vcs-git-unix
   runtime : stdlib
   vcs --> user
   user --> executable

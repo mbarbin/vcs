@@ -18,7 +18,7 @@ depends: [
   "ppxlib" {>= "0.33"}
   "sexplib0" {>= "v0.17" & < "v0.18"}
   "vcs" {= version}
-  "vcs-git-blocking" {= version}
+  "vcs-git-unix" {= version}
   "odoc" {with-doc}
 ]
 build: [

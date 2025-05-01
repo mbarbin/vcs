@@ -1,6 +1,6 @@
 (library
- (name vcs_git_blocking_test)
- (public_name vcs-tests.vcs_git_blocking_test)
+ (name vcs_git_unix_test)
+ (public_name vcs-tests.vcs_git_unix_test)
  (inline_tests)
  (flags
   :standard
@@ -25,7 +25,7 @@
   stdio
   unix
   vcs
-  vcs_git_blocking
+  vcs_git_unix
   vcs_test_helpers)
  (instrumentation
   (backend bisect_ppx))

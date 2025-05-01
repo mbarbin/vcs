@@ -23,7 +23,7 @@
    file, and verify the mock rev mapping, in a purely blocking fashion. *)
 
 let%expect_test "hello commit" =
-  let vcs = Vcs_git_blocking.create () in
+  let vcs = Vcs_git_unix.create () in
   let mock_revs = Vcs.Mock_revs.create () in
   let cwd = Unix.getcwd () |> Absolute_path.v in
   let repo_root = Vcs_test_helpers.init vcs ~path:cwd in
@@ -62,7 +62,7 @@ let%expect_test "hello commit" =
 ;;
 
 let%expect_test "read_dir" =
-  let vcs = Vcs_git_blocking.create () in
+  let vcs = Vcs_git_unix.create () in
   let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fsegment.t list)] in
   let cwd = Unix.getcwd () in
   let dir = Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
