@@ -213,6 +213,21 @@ Greatest common ancestors.
   Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
+Descendance.
+
+  $ ocaml-vcs descendance $rev1 $rev1
+  Same_node
+
+  $ ocaml-vcs descendance $rev1 $rev2
+  Strict_ancestor
+
+  $ ocaml-vcs descendance $rev2 $rev1
+  Strict_descendant
+
+  $ ocaml-vcs descendance $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
+  Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
+  [123]
+
 Vcs allows to run the git command line directly if the provider supports it.
 
   $ ocaml-vcs git rev-parse HEAD | stabilize_output
@@ -274,6 +289,9 @@ Vcs's help for review.
   
          current-revision [OPTION]…
              revision of HEAD
+  
+         descendance [OPTION]… REV REV
+             print descendance relation between 2 revisions
   
          find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
          [OPTION]…

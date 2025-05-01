@@ -44,6 +44,9 @@ COMMANDS
        current-revision [OPTION]…
            revision of HEAD
 
+       descendance [OPTION]… REV REV
+           print descendance relation between 2 revisions
+
        find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
        [OPTION]…
            find enclosing repo root

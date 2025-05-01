@@ -434,6 +434,29 @@ let branch_revision_cmd =
      ())
 ;;
 
+let descendance_cmd =
+  Command.make
+    ~summary:"print descendance relation between 2 revisions"
+    (let+ rev1 =
+       Arg.pos ~pos:0 (Param.validated_string (module Vcs.Rev)) ~docv:"REV" ~doc:"rev1"
+     and+ rev2 =
+       Arg.pos ~pos:1 (Param.validated_string (module Vcs.Rev)) ~docv:"REV" ~doc:"rev2"
+     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
+     let graph = Vcs.graph vcs ~repo_root in
+     let find_node ~rev =
+       match Vcs.Graph.find_rev graph ~rev with
+       | Some node -> node
+       | None ->
+         raise (Vcs.E (Vcs.Err.create_s [%sexp "Rev not found", { rev : Vcs.Rev.t }]))
+     in
+     let node1 = find_node ~rev:rev1 in
+     let node2 = find_node ~rev:rev2 in
+     let descendance = Vcs.Graph.descendance graph node1 node2 in
+     print_sexp [%sexp (descendance : Vcs.Graph.Descendance.t)];
+     ())
+;;
+
 let greatest_common_ancestors_cmd =
   Command.make
     ~summary:"print greatest common ancestors of revisions"
@@ -475,6 +498,7 @@ sub commands exposed here, plus additional ones.
     ; "commit", commit_cmd
     ; "current-branch", current_branch_cmd
     ; "current-revision", current_revision_cmd
+    ; "descendance", descendance_cmd
     ; "find-enclosing-repo-root", find_enclosing_repo_root_cmd
     ; "gca", greatest_common_ancestors_cmd
     ; "git", git_cmd
