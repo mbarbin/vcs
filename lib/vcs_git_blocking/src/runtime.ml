@@ -44,9 +44,9 @@ let find_executable ~path =
 
 let create () =
   let git_executable =
-    match Unix.getenv "PATH" with
-    | exception Stdlib.Not_found -> None [@coverage off]
-    | path ->
+    match Stdlib.Sys.getenv_opt "PATH" with
+    | None -> None [@coverage off]
+    | Some path ->
       (match find_executable ~path with
        | None -> None
        | Some filename -> Some { Found_executable.filename; path })

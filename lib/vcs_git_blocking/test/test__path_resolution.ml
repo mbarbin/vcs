@@ -181,7 +181,7 @@ let%expect_test "hello path" =
      (error "expected exit code 0"))
     |}];
   (* The initial PATH under which the [vcs] is created is used to pre locate the executable. *)
-  let save_path = Unix.getenv "PATH" in
+  let save_path = Stdlib.Sys.getenv_opt "PATH" in
   Unix.putenv "PATH" (Absolute_path.to_string bin);
   let vcs = Vcs_git_blocking.create () in
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "env"; "prog"; "repo_root" ];
@@ -215,6 +215,6 @@ let%expect_test "hello path" =
         (stderr      ""))))
      (error (Failure "git: command not found")))
     |}];
-  Unix.putenv "PATH" save_path;
+  Option.iter save_path ~f:(fun path -> Unix.putenv "PATH" path);
   ()
 ;;
