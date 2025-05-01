@@ -23,7 +23,7 @@
 
 let%expect_test "hello commit" =
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
-     provider. We're using [Vcs_git_blocking] for this here. It is a provider
+     provider. We're using [Vcs_git_unix] for this here. It is a provider
      based on [Stdlib] and running the [git] command line as an external
      process. *)
   let vcs = Vcs_git_unix.create () in
