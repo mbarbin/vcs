@@ -105,20 +105,12 @@
    (>= 5.2))
   (cmdlang
    (>= 0.0.9))
-  (eio
-   (>= 1.0))
-  (eio_main
-   (>= 1.0))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
   (pplumbing
    (>= 0.0.9))
-  (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
   (ppx_sexp_value
    (and
     (>= v0.17)
@@ -131,7 +123,7 @@
     (< v0.18)))
   (vcs
    (= :version))
-  (vcs-git-eio
+  (vcs-git-blocking
    (= :version))))
 
 (package
