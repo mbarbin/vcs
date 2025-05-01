@@ -1,5 +1,9 @@
 ## 0.0.12 (2025-05-01)
 
+### Added
+
+- Add `ocaml-vcs` subcommand to compute descendance relation between 2 nodes (#55, @mbarbin).
+
 ### Changed
 
 - Rename `vcs-git-blocking` to `vcs-git-unix` (#54, @mbarbin).
