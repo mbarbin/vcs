@@ -393,11 +393,11 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-unix
-   (= :version))
   (vcs-git-eio
    (= :version))
   (vcs-git-provider
+   (= :version))
+  (vcs-git-unix
    (= :version))
   (vcs-test-helpers
    (= :version))
@@ -521,11 +521,11 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-unix
-   (= :version))
   (vcs-git-eio
    (= :version))
   (vcs-git-provider
+   (= :version))
+  (vcs-git-unix
    (= :version))
   (vcs-test-helpers
    (= :version))
