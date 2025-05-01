@@ -1,6 +1,4 @@
-## 0.0.12 (unreleased)
-
-### Added
+## 0.0.12 (2025-05-01)
 
 ### Changed
 
@@ -8,13 +6,9 @@
 - Switch the backend used in `vcs-cli` from `eio` to `blocking` (#53, @mbarbin).
 - Pre-locate the git executable in `vcs_git_blocking` (#52, @mbarbin).
 
-### Deprecated
-
 ### Fixed
 
 - Dispose of `Shexp_process.Context` in `vcs_git_blocking` (#52, @mbarbin).
-
-### Removed
 
 ## 0.0.11 (2025-04-13)
 
