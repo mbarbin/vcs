@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -60,7 +60,7 @@ let load_file (_ : t) ~path =
     |> Vcs.File_contents.create)
 ;;
 
-let save_file ?(perms = 0o666) (_ : t) ~path ~(file_contents : Vcs.File_contents.t) =
+let save_file (_ : t) ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
   Vcs.Exn.Private.try_with (fun () ->
     let oc =
       open_out_gen

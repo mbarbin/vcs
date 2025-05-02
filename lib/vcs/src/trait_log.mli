@@ -1,6 +1,6 @@
 (*_******************************************************************************)
 (*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*_  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
 (*_                                                                             *)
@@ -19,8 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type all_method = repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val all : t -> repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+  val all : t -> all_method
+end
+
+class type t = object
+  method all : all_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

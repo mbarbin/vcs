@@ -1,6 +1,6 @@
 (*_******************************************************************************)
 (*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*_  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
 (*_                                                                             *)
@@ -19,9 +19,23 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type current_branch_method = repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
+type current_revision_method = repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val current_branch : t -> repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
-  val current_revision : t -> repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
+  val current_branch : t -> current_branch_method
+  val current_revision : t -> current_revision_method
+end
+
+class type t = object
+  method current_branch : current_branch_method
+  method current_revision : current_revision_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

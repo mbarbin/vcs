@@ -44,9 +44,7 @@
     (>= v0.17)
     (< v0.18)))
   (ppxlib
-   (>= 0.33))
-  (provider
-   (>= 0.0.11))))
+   (>= 0.33))))
 
 (package
  (name vcs-base)
@@ -92,8 +90,6 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (vcs
    (= :version))))
 
@@ -127,7 +123,7 @@
    (= :version))))
 
 (package
- (name vcs-git-provider)
+ (name vcs-git-backend)
  (synopsis "An IO-free library that parses the output of Git commands")
  (depends
   (ocaml
@@ -148,8 +144,6 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (sexplib0
    (and
     (>= v0.17)
@@ -159,8 +153,7 @@
 
 (package
  (name vcs-git-eio)
- (synopsis
-  "A Git provider for Vcs based on Vcs_git_provider for Eio programs")
+ (synopsis "A Git backend for Vcs based on Vcs_git_backend for Eio programs")
  (depends
   (ocaml
    (>= 5.2))
@@ -180,21 +173,19 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (sexplib0
    (and
     (>= v0.17)
     (< v0.18)))
   (vcs
    (= :version))
-  (vcs-git-provider
+  (vcs-git-backend
    (= :version))))
 
 (package
  (name vcs-git-unix)
  (synopsis
-  "A Git provider for Vcs based on Vcs_git_provider and the Unix library")
+  "A Git backend for Vcs based on Vcs_git_backend and the Unix library")
  (depends
   (ocaml
    (>= 5.2))
@@ -212,8 +203,6 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (sexplib0
    (and
     (>= v0.17)
@@ -224,7 +213,7 @@
     (< v0.18)))
   (vcs
    (= :version))
-  (vcs-git-provider
+  (vcs-git-backend
    (= :version))))
 
 (package
@@ -273,8 +262,6 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (vcs
    (= :version))))
 
@@ -371,8 +358,6 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (re
    (>= 1.8.0))
   (sexp_pretty
@@ -393,9 +378,9 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-eio
+  (vcs-git-backend
    (= :version))
-  (vcs-git-provider
+  (vcs-git-eio
    (= :version))
   (vcs-git-unix
    (= :version))
@@ -499,8 +484,6 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (re
    (>= 1.8.0))
   (sexp_pretty
@@ -521,9 +504,9 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-eio
+  (vcs-git-backend
    (= :version))
-  (vcs-git-provider
+  (vcs-git-eio
    (= :version))
   (vcs-git-unix
    (= :version))

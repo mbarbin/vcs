@@ -29,7 +29,7 @@
   pplumbing.err
   vcs
   vcs_base
-  vcs_git_provider)
+  vcs_git_backend)
  (instrumentation
   (backend bisect_ppx))
  (lint

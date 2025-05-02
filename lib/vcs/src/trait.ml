@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -19,173 +19,49 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type add = [ `Add of add_ty ]
-and add_ty
+module Add = Trait_add
+module Branch = Trait_branch
+module Commit = Trait_commit
+module Config = Trait_config
+module File_system = Trait_file_system
+module Git = Trait_git
+module Init = Trait_init
+module Log = Trait_log
+module Ls_files = Trait_ls_files
+module Name_status = Trait_name_status
+module Num_status = Trait_num_status
+module Refs = Trait_refs
+module Rev_parse = Trait_rev_parse
+module Show = Trait_show
 
-module Add = struct
-  module type S = Trait_add.S
+class type add = Add.t
+class type branch = Branch.t
+class type commit = Commit.t
+class type config = Config.t
+class type file_system = File_system.t
+class type git = Git.t
+class type init = Init.t
+class type log = Log.t
+class type ls_files = Ls_files.t
+class type name_status = Name_status.t
+class type num_status = Num_status.t
+class type refs = Refs.t
+class type rev_parse = Rev_parse.t
+class type show = Show.t
 
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
+class type t = object
+  inherit add
+  inherit branch
+  inherit commit
+  inherit config
+  inherit file_system
+  inherit git
+  inherit init
+  inherit log
+  inherit ls_files
+  inherit name_status
+  inherit num_status
+  inherit refs
+  inherit rev_parse
+  inherit show
 end
-
-type branch = [ `Branch of branch_ty ]
-and branch_ty
-
-module Branch = struct
-  module type S = Trait_branch.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type commit = [ `Commit of commit_ty ]
-and commit_ty
-
-module Commit = struct
-  module type S = Trait_commit.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type config = [ `Config of config_ty ]
-and config_ty
-
-module Config = struct
-  module type S = Trait_config.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type file_system = [ `File_system of file_system_ty ]
-and file_system_ty
-
-module File_system = struct
-  module type S = Trait_file_system.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type git = [ `Git of git_ty ]
-and git_ty
-
-module Git = struct
-  module type S = Trait_git.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type init = [ `Init of init_ty ]
-and init_ty
-
-module Init = struct
-  module type S = Trait_init.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type log = [ `Log of log_ty ]
-and log_ty
-
-module Log = struct
-  module type S = Trait_log.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type ls_files = [ `Ls_files of ls_files_ty ]
-and ls_files_ty
-
-module Ls_files = struct
-  module type S = Trait_ls_files.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type name_status = [ `Name_status of name_status_ty ]
-and name_status_ty
-
-module Name_status = struct
-  module type S = Trait_name_status.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type num_status = [ `Num_status of num_status_ty ]
-and num_status_ty
-
-module Num_status = struct
-  module type S = Trait_num_status.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type refs = [ `Refs of refs_ty ]
-and refs_ty
-
-module Refs = struct
-  module type S = Trait_refs.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type rev_parse = [ `Rev_parse of rev_parse_ty ]
-and rev_parse_ty
-
-module Rev_parse = struct
-  module type S = Trait_rev_parse.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type show = [ `Show of show_ty ]
-and show_ty
-
-module Show = struct
-  module type S = Trait_show.S
-
-  include Provider.Trait.Create (struct
-      type 'a module_type = (module S with type t = 'a)
-    end)
-end
-
-type t =
-  [ add
-  | branch
-  | commit
-  | config
-  | file_system
-  | git
-  | init
-  | log
-  | ls_files
-  | name_status
-  | num_status
-  | refs
-  | rev_parse
-  | show
-  ]

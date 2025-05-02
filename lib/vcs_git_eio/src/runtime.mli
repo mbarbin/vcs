@@ -1,6 +1,6 @@
 (*_******************************************************************************)
 (*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*_  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
 (*_                                                                             *)
@@ -21,6 +21,6 @@
 
 type t
 
-include Vcs_git_provider.Runtime.S with type t := t
+include Vcs_git_backend.Runtime.S with type t := t
 
 val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t

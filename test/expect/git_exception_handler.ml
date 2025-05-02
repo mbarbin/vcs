@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -20,15 +20,15 @@
 (*******************************************************************************)
 
 (* This test monitors that the [git] runtime functions implemented by the
-   blocking and eio providers do respect the specified behavior related to
-   exception handling.
+   [vcs_git_unix] and [vcs_git_eio] backends do respect the specified behavior
+   related to exception handling.
 
    We also check for the occurrence of a regression where the exception handling
    would be defeated by [f] raising the particular [Vcs.E] exception. *)
 
 module _ (S : sig
     (* First let's be reminded of the signature of the [git] function that is
-       expected to be implemented by a provider runtime.
+       expected to be implemented by a backend runtime.
 
        The key here is the overall behavior expected when the [f] argument
        raises. According to the specification, this should be treated as a
@@ -123,7 +123,7 @@ let%expect_test "eio" =
   let vcs = Vcs_git_eio.create ~env in
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   create_first_commit vcs ~repo_root;
-  let runtime = Vcs_git_eio.Impl.create ~env in
+  let runtime = Vcs_git_eio.Runtime.create ~env in
   let test () = test_current_branch (module Vcs_git_eio.Impl.Git) runtime ~repo_root in
   print_s [%sexp (test () : (Sexp.t, Vcs.Err.t) Result.t)];
   [%expect {| (Ok ((current_branch main))) |}];
@@ -181,7 +181,7 @@ let%expect_test "blocking" =
   let vcs = Vcs_git_eio.create ~env in
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   create_first_commit vcs ~repo_root;
-  let runtime = Vcs_git_unix.Impl.create () in
+  let runtime = Vcs_git_unix.Runtime.create () in
   let test () = test_current_branch (module Vcs_git_unix.Impl.Git) runtime ~repo_root in
   print_s [%sexp (test () : (Sexp.t, Vcs.Err.t) Result.t)];
   [%expect {| (Ok ((current_branch main))) |}];

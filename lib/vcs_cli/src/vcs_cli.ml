@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -29,7 +29,7 @@ let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
   type t =
-    { vcs : Vcs_git_unix.t'
+    { vcs : Vcs_git_unix.t
     ; repo_root : Vcs.Repo_root.t
     ; cwd : Absolute_path.t
     }

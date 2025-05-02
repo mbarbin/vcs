@@ -1,6 +1,6 @@
 (*_******************************************************************************)
 (*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*_  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
 (*_                                                                             *)
@@ -29,4 +29,21 @@ module type S = sig
     -> args:string list
     -> f:(Git_output0.t -> ('a, Err.t) Result.t)
     -> ('a, Err.t) Result.t
+end
+
+class type t = object
+  method git :
+    'a.
+    ?env:string array
+    -> unit
+    -> cwd:Absolute_path.t
+    -> args:string list
+    -> f:(Git_output0.t -> ('a, Err.t) Result.t)
+    -> ('a, Err.t) Result.t
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

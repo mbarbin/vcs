@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -182,7 +182,12 @@ module Option = struct
 end
 
 module Ordering = struct
-  include Provider.Private.Import.Ordering
+  type t =
+    | Less
+    | Equal
+    | Greater
+
+  let of_int i = if i < 0 then Less else if i = 0 then Equal else Greater
 end
 
 module Queue = struct

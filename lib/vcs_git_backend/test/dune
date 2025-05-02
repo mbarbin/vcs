@@ -1,0 +1,62 @@
+(library
+ (name vcs_git_backend_test)
+ (public_name vcs-tests.vcs_git_backend_test)
+ (inline_tests
+  (deps
+   (glob_files *.name-status)
+   (glob_files *.num-status)
+   (glob_files *.log)
+   (glob_files *.refs)))
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Base
+  -open
+  Expect_test_helpers_base)
+ (libraries
+  base
+  eio
+  eio_main
+  expect_test_helpers_core.expect_test_helpers_base
+  vcs
+  vcs_git_backend)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -check-doc-comments))
+ (preprocess
+  (pps
+   -unused-code-warnings=force
+   ppx_compare
+   ppx_enumerate
+   ppx_expect
+   ppx_hash
+   ppx_here
+   ppx_let
+   ppx_sexp_conv
+   ppx_sexp_value)))
+
+(rule
+ (copy
+  %{project_root}/test/data/super-master-mind.name-status
+  super-master-mind.name-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/super-master-mind.num-status
+  super-master-mind.num-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/super-master-mind.refs
+  super-master-mind.refs))
+
+(rule
+ (copy %{project_root}/test/data/super-master-mind.log super-master-mind.log))
+
+(rule
+ (copy %{project_root}/test/data/eio.num-status eio.num-status))

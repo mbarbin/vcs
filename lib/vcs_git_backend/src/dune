@@ -1,0 +1,23 @@
+(library
+ (name vcs_git_backend)
+ (public_name vcs-git-backend)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Fpath_sexp0
+  -open
+  Sexplib0
+  -open
+  Sexplib0.Sexp_conv)
+ (libraries astring fpath fpath-sexp0 sexplib0 vcs)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (modules_without_implementation runtime)
+ (preprocess
+  (pps -unused-code-warnings=force ppx_sexp_conv ppx_sexp_value)))

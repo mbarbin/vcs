@@ -1,6 +1,6 @@
 (*_******************************************************************************)
 (*_  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*_  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*_  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*_                                                                             *)
 (*_  This file is part of Vcs.                                                  *)
 (*_                                                                             *)
@@ -19,12 +19,21 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+type ls_files_method =
+  repo_root:Repo_root.t -> below:Path_in_repo.t -> (Path_in_repo.t list, Err.t) Result.t
+
 module type S = sig
   type t
 
-  val ls_files
-    :  t
-    -> repo_root:Repo_root.t
-    -> below:Path_in_repo.t
-    -> (Path_in_repo.t list, Err.t) Result.t
+  val ls_files : t -> ls_files_method
+end
+
+class type t = object
+  method ls_files : ls_files_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end

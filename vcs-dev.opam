@@ -37,7 +37,6 @@ depends: [
   "ppx_sexp_message" {>= "v0.17" & < "v0.18"}
   "ppx_sexp_value" {>= "v0.17" & < "v0.18"}
   "ppxlib" {>= "0.33"}
-  "provider" {>= "0.0.11"}
   "re" {>= "1.8.0"}
   "sexp_pretty" {>= "v0.17" & < "v0.18"}
   "shexp" {>= "v0.17" & < "v0.18"}
@@ -45,8 +44,8 @@ depends: [
   "vcs" {= version}
   "vcs-base" {= version}
   "vcs-cli" {= version}
+  "vcs-git-backend" {= version}
   "vcs-git-eio" {= version}
-  "vcs-git-provider" {= version}
   "vcs-git-unix" {= version}
   "vcs-test-helpers" {= version}
   "vcs-tests" {= version}

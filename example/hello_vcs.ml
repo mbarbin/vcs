@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -29,7 +29,7 @@ let%expect_test "hello commit" =
   Eio.Switch.run
   @@ fun sw ->
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
-     provider. We're using [Vcs_git] for this here. It is a provider based on
+     backend. We're using [Vcs_git] for this here. It is a backend based on
      [Eio] and running the [git] command line as an external process. *)
   let vcs = Vcs_git_eio.create ~env in
   (* The next step takes care of creating a fresh repository. We make use of a
@@ -41,8 +41,8 @@ let%expect_test "hello commit" =
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   (* Just a quick word about [Vcs.save_file]. This is only a part of Vcs that is
      included for convenience. Indeed, this allows a library that uses Vcs to
-     perform some basic IO while maintaining compatibility with [Eio] and
-     [Blocking] clients. This dispatches to the actual Vcs provider
+     perform some basic IO while maintaining compatibility with [Vcs_git_eio]
+     and [Vcs_git_unix] clients. This dispatches to the actual Vcs backend
      implementation, which here uses [Eio.Path.save_file] under the hood. *)
   Vcs.save_file
     vcs

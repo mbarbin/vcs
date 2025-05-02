@@ -1,3 +1,9 @@
+## 0.0.13 (2025-05-02)
+
+### Changed
+
+- Switch from Provider to OCaml Objects based design (#56, @mbarbin).
+
 ## 0.0.12 (2025-05-01)
 
 ### Added

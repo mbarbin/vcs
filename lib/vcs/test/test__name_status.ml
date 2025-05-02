@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -25,7 +25,7 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.name-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let name_status = Vcs_git_provider.Name_status.parse_lines_exn ~lines in
+  let name_status = Vcs_git_backend.Name_status.parse_lines_exn ~lines in
   let files_at_src =
     Vcs.Name_status.files_at_src name_status
     |> Set.of_list (module Vcs_base.Vcs.Path_in_repo)
@@ -53,7 +53,7 @@ let%expect_test "files" =
     ; "R100\toriginal_renamed_file\tnew_renamed_file"
     ]
   in
-  let name_status = Vcs_git_provider.Name_status.parse_lines_exn ~lines in
+  let name_status = Vcs_git_backend.Name_status.parse_lines_exn ~lines in
   print_s [%sexp (name_status : Vcs.Name_status.t)];
   [%expect
     {|

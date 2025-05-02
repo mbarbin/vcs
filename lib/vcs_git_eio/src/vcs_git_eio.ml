@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
@@ -19,14 +19,14 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
-type t' = Vcs_git_provider.Trait.t t
+type t = Vcs_git_backend.Trait.t Vcs.t
 
 module Impl = struct
   include Runtime
-  include Vcs_git_provider.Make (Runtime)
+  include Vcs_git_backend.Make (Runtime)
 end
 
-let create ~env =
-  Vcs.create (Provider.T { t = Impl.create ~env; provider = Impl.provider () })
-;;
+let create_class ~env = new Impl.c (Impl.create ~env)
+let create ~env = Vcs.create (create_class ~env)
+
+module Runtime = Runtime

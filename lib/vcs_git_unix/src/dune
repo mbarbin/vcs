@@ -13,14 +13,7 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries
-  fpath
-  fpath-sexp0
-  provider
-  shexp.process
-  unix
-  vcs
-  vcs-git-provider)
+ (libraries fpath fpath-sexp0 shexp.process unix vcs vcs-git-backend)
  (instrumentation
   (backend bisect_ppx))
  (lint
