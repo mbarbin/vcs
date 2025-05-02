@@ -378,9 +378,9 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-eio
-   (= :version))
   (vcs-git-backend
+   (= :version))
+  (vcs-git-eio
    (= :version))
   (vcs-git-unix
    (= :version))
@@ -504,9 +504,9 @@
    (= :version))
   (vcs-cli
    (= :version))
-  (vcs-git-eio
-   (= :version))
   (vcs-git-backend
+   (= :version))
+  (vcs-git-eio
    (= :version))
   (vcs-git-unix
    (= :version))
