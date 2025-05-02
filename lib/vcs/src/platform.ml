@@ -1,6 +1,6 @@
 (*******************************************************************************)
 (*  Vcs - a Versatile OCaml Library for Git Operations                         *)
-(*  Copyright (C) 2024 Mathieu Barbin <mathieu.barbin@gmail.com>               *)
+(*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
 (*  This file is part of Vcs.                                                  *)
 (*                                                                             *)
