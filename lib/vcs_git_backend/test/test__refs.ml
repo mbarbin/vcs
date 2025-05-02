@@ -33,7 +33,7 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.refs") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let refs = Vcs_git_provider.Refs.parse_lines_exn ~lines in
+  let refs = Vcs_git_backend.Refs.parse_lines_exn ~lines in
   print_s
     [%sexp
       { tags = (Vcs.Refs.tags refs : Vcs.Tag_name.t list)
@@ -55,13 +55,13 @@ let%expect_test "parse_exn" =
 
 let%expect_test "parse_ref_kind_exn" =
   let test_ref_kind str =
-    print_s [%sexp (Vcs_git_provider.Refs.parse_ref_kind_exn str : Vcs.Ref_kind.t)]
+    print_s [%sexp (Vcs_git_backend.Refs.parse_ref_kind_exn str : Vcs.Ref_kind.t)]
   in
   require_does_raise [%here] (fun () -> test_ref_kind "blah");
   [%expect
     {|
     (Vcs.E (
-      (steps ((Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind blah)))))
+      (steps ((Vcs_git_backend.Refs.parse_ref_kind_exn ((ref_kind blah)))))
       (error "Expected ref to start with 'refs/'")))
     |}];
   require_does_raise [%here] (fun () -> test_ref_kind "non-refs/tags/0.0.1");
@@ -69,7 +69,7 @@ let%expect_test "parse_ref_kind_exn" =
     {|
     (Vcs.E (
       (steps ((
-        Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind non-refs/tags/0.0.1)))))
+        Vcs_git_backend.Refs.parse_ref_kind_exn ((ref_kind non-refs/tags/0.0.1)))))
       (error "Expected ref to start with 'refs/'")))
     |}];
   test_ref_kind "refs/blah";
@@ -83,7 +83,7 @@ let%expect_test "parse_ref_kind_exn" =
     {|
     (Vcs.E (
       (steps ((
-        Vcs_git_provider.Refs.parse_ref_kind_exn ((ref_kind refs/remotes/blah)))))
+        Vcs_git_backend.Refs.parse_ref_kind_exn ((ref_kind refs/remotes/blah)))))
       (error (Invalid_argument "\"blah\": invalid remote_branch_name"))))
     |}];
   test_ref_kind "refs/remotes/origin/main";
@@ -102,14 +102,14 @@ let%expect_test "dereferenced" =
   let test line =
     print_s
       [%sexp
-        (Vcs_git_provider.Refs.Dereferenced.parse_exn ~line
-         : Vcs_git_provider.Refs.Dereferenced.t)]
+        (Vcs_git_backend.Refs.Dereferenced.parse_exn ~line
+         : Vcs_git_backend.Refs.Dereferenced.t)]
   in
   require_does_raise [%here] (fun () -> test "");
   [%expect
     {|
     (Vcs.E (
-      (steps ((Vcs_git_provider.Refs.Dereferenced.parse_exn ((line "")))))
+      (steps ((Vcs_git_backend.Refs.Dereferenced.parse_exn ((line "")))))
       (error "Invalid ref line")))
     |}];
   test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main";

@@ -27,7 +27,7 @@ let%expect_test "parse_exn - super-master-mind" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.num-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let num_status = Vcs_git_provider.Num_status.parse_lines_exn ~lines in
+  let num_status = Vcs_git_backend.Num_status.parse_lines_exn ~lines in
   print_s [%sexp (num_status : Vcs.Num_status.t)];
   [%expect
     {|
@@ -331,7 +331,7 @@ let%expect_test "parse_exn - eio" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "eio.num-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let num_status = Vcs_git_provider.Num_status.parse_lines_exn ~lines in
+  let num_status = Vcs_git_backend.Num_status.parse_lines_exn ~lines in
   print_s [%sexp (num_status : Vcs.Num_status.t)];
   [%expect
     {|
@@ -473,7 +473,7 @@ let%expect_test "parse_lines_exn" =
   in
   List.iter lines ~f:(fun line ->
     let result =
-      Or_error.try_with (fun () -> Vcs_git_provider.Num_status.parse_line_exn ~line)
+      Or_error.try_with (fun () -> Vcs_git_backend.Num_status.parse_line_exn ~line)
     in
     print_s [%sexp (line : string), (result : Vcs.Num_status.Change.t Or_error.t)]);
   [%expect
@@ -481,28 +481,28 @@ let%expect_test "parse_lines_exn" =
     ("" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_provider.Num_status.parse_line_exn ((line "")))))
+          (steps ((Vcs_git_backend.Num_status.parse_line_exn ((line "")))))
           (error "Unexpected output from git diff")))))
     (file (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_provider.Num_status.parse_line_exn ((line file)))))
+          (steps ((Vcs_git_backend.Num_status.parse_line_exn ((line file)))))
           (error "Unexpected output from git diff")))))
     ("A\tB" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_provider.Num_status.parse_line_exn ((line "A\tB")))))
+          (steps ((Vcs_git_backend.Num_status.parse_line_exn ((line "A\tB")))))
           (error "Unexpected output from git diff")))))
     ("A\tB\tC\tD" (
       Error (
         Vcs.E (
           (steps ((
-            Vcs_git_provider.Num_status.parse_line_exn ((line "A\tB\tC\tD")))))
+            Vcs_git_backend.Num_status.parse_line_exn ((line "A\tB\tC\tD")))))
           (error "Unexpected output from git diff")))))
     ("A\tB\tC" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_provider.Num_status.parse_line_exn ((line "A\tB\tC")))))
+          (steps ((Vcs_git_backend.Num_status.parse_line_exn ((line "A\tB\tC")))))
           (error (
             "Unexpected output from git diff" (
               (insertions (Other A))
@@ -539,7 +539,7 @@ let%expect_test "parse_lines_exn" =
       Error (
         Vcs.E (
           (steps ((
-            Vcs_git_provider.Num_status.parse_line_exn ((line "-\t10\tfile")))))
+            Vcs_git_backend.Num_status.parse_line_exn ((line "-\t10\tfile")))))
           (error (
             "Unexpected output from git diff" (
               (insertions Dash) (deletions (Num 10)))))))))
@@ -547,7 +547,7 @@ let%expect_test "parse_lines_exn" =
       Error (
         Vcs.E (
           (steps ((
-            Vcs_git_provider.Num_status.parse_line_exn ((line "7\t-\tfile")))))
+            Vcs_git_backend.Num_status.parse_line_exn ((line "7\t-\tfile")))))
           (error (
             "Unexpected output from git diff" (
               (insertions (Num 7)) (deletions Dash))))))))
@@ -555,7 +555,7 @@ let%expect_test "parse_lines_exn" =
       Error (
         Vcs.E (
           (steps ((
-            Vcs_git_provider.Num_status.parse_line_exn ((line "-2\t-10\tfile")))))
+            Vcs_git_backend.Num_status.parse_line_exn ((line "-2\t-10\tfile")))))
           (error (
             "Unexpected output from git diff" (
               (insertions (Other -2))
@@ -564,9 +564,9 @@ let%expect_test "parse_lines_exn" =
       Error (
         Vcs.E (
           (steps (
-            (Vcs_git_provider.Num_status.parse_line_exn
+            (Vcs_git_backend.Num_status.parse_line_exn
              ((line "1985\t0\tfile1 => /tmp/file2")))
-            (Vcs_git_provider.Munged_path.parse_exn ((path "file1 => /tmp/file2")))))
+            (Vcs_git_backend.Munged_path.parse_exn ((path "file1 => /tmp/file2")))))
           (error (Invalid_argument "\"/tmp/file2\": not a relative path"))))))
     |}];
   ()

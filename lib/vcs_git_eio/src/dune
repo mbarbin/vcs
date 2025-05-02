@@ -13,7 +13,7 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries eio fpath fpath-sexp0 sexplib0 vcs vcs-git-provider)
+ (libraries eio fpath fpath-sexp0 sexplib0 vcs vcs-git-backend)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -27,7 +27,7 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.refs") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let refs = Vcs_git_provider.Refs.parse_lines_exn ~lines in
+  let refs = Vcs_git_backend.Refs.parse_lines_exn ~lines in
   print_s
     [%sexp
       { tags = (Vcs.Refs.tags refs : Set.M(Vcs.Tag_name).t)

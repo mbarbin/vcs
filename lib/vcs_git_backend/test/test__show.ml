@@ -23,7 +23,7 @@ let%expect_test "show" =
   let test output =
     print_s
       [%sexp
-        (Vcs_git_provider.Show.interpret_output output
+        (Vcs_git_backend.Show.interpret_output output
          : [ `Absent | `Present of Vcs.File_contents.t ] Vcs.Result.t)]
   in
   test { exit_code = 0; stdout = "contents"; stderr = "" };

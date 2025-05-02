@@ -123,7 +123,7 @@
    (= :version))))
 
 (package
- (name vcs-git-provider)
+ (name vcs-git-backend)
  (synopsis "An IO-free library that parses the output of Git commands")
  (depends
   (ocaml
@@ -153,8 +153,7 @@
 
 (package
  (name vcs-git-eio)
- (synopsis
-  "A Git backend for Vcs based on Vcs_git_provider for Eio programs")
+ (synopsis "A Git backend for Vcs based on Vcs_git_backend for Eio programs")
  (depends
   (ocaml
    (>= 5.2))
@@ -180,13 +179,13 @@
     (< v0.18)))
   (vcs
    (= :version))
-  (vcs-git-provider
+  (vcs-git-backend
    (= :version))))
 
 (package
  (name vcs-git-unix)
  (synopsis
-  "A Git backend for Vcs based on Vcs_git_provider and the Unix library")
+  "A Git backend for Vcs based on Vcs_git_backend and the Unix library")
  (depends
   (ocaml
    (>= 5.2))
@@ -214,7 +213,7 @@
     (< v0.18)))
   (vcs
    (= :version))
-  (vcs-git-provider
+  (vcs-git-backend
    (= :version))))
 
 (package
@@ -381,7 +380,7 @@
    (= :version))
   (vcs-git-eio
    (= :version))
-  (vcs-git-provider
+  (vcs-git-backend
    (= :version))
   (vcs-git-unix
    (= :version))
@@ -507,7 +506,7 @@
    (= :version))
   (vcs-git-eio
    (= :version))
-  (vcs-git-provider
+  (vcs-git-backend
    (= :version))
   (vcs-git-unix
    (= :version))

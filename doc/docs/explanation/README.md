@@ -20,13 +20,13 @@ The `vcs` repository contains several components:
 stateDiagram-v2
   vcs : vcs *
   user : user-lib *
-  vcs_git_provider : vcs-git-provider
+  vcs_git_backend : vcs-git-backend
   executable : executable (eio)
   backend : vcs-git-eio
   runtime : eio
   vcs --> user
   user --> executable
-  vcs_git_provider --> backend
+  vcs_git_backend --> backend
   runtime --> backend
   backend --> executable
 ```
@@ -37,21 +37,21 @@ stateDiagram-v2
   Also marked with a * to indicate no runtime dependencies.
 - **executable**: A placeholder for a runtime component based on `user-lib` that
   commits to a specific backend and concurrency model.
-- **vcs-git-provider**: A IO-free library that parses the output of a `git` cli process.
-- **vcs-git-eio**: An instantiation of `Vcs_git_provider` based on an `Eio` runtime.
-- **vcs-git-unix**: An instantiation of `Vcs_git_provider` based on the OCaml `Stdlib`.
+- **vcs-git-backend**: A IO-free library that parses the output of a `git` cli process.
+- **vcs-git-eio**: An instantiation of `Vcs_git_backend` based on an `Eio` runtime.
+- **vcs-git-unix**: An instantiation of `Vcs_git_backend` based on the OCaml `Stdlib`.
 
 ```mermaid
 stateDiagram-v2
   vcs : vcs *
   user : user-lib *
-  vcs_git_provider : vcs-git-provider
+  vcs_git_backend : vcs-git-backend
   executable : executable (blocking)
   backend : vcs-git-unix
   runtime : stdlib
   vcs --> user
   user --> executable
-  vcs_git_provider --> backend
+  vcs_git_backend --> backend
   runtime --> backend
   backend --> executable
 ```

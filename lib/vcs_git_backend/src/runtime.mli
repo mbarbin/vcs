@@ -21,7 +21,7 @@
 
 (** Defining the interface of a compatible runtime.
 
-    The other modules defined by [Vcs_git_provider] are all functors that are
+    The other modules defined by [Vcs_git_backend] are all functors that are
     parametrized by this interface. *)
 
 module type S = sig

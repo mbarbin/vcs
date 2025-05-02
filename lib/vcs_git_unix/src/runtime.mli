@@ -21,7 +21,7 @@
 
 type t
 
-include Vcs_git_provider.Runtime.S with type t := t
+include Vcs_git_backend.Runtime.S with type t := t
 
 val create : unit -> t
 

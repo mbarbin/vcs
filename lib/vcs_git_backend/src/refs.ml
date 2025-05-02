@@ -48,7 +48,7 @@ let parse_ref_kind_exn str : Vcs.Ref_kind.t =
             err
             ~step:
               [%sexp
-                "Vcs_git_provider.Refs.parse_ref_kind_exn", { ref_kind = (str : string) }]))
+                "Vcs_git_backend.Refs.parse_ref_kind_exn", { ref_kind = (str : string) }]))
 ;;
 
 module Dereferenced = struct
@@ -102,8 +102,7 @@ module Dereferenced = struct
               err
               ~step:
                 [%sexp
-                  "Vcs_git_provider.Refs.Dereferenced.parse_exn"
-                , { line = (str : string) }]))
+                  "Vcs_git_backend.Refs.Dereferenced.parse_exn", { line = (str : string) }]))
   ;;
 end
 

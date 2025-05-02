@@ -1,6 +1,6 @@
 (library
- (name vcs_git_provider)
- (public_name vcs-git-provider)
+ (name vcs_git_backend)
+ (public_name vcs-git-backend)
  (flags
   :standard
   -w

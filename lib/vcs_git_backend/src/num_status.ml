@@ -21,77 +21,50 @@
 
 open! Import
 
-module Diff_status = struct
+module Status_code = struct
   module T = struct
     [@@@coverage off]
 
     type t =
-      [ `A
-      | `D
-      | `M
-      | `R
-      | `C
-      | `U
-      | `Q
-      | `I
-      | `Question_mark
-      | `Bang
-      | `X
-      | `Not_supported
-      ]
+      | Dash
+      | Num of int
+      | Other of string
     [@@deriving sexp_of]
   end
 
   include T
 
-  let parse_exn str : t =
-    if String.is_empty str
-    then raise (Vcs.E (Vcs.Err.error_string "Unexpected empty diff status"));
-    match str.[0] with
-    | 'A' -> `A
-    | 'D' -> `D
-    | 'M' -> `M
-    | 'U' -> `U
-    | 'Q' -> `Q
-    | 'I' -> `I
-    | '?' -> `Question_mark
-    | '!' -> `Bang
-    | 'X' -> `X
-    | 'R' -> `R
-    | 'C' -> `C
-    | _ -> `Not_supported
+  let parse = function
+    | "-" -> Dash
+    | status ->
+      (match Int.of_string_opt status with
+       | Some n when n >= 0 -> Num n
+       | Some _ | None -> Other status)
   ;;
 end
 
-let parse_line_exn ~line : Vcs.Name_status.Change.t =
+let parse_line_exn ~line : Vcs.Num_status.Change.t =
   match
     Vcs.Exn.Private.try_with (fun () ->
       match String.split line ~on:'\t' with
       | [] -> assert false
-      | [ _ ] -> raise (Vcs.E (Vcs.Err.error_string "Unexpected output from git status"))
-      | status :: path :: rest ->
-        (match Diff_status.parse_exn status with
-         | `A -> Vcs.Name_status.Change.Added (Vcs.Path_in_repo.v path)
-         | `D -> Removed (Vcs.Path_in_repo.v path)
-         | `M -> Modified (Vcs.Path_in_repo.v path)
-         | (`R | `C) as diff_status ->
-           let similarity =
-             String.sub status ~pos:1 ~len:(String.length status - 1) |> Int.of_string
-           in
-           let path2 =
-             match List.hd rest with
-             | Some hd -> Vcs.Path_in_repo.v hd
-             | None ->
-               raise (Vcs.E (Vcs.Err.error_string "Unexpected output from git status"))
-           in
-           (match diff_status with
-            | `R -> Renamed { src = Vcs.Path_in_repo.v path; dst = path2; similarity }
-            | `C -> Copied { src = Vcs.Path_in_repo.v path; dst = path2; similarity })
-         | other ->
-           raise
-             (Vcs.E
-                (Vcs.Err.create_s
-                   [%sexp "Unexpected status", (status : string), (other : Diff_status.t)]))))
+      | [ _ ] | [ _; _ ] | _ :: _ :: _ :: _ :: _ ->
+        raise (Vcs.E (Vcs.Err.error_string "Unexpected output from git diff"))
+      | [ insertions; deletions; munged_path ] ->
+        { Vcs.Num_status.Change.key = Munged_path.parse_exn munged_path
+        ; num_stat =
+            (match Status_code.parse insertions, Status_code.parse deletions with
+             | Dash, Dash -> Binary_file
+             | Num insertions, Num deletions ->
+               Num_lines_in_diff { insertions; deletions }
+             | insertions, deletions ->
+               raise
+                 (Vcs.E
+                    (Vcs.Err.create_s
+                       [%sexp
+                         "Unexpected output from git diff"
+                       , { insertions : Status_code.t; deletions : Status_code.t }])))
+        })
   with
   | Ok t -> t
   | Error err ->
@@ -99,7 +72,7 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
       (Vcs.E
          (Vcs.Err.add_context
             err
-            ~step:[%sexp "Vcs_git_provider.Name_status.parse_line_exn", { line : string }]))
+            ~step:[%sexp "Vcs_git_backend.Num_status.parse_line_exn", { line : string }]))
 ;;
 
 let parse_lines_exn ~lines = List.map lines ~f:(fun line -> parse_line_exn ~line)
@@ -107,7 +80,7 @@ let parse_lines_exn ~lines = List.map lines ~f:(fun line -> parse_line_exn ~line
 module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
-  let name_status t ~repo_root ~(changed : Vcs.Name_status.Changed.t) =
+  let num_status t ~repo_root ~(changed : Vcs.Name_status.Changed.t) =
     let changed_param =
       match changed with
       | Between { src; dst } ->
@@ -116,7 +89,7 @@ module Make (Runtime : Runtime.S) = struct
     Runtime.git
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
-      ~args:[ "diff"; "--name-status"; changed_param ]
+      ~args:[ "diff"; "--numstat"; changed_param ]
       ~f:(fun output ->
         let open Result.Monad_syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in

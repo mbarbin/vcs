@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* More tests for the [Vcs.Log] module in [lib/vcs_git_provider/test/test__log.ml]. *)
+(* More tests for the [Vcs.Log] module in [lib/vcs_git_backend/test/test__log.ml]. *)
 
 let%expect_test "parse_exn" =
   Eio_main.run
@@ -28,7 +28,7 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let log =
-    List.map lines ~f:(fun line -> Vcs_git_provider.Log.parse_log_line_exn ~line)
+    List.map lines ~f:(fun line -> Vcs_git_backend.Log.parse_log_line_exn ~line)
   in
   let roots = Vcs.Log.roots log in
   print_s [%sexp (roots : Vcs.Rev.t list)];
