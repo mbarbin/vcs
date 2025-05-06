@@ -169,7 +169,7 @@ let%expect_test "eio" =
         {| (Vcs_expect_tests.Git_exception_handler.Handler_scenario.Custom_exception) |}]
     | Raise_vcs_exception ->
       require_does_raise [%here] test;
-      [%expect {| (Vcs.E Raise_vcs_exception) |}]);
+      [%expect {| Raise_vcs_exception |}]);
   ()
 ;;
 
@@ -230,6 +230,6 @@ let%expect_test "blocking" =
         {| (Vcs_expect_tests.Git_exception_handler.Handler_scenario.Custom_exception) |}]
     | Raise_vcs_exception ->
       require_does_raise [%here] test;
-      [%expect {| (Vcs.E Raise_vcs_exception) |}]);
+      [%expect {| Raise_vcs_exception |}]);
   ()
 ;;
