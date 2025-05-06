@@ -24,6 +24,7 @@ depends: [
   "fpath-base" {>= "0.2.2"}
   "fpath-sexp0" {>= "0.2.2"}
   "mdx" {with-doc & >= "2.4"}
+  "pp" {>= "2.0.0"}
   "pplumbing" {>= "0.0.9"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
   "ppx_enumerate" {>= "v0.17" & < "v0.18"}

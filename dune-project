@@ -31,6 +31,10 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_enumerate
    (and
     (>= v0.17)
@@ -60,6 +64,10 @@
    (>= 0.7.3))
   (fpath-base
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.17)
@@ -105,6 +113,8 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
   (pplumbing
    (>= 0.0.9))
   (ppx_sexp_value
@@ -134,6 +144,10 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -163,6 +177,10 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -193,6 +211,10 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_sexp_conv
    (and
     (>= v0.17)
@@ -232,6 +254,10 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.9))
   (ppx_compare
    (and
     (>= v0.17)
@@ -313,6 +339,8 @@
    (and
     :with-doc
     (>= 2.4)))
+  (pp
+   (>= 2.0.0))
   (pplumbing
    (>= 0.0.9))
   (ppx_compare
