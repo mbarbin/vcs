@@ -19,7 +19,9 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let reraise_with_context err bt ~step = Err.reraise_with_context err bt [ Err.sexp step ]
+let reraise_with_context err bt ~step =
+  Err.reraise_with_context err bt [ Err.sexp step ] [@coverage off]
+;;
 
 module Private = struct
   let try_with f =

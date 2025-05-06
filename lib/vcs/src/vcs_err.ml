@@ -24,11 +24,14 @@ open! Import
 type t = Err.t [@@deriving sexp_of]
 
 let to_string_hum = Err.to_string_hum
-let create_s sexp = Err.create [ Err.sexp sexp ]
-let error_string str = Err.create [ Pp.text str ]
+let create_s sexp = Err.create [ Err.sexp sexp ] [@coverage off]
+let error_string str = Err.create [ Pp.text str ] [@coverage off]
 let of_exn = Err.of_exn
-let add_context t ~step = Err.add_context t [ Err.sexp step ]
-let init error ~step = Err.add_context (Err.create [ Err.sexp error ]) [ Err.sexp step ]
+let add_context t ~step = Err.add_context t [ Err.sexp step ] [@coverage off]
+
+let init error ~step =
+  Err.add_context (Err.create [ Err.sexp error ]) [ Err.sexp step ] [@coverage off]
+;;
 
 module Private = struct
   module Non_raising_M = struct
