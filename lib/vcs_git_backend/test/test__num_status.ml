@@ -497,10 +497,9 @@ let%expect_test "parse_lines_exn" =
     ("A\tB\tC" (
       Error (
         (context (Vcs_git_backend.Num_status.parse_line_exn ((line "A\tB\tC"))))
-        (error (
-          "Unexpected output from git diff." (
-            (insertions (Other A))
-            (deletions  (Other B))))))))
+        (error "Unexpected output from git diff." (
+          (insertions (Other A))
+          (deletions  (Other B)))))))
     ("0\t1\tfile" (
       Ok (
         (key (One_file file))
@@ -533,23 +532,20 @@ let%expect_test "parse_lines_exn" =
       Error (
         (context (
           Vcs_git_backend.Num_status.parse_line_exn ((line "-\t10\tfile"))))
-        (error (
-          "Unexpected output from git diff." (
-            (insertions Dash) (deletions (Num 10))))))))
+        (error "Unexpected output from git diff." (
+          (insertions Dash) (deletions (Num 10)))))))
     ("7\t-\tfile" (
       Error (
         (context (Vcs_git_backend.Num_status.parse_line_exn ((line "7\t-\tfile"))))
-        (error (
-          "Unexpected output from git diff." (
-            (insertions (Num 7)) (deletions Dash)))))))
+        (error "Unexpected output from git diff." (
+          (insertions (Num 7)) (deletions Dash))))))
     ("-2\t-10\tfile" (
       Error (
         (context (
           Vcs_git_backend.Num_status.parse_line_exn ((line "-2\t-10\tfile"))))
-        (error (
-          "Unexpected output from git diff." (
-            (insertions (Other -2))
-            (deletions  (Other -10))))))))
+        (error "Unexpected output from git diff." (
+          (insertions (Other -2))
+          (deletions  (Other -10)))))))
     ("1985\t0\tfile1 => /tmp/file2" (
       Error (
         (context

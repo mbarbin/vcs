@@ -237,27 +237,27 @@ let%expect_test "parse_lines_exn" =
     ("U\tfile4" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "U\tfile4"))))
-        (error ("Unexpected status:" U U)))))
+        (error "Unexpected status:" (U U)))))
     ("Q\tfile5" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "Q\tfile5"))))
-        (error ("Unexpected status:" Q Q)))))
+        (error "Unexpected status:" (Q Q)))))
     ("I\tfile6" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "I\tfile6"))))
-        (error ("Unexpected status:" I I)))))
+        (error "Unexpected status:" (I I)))))
     ("?\tfile7" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "?\tfile7"))))
-        (error ("Unexpected status:" ? Question_mark)))))
+        (error "Unexpected status:" (? Question_mark)))))
     ("!\tfile8" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "!\tfile8"))))
-        (error ("Unexpected status:" ! Bang)))))
+        (error "Unexpected status:" (! Bang)))))
     ("X\tfile9" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "X\tfile9"))))
-        (error ("Unexpected status:" X X)))))
+        (error "Unexpected status:" (X X)))))
     ("R\tfile10" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "R\tfile10"))))
@@ -286,7 +286,7 @@ let%expect_test "parse_lines_exn" =
     ("Z\tfile12" (
       Error (
         (context (Vcs_git_backend.Name_status.parse_line_exn ((line "Z\tfile12"))))
-        (error ("Unexpected status:" Z Not_supported)))))
+        (error "Unexpected status:" (Z Not_supported)))))
     |}];
   ()
 ;;

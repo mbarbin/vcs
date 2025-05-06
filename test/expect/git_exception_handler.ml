@@ -24,7 +24,7 @@
    related to exception handling.
 
    We also check for the occurrence of a regression where the exception handling
-   would be defeated by [f] raising the particular [Vcs.E] exception. *)
+   would be defeated by [f] raising the particular [Err.E] exception. *)
 
 module _ (S : sig
     (* First let's be reminded of the signature of the [git] function that is
@@ -42,8 +42,8 @@ module _ (S : sig
       -> t
       -> cwd:Absolute_path.t
       -> args:string list
-      -> f:(Vcs.Git.Output.t -> ('a, Vcs.Err.t) Result.t)
-      -> ('a, Vcs.Err.t) Result.t
+      -> f:(Vcs.Git.Output.t -> ('a, Err.t) Result.t)
+      -> ('a, Err.t) Result.t
   end) : Vcs.Trait.Git.S = struct
   include S
 end
@@ -78,8 +78,7 @@ let handler (handler_scenario : Handler_scenario.t) =
   | Raise_failure -> failwith "Raise_failure"
   | Raise_invalid_argument -> invalid_arg "Raise_invalid_argument"
   | Raise_custom_exception -> raise Handler_scenario.Custom_exception
-  | Raise_vcs_exception ->
-    raise (Vcs.E (Err.create [ Err.sexp [%sexp "Raise_vcs_exception"] ]))
+  | Raise_vcs_exception -> raise (Err.E (Err.create [ Pp.text "Raise_vcs_exception" ]))
 ;;
 
 let test_current_branch
@@ -126,7 +125,7 @@ let%expect_test "eio" =
   create_first_commit vcs ~repo_root;
   let runtime = Vcs_git_eio.Runtime.create ~env in
   let test () = test_current_branch (module Vcs_git_eio.Impl.Git) runtime ~repo_root in
-  print_s [%sexp (test () : (Sexp.t, Vcs.Err.t) Result.t)];
+  print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
   [%expect {| (Ok ((current_branch main))) |}];
   let test_scenario handler_scenario =
     (* We rename the current branch according to the scenario to test. *)
@@ -140,7 +139,7 @@ let%expect_test "eio" =
     let test () = test_scenario handler_scenario in
     match handler_scenario with
     | Ok ->
-      print_s [%sexp (test () : (Sexp.t, Vcs.Err.t) Result.t)];
+      print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
       [%expect {| (Ok ()) |}]
     | Error ->
       (match test () with
@@ -184,7 +183,7 @@ let%expect_test "blocking" =
   create_first_commit vcs ~repo_root;
   let runtime = Vcs_git_unix.Runtime.create () in
   let test () = test_current_branch (module Vcs_git_unix.Impl.Git) runtime ~repo_root in
-  print_s [%sexp (test () : (Sexp.t, Vcs.Err.t) Result.t)];
+  print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
   [%expect {| (Ok ((current_branch main))) |}];
   let test_scenario handler_scenario =
     (* We rename the current branch according to the scenario to test. *)
@@ -198,7 +197,7 @@ let%expect_test "blocking" =
     let test () = test_scenario handler_scenario in
     match handler_scenario with
     | Ok ->
-      print_s [%sexp (test () : (Sexp.t, Vcs.Err.t) Result.t)];
+      print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
       [%expect {| (Ok ()) |}]
     | Error ->
       (match test () with

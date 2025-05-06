@@ -70,7 +70,7 @@ let%expect_test "redact_sexp" =
   let error =
     match Vcs.init vcs ~path:invalid_path with
     | _ -> assert false
-    | exception Vcs.E err -> [%sexp (err : Vcs.Err.t)]
+    | exception Err.E err -> [%sexp (err : Err.t)]
   in
   print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error" ]);
   [%expect

@@ -35,12 +35,12 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
           ; parent2 = Vcs.Rev.v parent2
           }
       | _ :: _ :: _ :: _ ->
-        raise (Vcs.E (Err.create [ Pp.text "Too many words (expected 1, 2, or 3)." ])))
+        raise (Err.E (Err.create [ Pp.text "Too many words (expected 1, 2, or 3)." ])))
   with
   | Ok t -> t
   | Error err ->
     raise
-      (Vcs.E
+      (Err.E
          (Err.add_context
             err
             [ Err.sexp

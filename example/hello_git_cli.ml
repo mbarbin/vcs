@@ -98,10 +98,10 @@ let%expect_test "hello cli" =
         else failwith "Hello invalid exit code")
     with
     | _ -> assert false [@coverage off]
-    | exception Vcs.E err ->
+    | exception Err.E err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Vcs.Err.t)]
+           [%sexp (err : Err.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -151,13 +151,13 @@ let%expect_test "hello cli" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (Err.create [ Err.sexp [%sexp "Hello invalid exit code."] ]))
+        else Error (Err.create [ Pp.text "Hello invalid exit code." ]))
     with
     | Ok _ -> assert false
     | Error err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Vcs.Err.t)]
+           [%sexp (err : Err.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -181,13 +181,13 @@ let%expect_test "hello cli" =
         ~f:(fun output ->
           if output.exit_code = 0
           then assert false [@coverage off]
-          else Error (`Vcs (Err.create [ Err.sexp [%sexp "Hello invalid exit code."] ])))
+          else Error (`Vcs (Err.create [ Pp.text "Hello invalid exit code." ])))
     with
     | Ok _ -> assert false
     | Error (`Vcs err) ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Vcs.Err.t)]
+           [%sexp (err : Err.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -221,8 +221,8 @@ let%expect_test "hello cli" =
   let () =
     match abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" with
     | Ok (_ : string) | Error (_ : Error.t) -> assert false [@coverage off]
-    | exception Vcs.E err ->
-      print_s (Vcs_test_helpers.redact_sexp [%sexp (err : Vcs.Err.t)] ~fields:[ "error" ])
+    | exception Err.E err ->
+      print_s (Vcs_test_helpers.redact_sexp [%sexp (err : Err.t)] ~fields:[ "error" ])
   in
   [%expect
     {|
@@ -348,11 +348,11 @@ let%expect_test "hello cli" =
   (* You get a function that does not raise in the happy path. *)
   print_s [%sexp (abbrev_ref "HEAD" : string)];
   [%expect {| main |}];
-  (* And always raises [Vcs.E], with context, whether the error comes from your handler or not. *)
+  (* And always raises [Err.E], with context, whether the error comes from your handler or not. *)
   let abbrev_ref_does_raise ?repo_root ref_ ~redact_fields =
     match abbrev_ref ?repo_root ref_ with
     | _ -> assert false [@coverage off]
-    | exception Vcs.E err ->
+    | exception Err.E err ->
       print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:redact_fields)
   in
   abbrev_ref_does_raise

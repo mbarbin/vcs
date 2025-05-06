@@ -15,7 +15,15 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries cmdlang fpath-sexp0 pplumbing.err sexplib0 unix vcs vcs-git-unix)
+ (libraries
+  cmdlang
+  fpath-sexp0
+  pp
+  pplumbing.err
+  sexplib0
+  unix
+  vcs
+  vcs-git-unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -46,7 +46,7 @@ let%expect_test "read_dir" =
     (* [Vcs.read_dir] errors out on non-existing directories. *)
     match Vcs.read_dir vcs ~dir:(Absolute_path.v "/non-existing") with
     | (_ : Fsegment.t list) -> assert false
-    | exception Vcs.E err ->
+    | exception Err.E err ->
       print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "dir" ])
   in
   [%expect
@@ -64,7 +64,7 @@ let%expect_test "read_dir" =
     [%expect {| ((file_exists true)) |}];
     match Vcs.read_dir vcs ~dir:path with
     | (_ : Fsegment.t list) -> assert false
-    | exception Vcs.E err ->
+    | exception Err.E err ->
       print_s
         (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
   in

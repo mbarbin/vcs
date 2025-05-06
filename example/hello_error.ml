@@ -36,7 +36,7 @@ let%expect_test "hello error" =
   let () =
     match Vcs.init vcs ~path:invalid_path with
     | _ -> assert false
-    | exception Vcs.E err -> print_s (redact_sexp [%sexp (err : Vcs.Err.t)])
+    | exception Err.E err -> print_s (redact_sexp [%sexp (err : Err.t)])
   in
   [%expect
     {|
@@ -71,7 +71,7 @@ let%expect_test "hello error" =
   let () =
     match Vcs.Result.init vcs ~path:invalid_path with
     | Ok _ -> assert false
-    | Error err -> print_s (redact_sexp [%sexp (err : Vcs.Err.t)])
+    | Error err -> print_s (redact_sexp [%sexp (err : Err.t)])
   in
   [%expect
     {|

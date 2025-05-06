@@ -160,23 +160,19 @@ let git ?env t ~cwd ~args ~f =
 
        Illustrating what the inserted unvisitable coverage point looks like:
        {[
-         ___bisect_post_visit___ 36 (raise_notrace (Vcs.E err))
+         ___bisect_post_visit___ 36 (raise_notrace (Err.E err))
        ]}
     *)
     match f { Vcs.Git.Output.exit_code; stdout; stderr } with
     | Ok _ as ok -> ok
-    | Error err -> raise_notrace (Vcs.E err) [@coverage off]
+    | Error err -> raise_notrace (Err.E err) [@coverage off]
     | exception exn ->
       let bt = Printexc.get_raw_backtrace () in
       (raise_notrace (Uncaught_user_exn (exn, bt)) [@coverage off])
   with
   | Uncaught_user_exn (exn, bt) -> Printexc.raise_with_backtrace exn bt
   | exn ->
-    let err =
-      match exn with
-      | Vcs.E err -> err
-      | _ -> Err.of_exn exn
-    in
+    let err = Err.of_exn exn in
     Error
       (Err.add_context
          err

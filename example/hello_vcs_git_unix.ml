@@ -88,7 +88,7 @@ let%expect_test "hello commit" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (Err.create [ Err.sexp [%sexp "Hello invalid exit code."] ]))
+        else Error (Err.create [ Pp.text "Hello invalid exit code." ]))
     with
     | Ok _ -> assert false
     | Error err ->

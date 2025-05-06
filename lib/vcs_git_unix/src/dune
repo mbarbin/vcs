@@ -16,6 +16,7 @@
  (libraries
   fpath
   fpath-sexp0
+  pp
   pplumbing.err
   shexp.process
   unix

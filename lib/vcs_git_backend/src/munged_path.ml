@@ -39,14 +39,14 @@ let parse_exn str =
   match
     Vcs.Exn.Private.try_with (fun () ->
       match Astring.String.cuts ~empty:false ~sep:" => " str with
-      | [] -> raise (Vcs.E (Err.create [ Pp.text "Unexpected empty path." ]))
+      | [] -> raise (Err.E (Err.create [ Pp.text "Unexpected empty path." ]))
       | [ str ] ->
         if
           String.exists str ~f:(function
             | '{' | '}' -> true
             | _ -> false)
         then
-          raise (Vcs.E (Err.create [ Pp.text "Unexpected '{' or '}' in simple path." ]))
+          raise (Err.E (Err.create [ Pp.text "Unexpected '{' or '}' in simple path." ]))
         else One_file (Vcs.Path_in_repo.v str)
       | [ left; right ] ->
         (match String.rsplit2 left ~on:'{' with
@@ -55,25 +55,25 @@ let parse_exn str =
              String.exists str ~f:(function
                | '}' -> true
                | _ -> false)
-           then raise (Vcs.E (Err.create [ Pp.text "Matching '{' not found." ]))
+           then raise (Err.E (Err.create [ Pp.text "Matching '{' not found." ]))
            else
              Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }
          | Some (prefix, left_of_arrow) ->
            let right_of_arrow, suffix =
              match String.lsplit2 right ~on:'}' with
              | Some split -> split
-             | None -> raise (Vcs.E (Err.create [ Pp.text "Matching '}' not found." ]))
+             | None -> raise (Err.E (Err.create [ Pp.text "Matching '}' not found." ]))
            in
            Two_files
              { src = Vcs.Path_in_repo.v (prefix ^ left_of_arrow ^ suffix)
              ; dst = Vcs.Path_in_repo.v (prefix ^ right_of_arrow ^ suffix)
              })
-      | _ :: _ :: _ -> raise (Vcs.E (Err.create [ Pp.text "Too many ['=>']." ])))
+      | _ :: _ :: _ -> raise (Err.E (Err.create [ Pp.text "Too many ['=>']." ])))
   with
   | Ok t -> t
   | Error err ->
     raise
-      (Vcs.E
+      (Err.E
          (Err.add_context
             err
             [ Err.sexp

@@ -46,7 +46,7 @@ module Diff_status = struct
 
   let parse_exn str : t =
     if String.is_empty str
-    then raise (Vcs.E (Err.create [ Pp.text "Unexpected empty diff status." ]));
+    then raise (Err.E (Err.create [ Pp.text "Unexpected empty diff status." ]));
     match str.[0] with
     | 'A' -> `A
     | 'D' -> `D
@@ -69,7 +69,7 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
       match String.split line ~on:'\t' with
       | [] -> assert false
       | [ _ ] ->
-        raise (Vcs.E (Err.create [ Pp.text "Unexpected output from git status." ]))
+        raise (Err.E (Err.create [ Pp.text "Unexpected output from git status." ]))
       | status :: path :: rest ->
         (match Diff_status.parse_exn status with
          | `A -> Vcs.Name_status.Change.Added (Vcs.Path_in_repo.v path)
@@ -83,24 +83,23 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
              match List.hd rest with
              | Some hd -> Vcs.Path_in_repo.v hd
              | None ->
-               raise (Vcs.E (Err.create [ Pp.text "Unexpected output from git status." ]))
+               raise (Err.E (Err.create [ Pp.text "Unexpected output from git status." ]))
            in
            (match diff_status with
             | `R -> Renamed { src = Vcs.Path_in_repo.v path; dst = path2; similarity }
             | `C -> Copied { src = Vcs.Path_in_repo.v path; dst = path2; similarity })
          | other ->
            raise
-             (Vcs.E
+             (Err.E
                 (Err.create
-                   [ Err.sexp
-                       [%sexp
-                         "Unexpected status:", (status : string), (other : Diff_status.t)]
+                   [ Pp.text "Unexpected status:"
+                   ; Err.sexp [%sexp (status : string), (other : Diff_status.t)]
                    ]))))
   with
   | Ok t -> t
   | Error err ->
     raise
-      (Vcs.E
+      (Err.E
          (Err.add_context
             err
             [ Err.sexp
