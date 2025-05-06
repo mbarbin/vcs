@@ -1,3 +1,17 @@
+## 0.0.14 (unreleased)
+
+### Added
+
+### Changed
+
+- Make some tweaks to vcs errors and exns sexp formats (#57, @mbarbin).
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.13 (2025-05-02)
 
 ### Changed
