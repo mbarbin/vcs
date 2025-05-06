@@ -27,8 +27,8 @@ let to_string_hum = Err.to_string_hum
 let create_s sexp = Err.create [ Err.sexp sexp ]
 let error_string str = Err.create [ Pp.text str ]
 let of_exn = Err.of_exn
-let add_context t ~step:sexp = Err.add_context t [ Err.sexp sexp ]
-let init error ~step = add_context (Err.create [ Err.sexp error ]) ~step
+let add_context t ~step = Err.add_context t [ Err.sexp step ]
+let init error ~step = Err.add_context (Err.create [ Err.sexp error ]) [ Err.sexp step ]
 
 module Private = struct
   module Non_raising_M = struct

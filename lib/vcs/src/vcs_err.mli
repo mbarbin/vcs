@@ -19,39 +19,54 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(* CR mbarbin: Handle deprecation and ocamlmig annotations. *)
+(** Note that this entire module is scheduled for deprecation. Vcs has migrated
+    to using [Err.t] from the [pplumbing.err] package.
 
-(** The type of errors raised by [Vcs].
+    We have prepared [ocamlmig] annotations in this module to help migrating
+    existing clients, and we plan on adding deprecation annotations in a future
+    release. *)
 
-    Under the hood, it is human-readable information which also carries some
-    context (a sort of a high level stack trace manipulated by the programmers
-    of Vcs).
-
-    It is not meant to be matched on, but rather to be printed on stderr (or
-    perhaps logged). *)
 type t = Err.t
 
-(** {1 Printing} *)
-
-(** [sexp_of_t t] allows printing the information contained by [t]. *)
+(** This is deprecated - use [Err.sexp_of_t] instead. *)
 val sexp_of_t : t -> Sexp.t
+[@@migrate { repl = Err.sexp_of_t; libraries = [ "pplumbing.err" ] }]
 
-(** [to_string_hum t] is a convenience wrapper around
-    [t |> sexp_of_t |> Sexp.to_string_hum]. *)
+(** This is deprecated - use [Err.to_string_hum] instead. *)
 val to_string_hum : t -> string
+[@@migrate { repl = Err.to_string_hum; libraries = [ "pplumbing.err" ] }]
 
-(** {1 Building} *)
-
+(** This is deprecated - use [Err.create] instead. *)
 val error_string : string -> t
+[@@migrate
+  { repl = (fun str -> Err.create [ Pp.text str ])
+  ; libraries = [ "pp"; "pplumbing.err" ]
+  }]
+
+(** This is deprecated - use [Err.create] instead. *)
 val create_s : Sexp.t -> t
+[@@migrate
+  { repl = (fun sexp -> Err.create [ Err.sexp sexp ]); libraries = [ "pplumbing.err" ] }]
+
+(** This is deprecated - use [Err.of_exn] instead. *)
 val of_exn : exn -> t
+[@@migrate { repl = Err.of_exn; libraries = [ "pplumbing.err" ] }]
 
-(** Add a step of context into the stack trace contained by the error. *)
+(** This is deprecated - use [Err.add_context] instead. *)
 val add_context : t -> step:Sexp.t -> t
+[@@migrate
+  { repl = (fun t ~step -> Err.add_context t [ Err.sexp step ])
+  ; libraries = [ "pplumbing.err" ]
+  }]
 
-(** This is useful if you are starting from an [Sexp.t] initially with an
-    initial step. *)
+(** This is deprecated - use [Err.add_context] instead. *)
 val init : Sexp.t -> step:Sexp.t -> t
+[@@migrate
+  { repl =
+      (fun error ~step ->
+        Err.add_context (Err.create [ Err.sexp error ]) [ Err.sexp step ])
+  ; libraries = [ "pplumbing.err" ]
+  }]
 
 module Private : sig
   module Non_raising_M : sig
