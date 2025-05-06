@@ -19,4 +19,13 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-include Vcs_err
+include Vcs.Err
+
+let to_error t =
+  Error.create_s
+    (match Private.view t with
+     | { context = []; error } -> error
+     | { context = _ :: _; error = _ } -> sexp_of_t t)
+;;
+
+let of_error error = create_s (Error.sexp_of_t error)
