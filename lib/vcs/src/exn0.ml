@@ -23,6 +23,6 @@ exception E of Err.t
 
 let () =
   Sexplib0.Sexp_conv.Exn_converter.add [%extension_constructor E] (function
-    | E err -> Sexp.List [ Atom "Vcs.E"; Err.sexp_of_t err ]
+    | E err -> Err.sexp_of_t err
     | _ -> assert false)
 ;;

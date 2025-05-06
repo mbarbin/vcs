@@ -61,7 +61,7 @@ module Private : sig
 
   module View : sig
     type t =
-      { steps : Sexp.t list
+      { context : Sexp.t list
       ; error : Sexp.t
       }
   end

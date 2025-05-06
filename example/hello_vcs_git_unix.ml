@@ -72,14 +72,14 @@ let%expect_test "hello commit" =
   in
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.git ((repo_root /invalid/path) (args ())))
        ((prog <REDACTED>)
         (args ())
         (exit_status Unknown)
         (cwd         /invalid/path/)
         (stdout      "")
-        (stderr      ""))))
+        (stderr      "")))
      (error ("Unix.Unix_error(Unix.ENOENT, \"open\", \"/invalid/path/\")")))
     |}];
   (* Let's also show a case where the command fails due to a user error. *)
@@ -88,7 +88,7 @@ let%expect_test "hello commit" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code"]))
+        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code."]))
     with
     | Ok _ -> assert false
     | Error err ->
@@ -99,15 +99,15 @@ let%expect_test "hello commit" =
   in
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
        ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
         (cwd    <REDACTED>)
         (stdout INVALID-REF)
-        (stderr <REDACTED>))))
-     (error "Hello invalid exit code"))
+        (stderr <REDACTED>)))
+     (error "Hello invalid exit code."))
     |}];
   (* Here we only use [Eio] to clean up the temporary repo, because [rmtree] is
      a convenient function to use in this test. But the point is that the rest

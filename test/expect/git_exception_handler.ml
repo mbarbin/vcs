@@ -74,7 +74,7 @@ end
 let handler (handler_scenario : Handler_scenario.t) =
   match handler_scenario with
   | Ok -> Ok [%sexp ()]
-  | Error -> Error (Vcs.Err.error_string "expected exit code 0")
+  | Error -> Error (Vcs.Err.error_string "Expected exit code 0.")
   | Raise_failure -> failwith "Raise_failure"
   | Raise_invalid_argument -> invalid_arg "Raise_invalid_argument"
   | Raise_custom_exception -> raise Handler_scenario.Custom_exception
@@ -148,14 +148,14 @@ let%expect_test "eio" =
          print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "cwd" ]);
          [%expect
            {|
-           ((steps ((
+           ((context (
               (prog git)
               (args (rev-parse --abbrev-ref HEAD))
               (exit_status (Exited 0))
               (cwd    <REDACTED>)
               (stdout error)
-              (stderr ""))))
-            (error "expected exit code 0"))
+              (stderr "")))
+            (error "Expected exit code 0."))
            |}])
     | Raise_failure ->
       require_does_raise [%here] test;
@@ -169,7 +169,7 @@ let%expect_test "eio" =
         {| (Vcs_expect_tests.Git_exception_handler.Handler_scenario.Custom_exception) |}]
     | Raise_vcs_exception ->
       require_does_raise [%here] test;
-      [%expect {| (Vcs.E Raise_vcs_exception) |}]);
+      [%expect {| Raise_vcs_exception |}]);
   ()
 ;;
 
@@ -209,14 +209,14 @@ let%expect_test "blocking" =
               ~fields:[ "cwd"; "prog" ]);
          [%expect
            {|
-           ((steps ((
+           ((context (
               (prog <REDACTED>)
               (args (rev-parse --abbrev-ref HEAD))
               (exit_status (Exited 0))
               (cwd    <REDACTED>)
               (stdout error)
-              (stderr ""))))
-            (error "expected exit code 0"))
+              (stderr "")))
+            (error "Expected exit code 0."))
            |}])
     | Raise_failure ->
       require_does_raise [%here] test;
@@ -230,6 +230,6 @@ let%expect_test "blocking" =
         {| (Vcs_expect_tests.Git_exception_handler.Handler_scenario.Custom_exception) |}]
     | Raise_vcs_exception ->
       require_does_raise [%here] test;
-      [%expect {| (Vcs.E Raise_vcs_exception) |}]);
+      [%expect {| Raise_vcs_exception |}]);
   ()
 ;;

@@ -36,7 +36,7 @@ Rev-parse.
   rev0
 
   $ ocaml-vcs branch-revision unknown-branch
-  Error: Branch not found (branch_name unknown-branch)
+  Error: Branch not found. (branch_name unknown-branch)
   [123]
 
 Testing a successful file show with git and via vcs.
@@ -50,17 +50,17 @@ Testing a successful file show with git and via vcs.
 Invalid path-in-repo.
 
   $ ocaml-vcs show-file-at-rev /hello -r $rev0
-  Error: Path is not in repo (path /hello)
+  Error: Path is not in repo. (path /hello)
   [123]
 
 File system operations.
 
   $ ocaml-vcs read-dir untracked
   Error:
-  ((steps
-    ((Vcs.read_dir
-      ((dir
-        $TESTCASE_ROOT/untracked)))))
+  ((context
+    (Vcs.read_dir
+     ((dir
+       $TESTCASE_ROOT/untracked))))
    (error
     (Sys_error
      "$TESTCASE_ROOT/untracked: No such file or directory")))
@@ -78,10 +78,10 @@ File system operations.
 
   $ ocaml-vcs read-dir untracked/hello
   Error:
-  ((steps
-    ((Vcs.read_dir
-      ((dir
-        $TESTCASE_ROOT/untracked/hello)))))
+  ((context
+    (Vcs.read_dir
+     ((dir
+       $TESTCASE_ROOT/untracked/hello))))
    (error
     (Sys_error
      "$TESTCASE_ROOT/untracked/hello: Not a directory")))
@@ -93,10 +93,10 @@ File system operations.
   $ chmod -r untracked
   $ ocaml-vcs read-dir untracked
   Error:
-  ((steps
-    ((Vcs.read_dir
-      ((dir
-        $TESTCASE_ROOT/untracked)))))
+  ((context
+    (Vcs.read_dir
+     ((dir
+       $TESTCASE_ROOT/untracked))))
    (error
     (Sys_error
      "$TESTCASE_ROOT/untracked: Permission denied")))
@@ -108,7 +108,7 @@ File system operations.
 Find enclosing repo root.
 
   $ (cd "/" && ocaml-vcs current-revision)
-  Error: Failed to locate enclosing repo root from directory (from /)
+  Error: Failed to locate enclosing repo root from directory. (from /)
   [123]
 
   $ ocaml-vcs find-enclosing-repo-root
@@ -143,7 +143,7 @@ Adding a new file under a directory.
   $ ocaml-vcs ls-files --below dir
   dir/hello
   $ ocaml-vcs ls-files --below /dir
-  Error: Path is not in repo (path /dir)
+  Error: Path is not in repo. (path /dir)
   [123]
 
 Testing an unsuccessful file show with git and via vcs.
@@ -210,7 +210,7 @@ Greatest common ancestors.
   ($REV1)
 
   $ ocaml-vcs gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
-  Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
+  Error: Rev not found. (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
 Descendance.
@@ -225,7 +225,7 @@ Descendance.
   Strict_descendant
 
   $ ocaml-vcs descendance $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
-  Error: Rev not found (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
+  Error: Rev not found. (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
 Vcs allows to run the git command line directly if the backend supports it.

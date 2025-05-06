@@ -32,6 +32,10 @@ let%expect_test "reraise_with_context" =
     | _ -> assert false
     | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]
   in
-  [%expect {| ((steps (Step)) (error Err)) |}];
+  [%expect
+    {|
+    ((context Step)
+     (error   Err))
+    |}];
   ()
 ;;
