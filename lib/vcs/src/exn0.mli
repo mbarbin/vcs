@@ -19,9 +19,9 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Exception raised by [Vcs].
+(** During a transition period we are leaving this exception constructor defined
+    however the runtime exception is the same as [Err.E], which should be
+    preferred in user code.
 
-    This module is used to break what's otherwise a dependency cycle between
-    [Vcs], and [Vcs.Exn]. *)
-
+    The plan is to deprecate this module in a future release. *)
 exception E of Err.t

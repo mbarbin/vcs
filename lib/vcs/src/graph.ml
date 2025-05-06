@@ -232,7 +232,7 @@ let refs t =
 
 let set_ref t ~rev ~ref_kind =
   match Rev_table.find t.revs rev with
-  | None -> raise (Exn0.E (Err.create_s [%sexp "Rev not found.", (rev : Rev.t)]))
+  | None -> Err.raise [ Pp.text "Rev not found."; Err.sexp [%sexp (rev : Rev.t)] ]
   | Some index ->
     (match Ref_kind_table.find t.refs ref_kind with
      | None -> ()
@@ -280,8 +280,8 @@ let add_nodes t ~log =
       match Rev_table.find nodes_table parent with
       | Some node -> node
       | None ->
-        raise
-          (Exn0.E (Err.create_s [%sexp "Parent not found.", (line : Log.Line.t)]))
+        Err.raise
+          [ Pp.text "Parent not found."; Err.sexp [%sexp (line : Log.Line.t)] ]
         [@coverage off]
     in
     match (line : Log.Line.t) with
@@ -312,12 +312,10 @@ let add_nodes t ~log =
       match Rev_table.find t.revs rev with
       | Some node -> node
       | None ->
-        raise
-          (Exn0.E
-             (Err.create_s
-                [%sexp
-                  "Node not found during the building of new nodes (internal error)."
-                , { rev : Rev.t }])) [@coverage off]
+        Err.raise
+          [ Pp.text "Node not found during the building of new nodes (internal error)."
+          ; Err.sexp [%sexp { rev : Rev.t }]
+          ] [@coverage off]
     in
     Queue.to_seq new_nodes
     |> Array.of_seq
@@ -532,10 +530,10 @@ let check_index_exn t ~index =
   let node_count = node_count t in
   if index < 0 || index >= node_count
   then
-    raise
-      (Exn0.E
-         (Err.create_s
-            [%sexp "Node index out of bounds.", { index : int; node_count : int }]))
+    Err.raise
+      [ Pp.text "Node index out of bounds."
+      ; Err.sexp [%sexp { index : int; node_count : int }]
+      ]
 ;;
 
 let get_node_exn t ~index =

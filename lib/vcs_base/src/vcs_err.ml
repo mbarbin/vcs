@@ -21,11 +21,5 @@
 
 include Vcs.Err
 
-let to_error t =
-  Error.create_s
-    (match Private.view t with
-     | { context = []; error } -> error
-     | { context = _ :: _; error = _ } -> sexp_of_t t)
-;;
-
-let of_error error = create_s (Error.sexp_of_t error)
+let to_error t = Error.create_s (Err.sexp_of_t t)
+let of_error error = Err.create [ Err.sexp (Error.sexp_of_t error) ]

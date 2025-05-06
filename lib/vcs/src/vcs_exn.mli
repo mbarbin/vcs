@@ -19,6 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(* CR mbarbin: Handle deprecation and ocamlmig annotations. *)
+
 (** Handling of exceptions in [Vcs].
 
     This module is used to handle exceptions that can occur when using the Vcs API. *)

@@ -51,9 +51,9 @@ val create : 'a -> 'a t
 (** {1 Error handling}
 
     The default API of [Vcs] is one that exposes functions that may raise a
-    single exception, named {!exception:E}, which carries an abstract payload
-    [err] containing printable information. [err] is not meant for pattern
-    matching - we're only targeting a non-specialized error recovery.
+    single exception [Err.E], which carries an abstract payload [err] containing
+    printable information. [err] is not meant for pattern matching - we're only
+    targeting a non-specialized error recovery.
 
     A general design principle that we follow here is that if an error result is
     of interest for pattern matching, we want to incorporate it into the
@@ -68,7 +68,7 @@ val create : 'a -> 'a t
     {{!non_raising_apis} non-raising APIs} if you prefer. *)
 
 (** Payload of the exception raised by [Vcs] functions. *)
-module Err = Err
+module Err = Vcs_err
 
 (** [E] is meant to be the only exception ever raised by functions from the
     [Vcs] interface. [Err.t] doesn't carry the raw backtrace, so you'll need

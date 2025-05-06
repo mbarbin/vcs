@@ -21,7 +21,7 @@
 
 open! Import
 
-type err = Err.t [@@deriving sexp_of]
+type err = Vcs_err.t [@@deriving sexp_of]
 type 'a t = ('a, err) Result.t [@@deriving sexp_of]
 
-include Non_raising.Make (Err.Private.Non_raising_M)
+include Non_raising.Make (Vcs_err.Private.Non_raising_M)

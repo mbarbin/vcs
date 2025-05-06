@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type t = Vcs.Err.t
+type t = Err.t
 
 include module type of Vcs.Err with type t := t
 

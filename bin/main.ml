@@ -19,12 +19,4 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let () =
-  Cmdlang_cmdliner_runner.run
-    Vcs_cli.main
-    ~name:"ocaml-vcs"
-    ~version:"%%VERSION%%"
-    ~exn_handler:(function
-    | Vcs.E e -> Some (Err.create [ Err.pp_of_sexp (Vcs.Err.sexp_of_t e) ])
-    | _ -> None [@coverage off])
-;;
+let () = Cmdlang_cmdliner_runner.run Vcs_cli.main ~name:"ocaml-vcs" ~version:"%%VERSION%%"

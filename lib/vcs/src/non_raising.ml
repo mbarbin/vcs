@@ -29,7 +29,7 @@ module Make (M : M) :
   let try_with f =
     match f () with
     | r -> Ok r
-    | exception Exn0.E err -> Error (M.of_err err)
+    | exception Err.E err -> Error (M.of_err err)
   ;;
 
   let init vcs ~path = try_with (fun () -> Vcs0.init vcs ~path)
@@ -107,7 +107,8 @@ module Make (M : M) :
         (M.of_err
            (Err.add_context
               err
-              ~step:
-                (Vcs0.Private.make_git_err_step ?env ?run_in_subdir ~repo_root ~args ())))
+              [ Err.sexp
+                  (Vcs0.Private.make_git_err_step ?env ?run_in_subdir ~repo_root ~args ())
+              ]))
   ;;
 end

@@ -13,7 +13,7 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries astring fpath fpath-sexp0)
+ (libraries astring fpath fpath-sexp0 pp pplumbing.err)
  (instrumentation
   (backend bisect_ppx))
  (lint

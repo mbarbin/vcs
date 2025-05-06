@@ -19,6 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(* CR mbarbin: Handle deprecation and ocamlmig annotations. *)
+
 (** The type of errors raised by [Vcs].
 
     Under the hood, it is human-readable information which also carries some
@@ -27,7 +29,7 @@
 
     It is not meant to be matched on, but rather to be printed on stderr (or
     perhaps logged). *)
-type t
+type t = Err.t
 
 (** {1 Printing} *)
 
@@ -58,13 +60,4 @@ module Private : sig
     val to_err : t -> t
     val of_err : t -> t
   end
-
-  module View : sig
-    type t =
-      { context : Sexp.t list
-      ; error : Sexp.t
-      }
-  end
-
-  val view : t -> View.t
 end

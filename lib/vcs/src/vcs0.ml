@@ -27,7 +27,7 @@ let create traits = traits
 
 let of_result ~step = function
   | Ok r -> r
-  | Error err -> raise (Exn0.E (Err.add_context err ~step:(Lazy.force step)))
+  | Error err -> raise (Err.E (Err.add_context err [ Err.sexp (Lazy.force step) ]))
 ;;
 
 let load_file (t : < Trait.file_system ; .. > t) ~path =
