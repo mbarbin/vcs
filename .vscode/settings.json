@@ -3,6 +3,8 @@
         "alphanum",
         "astring",
         "chdir",
+        "cmdlang",
+        "cmdliner",
         "ENOENT",
         "fpath",
         "fsegment",
