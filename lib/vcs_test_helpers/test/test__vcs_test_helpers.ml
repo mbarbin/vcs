@@ -75,40 +75,41 @@ let%expect_test "redact_sexp" =
   print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error" ]);
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.init ((path /invalid/path)))
        ((prog git)
         (args (init .))
         (exit_status Unknown)
         (cwd         /invalid/path)
         (stdout      "")
-        (stderr      ""))))
+        (stderr      "")))
      (error <REDACTED>))
     |}];
-  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "steps/cwd" ]);
+  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "context/cwd" ]);
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.init ((path /invalid/path)))
        ((prog git)
         (args (init .))
         (exit_status Unknown)
         (cwd         <REDACTED>)
         (stdout      "")
-        (stderr      ""))))
+        (stderr      "")))
      (error <REDACTED>))
     |}];
-  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "steps/stderr"; "cwd" ]);
+  print_s
+    (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "context/stderr"; "cwd" ]);
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.init ((path /invalid/path)))
        ((prog git)
         (args (init .))
         (exit_status Unknown)
         (cwd         <REDACTED>)
         (stdout      "")
-        (stderr      <REDACTED>))))
+        (stderr      <REDACTED>)))
      (error <REDACTED>))
     |}];
   (* Adding corner cases, such as empty nested fields. *)

@@ -226,12 +226,12 @@ let%expect_test "parse_lines_exn" =
     ("" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line "")))))
+          (context (Vcs_git_backend.Name_status.parse_line_exn ((line ""))))
           (error "Unexpected output from git status")))))
     (file (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line file)))))
+          (context (Vcs_git_backend.Name_status.parse_line_exn ((line file))))
           (error "Unexpected output from git status")))))
     ("A\tfile1" (Ok (Added file1)))
     ("D\tfile2" (Ok (Removed file2)))
@@ -239,44 +239,50 @@ let%expect_test "parse_lines_exn" =
     ("U\tfile4" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line "U\tfile4")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "U\tfile4"))))
           (error ("Unexpected status" U U))))))
     ("Q\tfile5" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line "Q\tfile5")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "Q\tfile5"))))
           (error ("Unexpected status" Q Q))))))
     ("I\tfile6" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line "I\tfile6")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "I\tfile6"))))
           (error ("Unexpected status" I I))))))
     ("?\tfile7" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line "?\tfile7")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "?\tfile7"))))
           (error ("Unexpected status" ? Question_mark))))))
     ("!\tfile8" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line "!\tfile8")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "!\tfile8"))))
           (error ("Unexpected status" ! Bang))))))
     ("X\tfile9" (
       Error (
         Vcs.E (
-          (steps ((Vcs_git_backend.Name_status.parse_line_exn ((line "X\tfile9")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "X\tfile9"))))
           (error ("Unexpected status" X X))))))
     ("R\tfile10" (
       Error (
         Vcs.E (
-          (steps ((
-            Vcs_git_backend.Name_status.parse_line_exn ((line "R\tfile10")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "R\tfile10"))))
           (error (Failure "Int.of_string: \"\""))))))
     ("R35\tfile10" (
       Error (
         Vcs.E (
-          (steps ((
-            Vcs_git_backend.Name_status.parse_line_exn ((line "R35\tfile10")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "R35\tfile10"))))
           (error "Unexpected output from git status")))))
     ("R35\tfile1\tfile2" (
       Ok (
@@ -287,8 +293,8 @@ let%expect_test "parse_lines_exn" =
     ("C\tfile11" (
       Error (
         Vcs.E (
-          (steps ((
-            Vcs_git_backend.Name_status.parse_line_exn ((line "C\tfile11")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "C\tfile11"))))
           (error (Failure "Int.of_string: \"\""))))))
     ("C75\tfile1\tfile2" (
       Ok (
@@ -299,8 +305,8 @@ let%expect_test "parse_lines_exn" =
     ("Z\tfile12" (
       Error (
         Vcs.E (
-          (steps ((
-            Vcs_git_backend.Name_status.parse_line_exn ((line "Z\tfile12")))))
+          (context (
+            Vcs_git_backend.Name_status.parse_line_exn ((line "Z\tfile12"))))
           (error ("Unexpected status" Z Not_supported))))))
     |}];
   ()

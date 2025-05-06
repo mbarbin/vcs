@@ -22,18 +22,22 @@
 open! Import
 
 type t =
-  { steps : Sexp.t list
+  { context : Sexp.t list
   ; error : Sexp.t
   }
-[@@deriving sexp_of]
 
-let sexp_of_t ({ steps; error } as t) = if List.is_empty steps then error else sexp_of_t t
+let sexp_of_t { context; error } =
+  if List.is_empty context
+  then error
+  else Sexp.List [ List (Atom "context" :: context); List [ Atom "error"; error ] ]
+;;
+
 let to_string_hum t = t |> sexp_of_t |> Sexp.to_string_hum
-let create_s sexp = { steps = []; error = sexp }
+let create_s sexp = { context = []; error = sexp }
 let error_string str = create_s (Sexp.Atom str)
 let of_exn exn = create_s (sexp_of_exn exn)
-let add_context t ~step = { steps = step :: t.steps; error = t.error }
-let init error ~step = { steps = [ step ]; error }
+let add_context t ~step = { context = step :: t.context; error = t.error }
+let init error ~step = { context = [ step ]; error }
 
 module Private = struct
   module Non_raising_M = struct
@@ -46,7 +50,7 @@ module Private = struct
 
   module View = struct
     type nonrec t = t =
-      { steps : Sexp.t list
+      { context : Sexp.t list
       ; error : Sexp.t
       }
   end

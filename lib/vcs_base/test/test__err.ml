@@ -26,7 +26,11 @@ let%expect_test "to_error" =
   test (Vcs.Err.create_s [%sexp Hello]);
   [%expect {| Hello |}];
   test (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step]);
-  [%expect {| ((steps (Step)) (error Hello)) |}];
+  [%expect
+    {|
+    ((context Step)
+     (error   Hello))
+    |}];
   ()
 ;;
 

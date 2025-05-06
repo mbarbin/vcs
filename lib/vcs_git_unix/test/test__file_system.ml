@@ -51,7 +51,7 @@ let%expect_test "read_dir" =
   in
   [%expect
     {|
-    ((steps ((Vcs.read_dir ((dir <REDACTED>)))))
+    ((context (Vcs.read_dir ((dir <REDACTED>))))
      (error (Sys_error "/non-existing: No such file or directory")))
     |}];
   let () =
@@ -68,6 +68,6 @@ let%expect_test "read_dir" =
       print_s
         (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
   in
-  [%expect {| ((steps ((Vcs.read_dir ((dir <REDACTED>))))) (error <REDACTED>)) |}];
+  [%expect {| ((context (Vcs.read_dir ((dir <REDACTED>)))) (error <REDACTED>)) |}];
   ()
 ;;

@@ -67,7 +67,7 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.add (
          (repo_root <REDACTED>)
          (path      unknown-file.txt)))
@@ -76,7 +76,7 @@ let%expect_test "small graph" =
         (exit_status (Exited 128))
         (cwd    <REDACTED>)
         (stdout "")
-        (stderr "fatal: pathspec 'unknown-file.txt' did not match any files"))))
+        (stderr "fatal: pathspec 'unknown-file.txt' did not match any files")))
      (error "expected exit code 0"))
     |}];
   let () =
@@ -95,14 +95,14 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.commit ((repo_root <REDACTED>)))
        ((prog git)
         (args (commit -m "Nothing to commit"))
         (exit_status (Exited 1))
         (cwd    <REDACTED>)
         (stdout <REDACTED>)
-        (stderr ""))))
+        (stderr "")))
      (error "expected exit code 0"))
     |}];
   let commit_file ~path ~file_contents =
@@ -180,7 +180,7 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((steps (
+    ((context
        (Vcs.ls_files (
          (repo_root <REDACTED>)
          (below     dir)))
@@ -189,7 +189,7 @@ let%expect_test "small graph" =
         (exit_status Unknown)
         (cwd         <REDACTED>)
         (stdout      "")
-        (stderr      ""))))
+        (stderr      "")))
      (error <REDACTED>))
     |}];
   let foo_file = Vcs.Path_in_repo.v "foo.txt" in

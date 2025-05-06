@@ -23,7 +23,11 @@ let%expect_test "sexp_of_t" =
   print_s [%sexp (Vcs.Err.create_s [%sexp Hello] : Vcs.Err.t)];
   [%expect {| Hello |}];
   print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
-  [%expect {| ((steps (Step)) (error Hello)) |}];
+  [%expect
+    {|
+    ((context Step)
+     (error   Hello))
+    |}];
   ()
 ;;
 
@@ -62,15 +66,23 @@ let%expect_test "add_context" =
   [%expect {| Hello |}];
   let err = Vcs.Err.add_context err ~step:[%sexp Step_1] in
   print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| ((steps (Step_1)) (error Hello)) |}];
+  [%expect
+    {|
+    ((context Step_1)
+     (error   Hello))
+    |}];
   let err = Vcs.Err.add_context err ~step:[%sexp Step_2, { x = 42 }] in
   print_s [%sexp (err : Vcs.Err.t)];
-  [%expect {| ((steps ((Step_2 ((x 42))) Step_1)) (error Hello)) |}];
+  [%expect {| ((context (Step_2 ((x 42))) Step_1) (error Hello)) |}];
   ()
 ;;
 
 let%expect_test "init" =
   print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
-  [%expect {| ((steps (Step)) (error Hello)) |}];
+  [%expect
+    {|
+    ((context Step)
+     (error   Hello))
+    |}];
   ()
 ;;
