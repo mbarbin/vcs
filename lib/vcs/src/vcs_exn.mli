@@ -29,7 +29,9 @@
 (** This is deprecated - use [Err.reraise_with_context] instead. *)
 val reraise_with_context : Err.t -> Printexc.raw_backtrace -> step:Sexp.t -> _
 [@@migrate
-  { repl = (fun err bt ~step -> Err.reraise_with_context err bt [ Err.sexp step ])
+  { repl =
+      (fun err bt ~step ->
+        Err.reraise_with_context err bt [ (Err.sexp step [@commutes]) ])
   ; libraries = [ "pplumbing.err" ]
   }]
 

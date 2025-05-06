@@ -55,7 +55,7 @@ val of_exn : exn -> t
 (** This is deprecated - use [Err.add_context] instead. *)
 val add_context : t -> step:Sexp.t -> t
 [@@migrate
-  { repl = (fun t ~step -> Err.add_context t [ Err.sexp step ])
+  { repl = (fun t ~step -> Err.add_context t [ (Err.sexp step [@commutes]) ])
   ; libraries = [ "pplumbing.err" ]
   }]
 
@@ -64,7 +64,9 @@ val init : Sexp.t -> step:Sexp.t -> t
 [@@migrate
   { repl =
       (fun error ~step ->
-        Err.add_context (Err.create [ Err.sexp error ]) [ Err.sexp step ])
+        Err.add_context
+          (Err.create [ (Err.sexp error [@commutes]) ])
+          [ (Err.sexp step [@commutes]) ])
   ; libraries = [ "pplumbing.err" ]
   }]
 
