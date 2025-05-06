@@ -451,7 +451,7 @@ let%expect_test "set invalid rev" =
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "main" })
   in
   require_does_raise [%here] (fun () -> set_ref_r1 ());
-  [%expect {| (Vcs.E ("Rev not found" 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
+  [%expect {| (Vcs.E ("Rev not found." 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
   Vcs.Graph.add_nodes graph ~log:[ Root { rev = r1 } ];
   set_ref_r1 ();
   print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
@@ -710,7 +710,7 @@ let%expect_test "debug graph" =
   [%expect
     {|
     (Vcs.E (
-      "Node index out of bounds" (
+      "Node index out of bounds." (
         (index      5)
         (node_count 5))))
     |}];
@@ -718,7 +718,7 @@ let%expect_test "debug graph" =
   [%expect
     {|
     (Vcs.E (
-      "Node index out of bounds" (
+      "Node index out of bounds." (
         (index      -1)
         (node_count 5))))
     |}];

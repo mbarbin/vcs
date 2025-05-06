@@ -28,7 +28,7 @@ let%expect_test "parse" =
     {|
     (Vcs.E (
       (context (Vcs_git_backend.Munged_path.parse_exn ((path ""))))
-      (error "Unexpected empty path")))
+      (error "Unexpected empty path.")))
     |}];
   require_does_raise [%here] (fun () -> test "/tmp => /tmp");
   [%expect
@@ -43,35 +43,35 @@ let%expect_test "parse" =
     (Vcs.E (
       (context (
         Vcs_git_backend.Munged_path.parse_exn ((path "tmp => tmp2 => tmp3"))))
-      (error "Too many '=>'")))
+      (error "Too many ['=>'].")))
     |}];
   require_does_raise [%here] (fun () -> test "}");
   [%expect
     {|
     (Vcs.E (
       (context (Vcs_git_backend.Munged_path.parse_exn ((path }))))
-      (error "Unexpected '{' or '}' in simple path")))
+      (error "Unexpected '{' or '}' in simple path.")))
     |}];
   require_does_raise [%here] (fun () -> test "{");
   [%expect
     {|
     (Vcs.E (
       (context (Vcs_git_backend.Munged_path.parse_exn ((path {))))
-      (error "Unexpected '{' or '}' in simple path")))
+      (error "Unexpected '{' or '}' in simple path.")))
     |}];
   require_does_raise [%here] (fun () -> test "a/{dir => b");
   [%expect
     {|
     (Vcs.E (
       (context (Vcs_git_backend.Munged_path.parse_exn ((path "a/{dir => b"))))
-      (error "Matching '}' not found")))
+      (error "Matching '}' not found.")))
     |}];
   require_does_raise [%here] (fun () -> test "a/dir => b}");
   [%expect
     {|
     (Vcs.E (
       (context (Vcs_git_backend.Munged_path.parse_exn ((path "a/dir => b}"))))
-      (error "Matching '{' not found")))
+      (error "Matching '{' not found.")))
     |}];
   test "a/simple/path";
   [%expect {| (One_file a/simple/path) |}];

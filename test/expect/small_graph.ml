@@ -77,7 +77,7 @@ let%expect_test "small graph" =
         (cwd    <REDACTED>)
         (stdout "")
         (stderr "fatal: pathspec 'unknown-file.txt' did not match any files")))
-     (error "expected exit code 0"))
+     (error "Expected exit code 0."))
     |}];
   let () =
     match
@@ -103,7 +103,7 @@ let%expect_test "small graph" =
         (cwd    <REDACTED>)
         (stdout <REDACTED>)
         (stderr "")))
-     (error "expected exit code 0"))
+     (error "Expected exit code 0."))
     |}];
   let commit_file ~path ~file_contents =
     let result =

@@ -88,7 +88,7 @@ let%expect_test "hello commit" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code"]))
+        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code."]))
     with
     | Ok _ -> assert false
     | Error err ->
@@ -107,7 +107,7 @@ let%expect_test "hello commit" =
         (cwd    <REDACTED>)
         (stdout INVALID-REF)
         (stderr <REDACTED>)))
-     (error "Hello invalid exit code"))
+     (error "Hello invalid exit code."))
     |}];
   (* Here we only use [Eio] to clean up the temporary repo, because [rmtree] is
      a convenient function to use in this test. But the point is that the rest

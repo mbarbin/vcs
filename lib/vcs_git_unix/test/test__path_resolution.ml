@@ -85,7 +85,7 @@ let%expect_test "hello path" =
         (cwd    <REDACTED>)
         (stdout INVALID-REF)
         (stderr <REDACTED>)))
-     (error "expected exit code 0"))
+     (error "Expected exit code 0."))
     |}];
   let bin = Absolute_path.extend cwd (Fsegment.v "bin") in
   Unix.mkdir (bin |> Absolute_path.to_string) ~perm:0o755;
@@ -133,7 +133,7 @@ let%expect_test "hello path" =
         (cwd    <REDACTED>)
         (stdout INVALID-REF)
         (stderr <REDACTED>)))
-     (error "expected exit code 0"))
+     (error "Expected exit code 0."))
     |}];
   (* If we extend the environment in a way that changes PATH, we rerun the
      executable resolution. *)
@@ -158,7 +158,7 @@ let%expect_test "hello path" =
         (cwd    <REDACTED>)
         (stdout "Hello Git!")
         (stderr "")))
-     (error "expected exit code 0"))
+     (error "Expected exit code 0."))
     |}];
   (* Under an empty environment, we expect to revert to the previous git binary. *)
   test_with_env
@@ -178,7 +178,7 @@ let%expect_test "hello path" =
         (cwd    <REDACTED>)
         (stdout INVALID-REF)
         (stderr <REDACTED>)))
-     (error "expected exit code 0"))
+     (error "Expected exit code 0."))
     |}];
   (* The initial PATH under which the [vcs] is created is used to pre locate the executable. *)
   let save_path = Stdlib.Sys.getenv_opt "PATH" in
@@ -195,7 +195,7 @@ let%expect_test "hello path" =
         (cwd    <REDACTED>)
         (stdout "Hello Git!")
         (stderr "")))
-     (error "expected exit code 0"))
+     (error "Expected exit code 0."))
     |}];
   (* Let's monitor the behavior when no Git executable is found in the PATH. In
      this case, the [prog] is left as "git" and we rely on the backend process

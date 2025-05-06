@@ -62,7 +62,7 @@ let%expect_test "parse_ref_kind_exn" =
     {|
     (Vcs.E (
       (context (Vcs_git_backend.Refs.parse_ref_kind_exn ((ref_kind blah))))
-      (error "Expected ref to start with 'refs/'")))
+      (error "Expected ref to start with ['refs/'].")))
     |}];
   require_does_raise [%here] (fun () -> test_ref_kind "non-refs/tags/0.0.1");
   [%expect
@@ -70,7 +70,7 @@ let%expect_test "parse_ref_kind_exn" =
     (Vcs.E (
       (context (
         Vcs_git_backend.Refs.parse_ref_kind_exn ((ref_kind non-refs/tags/0.0.1))))
-      (error "Expected ref to start with 'refs/'")))
+      (error "Expected ref to start with ['refs/'].")))
     |}];
   test_ref_kind "refs/blah";
   [%expect {| (Other (name blah)) |}];
@@ -110,7 +110,7 @@ let%expect_test "dereferenced" =
     {|
     (Vcs.E (
       (context (Vcs_git_backend.Refs.Dereferenced.parse_exn ((line ""))))
-      (error "Invalid ref line")))
+      (error "Invalid ref line.")))
     |}];
   test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main";
   [%expect

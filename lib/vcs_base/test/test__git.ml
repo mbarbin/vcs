@@ -29,7 +29,7 @@ let%expect_test "exit0" =
      by the code that interprets the result of the user function supplied to
      [Vcs.Or_error.git]. *)
   test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
-  [%expect {| (Error "expected exit code 0") |}];
+  [%expect {| (Error "Expected exit code 0.") |}];
   ()
 ;;
 
@@ -41,7 +41,7 @@ let%expect_test "exit0_and_stdout" =
   [%expect {| (Ok stdout) |}];
   (* Same remark as in [exit0] regarding the error trace. *)
   test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
-  [%expect {| (Error "expected exit code 0") |}];
+  [%expect {| (Error "Expected exit code 0.") |}];
   ()
 ;;
 
@@ -58,6 +58,6 @@ let%expect_test "exit_code" =
   [%expect {| (Ok other) |}];
   (* Same remark as in [exit0] regarding the error trace. *)
   test { exit_code = 1; stdout = ""; stderr = "" };
-  [%expect {| (Error ("unexpected exit code" ((accepted_codes (0 42))))) |}];
+  [%expect {| (Error ("Unexpected exit code." ((accepted_codes (0 42))))) |}];
   ()
 ;;

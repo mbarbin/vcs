@@ -39,13 +39,13 @@ let parse_exn str =
   match
     Vcs.Exn.Private.try_with (fun () ->
       match Astring.String.cuts ~empty:false ~sep:" => " str with
-      | [] -> raise (Vcs.E (Vcs.Err.error_string "Unexpected empty path"))
+      | [] -> raise (Vcs.E (Vcs.Err.error_string "Unexpected empty path."))
       | [ str ] ->
         if
           String.exists str ~f:(function
             | '{' | '}' -> true
             | _ -> false)
-        then raise (Vcs.E (Vcs.Err.error_string "Unexpected '{' or '}' in simple path"))
+        then raise (Vcs.E (Vcs.Err.error_string "Unexpected '{' or '}' in simple path."))
         else One_file (Vcs.Path_in_repo.v str)
       | [ left; right ] ->
         (match String.rsplit2 left ~on:'{' with
@@ -54,20 +54,20 @@ let parse_exn str =
              String.exists str ~f:(function
                | '}' -> true
                | _ -> false)
-           then raise (Vcs.E (Vcs.Err.error_string "Matching '{' not found"))
+           then raise (Vcs.E (Vcs.Err.error_string "Matching '{' not found."))
            else
              Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }
          | Some (prefix, left_of_arrow) ->
            let right_of_arrow, suffix =
              match String.lsplit2 right ~on:'}' with
              | Some split -> split
-             | None -> raise (Vcs.E (Vcs.Err.error_string "Matching '}' not found"))
+             | None -> raise (Vcs.E (Vcs.Err.error_string "Matching '}' not found."))
            in
            Two_files
              { src = Vcs.Path_in_repo.v (prefix ^ left_of_arrow ^ suffix)
              ; dst = Vcs.Path_in_repo.v (prefix ^ right_of_arrow ^ suffix)
              })
-      | _ :: _ :: _ -> raise (Vcs.E (Vcs.Err.error_string "Too many '=>'")))
+      | _ :: _ :: _ -> raise (Vcs.E (Vcs.Err.error_string "Too many ['=>'].")))
   with
   | Ok t -> t
   | Error err ->

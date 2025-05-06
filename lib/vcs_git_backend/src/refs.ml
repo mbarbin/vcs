@@ -28,7 +28,7 @@ let parse_ref_kind_exn str : Vcs.Ref_kind.t =
         match String.chop_prefix str ~prefix:"refs/" with
         | Some str -> str
         | None ->
-          raise (Vcs.E (Vcs.Err.error_string "Expected ref to start with 'refs/'"))
+          raise (Vcs.E (Vcs.Err.error_string "Expected ref to start with ['refs/']."))
       in
       match String.lsplit2 str ~on:'/' with
       | None -> Vcs.Ref_kind.Other { name = str }
@@ -80,7 +80,7 @@ module Dereferenced = struct
     match
       Vcs.Exn.Private.try_with (fun () ->
         match String.lsplit2 str ~on:' ' with
-        | None -> raise (Vcs.E (Vcs.Err.error_string "Invalid ref line"))
+        | None -> raise (Vcs.E (Vcs.Err.error_string "Invalid ref line."))
         | Some (rev, ref_) ->
           (match String.chop_suffix ref_ ~suffix:"^{}" with
            | Some ref_ ->

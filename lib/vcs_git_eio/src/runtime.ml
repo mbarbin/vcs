@@ -156,7 +156,7 @@ let git ?env t ~cwd ~args ~f =
       raise_notrace
         (Vcs.E
            (Vcs.Err.create_s
-              [%sexp "process exited abnormally", { signal : int }] [@coverage off]))
+              [%sexp "Process exited abnormally.", { signal : int }] [@coverage off]))
       [@coverage off]
     | `Exited exit_code ->
       (* A note regarding the [raise_notrace] below. These cases are indeed
