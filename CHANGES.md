@@ -2,6 +2,8 @@
 
 ### Added
 
+- Add dependency to `pp` and `pplumbing.err` (@mbarbin).
+
 ### Changed
 
 - Make some tweaks to vcs errors and exns sexp formats (#57, @mbarbin).
