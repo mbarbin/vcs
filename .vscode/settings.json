@@ -21,6 +21,7 @@
         "pplumbing",
         "putenv",
         "raise_notrace",
+        "reraise",
         "rmtree",
         "rresult",
         "rsplit",
