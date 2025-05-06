@@ -20,9 +20,12 @@
 (*******************************************************************************)
 
 let%expect_test "sexp_of_t" =
-  print_s [%sexp (Vcs.Err.create_s [%sexp Hello] : Vcs.Err.t)];
+  print_s [%sexp (Err.create [ Err.sexp [%sexp Hello] ] : Vcs.Err.t)];
   [%expect {| Hello |}];
-  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
+  print_s
+    [%sexp
+      (Err.add_context (Err.create [ Err.sexp [%sexp Hello] ]) [ Err.sexp [%sexp Step] ]
+       : Vcs.Err.t)];
   [%expect
     {|
     ((context Step)
@@ -32,14 +35,14 @@ let%expect_test "sexp_of_t" =
 ;;
 
 let%expect_test "to_string_hum" =
-  print_endline (Vcs.Err.to_string_hum (Vcs.Err.create_s [%sexp Hello]));
+  print_endline (Err.to_string_hum (Err.create [ Err.sexp [%sexp Hello] ]));
   [%expect {| Hello |}];
   ()
 ;;
 
 let%expect_test "error_string" =
-  let err = Vcs.Err.error_string "error message" in
-  print_endline (Vcs.Err.to_string_hum err);
+  let err = Err.create [ Pp.text "error message" ] in
+  print_endline (Err.to_string_hum err);
   [%expect {| "error message" |}];
   print_s [%sexp (err : Vcs.Err.t)];
   [%expect {| "error message" |}];
@@ -47,13 +50,13 @@ let%expect_test "error_string" =
 ;;
 
 let%expect_test "of_exn" =
-  let err = Vcs.Err.of_exn (Failure "exn message") in
-  print_endline (Vcs.Err.to_string_hum err);
+  let err = Err.of_exn (Failure "exn message") in
+  print_endline (Err.to_string_hum err);
   [%expect {| (Failure "exn message") |}];
   print_s [%sexp (err : Vcs.Err.t)];
   [%expect {| (Failure "exn message") |}];
-  let err = Vcs.Err.of_exn (Invalid_argument "exn message") in
-  print_endline (Vcs.Err.to_string_hum err);
+  let err = Err.of_exn (Invalid_argument "exn message") in
+  print_endline (Err.to_string_hum err);
   [%expect {| (Invalid_argument "exn message") |}];
   print_s [%sexp (err : Vcs.Err.t)];
   [%expect {| (Invalid_argument "exn message") |}];
@@ -61,24 +64,27 @@ let%expect_test "of_exn" =
 ;;
 
 let%expect_test "add_context" =
-  let err = Vcs.Err.create_s [%sexp Hello] in
+  let err = Err.create [ Err.sexp [%sexp Hello] ] in
   print_s [%sexp (err : Vcs.Err.t)];
   [%expect {| Hello |}];
-  let err = Vcs.Err.add_context err ~step:[%sexp Step_1] in
+  let err = Err.add_context err [ Err.sexp [%sexp Step_1] ] in
   print_s [%sexp (err : Vcs.Err.t)];
   [%expect
     {|
     ((context Step_1)
      (error   Hello))
     |}];
-  let err = Vcs.Err.add_context err ~step:[%sexp Step_2, { x = 42 }] in
+  let err = Err.add_context err [ Err.sexp [%sexp Step_2, { x = 42 }] ] in
   print_s [%sexp (err : Vcs.Err.t)];
   [%expect {| ((context (Step_2 ((x 42))) Step_1) (error Hello)) |}];
   ()
 ;;
 
 let%expect_test "init" =
-  print_s [%sexp (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step] : Vcs.Err.t)];
+  print_s
+    [%sexp
+      (Err.add_context (Err.create [ Err.sexp [%sexp Hello] ]) [ Err.sexp [%sexp Step] ]
+       : Vcs.Err.t)];
   [%expect
     {|
     ((context Step)

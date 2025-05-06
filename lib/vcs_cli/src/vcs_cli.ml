@@ -41,10 +41,12 @@ let find_enclosing_repo_root vcs ~from =
   | None ->
     raise
       (Vcs.E
-         (Vcs.Err.create_s
-            [%sexp
-              "Failed to locate enclosing repo root from directory."
-            , { from : Absolute_path.t }]))
+         (Err.create
+            [ Err.sexp
+                [%sexp
+                  "Failed to locate enclosing repo root from directory."
+                , { from : Absolute_path.t }]
+            ]))
 ;;
 
 let initialize () =
@@ -62,7 +64,9 @@ let relativize ~repo_root ~cwd ~path =
   | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
   | None ->
     raise
-      (Vcs.E (Vcs.Err.create_s [%sexp "Path is not in repo.", { path : Absolute_path.t }]))
+      (Vcs.E
+         (Err.create
+            [ Err.sexp [%sexp "Path is not in repo.", { path : Absolute_path.t }] ]))
 ;;
 
 open Command.Std
@@ -427,8 +431,10 @@ let branch_revision_cmd =
        | None ->
          raise
            (Vcs.E
-              (Vcs.Err.create_s
-                 [%sexp "Branch not found.", { branch_name : Vcs.Branch_name.t }]))
+              (Err.create
+                 [ Err.sexp
+                     [%sexp "Branch not found.", { branch_name : Vcs.Branch_name.t }]
+                 ]))
      in
      print_sexp [%sexp (rev : Vcs.Rev.t)];
      ())
@@ -448,7 +454,8 @@ let descendance_cmd =
        match Vcs.Graph.find_rev graph ~rev with
        | Some node -> node
        | None ->
-         raise (Vcs.E (Vcs.Err.create_s [%sexp "Rev not found.", { rev : Vcs.Rev.t }]))
+         raise
+           (Vcs.E (Err.create [ Err.sexp [%sexp "Rev not found.", { rev : Vcs.Rev.t }] ]))
      in
      let node1 = find_node ~rev:rev1 in
      let node2 = find_node ~rev:rev2 in
@@ -473,7 +480,9 @@ let greatest_common_ancestors_cmd =
          match Vcs.Graph.find_rev graph ~rev with
          | Some node -> node
          | None ->
-           raise (Vcs.E (Vcs.Err.create_s [%sexp "Rev not found.", { rev : Vcs.Rev.t }])))
+           raise
+             (Vcs.E
+                (Err.create [ Err.sexp [%sexp "Rev not found.", { rev : Vcs.Rev.t }] ])))
      in
      let gca =
        Vcs.Graph.greatest_common_ancestors graph ~nodes

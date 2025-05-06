@@ -155,8 +155,8 @@ let git ?env t ~cwd ~args ~f =
     | `Signaled signal ->
       raise_notrace
         (Vcs.E
-           (Vcs.Err.create_s
-              [%sexp "Process exited abnormally.", { signal : int }] [@coverage off]))
+           (Err.create
+              [ Err.sexp [%sexp "Process exited abnormally.", { signal : int }] ]))
       [@coverage off]
     | `Exited exit_code ->
       (* A note regarding the [raise_notrace] below. These cases are indeed
@@ -181,18 +181,19 @@ let git ?env t ~cwd ~args ~f =
     let err =
       match exn with
       | Vcs.E err -> err
-      | _ -> Vcs.Err.of_exn exn
+      | _ -> Err.of_exn exn
     in
     Error
-      (Vcs.Err.add_context
+      (Err.add_context
          err
-         ~step:
-           [%sexp
-             { prog : string
-             ; args : string list
-             ; exit_status = (!exit_status_r : [ Exit_status.t | `Unknown ])
-             ; cwd = (snd cwd : string)
-             ; stdout = (Lines.create !stdout_r : Lines.t)
-             ; stderr = (Lines.create !stderr_r : Lines.t)
-             }])
+         [ Err.sexp
+             [%sexp
+               { prog : string
+               ; args : string list
+               ; exit_status = (!exit_status_r : [ Exit_status.t | `Unknown ])
+               ; cwd = (snd cwd : string)
+               ; stdout = (Lines.create !stdout_r : Lines.t)
+               ; stderr = (Lines.create !stderr_r : Lines.t)
+               }]
+         ])
 ;;

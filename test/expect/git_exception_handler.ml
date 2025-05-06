@@ -74,11 +74,12 @@ end
 let handler (handler_scenario : Handler_scenario.t) =
   match handler_scenario with
   | Ok -> Ok [%sexp ()]
-  | Error -> Error (Vcs.Err.error_string "Expected exit code 0.")
+  | Error -> Error (Err.create [ Pp.text "Expected exit code 0." ])
   | Raise_failure -> failwith "Raise_failure"
   | Raise_invalid_argument -> invalid_arg "Raise_invalid_argument"
   | Raise_custom_exception -> raise Handler_scenario.Custom_exception
-  | Raise_vcs_exception -> raise (Vcs.E (Vcs.Err.create_s [%sexp "Raise_vcs_exception"]))
+  | Raise_vcs_exception ->
+    raise (Vcs.E (Err.create [ Err.sexp [%sexp "Raise_vcs_exception"] ]))
 ;;
 
 let test_current_branch
@@ -145,7 +146,7 @@ let%expect_test "eio" =
       (match test () with
        | Ok (_ : Sexp.t) -> assert false
        | Error err ->
-         print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "cwd" ]);
+         print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd" ]);
          [%expect
            {|
            ((context (
@@ -204,9 +205,7 @@ let%expect_test "blocking" =
        | Ok (_ : Sexp.t) -> assert false
        | Error err ->
          print_s
-           (Vcs_test_helpers.redact_sexp
-              (Vcs.Err.sexp_of_t err)
-              ~fields:[ "cwd"; "prog" ]);
+           (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd"; "prog" ]);
          [%expect
            {|
            ((context (

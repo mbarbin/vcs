@@ -68,7 +68,7 @@ let%expect_test "hello commit" =
     with
     | Ok _ -> assert false
     | Error err ->
-      print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "prog" ])
+      print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "prog" ])
   in
   [%expect
     {|
@@ -88,13 +88,13 @@ let%expect_test "hello commit" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code."]))
+        else Error (Err.create [ Err.sexp [%sexp "Hello invalid exit code."] ]))
     with
     | Ok _ -> assert false
     | Error err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           (Vcs.Err.sexp_of_t err)
+           (Err.sexp_of_t err)
            ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in
   [%expect

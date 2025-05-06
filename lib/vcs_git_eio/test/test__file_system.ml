@@ -53,7 +53,7 @@ let%expect_test "read_dir" =
     | (_ : Fsegment.t list) -> assert false
     | exception Vcs.E err ->
       print_s
-        (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
+        (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
   in
   [%expect {| ((context (Vcs.read_dir ((dir <REDACTED>)))) (error <REDACTED>)) |}];
   let () =
@@ -68,7 +68,7 @@ let%expect_test "read_dir" =
     | (_ : Fsegment.t list) -> assert false
     | exception Vcs.E err ->
       print_s
-        (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
+        (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
   in
   [%expect {| ((context (Vcs.read_dir ((dir <REDACTED>)))) (error <REDACTED>)) |}];
   ()

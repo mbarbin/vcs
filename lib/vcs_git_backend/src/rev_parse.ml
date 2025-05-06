@@ -34,7 +34,7 @@ module Make (Runtime : Runtime.S) = struct
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         match Vcs.Branch_name.of_string (String.strip stdout) with
         | Ok _ as ok -> ok
-        | Error (`Msg m) -> Error (Vcs.Err.error_string m) [@coverage off])
+        | Error (`Msg m) -> Error (Err.create [ Pp.text m ]) [@coverage off])
   ;;
 
   let current_revision t ~repo_root =
@@ -47,6 +47,6 @@ module Make (Runtime : Runtime.S) = struct
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         match Vcs.Rev.of_string (String.strip stdout) with
         | Ok _ as ok -> ok
-        | Error (`Msg m) -> Error (Vcs.Err.error_string m) [@coverage off])
+        | Error (`Msg m) -> Error (Err.create [ Pp.text m ]) [@coverage off])
   ;;
 end

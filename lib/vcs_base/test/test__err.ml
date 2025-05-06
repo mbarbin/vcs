@@ -23,9 +23,9 @@ module Vcs = Vcs_base.Vcs
 
 let%expect_test "to_error" =
   let test err = print_s [%sexp (Vcs.Err.to_error err : Error.t)] in
-  test (Vcs.Err.create_s [%sexp Hello]);
+  test (Err.create [ Err.sexp [%sexp Hello] ]);
   [%expect {| Hello |}];
-  test (Vcs.Err.init [%sexp Hello] ~step:[%sexp Step]);
+  test (Err.add_context (Err.create [ Err.sexp [%sexp Hello] ]) [ Err.sexp [%sexp Step] ]);
   [%expect
     {|
     ((context Step)

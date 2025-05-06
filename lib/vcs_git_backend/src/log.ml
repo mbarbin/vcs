@@ -35,16 +35,18 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
           ; parent2 = Vcs.Rev.v parent2
           }
       | _ :: _ :: _ :: _ ->
-        raise (Vcs.E (Vcs.Err.error_string "Too many words (expected 1, 2, or 3).")))
+        raise (Vcs.E (Err.create [ Pp.text "Too many words (expected 1, 2, or 3)." ])))
   with
   | Ok t -> t
   | Error err ->
     raise
       (Vcs.E
-         (Vcs.Err.add_context
+         (Err.add_context
             err
-            ~step:
-              [%sexp "Vcs_git_backend.Log.parse_log_line_exn", { line = (str : string) }]))
+            [ Err.sexp
+                [%sexp
+                  "Vcs_git_backend.Log.parse_log_line_exn", { line = (str : string) }]
+            ]))
 ;;
 
 module Make (Runtime : Runtime.S) = struct

@@ -49,7 +49,7 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
       match String.split line ~on:'\t' with
       | [] -> assert false
       | [ _ ] | [ _; _ ] | _ :: _ :: _ :: _ :: _ ->
-        raise (Vcs.E (Vcs.Err.error_string "Unexpected output from git diff."))
+        raise (Vcs.E (Err.create [ Pp.text "Unexpected output from git diff." ]))
       | [ insertions; deletions; munged_path ] ->
         { Vcs.Num_status.Change.key = Munged_path.parse_exn munged_path
         ; num_stat =
@@ -60,19 +60,23 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
              | insertions, deletions ->
                raise
                  (Vcs.E
-                    (Vcs.Err.create_s
-                       [%sexp
-                         "Unexpected output from git diff."
-                       , { insertions : Status_code.t; deletions : Status_code.t }])))
+                    (Err.create
+                       [ Err.sexp
+                           [%sexp
+                             "Unexpected output from git diff."
+                           , { insertions : Status_code.t; deletions : Status_code.t }]
+                       ])))
         })
   with
   | Ok t -> t
   | Error err ->
     raise
       (Vcs.E
-         (Vcs.Err.add_context
+         (Err.add_context
             err
-            ~step:[%sexp "Vcs_git_backend.Num_status.parse_line_exn", { line : string }]))
+            [ Err.sexp
+                [%sexp "Vcs_git_backend.Num_status.parse_line_exn", { line : string }]
+            ]))
 ;;
 
 let parse_lines_exn ~lines = List.map lines ~f:(fun line -> parse_line_exn ~line)

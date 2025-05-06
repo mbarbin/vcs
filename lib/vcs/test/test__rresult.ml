@@ -23,13 +23,15 @@ let%expect_test "sexp_of_t" =
   let test r = print_s [%sexp (r : int Vcs.Rresult.t)] in
   test (Result.return 0);
   [%expect {| (Ok 0) |}];
-  test (Error (`Vcs (Vcs.Err.error_string "Hello Rresult error")));
+  test (Error (`Vcs (Err.create [ Pp.text "Hello Rresult error" ])));
   [%expect {| (Error (Vcs "Hello Rresult error")) |}];
   ()
 ;;
 
 let%expect_test "pp_error" =
-  Vcs.Rresult.pp_error Stdlib.Format.std_formatter (`Vcs (Vcs.Err.create_s [%sexp Hello]));
+  Vcs.Rresult.pp_error
+    Stdlib.Format.std_formatter
+    (`Vcs (Err.create [ Err.sexp [%sexp Hello] ]));
   [%expect {| Hello |}];
   ()
 ;;
@@ -40,7 +42,7 @@ let%expect_test "error_to_msg" =
   in
   test (Ok ());
   [%expect {| (Ok ()) |}];
-  test (Error (`Vcs (Vcs.Err.create_s [%sexp Hello])));
+  test (Error (`Vcs (Err.create [ Err.sexp [%sexp Hello] ])));
   [%expect {| (Error (Msg Hello)) |}];
   ()
 ;;
@@ -68,7 +70,7 @@ let%expect_test "open_error" =
     in
     let ok = (Ok () : unit Vcs.Rresult.t) in
     let%bind.Result () = Vcs.Rresult.open_error ok in
-    let error = Error (`Vcs (Vcs.Err.create_s [%sexp Vcs_error])) in
+    let error = Error (`Vcs (Err.create [ Err.sexp [%sexp Vcs_error] ])) in
     let%bind.Result () = Vcs.Rresult.open_error error in
     (Result.return () [@coverage off])
   in

@@ -151,7 +151,7 @@ let%expect_test "hello cli" =
       Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
         if output.exit_code = 0
         then assert false [@coverage off]
-        else Error (Vcs.Err.create_s [%sexp "Hello invalid exit code."]))
+        else Error (Err.create [ Err.sexp [%sexp "Hello invalid exit code."] ]))
     with
     | Ok _ -> assert false
     | Error err ->
@@ -181,7 +181,7 @@ let%expect_test "hello cli" =
         ~f:(fun output ->
           if output.exit_code = 0
           then assert false [@coverage off]
-          else Error (`Vcs (Vcs.Err.create_s [%sexp "Hello invalid exit code."])))
+          else Error (`Vcs (Err.create [ Err.sexp [%sexp "Hello invalid exit code."] ])))
     with
     | Ok _ -> assert false
     | Error (`Vcs err) ->
@@ -353,7 +353,7 @@ let%expect_test "hello cli" =
     match abbrev_ref ?repo_root ref_ with
     | _ -> assert false [@coverage off]
     | exception Vcs.E err ->
-      print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:redact_fields)
+      print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:redact_fields)
   in
   abbrev_ref_does_raise
     ~repo_root:(Vcs.Repo_root.v "/bogus")
