@@ -59,8 +59,8 @@ File system operations.
   Error:
   ((context
     (Vcs.read_dir
-     ((dir
-       $TESTCASE_ROOT/untracked))))
+     (dir
+      $TESTCASE_ROOT/untracked)))
    (error
     (Sys_error
      "$TESTCASE_ROOT/untracked: No such file or directory")))
@@ -80,8 +80,8 @@ File system operations.
   Error:
   ((context
     (Vcs.read_dir
-     ((dir
-       $TESTCASE_ROOT/untracked/hello))))
+     (dir
+      $TESTCASE_ROOT/untracked/hello)))
    (error
     (Sys_error
      "$TESTCASE_ROOT/untracked/hello: Not a directory")))
@@ -95,8 +95,8 @@ File system operations.
   Error:
   ((context
     (Vcs.read_dir
-     ((dir
-       $TESTCASE_ROOT/untracked))))
+     (dir
+      $TESTCASE_ROOT/untracked)))
    (error
     (Sys_error
      "$TESTCASE_ROOT/untracked: Permission denied")))
