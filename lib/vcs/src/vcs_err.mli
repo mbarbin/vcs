@@ -65,7 +65,7 @@ val init : Sexp.t -> step:Sexp.t -> t
   { repl =
       (fun error ~step ->
         Err.add_context
-          (Err.create [ (Err.sexp error [@commutes]) ])
+          (Err.create [ (Err.sexp error [@commutes]) ] [@commutes])
           [ (Err.sexp step [@commutes]) ])
   ; libraries = [ "pplumbing.err" ]
   }]
