@@ -2,7 +2,7 @@
 
 ### Added
 
-- Add dependency to `pp` and `pplumbing.err` (@mbarbin).
+- Add dependency to `pp` and `pplumbing.err` (#58, @mbarbin).
 
 ### Changed
 
