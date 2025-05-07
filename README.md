@@ -31,7 +31,7 @@ Our goal is to create a versatile and highly compatible library that can cater t
 
 ## Known issues
 
-- The camel depicted in the project logo has only one hump, whereas OCaml camels traditionally have two. We dare to hope that, as the project matures, our camel will grow its second hump and fully embrace its OCaml heritage.
+- The camel depicted in the project logo has only one hump, whereas OCamls traditionally have two. We dare to hope that, as the project matures, our mascot will grow its second hump and fully embrace its OCaml heritage.
 
 ## Unknown issues
 
