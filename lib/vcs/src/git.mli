@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Manipulating the output of processes run by vcs and providers - typically
+(** Manipulating the output of processes run by vcs and backends - typically
     the ["git"] command. *)
 
 module Output : sig

@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Manipulating the output of process run by vcs and providers.
+(** Manipulating the output of process run by vcs and backends.
 
     This module is used to break a dependency cycle. It is exported as
     [Vcs.Git.Output]. *)

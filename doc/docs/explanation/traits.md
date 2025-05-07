@@ -12,7 +12,7 @@ However, after an initial experiment, we ended up switching from using Provider 
 
 ## Granularity of the Interface via Trait Granularity
 
-The `Trait` design of `vcs` allows us to define specific and isolated sub-functionalities within the library. This granularity enables different providers to choose which `Trait` they wish to implement, offering a level of flexibility not possible with a monolithic functor.
+The `Trait` design of `vcs` allows us to define specific and isolated sub-functionalities within the library. This granularity enables different backends to choose which `Trait` they wish to implement, offering a level of flexibility not possible with a monolithic functor.
 
 With `Traits`, you can select a backend with the specific set of traits you need, without changing any other code. In user code, you can specify the exact list of traits you require, while keeping the type open so your code is compatible with any backend providing *at least* the traits you need.
 

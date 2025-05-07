@@ -19,8 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** [Vcs_git_backend] is a helper library to build git providers for the [Vcs]
-    library.
+(** [Vcs_git_backend] is a helper library to build git backends for the [Vcs]
+    library based on the [Git] cli.
 
     Given the ability to run a [git] process, [Vcs_git_backend] knows what
     command to run, how to parse its output and how to interpret its exit code
