@@ -73,7 +73,11 @@ module Err = Vcs_err
 (** [E] is meant to be the only exception ever raised by functions from the
     [Vcs] interface. [Err.t] doesn't carry the raw backtrace, so you'll need
     to manipulate the backtrace yourself if you care about it (like you would
-    with any other exceptions). *)
+    with any other exceptions).
+
+    The [Vcs.E] exception is equal to [Err.E], which we are in the process of
+    migrating to. [Vcs.E] will be deprecated in a future release, please use
+    [Err.E] instead. *)
 exception E of Err.t
 
 module Exn = Vcs_exn
