@@ -29,6 +29,14 @@ Explore the [example](example/) directory to get a firsthand look at how Vcs wor
 
 Our goal is to create a versatile and highly compatible library that can cater to a wide range of use cases, while also fostering community engagement. We also hope to gain practical experience with the use of various technics to build parametric libraries.
 
+## Known issues
+
+- The camel depicted in the project logo has only one hump, whereas OCaml camels traditionally have two. We dare to hope that, as the project matures, our camel will grow its second hump and fully embrace its OCaml heritage.
+
+## Unknown issues
+
+- This is where you come in! If you discover any unknown issues, please open them on GitHub to let us know. Your contributions will help us improve this project!
+
 ## Acknowledgements
 
 We extend our gratitude to the following individuals and teams, whose contributions have been great sources of inspiration for the `Vcs` project:
@@ -52,7 +60,7 @@ For example, if you use a local opam switch, this would look like this:
 ```sh
 git clone https://github.com/mbarbin/vcs.git
 cd vcs
-opam switch create . 5.2.0 --no-install
+opam switch create . 5.3.0 --no-install
 eval $(opam env)
 opam repo add mbarbin https://github.com/mbarbin/opam-repository.git
 opam install . --deps-only --with-doc --with-test --with-dev-setup
