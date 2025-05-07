@@ -65,12 +65,12 @@ stateDiagram-v2
   vcs : vcs *
   user : user-lib *
   executable : executable (eio)
-  ocaml_git : ocaml_git_eio
-  backend : ocaml-git (mirage)
+  ocaml_git_eio : ocaml_git_eio
+  backend : vcs-git-mirage
   runtime : eio
   vcs --> user
   user --> executable
-  ocaml_git --> backend
+  ocaml_git_eio --> backend
   runtime --> backend
   backend --> executable
 ```
