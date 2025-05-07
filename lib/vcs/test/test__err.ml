@@ -43,7 +43,7 @@ let%expect_test "sexp_of_t" =
 let%expect_test "to_string_hum" =
   print_endline (Err.to_string_hum (Err.create [ Err.sexp [%sexp Hello] ]));
   [%expect {| Hello |}];
-  print_endline (Vcs.Err.to_string_hum (Err.create [ Pp.verbatim "Hello" ]));
+  print_endline (Err.to_string_hum (Err.create [ Pp.verbatim "Hello" ]));
   [%expect {| Hello |}];
   ()
 ;;
