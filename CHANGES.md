@@ -1,4 +1,4 @@
-## 0.0.14 (unreleased)
+## 0.0.14 (2025-05-07)
 
 ### Added
 
@@ -6,13 +6,12 @@
 
 ### Changed
 
+- Unify `Vcs.Err` with `pplumbing.Err` (#60, @mbarbin).
 - Make some tweaks to vcs errors and exns sexp formats (#57, @mbarbin).
 
 ### Deprecated
 
-### Fixed
-
-### Removed
+- Prepare for deprecation `Vcs.Err` and `Vcs.Exn` (#60, @mbarbin).
 
 ## 0.0.13 (2025-05-02)
 
