@@ -85,7 +85,7 @@ let%expect_test "read_dir" =
   let () =
     match Vcs.read_dir vcs ~dir:(Absolute_path.v "/invalid") with
     | (_ : Fsegment.t list) -> assert false
-    | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]
+    | exception Err.E err -> print_s [%sexp (err : Err.t)]
   in
   [%expect
     {|

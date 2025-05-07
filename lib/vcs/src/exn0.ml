@@ -19,10 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-exception E of Err.t
-
-let () =
-  Sexplib0.Sexp_conv.Exn_converter.add [%extension_constructor E] (function
-    | E err -> Err.sexp_of_t err
-    | _ -> assert false)
-;;
+include (
+  Err :
+  sig
+    exception E of Err.t
+  end)

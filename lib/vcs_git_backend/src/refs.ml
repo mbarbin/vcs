@@ -28,7 +28,7 @@ let parse_ref_kind_exn str : Vcs.Ref_kind.t =
         match String.chop_prefix str ~prefix:"refs/" with
         | Some str -> str
         | None ->
-          raise (Vcs.E (Vcs.Err.error_string "Expected ref to start with ['refs/']."))
+          raise (Err.E (Err.create [ Pp.text "Expected ref to start with ['refs/']." ]))
       in
       match String.lsplit2 str ~on:'/' with
       | None -> Vcs.Ref_kind.Other { name = str }
@@ -43,12 +43,13 @@ let parse_ref_kind_exn str : Vcs.Ref_kind.t =
   | Ok t -> t
   | Error err ->
     raise
-      (Vcs.E
-         (Vcs.Err.add_context
+      (Err.E
+         (Err.add_context
             err
-            ~step:
-              [%sexp
-                "Vcs_git_backend.Refs.parse_ref_kind_exn", { ref_kind = (str : string) }]))
+            [ Err.sexp
+                [%sexp
+                  "Vcs_git_backend.Refs.parse_ref_kind_exn", { ref_kind = (str : string) }]
+            ]))
 ;;
 
 module Dereferenced = struct
@@ -80,7 +81,7 @@ module Dereferenced = struct
     match
       Vcs.Exn.Private.try_with (fun () ->
         match String.lsplit2 str ~on:' ' with
-        | None -> raise (Vcs.E (Vcs.Err.error_string "Invalid ref line."))
+        | None -> raise (Err.E (Err.create [ Pp.text "Invalid ref line." ]))
         | Some (rev, ref_) ->
           (match String.chop_suffix ref_ ~suffix:"^{}" with
            | Some ref_ ->
@@ -97,12 +98,14 @@ module Dereferenced = struct
     | Ok t -> t
     | Error err ->
       raise
-        (Vcs.E
-           (Vcs.Err.add_context
+        (Err.E
+           (Err.add_context
               err
-              ~step:
-                [%sexp
-                  "Vcs_git_backend.Refs.Dereferenced.parse_exn", { line = (str : string) }]))
+              [ Err.sexp
+                  [%sexp
+                    "Vcs_git_backend.Refs.Dereferenced.parse_exn"
+                  , { line = (str : string) }]
+              ]))
   ;;
 end
 

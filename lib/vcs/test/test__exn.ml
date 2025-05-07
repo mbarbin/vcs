@@ -21,16 +21,16 @@
 
 let%expect_test "reraise_with_context" =
   let () =
-    let err = Vcs.Err.create_s [%sexp Err] in
+    let err = Err.create [ Pp.verbatim "Err" ] in
     match
-      match raise (Vcs.E err) with
+      match raise (Err.E err) with
       | _ -> assert false
-      | exception Vcs.E err ->
+      | exception Err.E err ->
         let bt = Stdlib.Printexc.get_raw_backtrace () in
-        (Vcs.Exn.reraise_with_context err bt ~step:[%sexp Step] [@coverage off])
+        (Err.reraise_with_context err bt [ Pp.verbatim "Step" ] [@coverage off])
     with
     | _ -> assert false
-    | exception Vcs.E err -> print_s [%sexp (err : Vcs.Err.t)]
+    | exception Err.E err -> print_s [%sexp (err : Err.t)]
   in
   [%expect
     {|

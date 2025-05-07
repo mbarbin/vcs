@@ -57,13 +57,11 @@ File system operations.
 
   $ ocaml-vcs read-dir untracked
   Error:
-  ((context
-    (Vcs.read_dir
-     (dir
-      $TESTCASE_ROOT/untracked)))
-   (error
-    (Sys_error
-     "$TESTCASE_ROOT/untracked: No such file or directory")))
+  (Vcs.read_dir
+   (dir
+    $TESTCASE_ROOT/untracked))
+  (Sys_error
+   "$TESTCASE_ROOT/untracked: No such file or directory")
   [123]
 
   $ mkdir -p untracked
@@ -78,13 +76,11 @@ File system operations.
 
   $ ocaml-vcs read-dir untracked/hello
   Error:
-  ((context
-    (Vcs.read_dir
-     (dir
-      $TESTCASE_ROOT/untracked/hello)))
-   (error
-    (Sys_error
-     "$TESTCASE_ROOT/untracked/hello: Not a directory")))
+  (Vcs.read_dir
+   (dir
+    $TESTCASE_ROOT/untracked/hello))
+  (Sys_error
+   "$TESTCASE_ROOT/untracked/hello: Not a directory")
   [123]
 
   $ ocaml-vcs load-file untracked/hello
@@ -93,13 +89,11 @@ File system operations.
   $ chmod -r untracked
   $ ocaml-vcs read-dir untracked
   Error:
-  ((context
-    (Vcs.read_dir
-     (dir
-      $TESTCASE_ROOT/untracked)))
-   (error
-    (Sys_error
-     "$TESTCASE_ROOT/untracked: Permission denied")))
+  (Vcs.read_dir
+   (dir
+    $TESTCASE_ROOT/untracked))
+  (Sys_error
+   "$TESTCASE_ROOT/untracked: Permission denied")
   [123]
 
   $ rm untracked/hello

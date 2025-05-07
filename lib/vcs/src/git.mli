@@ -39,8 +39,8 @@ end
 module type S = Vcs_interface.Process_S
 
 (** The interface exposed at the top level of this module are helpers that
-    return direct results, or raise {!exception:Vcs.E}. This module is
-    exported to users as [Vcs.Git].
+    return direct results, or raise [Err.E]. This module is exported to users
+    as [Vcs.Git].
 
     The helpers are suitable for use in combination with the {!val:Vcs.git}
     function, which will take care of wrapping the exception with useful

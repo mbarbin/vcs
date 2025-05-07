@@ -25,7 +25,7 @@ let%expect_test "exit0" =
   let test output =
     match Vcs.Git.exit0 output with
     | () -> print_s [%sexp Ok ()]
-    | exception Vcs.E err -> print_s [%sexp Raised (err : Vcs.Err.t)]
+    | exception Err.E err -> print_s [%sexp Raised (err : Err.t)]
   in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ()) |}];
@@ -41,7 +41,7 @@ let%expect_test "exit0_and_stdout" =
   let test output =
     match Vcs.Git.exit0_and_stdout output with
     | stdout -> print_s [%sexp (stdout : string)]
-    | exception Vcs.E err -> print_s [%sexp Raised (err : Vcs.Err.t)]
+    | exception Err.E err -> print_s [%sexp Raised (err : Err.t)]
   in
   test { exit_code = 0; stdout = "stdout"; stderr = "" };
   [%expect {| stdout |}];
@@ -55,7 +55,7 @@ let%expect_test "exit_code" =
   let test output =
     match Vcs.Git.exit_code output ~accept:[ 0, "ok"; 42, "other" ] with
     | result -> print_s [%sexp Ok (result : string)]
-    | exception Vcs.E err -> print_s [%sexp Raised (err : Vcs.Err.t)]
+    | exception Err.E err -> print_s [%sexp Raised (err : Err.t)]
   in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ok) |}];

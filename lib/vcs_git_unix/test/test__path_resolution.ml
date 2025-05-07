@@ -72,7 +72,7 @@ let%expect_test "hello path" =
     with
     | Ok _ -> assert false
     | Error err ->
-      print_s (Vcs_test_helpers.redact_sexp (Vcs.Err.sexp_of_t err) ~fields:redact_fields)
+      print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:redact_fields)
   in
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "prog"; "repo_root"; "stderr" ];
   [%expect

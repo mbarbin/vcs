@@ -26,22 +26,55 @@
     existing clients, and we plan on adding deprecation annotations in a future
     release. *)
 
-(** This is deprecated - use [Err.reraise_with_context] instead. *)
-val reraise_with_context : Err.t -> Printexc.raw_backtrace -> step:Sexp.t -> _
+type t = Err.t
+
+(** This is deprecated - use [Err.sexp_of_t] instead. *)
+val sexp_of_t : t -> Sexp.t
+[@@migrate { repl = Err.sexp_of_t; libraries = [ "pplumbing.err" ] }]
+
+(** This is deprecated - use [Err.to_string_hum] instead. *)
+val to_string_hum : t -> string
+[@@migrate { repl = Err.to_string_hum; libraries = [ "pplumbing.err" ] }]
+
+(** This is deprecated - use [Err.create] instead. *)
+val error_string : string -> t
+[@@migrate
+  { repl = (fun str -> Err.create [ Pp.text str ])
+  ; libraries = [ "pp"; "pplumbing.err" ]
+  }]
+
+(** This is deprecated - use [Err.create] instead. *)
+val create_s : Sexp.t -> t
+[@@migrate
+  { repl = (fun sexp -> Err.create [ Err.sexp sexp ]); libraries = [ "pplumbing.err" ] }]
+
+(** This is deprecated - use [Err.of_exn] instead. *)
+val of_exn : exn -> t
+[@@migrate { repl = Err.of_exn; libraries = [ "pplumbing.err" ] }]
+
+(** This is deprecated - use [Err.add_context] instead. *)
+val add_context : t -> step:Sexp.t -> t
+[@@migrate
+  { repl = (fun t ~step -> Err.add_context t [ (Err.sexp step [@commutes]) ])
+  ; libraries = [ "pplumbing.err" ]
+  }]
+
+(** This is deprecated - use [Err.add_context] instead. *)
+val init : Sexp.t -> step:Sexp.t -> t
 [@@migrate
   { repl =
-      (fun err bt ~step ->
-        Err.reraise_with_context err bt [ (Err.sexp step [@commutes]) ])
+      (fun error ~step ->
+        Err.add_context
+          (Err.create [ (Err.sexp error [@commutes]) ] [@commutes])
+          [ (Err.sexp step [@commutes]) ])
   ; libraries = [ "pplumbing.err" ]
   }]
 
 module Private : sig
-  (** [try_with f] runs [f] and wraps any exception it raises into an
-      {!type:Err.t} error. Because this catches all exceptions, including
-      exceptions that may not be designed to be caught (such as
-      [Stack_overflow], [Out_of_memory], etc.) we recommend that code be
-      refactored overtime not to rely on this function. However, this is
-      rather hard to do without assistance from the type checker, thus we
-      currently rely on this function. TBD! *)
-  val try_with : (unit -> 'a) -> ('a, Err.t) Result.t
+  module Non_raising_M : sig
+    type nonrec t = t [@@deriving sexp_of]
+
+    val to_err : t -> t
+    val of_err : t -> t
+  end
 end

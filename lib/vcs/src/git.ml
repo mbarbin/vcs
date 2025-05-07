@@ -38,13 +38,13 @@ module Result_impl = struct
   let exit0 { Output.exit_code; stdout = _; stderr = _ } =
     if Int.equal exit_code 0
     then Ok ()
-    else Error (Err.error_string "Expected exit code 0.")
+    else Error (Err.create [ Pp.text "Expected exit code 0." ])
   ;;
 
   let exit0_and_stdout { Output.exit_code; stdout; stderr = _ } =
     if Int.equal exit_code 0
     then Ok stdout
-    else Error (Err.error_string "Expected exit code 0.")
+    else Error (Err.create [ Pp.text "Expected exit code 0." ])
   ;;
 
   let exit_code { Output.exit_code; stdout = _; stderr = _ } ~accept =
@@ -52,10 +52,10 @@ module Result_impl = struct
     | Some (_, result) -> Ok result
     | None ->
       Error
-        (Err.create_s
-           [%sexp
-             "Unexpected exit code."
-           , { accepted_codes : int list = List.map accept ~f:fst }])
+        (Err.create
+           [ Pp.text "Unexpected exit code."
+           ; Err.sexp [%sexp { accepted_codes : int list = List.map accept ~f:fst }]
+           ])
   ;;
 end
 
@@ -76,7 +76,7 @@ end
 
 let err_exn = function
   | Ok x -> x
-  | Error err -> raise (Exn0.E err)
+  | Error err -> raise (Err.E err)
 ;;
 
 let exit0 output = Result_impl.exit0 output |> err_exn

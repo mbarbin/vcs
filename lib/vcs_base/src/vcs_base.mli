@@ -65,7 +65,7 @@ module Vcs : sig
   module Author = Author
   module Branch_name = Branch_name
   module Commit_message = Commit_message
-  module Err = Err
+  module Err = Vcs_err
   module File_contents = File_contents
   module Git = Git
   module Graph = Graph
