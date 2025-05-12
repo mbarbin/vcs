@@ -180,7 +180,6 @@ let log_line t ~node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.re
    [visited] is taken as an input so we can re-use the same array multiple
    times, rather than re-allocating it. *)
 let iter_ancestors t ~visited node ~f =
-  Bit_vector.reset visited false;
   let rec loop to_visit =
     match to_visit with
     | [] -> ()
@@ -210,9 +209,11 @@ let greatest_common_ancestors t ~nodes =
       Bit_vector.copy visited
     in
     List.iter nodes ~f:(fun node ->
+      Bit_vector.reset visited false;
       iter_ancestors t ~visited node ~f:(fun _ -> ());
       Bit_vector.bw_and_in_place ~mutates:common_ancestors visited);
     let gcas = ref [] in
+    Bit_vector.reset visited false;
     for i = node_count - 1 downto 0 do
       if Bit_vector.get common_ancestors i
       then (
