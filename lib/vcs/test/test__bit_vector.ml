@@ -19,32 +19,58 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Bit_vector = Vcs.Private.Bit_vector
+module Bit_vector = struct
+  type t = Fast_bitvector.t
+
+  let sexp_of_t = Fast_bitvector.sexp_of_t
+
+  let create ~len value : t =
+    let t = Fast_bitvector.create ~length:len in
+    let () = if value then Fast_bitvector.set_all t in
+    t
+  ;;
+
+  let length = Fast_bitvector.length
+  let set = Fast_bitvector.set_to
+
+  let reset t value =
+    if value then Fast_bitvector.set_all t else Fast_bitvector.clear_all t
+  ;;
+
+  let bw_and_in_place ~mutates other =
+    if length mutates <> length other
+    then invalid_arg "Bit_vector.bw_and_in_place" [@coverage off];
+    let (_ : Fast_bitvector.t) =
+      Fast_bitvector.Set.intersect ~result:mutates mutates other
+    in
+    ()
+  ;;
+end
 
 let%expect_test "bw_and_inplace" =
   let v0 = Bit_vector.create ~len:10 true in
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| 1111111111 |}];
+  [%expect {| (LE 1111111111) |}];
   let v1 = Bit_vector.create ~len:10 false in
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| 0000000000 |}];
+  [%expect {| (LE 0000000000) |}];
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 2 = 0 then Bit_vector.set v1 i true
   done;
   Bit_vector.bw_and_in_place ~mutates:v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| 1010101010 |}];
+  [%expect {| (LE 0101010101) |}];
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| 1010101010 |}];
+  [%expect {| (LE 0101010101) |}];
   Bit_vector.reset v1 false;
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 3 = 0 then Bit_vector.set v1 i true
   done;
   Bit_vector.bw_and_in_place ~mutates:v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| 1000001000 |}];
+  [%expect {| (LE 0001000001) |}];
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| 1001001001 |}];
+  [%expect {| (LE 1001001001) |}];
   let vsmall = Bit_vector.create ~len:5 true in
   require_does_raise [%here] (fun () -> Bit_vector.bw_and_in_place ~mutates:v0 vsmall);
   [%expect {| (Invalid_argument Bit_vector.bw_and_in_place) |}];
