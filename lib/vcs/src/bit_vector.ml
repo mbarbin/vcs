@@ -35,7 +35,6 @@ let set = Array.set
 let get = Array.get
 let reset t value = Array.fill t ~pos:0 ~len:(Array.length t) value
 let copy = Array.copy
-let filter_mapi = Array.filter_mapi
 
 let bw_and_in_place ~mutates other =
   if Array.length mutates <> Array.length other

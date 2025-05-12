@@ -32,7 +32,6 @@ val set : t -> int -> bool -> unit
 val get : t -> int -> bool
 val reset : t -> bool -> unit
 val copy : t -> t
-val filter_mapi : t -> f:(int -> bool -> 'a option) -> 'a Array.t
 
 (** {1 In place bitwise operations} *)
 
