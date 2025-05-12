@@ -32,10 +32,7 @@ module Bit_vector = struct
 
   let length = Fast_bitvector.length
   let set = Fast_bitvector.set_to
-
-  let reset t value =
-    if value then Fast_bitvector.set_all t else Fast_bitvector.clear_all t
-  ;;
+  let clear_all = Fast_bitvector.clear_all
 
   let intersect_in_place ~mutates other =
     if length mutates <> length other
@@ -62,7 +59,7 @@ let%expect_test "intersect_in_place" =
   [%expect {| (LE 0101010101) |}];
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| (LE 0101010101) |}];
-  Bit_vector.reset v1 false;
+  Bit_vector.clear_all v1;
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 3 = 0 then Bit_vector.set v1 i true
   done;
