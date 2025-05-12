@@ -1,3 +1,17 @@
+## 0.0.15 (unreleased)
+
+### Added
+
+### Changed
+
+- Some improvements to `Graph.gcas` computation (#61, @mbarbin).
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.14 (2025-05-07)
 
 ### Added
