@@ -580,6 +580,29 @@ let%expect_test "greatest_common_ancestors" =
   ()
 ;;
 
+let%expect_test "gca - regression" =
+  let graph = Vcs.Graph.create () in
+  let t = Mock.create graph in
+  let gcas revs = Mock.print_gcas t ~revs in
+  let root = Mock.root t in
+  Mock.tag t ~rev:root "root";
+  let c1 = Mock.commit t ~parent:root in
+  let m = Mock.commit t ~parent:root in
+  Mock.tag t ~rev:m "middle";
+  let c2 = Mock.commit t ~parent:root in
+  let left = Mock.merge t ~parent1:c1 ~parent2:m in
+  let right = Mock.merge t ~parent1:m ~parent2:c2 in
+  gcas [ left; right ];
+  [%expect {| ((gcas (refs/tags/middle))) |}];
+  gcas [ c1; right ];
+  [%expect {| ((gcas (refs/tags/root))) |}];
+  gcas [ left; c2 ];
+  [%expect {| ((gcas (refs/tags/root))) |}];
+  gcas [ c1; c2 ];
+  [%expect {| ((gcas (refs/tags/root))) |}];
+  ()
+;;
+
 (* In this part of the test, we want to monitor that the interface exposed by
    [Vcs.Graph] is sufficient to write some algorithm on git graphs. As an example
    here, we are implementing from the user land a function that returns the set
