@@ -203,13 +203,14 @@ let greatest_common_ancestors t ~nodes =
   | [ node ] -> [ node ]
   | node1 :: nodes ->
     let node_count = Array.length t.nodes in
-    let visited = Bit_vector.create ~len:node_count false in
     let common_ancestors =
-      iter_ancestors t ~visited node1 ~f:(fun _ -> ());
-      Bit_vector.copy visited
+      let node1_ancestors = Bit_vector.create ~len:node_count false in
+      iter_ancestors t ~visited:node1_ancestors node1 ~f:(fun _ -> ());
+      node1_ancestors
     in
-    List.iter nodes ~f:(fun node ->
-      Bit_vector.reset visited false;
+    let visited = Bit_vector.create ~len:node_count false in
+    List.iteri nodes ~f:(fun i node ->
+      if i > 0 then Bit_vector.reset visited false;
       iter_ancestors t ~visited node ~f:(fun _ -> ());
       Bit_vector.bw_and_in_place ~mutates:common_ancestors visited);
     let gcas = ref [] in
