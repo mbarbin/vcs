@@ -209,12 +209,11 @@ let greatest_common_ancestors t ~nodes =
       node1_ancestors
     in
     let visited = Bit_vector.create ~len:node_count false in
-    List.iteri nodes ~f:(fun i node ->
-      if i > 0 then Bit_vector.reset visited false;
+    List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
-      Bit_vector.bw_and_in_place ~mutates:common_ancestors visited);
+      Bit_vector.bw_and_in_place ~mutates:common_ancestors visited;
+      Bit_vector.reset visited false);
     let gcas = ref [] in
-    Bit_vector.reset visited false;
     for i = node_count - 1 downto 0 do
       if Bit_vector.get common_ancestors i
       then (
