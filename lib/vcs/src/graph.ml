@@ -180,7 +180,6 @@ let log_line t ~node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.re
    [visited] is taken as an input so we can re-use the same array multiple
    times, rather than re-allocating it. *)
 let iter_ancestors t ~visited node ~f =
-  Bit_vector.reset visited false;
   let rec loop to_visit =
     match to_visit with
     | [] -> ()
@@ -204,22 +203,25 @@ let greatest_common_ancestors t ~nodes =
   | [ node ] -> [ node ]
   | node1 :: nodes ->
     let node_count = Array.length t.nodes in
-    let visited = Bit_vector.create ~len:node_count false in
     let common_ancestors =
-      iter_ancestors t ~visited node1 ~f:(fun _ -> ());
-      Bit_vector.copy visited
+      let node1_ancestors = Bit_vector.create ~len:node_count false in
+      iter_ancestors t ~visited:node1_ancestors node1 ~f:(fun _ -> ());
+      node1_ancestors
     in
+    let visited = Bit_vector.create ~len:node_count false in
     List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
-      Bit_vector.bw_and_in_place ~mutates:common_ancestors visited);
+      Bit_vector.bw_and_in_place ~mutates:common_ancestors visited;
+      Bit_vector.reset visited false);
+    let gcas = ref [] in
     for i = node_count - 1 downto 0 do
       if Bit_vector.get common_ancestors i
-      then
+      then (
+        gcas := i :: !gcas;
         iter_ancestors t ~visited i ~f:(fun j ->
-          if j <> i then Bit_vector.set common_ancestors j false)
+          if j <> i then Bit_vector.set common_ancestors j false))
     done;
-    Bit_vector.filter_mapi common_ancestors ~f:(fun i b -> if b then Some i else None)
-    |> Array.to_list
+    !gcas
 ;;
 
 let refs t =

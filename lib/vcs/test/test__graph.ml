@@ -464,59 +464,84 @@ let%expect_test "set invalid rev" =
   ()
 ;;
 
-let%expect_test "greatest_common_ancestors" =
-  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
-  let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
-  let graph = Vcs.Graph.create () in
-  let node ~rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
-  let tag ~rev tag_name =
-    Vcs.Graph.set_ref graph ~rev ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v tag_name })
-  in
-  let root () =
-    let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Root { rev } ];
+module Mock : sig
+  type t
+
+  val create : Vcs.Graph.t -> t
+  val node : t -> rev:Vcs.Rev.t -> Vcs.Graph.Node.t
+  val tag : t -> rev:Vcs.Rev.t -> string -> unit
+  val root : t -> Vcs.Rev.t
+  val commit : t -> parent:Vcs.Rev.t -> Vcs.Rev.t
+  val merge : t -> parent1:Vcs.Rev.t -> parent2:Vcs.Rev.t -> Vcs.Rev.t
+  val print_gcas : t -> revs:Vcs.Rev.t list -> unit
+end = struct
+  type t =
+    { graph : Vcs.Graph.t
+    ; mock_rev_gen : Vcs.Mock_rev_gen.t
+    }
+
+  let create graph = { graph; mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" }
+  let rev t = Vcs.Mock_rev_gen.next t.mock_rev_gen
+  let node t ~rev = Vcs.Graph.find_rev t.graph ~rev |> Option.value_exn ~here:[%here]
+
+  let tag t ~rev tag_name =
+    Vcs.Graph.set_ref t.graph ~rev ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v tag_name })
+  ;;
+
+  let root t =
+    let rev = rev t in
+    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Root { rev } ];
     rev
-  in
-  let commit ~parent =
-    let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+  ;;
+
+  let commit t ~parent =
+    let rev = rev t in
+    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
     rev
-  in
-  let merge ~parent1 ~parent2 =
-    let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+  ;;
+
+  let merge t ~parent1 ~parent2 =
+    let rev = rev t in
+    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
     rev
-  in
-  let gcas revs =
+  ;;
+
+  let print_gcas t ~revs =
     let gcas =
       Vcs.Graph.greatest_common_ancestors
-        graph
-        ~nodes:(List.map revs ~f:(fun rev -> node ~rev))
+        t.graph
+        ~nodes:(List.map revs ~f:(fun rev -> node t ~rev))
       |> List.map ~f:(fun node ->
-        match Vcs.Graph.node_refs graph ~node with
+        match Vcs.Graph.node_refs t.graph ~node with
         | ref :: _ -> Vcs.Ref_kind.to_string ref
         | [] ->
           (* This branch is kept for debug if it is executed by mistake but we
              shouldn't exercise this case since this makes the tests results
              harder to understand. *)
-          (Vcs.Graph.rev graph ~node |> Vcs.Rev.to_string) [@coverage off])
+          (Vcs.Graph.rev t.graph ~node |> Vcs.Rev.to_string) [@coverage off])
     in
     print_s [%sexp { gcas : string list }]
-  in
+  ;;
+end
+
+let%expect_test "greatest_common_ancestors" =
+  let graph = Vcs.Graph.create () in
+  let t = Mock.create graph in
+  let gcas revs = Mock.print_gcas t ~revs in
   gcas [];
   [%expect {| ((gcas ())) |}];
-  let root1 = root () in
-  tag ~rev:root1 "root1";
+  let root1 = Mock.root t in
+  Mock.tag t ~rev:root1 "root1";
   gcas [ root1 ];
   [%expect {| ((gcas (refs/tags/root1))) |}];
-  let r1 = commit ~parent:root1 in
-  tag ~rev:r1 "r1";
+  let r1 = Mock.commit t ~parent:root1 in
+  Mock.tag t ~rev:r1 "r1";
   gcas [ r1 ];
   [%expect {| ((gcas (refs/tags/r1))) |}];
   gcas [ root1; r1 ];
   [%expect {| ((gcas (refs/tags/root1))) |}];
-  let m1 = merge ~parent1:root1 ~parent2:r1 in
-  tag ~rev:m1 "m1";
+  let m1 = Mock.merge t ~parent1:root1 ~parent2:r1 in
+  Mock.tag t ~rev:m1 "m1";
   gcas [ m1 ];
   [%expect {| ((gcas (refs/tags/m1))) |}];
   gcas [ root1; m1 ];
@@ -525,31 +550,56 @@ let%expect_test "greatest_common_ancestors" =
   [%expect {| ((gcas (refs/tags/r1))) |}];
   gcas [ root1; r1; m1 ];
   [%expect {| ((gcas (refs/tags/root1))) |}];
-  let root2 = root () in
-  tag ~rev:root2 "root2";
+  let root2 = Mock.root t in
+  Mock.tag t ~rev:root2 "root2";
   gcas [ root1; root2 ];
   [%expect {| ((gcas ())) |}];
   gcas [ r1; root2 ];
   [%expect {| ((gcas ())) |}];
   let r2 =
-    List.fold (List.init 10 ~f:ignore) ~init:r1 ~f:(fun parent () -> commit ~parent)
+    List.fold (List.init 10 ~f:ignore) ~init:r1 ~f:(fun parent () ->
+      Mock.commit t ~parent)
   in
   let r3 =
-    List.fold (List.init 10 ~f:ignore) ~init:m1 ~f:(fun parent () -> commit ~parent)
+    List.fold (List.init 10 ~f:ignore) ~init:m1 ~f:(fun parent () ->
+      Mock.commit t ~parent)
   in
   gcas [ r2; r3 ];
   [%expect {| ((gcas (refs/tags/r1))) |}];
   (* A criss-cross merge. *)
-  let alice = commit ~parent:r1 in
-  tag ~rev:alice "alice";
-  let bob = commit ~parent:r1 in
-  tag ~rev:bob "bob";
-  let alice_merge = merge ~parent1:alice ~parent2:bob in
-  let bob_merge = merge ~parent1:bob ~parent2:alice in
-  let alice_continue = commit ~parent:alice_merge in
-  let bob_continue = commit ~parent:bob_merge in
+  let alice = Mock.commit t ~parent:r1 in
+  Mock.tag t ~rev:alice "alice";
+  let bob = Mock.commit t ~parent:r1 in
+  Mock.tag t ~rev:bob "bob";
+  let alice_merge = Mock.merge t ~parent1:alice ~parent2:bob in
+  let bob_merge = Mock.merge t ~parent1:bob ~parent2:alice in
+  let alice_continue = Mock.commit t ~parent:alice_merge in
+  let bob_continue = Mock.commit t ~parent:bob_merge in
   gcas [ alice_continue; bob_continue ];
   [%expect {| ((gcas (refs/tags/alice refs/tags/bob))) |}];
+  ()
+;;
+
+let%expect_test "gca - regression" =
+  let graph = Vcs.Graph.create () in
+  let t = Mock.create graph in
+  let gcas revs = Mock.print_gcas t ~revs in
+  let root = Mock.root t in
+  Mock.tag t ~rev:root "root";
+  let c1 = Mock.commit t ~parent:root in
+  let m = Mock.commit t ~parent:root in
+  Mock.tag t ~rev:m "middle";
+  let c2 = Mock.commit t ~parent:root in
+  let left = Mock.merge t ~parent1:c1 ~parent2:m in
+  let right = Mock.merge t ~parent1:m ~parent2:c2 in
+  gcas [ left; right ];
+  [%expect {| ((gcas (refs/tags/middle))) |}];
+  gcas [ c1; right ];
+  [%expect {| ((gcas (refs/tags/root))) |}];
+  gcas [ left; c2 ];
+  [%expect {| ((gcas (refs/tags/root))) |}];
+  gcas [ c1; c2 ];
+  [%expect {| ((gcas (refs/tags/root))) |}];
   ()
 ;;
 
@@ -575,30 +625,13 @@ let ancestors graph node =
 
 let%expect_test "debug graph" =
   (* If needed, sexp_of_t should show helpful indices for nodes. *)
-  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
-  let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
   let graph = Vcs.Graph.create () in
-  let node ~rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
-  let root () =
-    let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Root { rev } ];
-    rev
-  in
-  let commit ~parent =
-    let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
-    rev
-  in
-  let merge ~parent1 ~parent2 =
-    let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
-    rev
-  in
-  let r0 = root () in
-  let r1 = commit ~parent:r0 in
-  let r2 = commit ~parent:r0 in
-  let m1 = merge ~parent1:r1 ~parent2:r2 in
-  let r4 = commit ~parent:m1 in
+  let t = Mock.create graph in
+  let r0 = Mock.root t in
+  let r1 = Mock.commit t ~parent:r0 in
+  let r2 = Mock.commit t ~parent:r0 in
+  let m1 = Mock.merge t ~parent1:r1 ~parent2:r2 in
+  let r4 = Mock.commit t ~parent:m1 in
   Vcs.Graph.set_refs
     graph
     ~refs:
@@ -652,7 +685,7 @@ let%expect_test "debug graph" =
   [%expect {| ((node_count 5)) |}];
   (* node_kind *)
   let node_kind rev =
-    let node = node ~rev in
+    let node = Mock.node t ~rev in
     print_s [%sexp (Vcs.Graph.node_kind graph ~node : Vcs.Graph.Node_kind.t)]
   in
   node_kind r0;
@@ -681,7 +714,7 @@ let%expect_test "debug graph" =
     |}];
   (* ancestors *)
   let print_ancestors rev =
-    print_s [%sexp (ancestors graph (node ~rev) : Set.M(Vcs.Graph.Node).t)]
+    print_s [%sexp (ancestors graph (Mock.node t ~rev) : Set.M(Vcs.Graph.Node).t)]
   in
   print_ancestors r0;
   [%expect {| (#0) |}];
@@ -695,9 +728,9 @@ let%expect_test "debug graph" =
   [%expect {| (#0 #1 #2 #3 #4) |}];
   (* Low level int indexing. *)
   let node_index node = print_s [%sexp (Vcs.Graph.node_index node : int)] in
-  node_index (node ~rev:r0);
+  node_index (Mock.node t ~rev:r0);
   [%expect {| 0 |}];
-  node_index (node ~rev:r4);
+  node_index (Mock.node t ~rev:r4);
   [%expect {| 4 |}];
   let get_node_exn index =
     print_s [%sexp (Vcs.Graph.get_node_exn graph ~index : Vcs.Graph.Node.t)]
@@ -738,7 +771,8 @@ let%expect_test "debug graph" =
   show_upstream ();
   [%expect {| (#4) |}];
   let show_refs rev =
-    print_s [%sexp (Vcs.Graph.node_refs graph ~node:(node ~rev) : Vcs.Ref_kind.t list)]
+    print_s
+      [%sexp (Vcs.Graph.node_refs graph ~node:(Mock.node t ~rev) : Vcs.Ref_kind.t list)]
   in
   (* There are no longer any refs pointing to [r1]. *)
   show_refs r1;
