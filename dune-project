@@ -37,6 +37,8 @@
    (>= 4.14))
   (astring
    (>= 0.8.5))
+  (fast_bitvector
+   (>= 0.0.3.1))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
