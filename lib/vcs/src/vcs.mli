@@ -335,7 +335,6 @@ module Private : sig
 
       Use at your own risk/convenience! *)
 
-  module Bit_vector = Bit_vector
   module Import = Import
   module Int_table = Int_table
   module Ref_kind_table = Ref_kind_table
