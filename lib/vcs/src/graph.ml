@@ -212,14 +212,15 @@ let greatest_common_ancestors t ~nodes =
     List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
       Bit_vector.bw_and_in_place ~mutates:common_ancestors visited);
+    let gcas = ref [] in
     for i = node_count - 1 downto 0 do
       if Bit_vector.get common_ancestors i
-      then
+      then (
+        gcas := i :: !gcas;
         iter_ancestors t ~visited i ~f:(fun j ->
-          if j <> i then Bit_vector.set common_ancestors j false)
+          if j <> i then Bit_vector.set common_ancestors j false))
     done;
-    Bit_vector.filter_mapi common_ancestors ~f:(fun i b -> if b then Some i else None)
-    |> Array.to_list
+    !gcas
 ;;
 
 let refs t =
