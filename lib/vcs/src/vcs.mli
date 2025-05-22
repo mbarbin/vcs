@@ -331,12 +331,11 @@ module Private : sig
   module Rev_table = Rev_table
   module Validated_string = Validated_string
 
-  (** [try_with f] runs [f] and wraps any exception it raises into an
-      {!type:Err.t} error. Because this catches all exceptions, including
-      exceptions that may not be designed to be caught (such as
-      [Stack_overflow], [Out_of_memory], etc.) we recommend that code be
-      refactored overtime not to rely on this function. However, this is
-      rather hard to do without assistance from the type checker, thus we
-      currently rely on this function. TBD! *)
+  (** [try_with f] runs [f] and wraps any exception it raises into an [Err.t]
+      error. Because this catches all exceptions, including exceptions that may
+      not be designed to be caught (such as [Stack_overflow], [Out_of_memory],
+      etc.) we recommend that code be refactored overtime not to rely on this
+      function. However, this is rather hard to do without assistance from the
+      type checker, thus we currently rely on this function. TBD! *)
   val try_with : (unit -> 'a) -> ('a, Err.t) Stdlib.Result.t
 end
