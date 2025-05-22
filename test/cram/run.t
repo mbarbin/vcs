@@ -56,10 +56,11 @@ Invalid path-in-repo.
 File system operations.
 
   $ ocaml-vcs read-dir untracked
-  Error:
+  Context:
   (Vcs.read_dir
    (dir
     $TESTCASE_ROOT/untracked))
+  Error:
   (Sys_error
    "$TESTCASE_ROOT/untracked: No such file or directory")
   [123]
@@ -75,10 +76,11 @@ File system operations.
   (hello)
 
   $ ocaml-vcs read-dir untracked/hello
-  Error:
+  Context:
   (Vcs.read_dir
    (dir
     $TESTCASE_ROOT/untracked/hello))
+  Error:
   (Sys_error
    "$TESTCASE_ROOT/untracked/hello: Not a directory")
   [123]
@@ -88,10 +90,11 @@ File system operations.
 
   $ chmod -r untracked
   $ ocaml-vcs read-dir untracked
-  Error:
+  Context:
   (Vcs.read_dir
    (dir
     $TESTCASE_ROOT/untracked))
+  Error:
   (Sys_error
    "$TESTCASE_ROOT/untracked: Permission denied")
   [123]
