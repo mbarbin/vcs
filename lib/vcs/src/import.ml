@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Stdlib_compat
+
 module Array = struct
   include ArrayLabels
 

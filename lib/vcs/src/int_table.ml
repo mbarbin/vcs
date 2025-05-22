@@ -19,8 +19,10 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-include Import.Hashtbl.Make (struct
+open! Import
+
+include Hashtbl.Make (struct
     include Int
 
-    let sexp_of_t t = Sexp.Atom (Import.Int.to_string_hum t)
+    let sexp_of_t t = Sexp.Atom (Int.to_string_hum t)
   end)
