@@ -65,7 +65,3 @@ module Private = struct
     | exception exn -> Error (Err.of_exn exn)
   ;;
 end
-
-module Err = Vcs_err
-module Exn = Vcs_exn
-include Exn0

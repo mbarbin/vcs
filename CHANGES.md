@@ -1,3 +1,17 @@
+## 0.0.16 (unreleased)
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
+- Removed deprecated APIs (#65, @mbarbin).
+
 ## 0.0.15 (2025-05-22)
 
 ### Added
