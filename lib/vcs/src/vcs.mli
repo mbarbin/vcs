@@ -340,19 +340,3 @@ module Private : sig
       currently rely on this function. TBD! *)
   val try_with : (unit -> 'a) -> ('a, Err.t) Stdlib.Result.t
 end
-
-(** {1 Deprecated API} *)
-
-module Err = Vcs_err
-[@@ocaml.deprecated "[since 2025-05] Use [pplumbing.Err]. Hint: Run [ocamlmig migrate]"]
-
-(** The [Vcs.E] exception is deprecated and is equal to [Err.E] which should be
-    used instead. *)
-exception
-  E of Err.t
-      [@ocaml.deprecated "[since 2025-05] Use [Err.E]. Hint: Run [ocamlmig migrate]"]
-      [@migrate { repl = Err.E }]
-      [@ocaml.alert "-deprecated"]
-
-module Exn = Vcs_exn
-[@@ocaml.deprecated "[since 2025-05] Use [pplumbing.Err]. Hint: Run [ocamlmig migrate]"]

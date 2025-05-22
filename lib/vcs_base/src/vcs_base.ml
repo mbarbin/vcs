@@ -44,15 +44,12 @@ module Vcs = struct
   module User_handle = User_handle
   module User_name = User_name
 
-  [@@@ocaml.alert "-deprecated"]
-
   include (
     Vcs :
       module type of Vcs
       with module Author := Vcs.Author
        and module Branch_name := Vcs.Branch_name
        and module Commit_message := Vcs.Commit_message
-       and module Err := Vcs.Err
        and module File_contents := Vcs.File_contents
        and module Git := Vcs.Git
        and module Graph := Vcs.Graph
