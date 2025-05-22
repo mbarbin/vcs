@@ -23,7 +23,7 @@ open! Import
 
 let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
   match
-    Vcs.Exn.Private.try_with (fun () ->
+    Vcs.Private.try_with (fun () ->
       match String.split (String.strip str) ~on:' ' with
       | [] -> assert false (* [String.split] never returns the empty list. *)
       | [ rev ] -> Vcs.Log.Line.Root { rev = Vcs.Rev.v rev }
@@ -60,7 +60,7 @@ module Make (Runtime : Runtime.S) = struct
       ~f:(fun output ->
         let open Result.Monad_syntax in
         let* output = Vcs.Git.Result.exit0_and_stdout output in
-        Vcs.Exn.Private.try_with (fun () ->
+        Vcs.Private.try_with (fun () ->
           List.map (String.split_lines output) ~f:(fun line -> parse_log_line_exn ~line)))
   ;;
 end

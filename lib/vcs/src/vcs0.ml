@@ -212,7 +212,9 @@ let non_raising_git
 
 let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
   non_raising_git ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
-    Vcs_exn.Private.try_with (fun () -> f output))
+    match f output with
+    | ok -> Ok ok
+    | exception exn -> Error (Err.of_exn exn))
   |> of_result ~step:(lazy (make_git_err_step ?env ?run_in_subdir ~repo_root ~args ()))
 ;;
 

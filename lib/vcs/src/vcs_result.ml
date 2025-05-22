@@ -21,7 +21,15 @@
 
 open! Import
 
-type err = Vcs_err.t [@@deriving sexp_of]
+type err = Err.t [@@deriving sexp_of]
 type 'a t = ('a, err) Result.t [@@deriving sexp_of]
 
-include Non_raising.Make (Vcs_err.Private.Non_raising_M)
+module Non_raising_M = struct
+  type t = err
+
+  let sexp_of_t = Err.sexp_of_t
+  let to_err t = t
+  let of_err t = t
+end
+
+include Non_raising.Make (Non_raising_M)

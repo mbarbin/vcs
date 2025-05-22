@@ -86,6 +86,8 @@ module Vcs : sig
   module User_handle = User_handle
   module User_name = User_name
 
+  [@@@ocaml.alert "-deprecated"]
+
   include
     module type of Vcs
     with module Author := Vcs.Author

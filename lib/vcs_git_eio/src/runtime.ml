@@ -35,18 +35,18 @@ let create ~env =
 
 let load_file t ~path =
   let path = Eio.Path.(t.fs / Absolute_path.to_string path) in
-  Vcs.Exn.Private.try_with (fun () -> Vcs.File_contents.create (Eio.Path.load path))
+  Vcs.Private.try_with (fun () -> Vcs.File_contents.create (Eio.Path.load path))
 ;;
 
 let save_file t ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
   let path = Eio.Path.(t.fs / Absolute_path.to_string path) in
-  Vcs.Exn.Private.try_with (fun () ->
+  Vcs.Private.try_with (fun () ->
     Eio.Path.save ~create:(`Or_truncate perms) path (file_contents :> string))
 ;;
 
 let read_dir t ~dir =
   let dir = Eio.Path.(t.fs / Absolute_path.to_string dir) in
-  Vcs.Exn.Private.try_with (fun () -> Eio.Path.read_dir dir |> List.map ~f:Fsegment.v)
+  Vcs.Private.try_with (fun () -> Eio.Path.read_dir dir |> List.map ~f:Fsegment.v)
 ;;
 
 (* The modules [Exit_status], [Lines] and the function [git] below are derived

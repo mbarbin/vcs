@@ -37,7 +37,7 @@ include T
 
 let parse_exn str =
   match
-    Vcs.Exn.Private.try_with (fun () ->
+    Vcs.Private.try_with (fun () ->
       match Astring.String.cuts ~empty:false ~sep:" => " str with
       | [] -> raise (Err.E (Err.create [ Pp.text "Unexpected empty path." ]))
       | [ str ] ->

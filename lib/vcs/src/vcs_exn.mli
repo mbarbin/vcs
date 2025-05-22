@@ -28,20 +28,11 @@
 
 (** This is deprecated - use [Err.reraise_with_context] instead. *)
 val reraise_with_context : Err.t -> Printexc.raw_backtrace -> step:Sexp.t -> _
+[@@ocaml.deprecated
+  "[since 2025-05] Use [Err.reraise_with_context]. Hint: Run [ocamlmig migrate]"]
 [@@migrate
   { repl =
       (fun err bt ~step ->
         Err.reraise_with_context err bt [ (Err.sexp step [@commutes]) ])
   ; libraries = [ "pplumbing.err" ]
   }]
-
-module Private : sig
-  (** [try_with f] runs [f] and wraps any exception it raises into an
-      {!type:Err.t} error. Because this catches all exceptions, including
-      exceptions that may not be designed to be caught (such as
-      [Stack_overflow], [Out_of_memory], etc.) we recommend that code be
-      refactored overtime not to rely on this function. However, this is
-      rather hard to do without assistance from the type checker, thus we
-      currently rely on this function. TBD! *)
-  val try_with : (unit -> 'a) -> ('a, Err.t) Result.t
-end

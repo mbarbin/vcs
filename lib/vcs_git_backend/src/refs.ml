@@ -23,7 +23,7 @@ open! Import
 
 let parse_ref_kind_exn str : Vcs.Ref_kind.t =
   match
-    Vcs.Exn.Private.try_with (fun () ->
+    Vcs.Private.try_with (fun () ->
       let str =
         match String.chop_prefix str ~prefix:"refs/" with
         | Some str -> str
@@ -79,7 +79,7 @@ module Dereferenced = struct
 
   let parse_exn ~line:str =
     match
-      Vcs.Exn.Private.try_with (fun () ->
+      Vcs.Private.try_with (fun () ->
         match String.lsplit2 str ~on:' ' with
         | None -> raise (Err.E (Err.create [ Pp.text "Invalid ref line." ]))
         | Some (rev, ref_) ->
@@ -136,7 +136,7 @@ module Make (Runtime : Runtime.S) = struct
       ~f:(fun output ->
         let open Result.Monad_syntax in
         let* output = Vcs.Git.Result.exit0_and_stdout output in
-        Vcs.Exn.Private.try_with (fun () ->
+        Vcs.Private.try_with (fun () ->
           parse_lines_exn ~lines:(String.split_lines output)))
   ;;
 end

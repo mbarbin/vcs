@@ -55,13 +55,13 @@ let create () =
 ;;
 
 let load_file (_ : t) ~path =
-  Vcs.Exn.Private.try_with (fun () ->
+  Vcs.Private.try_with (fun () ->
     In_channel.with_open_bin (Absolute_path.to_string path) In_channel.input_all
     |> Vcs.File_contents.create)
 ;;
 
 let save_file (_ : t) ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
-  Vcs.Exn.Private.try_with (fun () ->
+  Vcs.Private.try_with (fun () ->
     let oc =
       open_out_gen
         [ Open_wronly; Open_creat; Open_trunc; Open_binary ]
@@ -74,7 +74,7 @@ let save_file (_ : t) ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_conte
 ;;
 
 let read_dir (_ : t) ~dir =
-  Vcs.Exn.Private.try_with (fun () ->
+  Vcs.Private.try_with (fun () ->
     let entries = Sys.readdir (Absolute_path.to_string dir) in
     Array.sort entries ~compare:String.compare;
     entries |> Array.map ~f:Fsegment.v |> Array.to_list)

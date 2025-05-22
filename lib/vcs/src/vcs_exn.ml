@@ -22,11 +22,3 @@
 let reraise_with_context err bt ~step =
   Err.reraise_with_context err bt [ Err.sexp step ] [@coverage off]
 ;;
-
-module Private = struct
-  let try_with f =
-    match f () with
-    | ok -> Ok ok
-    | exception exn -> Error (Err.of_exn exn)
-  ;;
-end

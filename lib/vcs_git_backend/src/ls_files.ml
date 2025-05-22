@@ -32,7 +32,7 @@ module Make (Runtime : Runtime.S) = struct
       ~f:(fun output ->
         let open Result.Monad_syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
-        Vcs.Exn.Private.try_with (fun () ->
+        Vcs.Private.try_with (fun () ->
           String.split_lines stdout |> List.map ~f:Vcs.Path_in_repo.v))
   ;;
 end
