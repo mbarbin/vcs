@@ -32,13 +32,3 @@ let add_context t ~step = Err.add_context t [ Err.sexp step ] [@coverage off]
 let init error ~step =
   Err.add_context (Err.create [ Err.sexp error ]) [ Err.sexp step ] [@coverage off]
 ;;
-
-module Private = struct
-  module Non_raising_M = struct
-    type nonrec t = t
-
-    let sexp_of_t = sexp_of_t
-    let to_err t = t
-    let of_err t = t
-  end
-end

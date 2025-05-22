@@ -45,7 +45,7 @@ end
 
 let parse_line_exn ~line : Vcs.Num_status.Change.t =
   match
-    Vcs.Exn.Private.try_with (fun () ->
+    Vcs.Private.try_with (fun () ->
       match String.split line ~on:'\t' with
       | [] -> assert false
       | [ _ ] | [ _; _ ] | _ :: _ :: _ :: _ :: _ ->
@@ -97,7 +97,7 @@ module Make (Runtime : Runtime.S) = struct
       ~f:(fun output ->
         let open Result.Monad_syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
-        Vcs.Exn.Private.try_with (fun () ->
+        Vcs.Private.try_with (fun () ->
           parse_lines_exn ~lines:(String.split_lines stdout)))
   ;;
 end

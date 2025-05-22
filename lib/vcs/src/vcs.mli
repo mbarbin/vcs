@@ -55,6 +55,11 @@ val create : 'a -> 'a t
     printable information. [err] is not meant for pattern matching - we're only
     targeting a non-specialized error recovery.
 
+    [Err.E] is meant to be the only exception ever raised by functions from the
+    [Vcs] interface. [Err.t] doesn't carry the raw backtrace, so you'll need to
+    manipulate the backtrace yourself if you care about it (like you would with
+    any other exceptions).
+
     A general design principle that we follow here is that if an error result is
     of interest for pattern matching, we want to incorporate it into the
     successful branch of the function's result, rather than in its error part -
@@ -66,21 +71,6 @@ val create : 'a -> 'a t
     As library authors we realize that manipulating [Result.t] is a popular
     choice too: we also export the [Vcs]'s functionality via
     {{!non_raising_apis} non-raising APIs} if you prefer. *)
-
-(** Payload of the exception raised by [Vcs] functions. *)
-module Err = Vcs_err
-
-(** [E] is meant to be the only exception ever raised by functions from the
-    [Vcs] interface. [Err.t] doesn't carry the raw backtrace, so you'll need
-    to manipulate the backtrace yourself if you care about it (like you would
-    with any other exceptions).
-
-    The [Vcs.E] exception is equal to [Err.E], which we are in the process of
-    migrating to. [Vcs.E] will be deprecated in a future release, please use
-    [Err.E] instead. *)
-exception E of Err.t
-
-module Exn = Vcs_exn
 
 (** {1 Creating repositories} *)
 
@@ -330,10 +320,9 @@ module Non_raising = Non_raising
 
 module Private : sig
   (** This part of the interface is not stable. Things may break without notice
-      when upgrading to a new version of [Vcs]. This is used e.g. by tests
-      or libraries with strong ties to [Vcs].
-
-      Use at your own risk/convenience! *)
+      and outside of the guidlines set by semver when upgrading to a new version
+      of [Vcs]. This is used e.g. by tests or libraries with strong ties to
+      [Vcs]. Do not use. *)
 
   module Bit_vector = Bit_vector
   module Import = Import
@@ -341,4 +330,29 @@ module Private : sig
   module Ref_kind_table = Ref_kind_table
   module Rev_table = Rev_table
   module Validated_string = Validated_string
+
+  (** [try_with f] runs [f] and wraps any exception it raises into an
+      {!type:Err.t} error. Because this catches all exceptions, including
+      exceptions that may not be designed to be caught (such as
+      [Stack_overflow], [Out_of_memory], etc.) we recommend that code be
+      refactored overtime not to rely on this function. However, this is
+      rather hard to do without assistance from the type checker, thus we
+      currently rely on this function. TBD! *)
+  val try_with : (unit -> 'a) -> ('a, Err.t) Stdlib.Result.t
 end
+
+(** {1 Deprecated API} *)
+
+module Err = Vcs_err
+[@@ocaml.deprecated "[since 2025-05] Use [pplumbing.Err]. Hint: Run [ocamlmig migrate]"]
+
+(** The [Vcs.E] exception is deprecated and is equal to [Err.E] which should be
+    used instead. *)
+exception
+  E of Err.t
+      [@ocaml.deprecated "[since 2025-05] Use [Err.E]. Hint: Run [ocamlmig migrate]"]
+      [@migrate { repl = Err.E }]
+      [@ocaml.alert "-deprecated"]
+
+module Exn = Vcs_exn
+[@@ocaml.deprecated "[since 2025-05] Use [pplumbing.Err]. Hint: Run [ocamlmig migrate]"]

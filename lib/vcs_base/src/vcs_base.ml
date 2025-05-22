@@ -44,6 +44,8 @@ module Vcs = struct
   module User_handle = User_handle
   module User_name = User_name
 
+  [@@@ocaml.alert "-deprecated"]
+
   include (
     Vcs :
       module type of Vcs

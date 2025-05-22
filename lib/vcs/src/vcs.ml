@@ -22,8 +22,6 @@
 module Author = Author
 module Branch_name = Branch_name
 module Commit_message = Commit_message
-module Err = Vcs_err
-module Exn = Vcs_exn
 module File_contents = File_contents
 module Git = Git
 module Graph = Graph
@@ -51,7 +49,6 @@ module Url = Url
 module User_email = User_email
 module User_handle = User_handle
 module User_name = User_name
-include Exn0
 include Vcs0
 
 module Private = struct
@@ -61,4 +58,14 @@ module Private = struct
   module Ref_kind_table = Ref_kind_table
   module Rev_table = Rev_table
   module Validated_string = Validated_string
+
+  let try_with f =
+    match f () with
+    | ok -> Ok ok
+    | exception exn -> Error (Err.of_exn exn)
+  ;;
 end
+
+module Err = Vcs_err
+module Exn = Vcs_exn
+include Exn0

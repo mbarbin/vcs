@@ -1,6 +1,8 @@
-## 0.0.15 (unreleased)
+## 0.0.15 (2025-05-22)
 
 ### Added
+
+- Add support for OCaml-4.14 to `vcs`, `vcs-git-backend` & `vcs-git-unix` (#64, @mbarbin).
 
 ### Changed
 
@@ -8,11 +10,13 @@
 
 ### Deprecated
 
-### Fixed
-
-### Removed
+- Actually mark for deprecation all the functions, modules and exceptions that were prepared to be deprecated (#64, @mbarbin).
 
 ## 0.0.14 (2025-05-07)
+
+This release prepares the deprecation of a few functions and contains `ocamlmig` annotations to help users with the migration.
+
+To automatically apply the migration changes, first upgrade your `vcs` dependency and re-build your project. Then run the command `ocamlmig migrate` from the root of your project.
 
 ### Added
 

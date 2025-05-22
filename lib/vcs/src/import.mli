@@ -19,6 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+open! Stdlib_compat
+
 module Array : sig
   include module type of ArrayLabels
 

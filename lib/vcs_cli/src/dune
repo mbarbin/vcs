@@ -20,6 +20,7 @@
   fpath-sexp0
   pp
   pplumbing.err
+  pplumbing.pp-tty
   sexplib0
   unix
   vcs

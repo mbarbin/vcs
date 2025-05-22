@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-include Vcs.Err
+type t = Err.t
 
 let to_error t = Error.create_s (Err.sexp_of_t t)
 let of_error error = Err.create [ Err.sexp (Error.sexp_of_t error) ]

@@ -18,6 +18,7 @@
   fpath-sexp0
   pp
   pplumbing.err
+  pplumbing.pp-tty
   shexp.process
   unix
   vcs

@@ -24,7 +24,7 @@
  (synopsis "A Versatile OCaml Library for Git Operations")
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 4.14))
   (astring
    (>= 0.8.5))
   (fpath
@@ -36,17 +36,11 @@
   (pplumbing
    (>= 0.0.13))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppxlib
    (>= 0.33))))
 
@@ -137,7 +131,7 @@
  (synopsis "An IO-free library that parses the output of Git commands")
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 4.14))
   (astring
    (>= 0.8.5))
   (fpath
@@ -149,19 +143,13 @@
   (pplumbing
    (>= 0.0.13))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (vcs
    (= :version))))
 
@@ -206,7 +194,7 @@
   "A Git backend for Vcs based on Vcs_git_backend and the Unix library")
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 4.14))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -216,23 +204,15 @@
   (pplumbing
    (>= 0.0.13))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (shexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (vcs
    (= :version))
   (vcs-git-backend
