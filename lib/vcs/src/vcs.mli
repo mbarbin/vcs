@@ -341,7 +341,7 @@ module Private : sig
   val try_with : (unit -> 'a) -> ('a, Err.t) Stdlib.Result.t
 end
 
-(** {1 Deprecated API}. *)
+(** {1 Deprecated API} *)
 
 module Err = Vcs_err
 [@@ocaml.deprecated "[since 2025-05] Use [pplumbing.Err]. Hint: Run [ocamlmig migrate]"]
