@@ -48,7 +48,7 @@ let values =
 let%expect_test "hash" =
   Hash_test.run
     (module Vcs.Remote_branch_name)
-    (module Vcs_base.Vcs.Remote_branch_name)
+    (module Volgo_base.Vcs.Remote_branch_name)
     values;
   [%expect
     {|

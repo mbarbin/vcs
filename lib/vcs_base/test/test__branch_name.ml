@@ -22,7 +22,7 @@
 let values = [ Vcs.Branch_name.main; Vcs.Branch_name.v "my-branch" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Branch_name) (module Vcs_base.Vcs.Branch_name) values;
+  Hash_test.run (module Vcs.Branch_name) (module Volgo_base.Vcs.Branch_name) values;
   [%expect
     {|
     (((value main))

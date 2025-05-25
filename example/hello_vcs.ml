@@ -31,18 +31,18 @@ let%expect_test "hello commit" =
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
      backend. We're using [Vcs_git] for this here. It is a backend based on
      [Eio] and running the [git] command line as an external process. *)
-  let vcs = Vcs_git_eio.create ~env in
+  let vcs = Volgo_git_eio.create ~env in
   (* The next step takes care of creating a fresh repository. We make use of a
      helper library to encapsulate the required steps. *)
-  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
   (* Ok, we are all set, [repo_root] points to a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it
      to the repository, and query it from the store afterwards. *)
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   (* Just a quick word about [Vcs.save_file]. This is only a part of Vcs that is
      included for convenience. Indeed, this allows a library that uses Vcs to
-     perform some basic IO while maintaining compatibility with [Vcs_git_eio]
-     and [Vcs_git_unix] clients. This dispatches to the actual Vcs backend
+     perform some basic IO while maintaining compatibility with [Volgo_git_eio]
+     and [Volgo_git_unix] clients. This dispatches to the actual Vcs backend
      implementation, which here uses [Eio.Path.save_file] under the hood. *)
   Vcs.save_file
     vcs

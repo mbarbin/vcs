@@ -19,11 +19,11 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t = Vcs_git_backend.Trait.t Vcs.t
+type t = Volgo_git_backend.Trait.t Vcs.t
 
 module Impl = struct
   include Runtime
-  include Vcs_git_backend.Make (Runtime)
+  include Volgo_git_backend.Make (Runtime)
 end
 
 let create_class ~env = new Impl.c (Impl.create ~env)

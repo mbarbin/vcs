@@ -26,13 +26,13 @@ let%expect_test "graph" =
     let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.log") in
     let contents = Eio.Path.load path in
     let lines = String.split_lines contents in
-    List.map lines ~f:(fun line -> Vcs_git_backend.Log.parse_log_line_exn ~line)
+    List.map lines ~f:(fun line -> Volgo_git_backend.Log.parse_log_line_exn ~line)
   in
   let refs =
     let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.refs") in
     let contents = Eio.Path.load path in
     let lines = String.split_lines contents in
-    Vcs_git_backend.Refs.parse_lines_exn ~lines
+    Volgo_git_backend.Refs.parse_lines_exn ~lines
   in
   let graph = Vcs.Graph.create () in
   print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
@@ -620,7 +620,7 @@ let ancestors graph node =
           (Set.add acc node)
           (Vcs.Graph.prepend_parents graph ~node ~prepend_to:to_visit)
   in
-  loop (Set.empty (module Vcs_base.Vcs.Graph.Node)) [ node ]
+  loop (Set.empty (module Volgo_base.Vcs.Graph.Node)) [ node ]
 ;;
 
 let%expect_test "debug graph" =

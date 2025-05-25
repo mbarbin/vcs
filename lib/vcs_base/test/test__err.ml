@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Vcs = Vcs_base.Vcs
+module Vcs = Volgo_base.Vcs
 
 let%expect_test "to_error" =
   let test err = print_s [%sexp (Vcs.Err.to_error err : Error.t)] in

@@ -45,7 +45,7 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
             err
             [ Err.sexp
                 [%sexp
-                  "Vcs_git_backend.Log.parse_log_line_exn", { line = (str : string) }]
+                  "Volgo_git_backend.Log.parse_log_line_exn", { line = (str : string) }]
             ]))
 ;;
 

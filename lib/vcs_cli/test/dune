@@ -11,11 +11,10 @@
   -open
   Base
   -open
-  Expect_test_helpers_base)
- (libraries
-  base
-  expect_test_helpers_core.expect_test_helpers_base
-  volgo_vcs_cli)
+  Expect_test_helpers_base
+  -open
+  Volgo_vcs)
+ (libraries base expect_test_helpers_core.expect_test_helpers_base volgo-vcs)
  (instrumentation
   (backend bisect_ppx))
  (lint

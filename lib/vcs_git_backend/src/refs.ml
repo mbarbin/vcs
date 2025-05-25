@@ -48,7 +48,8 @@ let parse_ref_kind_exn str : Vcs.Ref_kind.t =
             err
             [ Err.sexp
                 [%sexp
-                  "Vcs_git_backend.Refs.parse_ref_kind_exn", { ref_kind = (str : string) }]
+                  "Volgo_git_backend.Refs.parse_ref_kind_exn"
+                , { ref_kind = (str : string) }]
             ]))
 ;;
 
@@ -103,7 +104,7 @@ module Dereferenced = struct
               err
               [ Err.sexp
                   [%sexp
-                    "Vcs_git_backend.Refs.Dereferenced.parse_exn"
+                    "Volgo_git_backend.Refs.Dereferenced.parse_exn"
                   , { line = (str : string) }]
               ]))
   ;;

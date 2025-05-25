@@ -22,7 +22,7 @@
 let values = [ Vcs.Path_in_repo.v "foo.txt"; Vcs.Path_in_repo.v "bar/baz.ml" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Path_in_repo) (module Vcs_base.Vcs.Path_in_repo) values;
+  Hash_test.run (module Vcs.Path_in_repo) (module Volgo_base.Vcs.Path_in_repo) values;
   [%expect
     {|
     (((value foo.txt))

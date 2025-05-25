@@ -32,7 +32,7 @@ module Output : sig
 end
 
 (** This is the interface commonly used by raising and non-raising helper
-    modules, such as {!module:Vcs.Git}, [Vcs_base.Vcs.Git.Or_error],
+    modules, such as {!module:Vcs.Git}, [Volgo_base.Vcs.Git.Or_error],
     {!module:Vcs.Git.Result}, {!module:Vcs.Git.Rresult}, and custom ones built
     with {!module:Vcs.Git.Non_raising.Make}. [S] is parametrized by the result
     type returned by the helpers. *)
@@ -51,7 +51,7 @@ module Non_raising : sig
   (** A functor to build non raising helpers based on a custom error type.
 
       In addition to {!module:Vcs.Git.Result}, {!module:Vcs.Git.Rresult} and
-      [Vcs_base.Vcs.Git.Or_error], we provide this functor to create a [Git.S]
+      [Volgo_base.Vcs.Git.Or_error], we provide this functor to create a [Git.S]
       interface based on a custom error type of your choice. *)
 
   module type M = Vcs_interface.Error_S

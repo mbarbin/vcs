@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Platform) (module Vcs_base.Vcs.Platform) Vcs.Platform.all;
+  Hash_test.run (module Vcs.Platform) (module Volgo_base.Vcs.Platform) Vcs.Platform.all;
   [%expect
     {|
     (((value GitHub))

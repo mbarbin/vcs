@@ -22,7 +22,7 @@
 let%expect_test "protocol-hash" =
   Hash_test.run
     (module Vcs.Url.Protocol)
-    (module Vcs_base.Vcs.Url.Protocol)
+    (module Volgo_base.Vcs.Url.Protocol)
     Vcs.Url.Protocol.all;
   [%expect
     {|
@@ -73,7 +73,7 @@ let values =
 ;;
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Url) (module Vcs_base.Vcs.Url) values;
+  Hash_test.run (module Vcs.Url) (module Volgo_base.Vcs.Url) values;
   [%expect
     {|
     (((

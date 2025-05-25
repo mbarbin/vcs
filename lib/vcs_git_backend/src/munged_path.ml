@@ -77,6 +77,7 @@ let parse_exn str =
          (Err.add_context
             err
             [ Err.sexp
-                [%sexp "Vcs_git_backend.Munged_path.parse_exn", { path = (str : string) }]
+                [%sexp
+                  "Volgo_git_backend.Munged_path.parse_exn", { path = (str : string) }]
             ]))
 ;;

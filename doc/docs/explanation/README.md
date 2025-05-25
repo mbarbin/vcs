@@ -38,8 +38,8 @@ stateDiagram-v2
 - **executable**: A placeholder for a runtime component based on `user-lib` that
   commits to a specific backend and concurrency model.
 - **vcs-git-backend**: A IO-free library that parses the output of a `git` cli process.
-- **vcs-git-eio**: An instantiation of `Vcs_git_backend` based on an `Eio` runtime.
-- **vcs-git-unix**: An instantiation of `Vcs_git_backend` based on the OCaml `Stdlib`.
+- **vcs-git-eio**: An instantiation of `Volgo_git_backend` based on an `Eio` runtime.
+- **vcs-git-unix**: An instantiation of `Volgo_git_backend` based on the OCaml `Stdlib`.
 
 ```mermaid
 stateDiagram-v2

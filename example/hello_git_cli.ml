@@ -28,8 +28,8 @@ let%expect_test "hello cli" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git_eio.create ~env in
-  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let vcs = Volgo_git_eio.create ~env in
+  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   Vcs.save_file
     vcs
@@ -100,7 +100,7 @@ let%expect_test "hello cli" =
     | _ -> assert false [@coverage off]
     | exception Err.E err ->
       print_s
-        (Vcs_test_helpers.redact_sexp
+        (Volgo_test_helpers.redact_sexp
            [%sexp (err : Err.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
@@ -130,7 +130,7 @@ let%expect_test "hello cli" =
     | Ok _ -> assert false
     | Error error ->
       print_s
-        (Vcs_test_helpers.redact_sexp
+        (Volgo_test_helpers.redact_sexp
            [%sexp (error : Error.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
@@ -156,7 +156,7 @@ let%expect_test "hello cli" =
     | Ok _ -> assert false
     | Error err ->
       print_s
-        (Vcs_test_helpers.redact_sexp
+        (Volgo_test_helpers.redact_sexp
            [%sexp (err : Err.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
@@ -186,7 +186,7 @@ let%expect_test "hello cli" =
     | Ok _ -> assert false
     | Error (`Vcs err) ->
       print_s
-        (Vcs_test_helpers.redact_sexp
+        (Volgo_test_helpers.redact_sexp
            [%sexp (err : Err.t)]
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
@@ -222,7 +222,7 @@ let%expect_test "hello cli" =
     match abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" with
     | Ok (_ : string) | Error (_ : Error.t) -> assert false [@coverage off]
     | exception Err.E err ->
-      print_s (Vcs_test_helpers.redact_sexp [%sexp (err : Err.t)] ~fields:[ "error" ])
+      print_s (Volgo_test_helpers.redact_sexp [%sexp (err : Err.t)] ~fields:[ "error" ])
   in
   [%expect
     {|
@@ -255,7 +255,7 @@ let%expect_test "hello cli" =
   [%expect {| (Ok main) |}];
   (* However, now the function will not raise. *)
   print_s
-    (Vcs_test_helpers.redact_sexp
+    (Volgo_test_helpers.redact_sexp
        [%sexp
          (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" : string Or_error.t)]
        ~fields:[ "error" ]);
@@ -279,7 +279,7 @@ let%expect_test "hello cli" =
     | Error error -> Error.sexp_of_t error
   in
   print_s
-    (Vcs_test_helpers.redact_sexp
+    (Volgo_test_helpers.redact_sexp
        error_with_context
        ~fields:[ "cwd"; "repo_root"; "stderr" ]);
   [%expect
@@ -313,7 +313,7 @@ let%expect_test "hello cli" =
   (* Some error condition will even correctly be turned into Errors, which may
      further prevent you from hitting a raising case. *)
   print_s
-    (Vcs_test_helpers.redact_sexp
+    (Volgo_test_helpers.redact_sexp
        [%sexp
          (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" : string Or_error.t)]
        ~fields:[ "error" ]);
@@ -353,7 +353,7 @@ let%expect_test "hello cli" =
     match abbrev_ref ?repo_root ref_ with
     | _ -> assert false [@coverage off]
     | exception Err.E err ->
-      print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:redact_fields)
+      print_s (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:redact_fields)
   in
   abbrev_ref_does_raise
     ~repo_root:(Vcs.Repo_root.v "/bogus")

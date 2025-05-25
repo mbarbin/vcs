@@ -24,12 +24,12 @@ let%expect_test "init" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git_eio.create ~env in
+  let vcs = Volgo_git_eio.create ~env in
   let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
   let repo_root =
     Eio.Switch.on_release sw (fun () ->
       Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
-    Vcs_test_helpers.init vcs ~path:(Absolute_path.v path)
+    Volgo_test_helpers.init vcs ~path:(Absolute_path.v path)
   in
   require_equal
     [%here]

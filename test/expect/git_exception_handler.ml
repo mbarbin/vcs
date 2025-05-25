@@ -120,11 +120,11 @@ let%expect_test "eio" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git_eio.create ~env in
-  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let vcs = Volgo_git_eio.create ~env in
+  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
   create_first_commit vcs ~repo_root;
-  let runtime = Vcs_git_eio.Runtime.create ~env in
-  let test () = test_current_branch (module Vcs_git_eio.Impl.Git) runtime ~repo_root in
+  let runtime = Volgo_git_eio.Runtime.create ~env in
+  let test () = test_current_branch (module Volgo_git_eio.Impl.Git) runtime ~repo_root in
   print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
   [%expect {| (Ok ((current_branch main))) |}];
   let test_scenario handler_scenario =
@@ -145,7 +145,7 @@ let%expect_test "eio" =
       (match test () with
        | Ok (_ : Sexp.t) -> assert false
        | Error err ->
-         print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd" ]);
+         print_s (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd" ]);
          [%expect
            {|
            ((context (
@@ -178,11 +178,11 @@ let%expect_test "blocking" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git_eio.create ~env in
-  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let vcs = Volgo_git_eio.create ~env in
+  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
   create_first_commit vcs ~repo_root;
-  let runtime = Vcs_git_unix.Runtime.create () in
-  let test () = test_current_branch (module Vcs_git_unix.Impl.Git) runtime ~repo_root in
+  let runtime = Volgo_git_unix.Runtime.create () in
+  let test () = test_current_branch (module Volgo_git_unix.Impl.Git) runtime ~repo_root in
   print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
   [%expect {| (Ok ((current_branch main))) |}];
   let test_scenario handler_scenario =
@@ -204,7 +204,7 @@ let%expect_test "blocking" =
        | Ok (_ : Sexp.t) -> assert false
        | Error err ->
          print_s
-           (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd"; "prog" ]);
+           (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd"; "prog" ]);
          [%expect
            {|
            ((context (

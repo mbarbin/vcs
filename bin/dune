@@ -1,7 +1,7 @@
 (executable
  (name main)
  (public_name volgo-vcs)
- (package volgo-vcs-cli)
+ (package volgo-vcs)
  (flags
   :standard
   -w
@@ -9,11 +9,7 @@
   -warn-error
   +a
   -open
-  Volgo_vcs_cli)
- (libraries
-  pplumbing.cmdlang-cmdliner-runner
-  pplumbing.err
-  vcs
-  volgo-vcs-cli)
+  Volgo_vcs)
+ (libraries pplumbing.cmdlang-cmdliner-runner pplumbing.err volgo-vcs)
  (instrumentation
   (backend bisect_ppx)))

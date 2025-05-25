@@ -20,17 +20,17 @@
 (*_******************************************************************************)
 
 (** Implementation of a git backend for the {!module:Vcs} library, based on
-    [Stdlib] and {!module:Vcs_git_backend}.
+    [Stdlib] and {!module:Volgo_git_backend}.
 
     This implementation is based on the [git] command line tool. We run it as an
     external program with utils from [Stdlib] and [Unix], producing the right
     command line invocation and parsing the output to produce a typed version of
-    the expected results with [Vcs_git_backend]. Note that [git] must be found
+    the expected results with [Volgo_git_backend]. Note that [git] must be found
     in the PATH of the running environment. *)
 
 (** This is a convenient type alias that may be used to designate a backend
     with the exact list of traits supported by this implementation. *)
-type t = Vcs_git_backend.Trait.t Vcs.t
+type t = Volgo_git_backend.Trait.t Vcs.t
 
 (** When [create] is called, the environment variable ["PATH"] is read to
     resolve the executable whose basename is "git". Subsequent calls to that
@@ -41,7 +41,7 @@ val create : unit -> t
 
 (** The implementation of the backend is exported for convenience and tests.
     Casual users should prefer using [Vcs] directly. *)
-module Impl : Vcs_git_backend.S with type t = Runtime.t
+module Impl : Volgo_git_backend.S with type t = Runtime.t
 
 (** {1 Runtime}
 

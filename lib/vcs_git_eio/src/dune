@@ -1,6 +1,6 @@
 (library
- (name vcs_git_eio)
- (public_name vcs-git-eio)
+ (name volgo_git_eio)
+ (public_name volgo-git-eio)
  (flags
   :standard
   -w
@@ -12,7 +12,9 @@
   -open
   Sexplib0
   -open
-  Sexplib0.Sexp_conv)
+  Sexplib0.Sexp_conv
+  -open
+  Volgo)
  (libraries
   eio
   fpath
@@ -20,8 +22,8 @@
   pp
   pplumbing.err
   sexplib0
-  vcs
-  vcs-git-backend)
+  volgo
+  volgo-git-backend)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -22,7 +22,7 @@
 let values = [ Vcs.Repo_root.v "/tmp/foo"; Vcs.Repo_root.v "/home/user/dev/repo" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Repo_root) (module Vcs_base.Vcs.Repo_root) values;
+  Hash_test.run (module Vcs.Repo_root) (module Volgo_base.Vcs.Repo_root) values;
   [%expect
     {|
     (((value /tmp/foo))

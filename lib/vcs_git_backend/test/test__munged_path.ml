@@ -19,51 +19,51 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Munged_path = Vcs_git_backend.Private.Munged_path
+module Munged_path = Volgo_git_backend.Private.Munged_path
 
 let%expect_test "parse" =
   let test path = print_s [%sexp (Munged_path.parse_exn path : Munged_path.t)] in
   require_does_raise [%here] (fun () -> test "");
   [%expect
     {|
-    ((context (Vcs_git_backend.Munged_path.parse_exn ((path ""))))
+    ((context (Volgo_git_backend.Munged_path.parse_exn ((path ""))))
      (error "Unexpected empty path."))
     |}];
   require_does_raise [%here] (fun () -> test "/tmp => /tmp");
   [%expect
     {|
-    ((context (Vcs_git_backend.Munged_path.parse_exn ((path "/tmp => /tmp"))))
+    ((context (Volgo_git_backend.Munged_path.parse_exn ((path "/tmp => /tmp"))))
      (error (Invalid_argument "\"/tmp\": not a relative path")))
     |}];
   require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
   [%expect
     {|
     ((context (
-       Vcs_git_backend.Munged_path.parse_exn ((path "tmp => tmp2 => tmp3"))))
+       Volgo_git_backend.Munged_path.parse_exn ((path "tmp => tmp2 => tmp3"))))
      (error "Too many ['=>']."))
     |}];
   require_does_raise [%here] (fun () -> test "}");
   [%expect
     {|
-    ((context (Vcs_git_backend.Munged_path.parse_exn ((path }))))
+    ((context (Volgo_git_backend.Munged_path.parse_exn ((path }))))
      (error "Unexpected '{' or '}' in simple path."))
     |}];
   require_does_raise [%here] (fun () -> test "{");
   [%expect
     {|
-    ((context (Vcs_git_backend.Munged_path.parse_exn ((path {))))
+    ((context (Volgo_git_backend.Munged_path.parse_exn ((path {))))
      (error "Unexpected '{' or '}' in simple path."))
     |}];
   require_does_raise [%here] (fun () -> test "a/{dir => b");
   [%expect
     {|
-    ((context (Vcs_git_backend.Munged_path.parse_exn ((path "a/{dir => b"))))
+    ((context (Volgo_git_backend.Munged_path.parse_exn ((path "a/{dir => b"))))
      (error "Matching '}' not found."))
     |}];
   require_does_raise [%here] (fun () -> test "a/dir => b}");
   [%expect
     {|
-    ((context (Vcs_git_backend.Munged_path.parse_exn ((path "a/dir => b}"))))
+    ((context (Volgo_git_backend.Munged_path.parse_exn ((path "a/dir => b}"))))
      (error "Matching '{' not found."))
     |}];
   test "a/simple/path";

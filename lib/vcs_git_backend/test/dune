@@ -16,14 +16,16 @@
   -open
   Base
   -open
-  Expect_test_helpers_base)
+  Expect_test_helpers_base
+  -open
+  Volgo)
  (libraries
   base
   eio
   eio_main
   expect_test_helpers_core.expect_test_helpers_base
-  vcs
-  vcs_git_backend)
+  volgo
+  volgo_git_backend)
  (instrumentation
   (backend bisect_ppx))
  (lint

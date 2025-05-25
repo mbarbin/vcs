@@ -6,11 +6,11 @@ programmatically perform Git operations, ranging from creating commits
 and branches to loading and navigating commit graphs in memory,
 computing diffs between revisions, and more.
 
-[Vcs_test_helpers] is a library aimed at making it easier to write
-tests for libraries using [vcs] as a dependency. For example, it
-contains helpers for setting the running user's Git config, creating
-temporary repositories, and more.
+[Volgo_git_eio] implements a Git backend for [vcs] based on [eio]. It
+runs the [git] CLI as a subprocess in a non-blocking fashion.
+
+[eio]: https://github.com/ocaml-multicore/eio
 
 """
-tags: [ "git" "tests" "vcs" ]
+tags: [ "eio" "git" "vcs" "non-blocking-io" ]
 x-maintenance-intent: [ "(latest)" ]

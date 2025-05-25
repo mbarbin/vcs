@@ -1,6 +1,6 @@
 (library
- (name volgo_vcs_cli)
- (public_name volgo-vcs-cli)
+ (name volgo_vcs)
+ (public_name volgo-vcs)
  (flags
   :standard
   -w
@@ -14,7 +14,9 @@
   -open
   Sexplib0
   -open
-  Sexplib0.Sexp_conv)
+  Sexplib0.Sexp_conv
+  -open
+  Volgo)
  (libraries
   cmdlang
   fpath-sexp0
@@ -23,8 +25,8 @@
   pplumbing.pp-tty
   sexplib0
   unix
-  vcs
-  vcs-git-unix)
+  volgo
+  volgo-git-unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

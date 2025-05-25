@@ -29,7 +29,7 @@ let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
   type t =
-    { vcs : Vcs_git_unix.t
+    { vcs : Volgo_git_unix.t
     ; repo_root : Vcs.Repo_root.t
     ; cwd : Absolute_path.t
     }
@@ -48,7 +48,7 @@ let find_enclosing_repo_root vcs ~from =
 ;;
 
 let initialize () =
-  let vcs = Vcs_git_unix.create () in
+  let vcs = Volgo_git_unix.create () in
   let cwd = Unix.getcwd () |> Absolute_path.v in
   let repo_root = find_enclosing_repo_root vcs ~from:cwd in
   { Initialized.vcs; repo_root; cwd }

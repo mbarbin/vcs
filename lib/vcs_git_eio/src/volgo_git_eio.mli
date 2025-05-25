@@ -20,17 +20,17 @@
 (*_******************************************************************************)
 
 (** Implementation of a git backend for the {!module:Vcs} library, based on
-    [Eio] and {!module:Vcs_git_backend}.
+    [Eio] and {!module:Volgo_git_backend}.
 
     This implementation is based on the [git] command line tool. We run it as an
     external program within an [Eio] environment, producing the right command line
     invocation and parsing the output to produce a typed version of the expected
-    results with [Vcs_git_backend]. Note that [git] must be found in the PATH of the
+    results with [Volgo_git_backend]. Note that [git] must be found in the PATH of the
     running environment. *)
 
 (** This is a convenient type alias that may be used to designate a backend with
     the exact list of traits supported by this implementation. *)
-type t = Vcs_git_backend.Trait.t Vcs.t
+type t = Volgo_git_backend.Trait.t Vcs.t
 
 (** [create ~env] creates a [vcs] value that can be used by the {!module:Vcs}
     library. *)
@@ -38,7 +38,7 @@ val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > ->
 
 (** The implementation of the backend is exported for convenience and tests.
     Casual users should prefer using [Vcs] directly. *)
-module Impl : Vcs_git_backend.S with type t = Runtime.t
+module Impl : Volgo_git_backend.S with type t = Runtime.t
 
 (** {1 Runtime}
 

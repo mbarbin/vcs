@@ -1,6 +1,6 @@
 (library
- (name vcs_base)
- (public_name vcs-base)
+ (name volgo_base)
+ (public_name volgo-base)
  (flags
   :standard
   -w
@@ -10,8 +10,10 @@
   -open
   Base
   -open
-  Fpath_base)
- (libraries base fpath fpath-base pp pplumbing.err vcs)
+  Fpath_base
+  -open
+  Volgo)
+ (libraries base fpath fpath-base pp pplumbing.err volgo)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -1,6 +1,6 @@
 # License
 
-Vcs is released under the terms of the `LGPL-3.0-or-later WITH LGPL-3.0-linking-exception` license.
+`Volgo` is released under the terms of the `LGPL-3.0-or-later WITH LGPL-3.0-linking-exception` license.
 
 This notice file contains more details, as well as document the organization of files and headers that relate to licenses.
 

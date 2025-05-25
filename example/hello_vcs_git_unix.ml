@@ -19,13 +19,13 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* This is a simple test to show how to use the [Vcs_git_unix] backend. *)
+(* This is a simple test to show how to use the [Volgo_git_unix] backend. *)
 
 let%expect_test "hello commit" =
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
-     backend. We're using [Vcs_git_unix] for this here. It is a backend based on
+     backend. We're using [Volgo_git_unix] for this here. It is a backend based on
      [Stdlib] and running the [git] command line as an external process. *)
-  let vcs = Vcs_git_unix.create () in
+  let vcs = Volgo_git_unix.create () in
   (* The next step takes care of creating a repository and initializing the git
      users's config with some dummy values so we can use [commit] without having
      to worry about your user config on your machine. This isolates the test
@@ -33,7 +33,7 @@ let%expect_test "hello commit" =
      GitHub Actions environment, where no default user config exists. *)
   let repo_root =
     let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
-    Vcs_test_helpers.init vcs ~path:(Absolute_path.v path)
+    Volgo_test_helpers.init vcs ~path:(Absolute_path.v path)
   in
   (* Ok, we are all set, [repo_root] points to a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it
@@ -41,8 +41,8 @@ let%expect_test "hello commit" =
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   (* Just a quick word about [Vcs.save_file]. This is only a part of Vcs that is
      included for convenience. Indeed, this allows a library that uses Vcs to
-     perform some basic IO while maintaining compatibility with [Vcs_git_eio]
-     and [Vcs_git_unix] clients. This dispatches to the actual backend
+     perform some basic IO while maintaining compatibility with [Volgo_git_eio]
+     and [Volgo_git_unix] clients. This dispatches to the actual backend
      implementation, which here uses [Stdlib.Out_channel] under the hood. *)
   Vcs.save_file
     vcs
@@ -68,7 +68,7 @@ let%expect_test "hello commit" =
     with
     | Ok _ -> assert false
     | Error err ->
-      print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "prog" ])
+      print_s (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "prog" ])
   in
   [%expect
     {|
@@ -93,7 +93,7 @@ let%expect_test "hello commit" =
     | Ok _ -> assert false
     | Error err ->
       print_s
-        (Vcs_test_helpers.redact_sexp
+        (Volgo_test_helpers.redact_sexp
            (Err.sexp_of_t err)
            ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in

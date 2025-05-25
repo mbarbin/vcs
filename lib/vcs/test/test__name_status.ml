@@ -25,14 +25,14 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.name-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let name_status = Vcs_git_backend.Name_status.parse_lines_exn ~lines in
+  let name_status = Volgo_git_backend.Name_status.parse_lines_exn ~lines in
   let files_at_src =
     Vcs.Name_status.files_at_src name_status
-    |> Set.of_list (module Vcs_base.Vcs.Path_in_repo)
+    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
   in
   let files_at_dst =
     Vcs.Name_status.files_at_dst name_status
-    |> Set.of_list (module Vcs_base.Vcs.Path_in_repo)
+    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
   in
   print_s [%sexp (Set.diff files_at_dst files_at_src : Set.M(Vcs.Path_in_repo).t)];
   [%expect
@@ -53,7 +53,7 @@ let%expect_test "files" =
     ; "R100\toriginal_renamed_file\tnew_renamed_file"
     ]
   in
-  let name_status = Vcs_git_backend.Name_status.parse_lines_exn ~lines in
+  let name_status = Volgo_git_backend.Name_status.parse_lines_exn ~lines in
   print_s [%sexp (name_status : Vcs.Name_status.t)];
   [%expect
     {|
@@ -81,7 +81,7 @@ let%expect_test "files" =
      removed_file) |}];
   let files_at_src =
     Vcs.Name_status.files_at_src name_status
-    |> Set.of_list (module Vcs_base.Vcs.Path_in_repo)
+    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
   in
   print_s [%sexp (files_at_src : Set.M(Vcs.Path_in_repo).t)];
   [%expect
@@ -89,7 +89,7 @@ let%expect_test "files" =
   (modified_file original_copied_file original_renamed_file removed_file) |}];
   let files_at_dst =
     Vcs.Name_status.files_at_dst name_status
-    |> Set.of_list (module Vcs_base.Vcs.Path_in_repo)
+    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
   in
   print_s [%sexp (files_at_dst : Set.M(Vcs.Path_in_repo).t)];
   [%expect

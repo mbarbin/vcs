@@ -22,7 +22,7 @@
 let values = [ Vcs.User_email.v "jdoe@jdoe.org"; Vcs.User_email.v "john-doe@email.com" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.User_email) (module Vcs_base.Vcs.User_email) values;
+  Hash_test.run (module Vcs.User_email) (module Volgo_base.Vcs.User_email) values;
   [%expect
     {|
     (((value jdoe@jdoe.org))

@@ -24,8 +24,8 @@ let%expect_test "init_temp_repo" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git_eio.create ~env in
-  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let vcs = Volgo_git_eio.create ~env in
+  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   Vcs.save_file
     vcs
@@ -65,14 +65,14 @@ let%expect_test "init_temp_repo" =
 let%expect_test "redact_sexp" =
   Eio_main.run
   @@ fun env ->
-  let vcs = Vcs_git_eio.create ~env in
+  let vcs = Volgo_git_eio.create ~env in
   let invalid_path = Absolute_path.v "/invalid/path" in
   let error =
     match Vcs.init vcs ~path:invalid_path with
     | _ -> assert false
     | exception Err.E err -> [%sexp (err : Err.t)]
   in
-  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error" ]);
+  print_s (Volgo_test_helpers.redact_sexp error ~fields:[ "error" ]);
   [%expect
     {|
     ((context
@@ -85,7 +85,7 @@ let%expect_test "redact_sexp" =
         (stderr      "")))
      (error <REDACTED>))
     |}];
-  print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "context/cwd" ]);
+  print_s (Volgo_test_helpers.redact_sexp error ~fields:[ "error"; "context/cwd" ]);
   [%expect
     {|
     ((context
@@ -99,7 +99,7 @@ let%expect_test "redact_sexp" =
      (error <REDACTED>))
     |}];
   print_s
-    (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "context/stderr"; "cwd" ]);
+    (Volgo_test_helpers.redact_sexp error ~fields:[ "error"; "context/stderr"; "cwd" ]);
   [%expect
     {|
     ((context
@@ -121,16 +121,16 @@ let%expect_test "redact_sexp" =
         ; List [ Atom "error"; Atom "error" ]
         ])
   in
-  print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[]);
+  print_s (Volgo_test_helpers.redact_sexp sexp ~fields:[]);
   [%expect {| (("" empty) ("" ("" empty)) (error error)) |}];
-  print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[ "" ]);
+  print_s (Volgo_test_helpers.redact_sexp sexp ~fields:[ "" ]);
   [%expect
     {|
     ((""    <REDACTED>)
      (""    <REDACTED>)
      (error error))
     |}];
-  print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[ "/" ]);
+  print_s (Volgo_test_helpers.redact_sexp sexp ~fields:[ "/" ]);
   [%expect {| (("" empty) ("" ("" <REDACTED>)) (error error)) |}];
   ()
 ;;

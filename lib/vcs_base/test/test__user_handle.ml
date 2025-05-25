@@ -22,7 +22,7 @@
 let values = [ Vcs.User_handle.v "john-doe"; Vcs.User_handle.v "jane-doe" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.User_handle) (module Vcs_base.Vcs.User_handle) values;
+  Hash_test.run (module Vcs.User_handle) (module Volgo_base.Vcs.User_handle) values;
   [%expect
     {|
     (((value john-doe))

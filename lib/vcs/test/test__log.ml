@@ -28,7 +28,7 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let log =
-    List.map lines ~f:(fun line -> Vcs_git_backend.Log.parse_log_line_exn ~line)
+    List.map lines ~f:(fun line -> Volgo_git_backend.Log.parse_log_line_exn ~line)
   in
   let roots = Vcs.Log.roots log in
   print_s [%sexp (roots : Vcs.Rev.t list)];

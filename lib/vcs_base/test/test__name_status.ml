@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Vcs = Vcs_base.Vcs
+module Vcs = Volgo_base.Vcs
 
 let%expect_test "files" =
   let lines =
@@ -30,7 +30,7 @@ let%expect_test "files" =
     ; "R100\toriginal_renamed_file\tnew_renamed_file"
     ]
   in
-  let name_status = Vcs_git_backend.Name_status.parse_lines_exn ~lines in
+  let name_status = Volgo_git_backend.Name_status.parse_lines_exn ~lines in
   print_s [%sexp (name_status : Vcs.Name_status.t)];
   [%expect
     {|

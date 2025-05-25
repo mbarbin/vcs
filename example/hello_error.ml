@@ -26,12 +26,12 @@
 let%expect_test "hello error" =
   Eio_main.run
   @@ fun env ->
-  let vcs = Vcs_git_eio.create ~env in
+  let vcs = Volgo_git_eio.create ~env in
   let invalid_path = Absolute_path.v "/invalid/path" in
   let redact_sexp sexp =
     (* Because the actual error may become too brittle overtime, we actually
        redact it. *)
-    Vcs_test_helpers.redact_sexp sexp ~fields:[ "error" ]
+    Volgo_test_helpers.redact_sexp sexp ~fields:[ "error" ]
   in
   let () =
     match Vcs.init vcs ~path:invalid_path with

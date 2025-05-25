@@ -23,7 +23,7 @@ let%expect_test "hash" =
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
   let values = [ rev (); rev () ] in
-  Hash_test.run (module Vcs.Rev) (module Vcs_base.Vcs.Rev) values;
+  Hash_test.run (module Vcs.Rev) (module Volgo_base.Vcs.Rev) values;
   [%expect
     {|
     (((value f453b802f640c6888df978c712057d17f453b802))

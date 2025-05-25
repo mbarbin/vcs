@@ -31,7 +31,7 @@ let values =
 ;;
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Ref_kind) (module Vcs_base.Vcs.Ref_kind) values;
+  Hash_test.run (module Vcs.Ref_kind) (module Volgo_base.Vcs.Ref_kind) values;
   [%expect
     {|
     (((value (Local_branch (branch_name main))))

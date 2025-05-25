@@ -22,7 +22,7 @@
 let values = [ Vcs.File_contents.create ""; Vcs.File_contents.create "Hello" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.File_contents) (module Vcs_base.Vcs.File_contents) values;
+  Hash_test.run (module Vcs.File_contents) (module Volgo_base.Vcs.File_contents) values;
   [%expect
     {|
     (((value ""))

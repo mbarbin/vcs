@@ -1,6 +1,6 @@
 (library
- (name vcs)
- (public_name vcs)
+ (name volgo)
+ (public_name volgo)
  (flags
   :standard
   -w

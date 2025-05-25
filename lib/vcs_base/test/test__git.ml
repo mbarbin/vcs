@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Vcs = Vcs_base.Vcs
+module Vcs = Volgo_base.Vcs
 
 let%expect_test "exit0" =
   let test output = print_s [%sexp (Vcs.Git.Or_error.exit0 output : unit Or_error.t)] in

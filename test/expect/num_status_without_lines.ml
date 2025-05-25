@@ -27,8 +27,8 @@ let%expect_test "num stat without lines" =
   @@ fun env ->
   Eio.Switch.run
   @@ fun sw ->
-  let vcs = Vcs_git_eio.create ~env in
-  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let vcs = Volgo_git_eio.create ~env in
+  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let commit_file ~path ~file_contents =
     Vcs.save_file
       vcs

@@ -22,7 +22,7 @@
 let values = [ Vcs.Remote_name.origin; Vcs.Remote_name.v "upstream" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Remote_name) (module Vcs_base.Vcs.Remote_name) values;
+  Hash_test.run (module Vcs.Remote_name) (module Volgo_base.Vcs.Remote_name) values;
   [%expect
     {|
     (((value origin))

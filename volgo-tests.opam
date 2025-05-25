@@ -41,13 +41,13 @@ depends: [
   "sexp_pretty" {>= "v0.17" & < "v0.18"}
   "shexp" {>= "v0.17" & < "v0.18"}
   "stdio" {>= "v0.17" & < "v0.18"}
-  "vcs" {= version}
-  "vcs-base" {= version}
-  "volgo-vcs-cli" {= version}
-  "vcs-git-backend" {= version}
-  "vcs-git-eio" {= version}
-  "vcs-git-unix" {= version}
-  "vcs-test-helpers" {= version}
+  "volgo" {= version}
+  "volgo-base" {= version}
+  "volgo-vcs" {= version}
+  "volgo-git-backend" {= version}
+  "volgo-git-eio" {= version}
+  "volgo-git-unix" {= version}
+  "volgo-test-helpers" {= version}
   "sherlodoc" {with-doc & >= "0.2"}
   "odoc" {with-doc}
 ]

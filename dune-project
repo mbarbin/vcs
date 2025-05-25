@@ -20,7 +20,7 @@
 (implicit_transitive_deps false)
 
 (package
- (name vcs)
+ (name volgo)
  (synopsis "A Versatile OCaml Library for Git Operations")
  (depends
   (ocaml
@@ -45,8 +45,8 @@
    (>= 0.33))))
 
 (package
- (name vcs-base)
- (synopsis "An Extension of Vcs to use with Base")
+ (name volgo-base)
+ (synopsis "An Extension of volgo.Vcs to use with Base")
  (depends
   (ocaml
    (>= 5.2))
@@ -92,12 +92,13 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (vcs
+  (volgo
    (= :version))))
 
 (package
- (name volgo-vcs-cli)
- (synopsis "A command line tool based on the volgo-vcs libraries")
+ (name volgo-vcs)
+ (synopsis
+  "A command line tool for vcs operations based on the volgo libraries")
  (depends
   (ocaml
    (>= 5.2))
@@ -121,13 +122,13 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (vcs
+  (volgo
    (= :version))
-  (vcs-git-unix
+  (volgo-git-unix
    (= :version))))
 
 (package
- (name vcs-git-backend)
+ (name volgo-git-backend)
  (synopsis "An IO-free library that parses the output of Git commands")
  (depends
   (ocaml
@@ -150,12 +151,13 @@
    (>= 0.33))
   (sexplib0
    (>= v0.16))
-  (vcs
+  (volgo
    (= :version))))
 
 (package
- (name vcs-git-eio)
- (synopsis "A Git backend for Vcs based on Vcs_git_backend for Eio programs")
+ (name volgo-git-eio)
+ (synopsis
+  "A Git backend for Vcs based on Volgo_git_backend for Eio programs")
  (depends
   (ocaml
    (>= 5.2))
@@ -183,15 +185,15 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (vcs
+  (volgo
    (= :version))
-  (vcs-git-backend
+  (volgo-git-backend
    (= :version))))
 
 (package
- (name vcs-git-unix)
+ (name volgo-git-unix)
  (synopsis
-  "A Git backend for Vcs based on Vcs_git_backend and the Unix library")
+  "A Git backend for Vcs based on Volgo_git_backend and the Unix library")
  (depends
   (ocaml
    (>= 4.14))
@@ -213,14 +215,14 @@
    (>= v0.16))
   (shexp
    (>= v0.16))
-  (vcs
+  (volgo
    (= :version))
-  (vcs-git-backend
+  (volgo-git-backend
    (= :version))))
 
 (package
- (name vcs-test-helpers)
- (synopsis "Helper library to write tests using vcs")
+ (name volgo-test-helpers)
+ (synopsis "Helper library to write tests using volgo")
  (depends
   (ocaml
    (>= 5.2))
@@ -268,7 +270,7 @@
     (< v0.18)))
   (ppxlib
    (>= 0.33))
-  (vcs
+  (volgo
    (= :version))))
 
 (package
@@ -380,19 +382,19 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (vcs
+  (volgo
    (= :version))
-  (vcs-base
+  (volgo-base
    (= :version))
-  (volgo-vcs-cli
+  (volgo-vcs
    (= :version))
-  (vcs-git-backend
+  (volgo-git-backend
    (= :version))
-  (vcs-git-eio
+  (volgo-git-eio
    (= :version))
-  (vcs-git-unix
+  (volgo-git-unix
    (= :version))
-  (vcs-test-helpers
+  (volgo-test-helpers
    (= :version))
   (sherlodoc
    (and
@@ -402,7 +404,7 @@
 (package
  (name volgo-dev)
  (synopsis
-  "Package to regroup dev targets for the vcs project, documentation, and more")
+  "Package to regroup dev targets for the volgo project, documentation, and more")
  (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
  (depends
   (ocaml
@@ -508,19 +510,19 @@
    (and
     (>= v0.17)
     (< v0.18)))
-  (vcs
+  (volgo
    (= :version))
-  (vcs-base
+  (volgo-base
    (= :version))
-  (volgo-vcs-cli
+  (volgo-vcs
    (= :version))
-  (vcs-git-backend
+  (volgo-git-backend
    (= :version))
-  (vcs-git-eio
+  (volgo-git-eio
    (= :version))
-  (vcs-git-unix
+  (volgo-git-unix
    (= :version))
-  (vcs-test-helpers
+  (volgo-test-helpers
    (= :version))
   (volgo-tests
    (= :version))

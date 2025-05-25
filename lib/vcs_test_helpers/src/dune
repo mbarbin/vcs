@@ -1,6 +1,6 @@
 (library
- (name vcs_test_helpers)
- (public_name vcs-test-helpers)
+ (name volgo_test_helpers)
+ (public_name volgo-test-helpers)
  (flags
   :standard
   -w
@@ -10,8 +10,10 @@
   -open
   Base
   -open
-  Fpath_sexp0)
- (libraries base eio fpath fpath-sexp0 unix vcs)
+  Fpath_sexp0
+  -open
+  Volgo)
+ (libraries base eio fpath fpath-sexp0 unix volgo)
  (instrumentation
   (backend bisect_ppx))
  (lint

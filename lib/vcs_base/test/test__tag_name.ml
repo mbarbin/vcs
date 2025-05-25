@@ -22,7 +22,7 @@
 let values = [ Vcs.Tag_name.v "my-tag"; Vcs.Tag_name.v "v0.0.1"; Vcs.Tag_name.v "1.2" ]
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Tag_name) (module Vcs_base.Vcs.Tag_name) values;
+  Hash_test.run (module Vcs.Tag_name) (module Volgo_base.Vcs.Tag_name) values;
   [%expect
     {|
     (((value my-tag))

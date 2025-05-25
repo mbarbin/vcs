@@ -26,7 +26,7 @@ let values =
 ;;
 
 let%expect_test "hash" =
-  Hash_test.run (module Vcs.Commit_message) (module Vcs_base.Vcs.Commit_message) values;
+  Hash_test.run (module Vcs.Commit_message) (module Volgo_base.Vcs.Commit_message) values;
   [%expect
     {|
     (((value "Add this awesome new feature"))

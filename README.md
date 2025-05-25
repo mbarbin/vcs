@@ -31,7 +31,15 @@ Our goal is to create a versatile and highly compatible library that can cater t
 
 ## Naming is hard: Volgo vs Vcs?
 
-To publish our "Versatile OCaml Library for Git Operation" (hence VOLGO) to opam, we're using a packaging scheme where `volgo-` is a namespacing prefix. However, this name is not meant to appear in user code at call site, each package introducing other names for that (e.g. `Vcs`, `Vcs_git_unix`, etc.). *volgo-vcs* is the name of the cli distributed by the package *volgo-vcs-cli*.
+To publish our "Versatile OCaml Library for Git Operations" (V-O-L-G-O) to opam, we're using a packaging naming scheme where `volgo` is a namespacing prefix.
+
+However, the main module and entry point of the project is named `Vcs`. `Vcs` was also the original name for the entire project.
+
+Oftentimes in the documentation, you'll find references to the project using the name of that main library, `Vcs`, as it is meant to be named in user code, rather than by using the opam name `volgo`.
+
+The main reason for that naming duality is that, even though the project is designed such that the main library be referred to and used as `Vcs`, we didn't want to claim the `vcs.opam` name from the main opam-repository. Thus we have resorted to introducing the `volgo` name for packaging and publication purposes.
+
+*volgo-vcs* is the name of a cli built with the libraries of this project. It is distributed by the opam package of the same name (`volgo-vcs`).
 
 ## Known issues
 

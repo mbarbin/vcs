@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Vcs = Vcs_base.Vcs
+module Vcs = Volgo_base.Vcs
 
 let%expect_test "parse_exn" =
   Eio_main.run
@@ -27,7 +27,7 @@ let%expect_test "parse_exn" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.refs") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let refs = Vcs_git_backend.Refs.parse_lines_exn ~lines in
+  let refs = Volgo_git_backend.Refs.parse_lines_exn ~lines in
   print_s
     [%sexp
       { tags = (Vcs.Refs.tags refs : Set.M(Vcs.Tag_name).t)

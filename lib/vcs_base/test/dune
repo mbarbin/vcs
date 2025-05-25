@@ -18,7 +18,9 @@
   -open
   Fpath_sexp0
   -open
-  Expect_test_helpers_base)
+  Expect_test_helpers_base
+  -open
+  Volgo)
  (libraries
   base
   eio
@@ -28,9 +30,9 @@
   fpath-sexp0
   pp
   pplumbing.err
-  vcs
-  vcs_base
-  vcs_git_backend)
+  volgo
+  volgo_base
+  volgo_git_backend)
  (instrumentation
   (backend bisect_ppx))
  (lint

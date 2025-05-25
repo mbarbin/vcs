@@ -1,6 +1,6 @@
 (library
- (name vcs_git_unix)
- (public_name vcs-git-unix)
+ (name volgo_git_unix)
+ (public_name volgo-git-unix)
  (flags
   :standard
   -w
@@ -12,7 +12,9 @@
   -open
   Sexplib0
   -open
-  Sexplib0.Sexp_conv)
+  Sexplib0.Sexp_conv
+  -open
+  Volgo)
  (libraries
   fpath
   fpath-sexp0
@@ -21,8 +23,8 @@
   pplumbing.pp-tty
   shexp.process
   unix
-  vcs
-  vcs-git-backend)
+  volgo
+  volgo-git-backend)
  (instrumentation
   (backend bisect_ppx))
  (lint

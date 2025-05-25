@@ -103,7 +103,7 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
          (Err.add_context
             err
             [ Err.sexp
-                [%sexp "Vcs_git_backend.Name_status.parse_line_exn", { line : string }]
+                [%sexp "Volgo_git_backend.Name_status.parse_line_exn", { line : string }]
             ]))
 ;;
 

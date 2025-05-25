@@ -43,11 +43,11 @@
     available to your scope:
 
     {[
-      module Vcs = Vcs_base.Vcs
+      module Vcs = Volgo_base.Vcs
     ]}
 
     Another way to achieve this is to open [Vcs_base] via dune flags. When doing
-    that, all the files in your library will use [Vcs_base.Vcs] consistently.
+    that, all the files in your library will use [Volgo_base.Vcs] consistently.
 
     {v
       (library

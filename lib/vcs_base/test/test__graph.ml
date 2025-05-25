@@ -139,7 +139,7 @@ let%expect_test "node hash" =
     |}];
   Hash_test.run
     (module Vcs.Graph.Node)
-    (module Vcs_base.Vcs.Graph.Node)
+    (module Volgo_base.Vcs.Graph.Node)
     [ n1; n2; n3; n4; nm1 ];
   [%expect
     {|
@@ -220,7 +220,7 @@ let%expect_test "node hash" =
 let%expect_test "descendance-hash" =
   Hash_test.run
     (module Vcs.Graph.Descendance)
-    (module Vcs_base.Vcs.Graph.Descendance)
+    (module Volgo_base.Vcs.Graph.Descendance)
     Vcs.Graph.Descendance.all;
   [%expect
     {|

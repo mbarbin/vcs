@@ -16,8 +16,8 @@ dirs=(
     "lib/vcs_git_eio/test"
     "lib/vcs_git_backend/src"
     "lib/vcs_git_backend/test"
-    "lib/vcs_test_helpers/src"
-    "lib/vcs_test_helpers/test"
+    "lib/volgo_test_helpers/src"
+    "lib/volgo_test_helpers/test"
     "test/expect"
 )
 

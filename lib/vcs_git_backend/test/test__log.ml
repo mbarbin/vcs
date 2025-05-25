@@ -34,7 +34,7 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let log =
-    List.map lines ~f:(fun line -> Vcs_git_backend.Log.parse_log_line_exn ~line)
+    List.map lines ~f:(fun line -> Volgo_git_backend.Log.parse_log_line_exn ~line)
   in
   let roots = Vcs.Log.roots log in
   print_s [%sexp (roots : Vcs.Rev.t list)];
@@ -54,7 +54,7 @@ let%expect_test "parse_exn" =
 
 let%expect_test "invalid lines" =
   let test line =
-    print_s [%sexp (Vcs_git_backend.Log.parse_log_line_exn ~line : Vcs.Log.Line.t)]
+    print_s [%sexp (Volgo_git_backend.Log.parse_log_line_exn ~line : Vcs.Log.Line.t)]
   in
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d";
   [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
@@ -80,7 +80,7 @@ let%expect_test "invalid lines" =
   require_does_raise [%here] (fun () -> test "");
   [%expect
     {|
-    ((context (Vcs_git_backend.Log.parse_log_line_exn ((line ""))))
+    ((context (Volgo_git_backend.Log.parse_log_line_exn ((line ""))))
      (error (Invalid_argument "\"\": invalid rev")))
     |}];
   require_does_raise [%here] (fun () ->
@@ -90,7 +90,7 @@ let%expect_test "invalid lines" =
   [%expect
     {|
     ((context (
-       Vcs_git_backend.Log.parse_log_line_exn ((
+       Volgo_git_backend.Log.parse_log_line_exn ((
          line
          "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b"))))
      (error "Too many words (expected 1, 2, or 3)."))
