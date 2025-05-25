@@ -382,6 +382,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (vcs-test-helpers
+   (= :version))
   (volgo
    (= :version))
   (volgo-base
@@ -391,8 +393,6 @@
   (volgo-git-eio
    (= :version))
   (volgo-git-unix
-   (= :version))
-  (vcs-test-helpers
    (= :version))
   (volgo-vcs
    (= :version))
@@ -510,6 +510,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (vcs-test-helpers
+   (= :version))
   (volgo
    (= :version))
   (volgo-base
@@ -519,8 +521,6 @@
   (volgo-git-eio
    (= :version))
   (volgo-git-unix
-   (= :version))
-  (vcs-test-helpers
    (= :version))
   (volgo-tests
    (= :version))
