@@ -386,8 +386,6 @@
    (= :version))
   (volgo-base
    (= :version))
-  (volgo-vcs
-   (= :version))
   (volgo-git-backend
    (= :version))
   (volgo-git-eio
@@ -395,6 +393,8 @@
   (volgo-git-unix
    (= :version))
   (volgo-test-helpers
+   (= :version))
+  (volgo-vcs
    (= :version))
   (sherlodoc
    (and
@@ -514,8 +514,6 @@
    (= :version))
   (volgo-base
    (= :version))
-  (volgo-vcs
-   (= :version))
   (volgo-git-backend
    (= :version))
   (volgo-git-eio
@@ -525,6 +523,8 @@
   (volgo-test-helpers
    (= :version))
   (volgo-tests
+   (= :version))
+  (volgo-vcs
    (= :version))
   (sherlodoc
    (and
