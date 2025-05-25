@@ -20,5 +20,5 @@
 (*******************************************************************************)
 
 let () =
-  Cmdlang_cmdliner_runner.run Volgo_cli.main ~name:"volgo-vcs" ~version:"%%VERSION%%"
+  Cmdlang_cmdliner_runner.run Volgo_vcs_cli.main ~name:"volgo-vcs" ~version:"%%VERSION%%"
 ;;

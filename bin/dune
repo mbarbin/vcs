@@ -6,6 +6,6 @@
  (libraries
   pplumbing.cmdlang-cmdliner-runner
   pplumbing.err
-  volgo-vcs.volgo-cli)
+  volgo-vcs.volgo-vcs-cli)
  (instrumentation
   (backend bisect_ppx)))
