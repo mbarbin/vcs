@@ -1,6 +1,6 @@
 (lang dune 3.17)
 
-(name vcs)
+(name volgo)
 
 (generate_opam_files)
 
@@ -272,8 +272,8 @@
    (= :version))))
 
 (package
- (name vcs-tests)
- (synopsis "Tests & Examples for [Vcs]")
+ (name volgo-tests)
+ (synopsis "Tests & Examples for volgo")
  (depends
   (ocaml
    (>= 5.2))
@@ -400,7 +400,7 @@
     (>= 0.2)))))
 
 (package
- (name vcs-dev)
+ (name volgo-dev)
  (synopsis
   "Package to regroup dev targets for the vcs project, documentation, and more")
  (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
@@ -522,7 +522,7 @@
    (= :version))
   (vcs-test-helpers
    (= :version))
-  (vcs-tests
+  (volgo-tests
    (= :version))
   (sherlodoc
    (and

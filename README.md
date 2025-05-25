@@ -29,6 +29,10 @@ Explore the [example](example/) directory to get a firsthand look at how Vcs wor
 
 Our goal is to create a versatile and highly compatible library that can cater to a wide range of use cases, while also fostering community engagement. We also hope to gain practical experience with the use of various technics to build parametric libraries.
 
+## Naming is hard: Volgo vs Vcs?
+
+To publish our "Versatile OCaml Library for Git Operation" (hence VOLGO) to opam, we're using a packaging scheme where `volgo-` is a namespacing prefix. However, this name is not meant to appear in user code at call site, each package introducing other names for that (e.g. `Vcs`, `Vcs_git_unix`, etc.). *volgo-vcs* is the name of the cli distributed by the package *volgo-vcs-cli*.
+
 ## Known issues
 
 - The camel depicted in the project logo has only one hump, whereas OCamls traditionally have two. We dare to hope that, as the project matures, our mascot will grow its second hump and fully embrace its OCaml heritage.

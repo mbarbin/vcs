@@ -1,6 +1,6 @@
 (library
  (name vcs_example)
- (public_name vcs-tests.example)
+ (public_name volgo-tests.example)
  (inline_tests)
  (flags
   :standard
