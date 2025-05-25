@@ -1,8 +1,13 @@
 ## 0.0.16 (unreleased)
 
+This release contains a major repackaging of the project to make it easier to publish to opam without using the short and canonical name `vcs.opam`. The project is now named `volgo` (a Versatile Ocaml Library for Git Operations).
+
 ### Added
 
 ### Changed
+
+- Repackage project with the prefix name `volgo` for publication (#66, @mbarbin).
+- Rename the main cli `volgo-vcs` (#66, @mbarbin).
 
 ### Deprecated
 
@@ -39,7 +44,7 @@ To automatically apply the migration changes, first upgrade your `vcs` dependenc
 ### Changed
 
 - Unify `Vcs.Err` with `pplumbing.Err` (#60, @mbarbin).
-- Make some tweaks to vcs errors and exns sexp formats (#57, @mbarbin).
+- Make some tweaks to vcs errors and exceptions sexp formats (#57, @mbarbin).
 
 ### Deprecated
 
