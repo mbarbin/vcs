@@ -320,7 +320,7 @@ module Non_raising = Non_raising
 
 module Private : sig
   (** This part of the interface is not stable. Things may break without notice
-      and outside of the guidlines set by semver when upgrading to a new version
+      and outside of the guidelines set by semver when upgrading to a new version
       of [Vcs]. This is used e.g. by tests or libraries with strong ties to
       [Vcs]. Do not use. *)
 
