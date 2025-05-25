@@ -1,17 +1,11 @@
-## 0.0.16 (unreleased)
+## 0.0.16 (2025-05-25)
 
 This release contains a major repackaging of the project to make it easier to publish to opam without using the short and canonical name `vcs.opam`. The project is now named `volgo` (Versatile Ocaml Library for Git Operations).
-
-### Added
 
 ### Changed
 
 - Repackage project with the prefix name `volgo` for publication (#66, @mbarbin).
 - Rename the main cli `volgo-vcs` (#66, @mbarbin).
-
-### Deprecated
-
-### Fixed
 
 ### Removed
 
