@@ -29,6 +29,7 @@
     the remote branches as they are currently known locally. *)
 
 module Line : sig
+  (** @canonical Volgo.Vcs.Refs.Line.t *)
   type t =
     { rev : Rev.t
     ; ref_kind : Ref_kind.t

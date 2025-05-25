@@ -26,7 +26,7 @@
 
     For example: [Author.v "John Doe <john.doe@mail.com>"]. *)
 
-type t
+type t (** @canonical Vcs.Author.t *)
 
 include Container_key.S with type t := t
 include Validated_string.S with type t := t

@@ -23,7 +23,7 @@
     repository. The name was inherited from Mercurial. For git, this
     correspond to the commit-hash. In both systems, these are 40-chars hashes. *)
 
-type t
+type t (** @canonical Volgo.Vcs.Rev.t *)
 
 include Container_key.S with type t := t
 include Validated_string.S with type t := t

@@ -64,7 +64,5 @@ jobs:
       - name: Lint fmt
         uses: ocaml/setup-ocaml/lint-fmt@v3
 
-# mbarbin: Disabled due to warnings: 'Hidden constructors in type'
-# which I cannot figure out how to fix.
-#      - name: Lint doc
-#        uses: ocaml/setup-ocaml/lint-doc@v3
+      - name: Lint doc
+        uses: ocaml/setup-ocaml/lint-doc@v3

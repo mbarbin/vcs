@@ -25,6 +25,7 @@
     This is used to implement convenient utils, such as utils to clone
     repositories from GitHub, etc. *)
 
+(** @canonical Volgo.Vcs.Platform.t *)
 type t = GitHub
 
 include Container_key.S with type t := t

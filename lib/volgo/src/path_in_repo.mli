@@ -47,7 +47,7 @@
     This is a wrapper for a [Fpath.t] relative to the repo root, used for
     accrued type safety. *)
 
-type t
+type t (** @canonical Volgo.Vcs.Path_in_repo.t *)
 
 include Container_key.S with type t := t
 include Validated_string.S with type t := t
