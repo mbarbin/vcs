@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type t
+type t (** @canonical Volgo.Vcs.Remote_name.t *)
 
 include Container_key.S with type t := t
 include Validated_string.S with type t := t

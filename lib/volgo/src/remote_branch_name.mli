@@ -19,6 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(** @canonical Volgo.Vcs.Remote_branch_name.t *)
 type t =
   { remote_name : Remote_name.t
   ; branch_name : Branch_name.t

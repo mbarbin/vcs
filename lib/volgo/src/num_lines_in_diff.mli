@@ -25,6 +25,7 @@
     insertions and number of deletions. Both are a positive or null integer counting
     a number of lines. *)
 
+(** @canonical Volgo.Vcs.Num_lines_in_diff.t *)
 type t =
   { insertions : int
   ; deletions : int

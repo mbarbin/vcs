@@ -32,7 +32,7 @@
     which includes the full first name and last name, including spaces etc.
     This module is part of the [Vcs] library for convenience. *)
 
-type t
+type t (** @canonical Volgo.Vcs.User_handle.t *)
 
 include Container_key.S with type t := t
 include Validated_string.S with type t := t

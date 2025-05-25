@@ -24,6 +24,7 @@
     It contains all the commits, along with the parents of each commit. *)
 
 module Line : sig
+  (** @canonical Volgo.Vcs.Log.Line.t *)
   type t =
     | Root of { rev : Rev.t }
     | Commit of
