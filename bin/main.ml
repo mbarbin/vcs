@@ -19,4 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let () = Cmdlang_cmdliner_runner.run Vcs_cli.main ~name:"volgo-vcs" ~version:"%%VERSION%%"
+let () =
+  Cmdlang_cmdliner_runner.run Volgo_cli.main ~name:"volgo-vcs" ~version:"%%VERSION%%"
+;;

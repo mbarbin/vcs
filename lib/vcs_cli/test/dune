@@ -1,6 +1,6 @@
 (library
- (name vcs_cli_test)
- (public_name volgo-tests.vcs_cli_test)
+ (name volgo_cli_test)
+ (public_name volgo-tests.volgo_cli_test)
  (inline_tests)
  (flags
   :standard
@@ -11,10 +11,11 @@
   -open
   Base
   -open
-  Expect_test_helpers_base
-  -open
-  Volgo_vcs)
- (libraries base expect_test_helpers_core.expect_test_helpers_base volgo-vcs)
+  Expect_test_helpers_base)
+ (libraries
+  base
+  expect_test_helpers_core.expect_test_helpers_base
+  volgo-vcs.volgo-cli)
  (instrumentation
   (backend bisect_ppx))
  (lint

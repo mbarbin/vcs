@@ -54,7 +54,7 @@ jobs:
       # the development workflow and as part of the main CI job. These are the
       # tests that are checked for every combination of os and ocaml-compiler.
       - name: Install dependencies
-        run: opam install ./volgo.opam ./volgo-base.opam ./volgo-vcs.opam ./volgo-git-unix.opam ./volgo-git-eio.opam ./volgo-git-backend.opam ./volgo-test-helpers.opam ./volgo-tests.opam --deps-only --with-test
+        run: opam install ./volgo.opam ./volgo-base.opam ./volgo-vcs.opam ./volgo-git-unix.opam ./volgo-git-eio.opam ./volgo-git-backend.opam ./vcs-test-helpers.opam ./volgo-tests.opam --deps-only --with-test
 
       - name: Build & Run tests
-        run: opam exec -- dune build @all @runtest -p volgo,volgo-base,volgo-vcs,volgo-git-unix,volgo-git-eio,volgo-git-backend,volgo-test-helpers,volgo-tests
+        run: opam exec -- dune build @all @runtest -p volgo,volgo-base,volgo-vcs,volgo-git-unix,volgo-git-eio,volgo-git-backend,vcs-test-helpers,volgo-tests

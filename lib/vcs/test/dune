@@ -1,6 +1,6 @@
 (library
- (name vcs_test)
- (public_name volgo-tests.vcs_test)
+ (name volgo_test)
+ (public_name volgo-tests.volgo_test)
  (inline_tests
   (deps
    (glob_files *.name-status)

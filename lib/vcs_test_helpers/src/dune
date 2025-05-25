@@ -1,6 +1,6 @@
 (library
- (name volgo_test_helpers)
- (public_name volgo-test-helpers)
+ (name vcs_test_helpers)
+ (public_name vcs-test-helpers)
  (flags
   :standard
   -w

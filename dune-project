@@ -221,8 +221,8 @@
    (= :version))))
 
 (package
- (name volgo-test-helpers)
- (synopsis "Helper library to write tests using volgo")
+ (name vcs-test-helpers)
+ (synopsis "Helper library to write tests using vcs")
  (depends
   (ocaml
    (>= 5.2))
@@ -392,7 +392,7 @@
    (= :version))
   (volgo-git-unix
    (= :version))
-  (volgo-test-helpers
+  (vcs-test-helpers
    (= :version))
   (volgo-vcs
    (= :version))
@@ -520,7 +520,7 @@
    (= :version))
   (volgo-git-unix
    (= :version))
-  (volgo-test-helpers
+  (vcs-test-helpers
    (= :version))
   (volgo-tests
    (= :version))

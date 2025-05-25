@@ -25,7 +25,7 @@ let%expect_test "find_enclosing_repo_root" =
   Eio.Switch.run
   @@ fun sw ->
   let vcs = Volgo_git_eio.create ~env in
-  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   (* read_dir *)
   let () =
     let entries = Vcs.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root) in

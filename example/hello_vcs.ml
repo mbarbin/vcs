@@ -34,7 +34,7 @@ let%expect_test "hello commit" =
   let vcs = Volgo_git_eio.create ~env in
   (* The next step takes care of creating a fresh repository. We make use of a
      helper library to encapsulate the required steps. *)
-  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   (* Ok, we are all set, [repo_root] points to a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it
      to the repository, and query it from the store afterwards. *)

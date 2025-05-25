@@ -29,7 +29,7 @@
   volgo_base
   volgo_git_eio
   volgo_git_unix
-  volgo_test_helpers)
+  vcs_test_helpers)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -46,7 +46,7 @@ let%expect_test "hello path" =
     |> Absolute_path.v
   in
   let vcs = Volgo_git_unix.create () in
-  let repo_root = Volgo_test_helpers.init vcs ~path:dir in
+  let repo_root = Vcs_test_helpers.init vcs ~path:dir in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   Vcs.save_file
     vcs
@@ -72,7 +72,7 @@ let%expect_test "hello path" =
     with
     | Ok _ -> assert false
     | Error err ->
-      print_s (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:redact_fields)
+      print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:redact_fields)
   in
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "prog"; "repo_root"; "stderr" ];
   [%expect

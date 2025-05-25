@@ -31,7 +31,7 @@ let%expect_test "hello error" =
   let redact_sexp sexp =
     (* Because the actual error may become too brittle overtime, we actually
        redact it. *)
-    Volgo_test_helpers.redact_sexp sexp ~fields:[ "error" ]
+    Vcs_test_helpers.redact_sexp sexp ~fields:[ "error" ]
   in
   let () =
     match Vcs.init vcs ~path:invalid_path with

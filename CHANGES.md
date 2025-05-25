@@ -116,7 +116,7 @@ To automatically apply the migration changes, first upgrade your `vcs` dependenc
 
 ### Removed
 
-- Removed `Vcs.For_test` and merged it into `Volgo_test_helpers` (#38, @mbarbin).
+- Removed `Vcs.For_test` and merged it into `Vcs_test_helpers` (#38, @mbarbin).
 - Removed `Vcs.Exn.raise_s` since it is causing `bisect_ppx` unvisitable points (#34, @mbarbin).
 - Removed package `vcs-arg` and inline what's needed directly in `vcs-command` (#28, @mbarbin).
 

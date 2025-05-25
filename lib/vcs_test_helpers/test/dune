@@ -27,7 +27,7 @@
   pplumbing.err
   volgo
   volgo_git_eio
-  volgo_test_helpers)
+  vcs_test_helpers)
  (instrumentation
   (backend bisect_ppx))
  (lint

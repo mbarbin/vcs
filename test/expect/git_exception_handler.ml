@@ -121,7 +121,7 @@ let%expect_test "eio" =
   Eio.Switch.run
   @@ fun sw ->
   let vcs = Volgo_git_eio.create ~env in
-  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   create_first_commit vcs ~repo_root;
   let runtime = Volgo_git_eio.Runtime.create ~env in
   let test () = test_current_branch (module Volgo_git_eio.Impl.Git) runtime ~repo_root in
@@ -145,7 +145,7 @@ let%expect_test "eio" =
       (match test () with
        | Ok (_ : Sexp.t) -> assert false
        | Error err ->
-         print_s (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd" ]);
+         print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd" ]);
          [%expect
            {|
            ((context (
@@ -179,7 +179,7 @@ let%expect_test "blocking" =
   Eio.Switch.run
   @@ fun sw ->
   let vcs = Volgo_git_eio.create ~env in
-  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   create_first_commit vcs ~repo_root;
   let runtime = Volgo_git_unix.Runtime.create () in
   let test () = test_current_branch (module Volgo_git_unix.Impl.Git) runtime ~repo_root in
@@ -204,7 +204,7 @@ let%expect_test "blocking" =
        | Ok (_ : Sexp.t) -> assert false
        | Error err ->
          print_s
-           (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd"; "prog" ]);
+           (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd"; "prog" ]);
          [%expect
            {|
            ((context (

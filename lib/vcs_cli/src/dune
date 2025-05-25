@@ -1,6 +1,6 @@
 (library
- (name volgo_vcs)
- (public_name volgo-vcs)
+ (name volgo_cli)
+ (public_name volgo-vcs.volgo-cli)
  (flags
   :standard
   -w

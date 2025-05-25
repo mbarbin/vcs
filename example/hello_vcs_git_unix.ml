@@ -33,7 +33,7 @@ let%expect_test "hello commit" =
      GitHub Actions environment, where no default user config exists. *)
   let repo_root =
     let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
-    Volgo_test_helpers.init vcs ~path:(Absolute_path.v path)
+    Vcs_test_helpers.init vcs ~path:(Absolute_path.v path)
   in
   (* Ok, we are all set, [repo_root] points to a Git repo and we can start using
      [Vcs]. What we do in this example is simply create a new file and commit it
@@ -68,7 +68,7 @@ let%expect_test "hello commit" =
     with
     | Ok _ -> assert false
     | Error err ->
-      print_s (Volgo_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "prog" ])
+      print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "prog" ])
   in
   [%expect
     {|
@@ -93,7 +93,7 @@ let%expect_test "hello commit" =
     | Ok _ -> assert false
     | Error err ->
       print_s
-        (Volgo_test_helpers.redact_sexp
+        (Vcs_test_helpers.redact_sexp
            (Err.sexp_of_t err)
            ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in

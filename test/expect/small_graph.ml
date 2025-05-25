@@ -53,7 +53,7 @@ let%expect_test "small graph" =
   @@ fun sw ->
   let vcs = Volgo_git_eio.create ~env in
   let mock_revs = Vcs.Mock_revs.create () in
-  let repo_root = Volgo_test_helpers.init_temp_repo ~env ~sw ~vcs in
+  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let () =
     match
       Vcs.Or_error.add vcs ~repo_root ~path:(Vcs.Path_in_repo.v "unknown-file.txt")
@@ -61,7 +61,7 @@ let%expect_test "small graph" =
     | Ok () -> assert false
     | Error e ->
       print_s
-        (Volgo_test_helpers.redact_sexp
+        (Vcs_test_helpers.redact_sexp
            (e |> Error.sexp_of_t)
            ~fields:[ "cwd"; "repo_root" ])
   in
@@ -89,7 +89,7 @@ let%expect_test "small graph" =
     | Ok (_ : Vcs.Rev.t) -> assert false
     | Error e ->
       print_s
-        (Volgo_test_helpers.redact_sexp
+        (Vcs_test_helpers.redact_sexp
            (e |> Error.sexp_of_t)
            ~fields:[ "cwd"; "repo_root"; "stdout" ])
   in
@@ -174,7 +174,7 @@ let%expect_test "small graph" =
     | Ok _ -> assert false
     | Error e ->
       print_s
-        (Volgo_test_helpers.redact_sexp
+        (Vcs_test_helpers.redact_sexp
            (e |> Error.sexp_of_t)
            ~fields:[ "cwd"; "error"; "repo_root" ])
   in

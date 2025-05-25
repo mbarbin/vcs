@@ -2,14 +2,10 @@
  (name main)
  (public_name volgo-vcs)
  (package volgo-vcs)
- (flags
-  :standard
-  -w
-  +a-4-40-41-42-44-45-48-66
-  -warn-error
-  +a
-  -open
-  Volgo_vcs)
- (libraries pplumbing.cmdlang-cmdliner-runner pplumbing.err volgo-vcs)
+ (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
+ (libraries
+  pplumbing.cmdlang-cmdliner-runner
+  pplumbing.err
+  volgo-vcs.volgo-cli)
  (instrumentation
   (backend bisect_ppx)))
