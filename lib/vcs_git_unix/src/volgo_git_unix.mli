@@ -19,8 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a git backend for the {!module:Vcs} library, based on
-    [Stdlib] and {!module:Volgo_git_backend}.
+(** Implementation of a git backend for the {!module:Volgo.Vcs} library, based
+    on [Stdlib] and {!module:Volgo_git_backend}.
 
     This implementation is based on the [git] command line tool. We run it as an
     external program with utils from [Stdlib] and [Unix], producing the right

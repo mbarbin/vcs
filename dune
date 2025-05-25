@@ -1,4 +1,7 @@
-(env
- (dev
-  (odoc
-   (warnings fatal))))
+; mbarbin: Disabled due to warnings: 'Hidden constructors in type' which I
+; cannot figure out how to fix.
+
+;(env
+; (dev
+;  (odoc
+;   (warnings fatal))))

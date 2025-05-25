@@ -20,13 +20,13 @@ The `vcs` repository contains several components:
 stateDiagram-v2
   vcs : vcs *
   user : user-lib *
-  vcs_git_backend : vcs-git-backend
+  volgo_git_backend : volgo-git-backend
   executable : executable (eio)
-  backend : vcs-git-eio
+  backend : volgo-git-eio
   runtime : eio
   vcs --> user
   user --> executable
-  vcs_git_backend --> backend
+  volgo_git_backend --> backend
   runtime --> backend
   backend --> executable
 ```
@@ -37,28 +37,28 @@ stateDiagram-v2
   Also marked with a * to indicate no runtime dependencies.
 - **executable**: A placeholder for a runtime component based on `user-lib` that
   commits to a specific backend and concurrency model.
-- **vcs-git-backend**: A IO-free library that parses the output of a `git` cli process.
-- **vcs-git-eio**: An instantiation of `Volgo_git_backend` based on an `Eio` runtime.
-- **vcs-git-unix**: An instantiation of `Volgo_git_backend` based on the OCaml `Stdlib`.
+- **volgo-git-backend**: A IO-free library that parses the output of a `git` cli process.
+- **volgo-git-eio**: An instantiation of `Volgo_git_backend` based on an `Eio` runtime.
+- **volgo-git-unix**: An instantiation of `Volgo_git_backend` based on the OCaml `Stdlib`.
 
 ```mermaid
 stateDiagram-v2
   vcs : vcs *
   user : user-lib *
-  vcs_git_backend : vcs-git-backend
+  volgo_git_backend : volgo-git-backend
   executable : executable (blocking)
-  backend : vcs-git-unix
+  backend : volgo-git-unix
   runtime : stdlib
   vcs --> user
   user --> executable
-  vcs_git_backend --> backend
+  volgo_git_backend --> backend
   runtime --> backend
   backend --> executable
 ```
 
 ## Relation to ocaml-git
 
-[ocaml-git](https://github.com/mirage/ocaml-git) is a pure OCaml implementation of the Git format and protocol. In the `Vcs` framework, a direct-style compatible `ocaml-git` is a potential `backend` for the interface. We plan to create a `Vcs` backend based on `ocaml-git` in the future.
+[ocaml-git](https://github.com/mirage/ocaml-git) is a pure OCaml implementation of the Git format and protocol. In the `Vcs` framework, a direct-style compatible `ocaml-git` is a potential `backend` for the interface (for example, let's call it `ocaml_git_eio`). We plan to create a `Vcs` backend based on `ocaml-git` in the future (depicted by the name `volgo-git-mirage` below).
 
 ```mermaid
 stateDiagram-v2
@@ -66,7 +66,7 @@ stateDiagram-v2
   user : user-lib *
   executable : executable (eio)
   ocaml_git_eio : ocaml_git_eio
-  backend : vcs-git-mirage
+  backend : volgo-git-mirage
   runtime : eio
   vcs --> user
   user --> executable

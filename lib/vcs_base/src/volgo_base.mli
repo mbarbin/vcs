@@ -21,9 +21,9 @@
 
 (** An extension of the Vcs library for use with Base.
 
-    [Vcs_base] is a library that extends the [Vcs] library with additional
-    modules and functionalities, aimed to improve the compatibility of [Vcs] for
-    programs using [Base].
+    [volgo_base.Vcs] is a module that extends the [volgo.Vcs] module with
+    additional modules and functionalities, aimed to improve the compatibility
+    of [Vcs] for programs using [Base].
 
     For example, it adds [Comparable.S] to all container keys modules so that
     they can be used with Base-style containers:
@@ -46,18 +46,18 @@
       module Vcs = Volgo_base.Vcs
     ]}
 
-    Another way to achieve this is to open [Vcs_base] via dune flags. When doing
+    Another way to achieve this is to open [Volgo_base] via dune flags. When doing
     that, all the files in your library will use [Volgo_base.Vcs] consistently.
 
     {v
       (library
         (name my_library)
-        (flags (:standard -open Vcs_base))
-        (libraries vcs-base))
+        (flags (:standard -open Volgo_base))
+        (libraries volgo-base))
     v}
 
-    This pattern is Vcs's authors favorite way of using [Vcs_base] and is the
-    way we're setting up [Vcs_base] in the examples of the Vcs repository. *)
+    This pattern is Vcs's authors favorite way of using [Volgo_base] and is the
+    way we're setting up [Volgo_base] in the examples of the Vcs repository. *)
 
 module Vcs : sig
   (** {1 Extended Vcs API} *)

@@ -1,13 +1,13 @@
 description: """\
 
-[vcs] is a set of OCaml libraries for interacting with Git
+[volgo] is a set of OCaml libraries for interacting with Git
 repositories. It provides a type-safe and direct-style API to
-programmatically perform Git operations, ranging from creating commits
-and branches to loading and navigating commit graphs in memory,
-computing diffs between revisions, and more.
+programmatically perform Git operations, ranging from creating
+commits and branches to loading and navigating commit graphs in
+memory, computing diffs between revisions, and more.
 
 [Volgo_test_helpers] is a library aimed at making it easier to write
-tests for libraries using [vcs] as a dependency. For example, it
+tests for libraries using [volgo] as a dependency. For example, it
 contains helpers for setting the running user's Git config, creating
 temporary repositories, and more.
 

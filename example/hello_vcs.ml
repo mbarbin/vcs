@@ -29,8 +29,8 @@ let%expect_test "hello commit" =
   Eio.Switch.run
   @@ fun sw ->
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
-     backend. We're using [Vcs_git] for this here. It is a backend based on
-     [Eio] and running the [git] command line as an external process. *)
+     backend. We're using [Volgo_git_eio] for this here. It is a backend based
+     on [Eio] and running the [git] command line as an external process. *)
   let vcs = Volgo_git_eio.create ~env in
   (* The next step takes care of creating a fresh repository. We make use of a
      helper library to encapsulate the required steps. *)

@@ -40,13 +40,13 @@ build: [
 dev-repo: "git+https://github.com/mbarbin/vcs.git"
 description: """\
 
-[volgo-vcs-cli] is a package from the [volgo-vcs] project that
-provides a command-line interface called [volgo-vcs]. This interface
-is implemented on top of the other packages from the project.
+[volgo-vcs] is a package from the [volgo] project that provides a
+command-line interface called [volgo-vcs]. This CLI is implemented
+on top of the other packages from the project.
 
-It allows users to run exploratory tests using the [vcs] interface and
-the Git backends available on actual repositories, directly from the
-command line.
+It allows users to run exploratory tests using the [volgo] interfaces
+and the Git backends available on actual repositories, directly from
+the command line.
 
 This tool can be helpful for reproducing issues with the library or
 getting familiar with some functionality of the project in an

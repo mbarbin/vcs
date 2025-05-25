@@ -38,7 +38,7 @@ build: [
 dev-repo: "git+https://github.com/mbarbin/vcs.git"
 description: """\
 
-[vcs] is a set of OCaml libraries for interacting with Git
+[volgo] is a set of OCaml libraries for interacting with Git
 repositories. It provides a type-safe and direct-style API to
 programmatically perform Git operations, ranging from creating
 commits and branches to loading and navigating commit graphs in

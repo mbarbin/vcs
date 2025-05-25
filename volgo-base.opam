@@ -43,9 +43,9 @@ build: [
 dev-repo: "git+https://github.com/mbarbin/vcs.git"
 description: """\
 
-[Vcs_base] is a library that extends the [Vcs] library with additional
-modules and functionalities to improve compatibility with programs
-using [base].
+[Volgo_base] is a library that extends the [Vcs] library with
+additional modules and functionalities to improve compatibility with
+programs using [base].
 
 For example, it adds [Comparable.S] to all container key modules so
 that they can be used with [base]-style containers such as [Map] and

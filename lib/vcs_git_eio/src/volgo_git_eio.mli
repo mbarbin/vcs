@@ -19,8 +19,8 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a git backend for the {!module:Vcs} library, based on
-    [Eio] and {!module:Volgo_git_backend}.
+(** Implementation of a git backend for the {!module:Volgo.Vcs} library, based
+    on [Eio] and {!module:Volgo_git_backend}.
 
     This implementation is based on the [git] command line tool. We run it as an
     external program within an [Eio] environment, producing the right command line
@@ -32,7 +32,7 @@
     the exact list of traits supported by this implementation. *)
 type t = Volgo_git_backend.Trait.t Vcs.t
 
-(** [create ~env] creates a [vcs] value that can be used by the {!module:Vcs}
+(** [create ~env] creates a [vcs] value that can be used by the [Vcs]
     library. *)
 val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
 
