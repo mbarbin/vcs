@@ -28,9 +28,9 @@
   shexp.process
   stdio
   unix
+  vcs_test_helpers
   volgo
-  volgo_git_unix
-  vcs_test_helpers)
+  volgo_git_unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

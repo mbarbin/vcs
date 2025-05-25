@@ -25,10 +25,10 @@
   fpath-sexp0
   pp
   pplumbing.err
+  vcs_test_helpers
   volgo_base
   volgo_git_eio
-  volgo_git_unix
-  vcs_test_helpers)
+  volgo_git_unix)
  (instrumentation
   (backend bisect_ppx))
  (lint
