@@ -1,8 +1,8 @@
 description: """\
 
-[vcs-cli] is a package from the [vcs] project that provides a
-command-line interface called [ocaml-vcs]. This interface is
-implemented on top of the other packages from the project.
+[volgo-vcs-cli] is a package from the [volgo-vcs] project that
+provides a command-line interface called [volgo-vcs]. This interface
+is implemented on top of the other packages from the project.
 
 It allows users to run exploratory tests using the [vcs] interface and
 the Git backends available on actual repositories, directly from the
@@ -13,5 +13,5 @@ getting familiar with some functionality of the project in an
 interactive fashion using real live data.
 
 """
-tags: [ "cli" "git" "ocaml-vcs" "vcs" ]
+tags: [ "cli" "git" "vcs" ]
 x-maintenance-intent: [ "(latest)" ]

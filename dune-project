@@ -96,8 +96,8 @@
    (= :version))))
 
 (package
- (name vcs-cli)
- (synopsis "A command line tool for the Vcs library")
+ (name volgo-vcs-cli)
+ (synopsis "A command line tool based on the volgo-vcs libraries")
  (depends
   (ocaml
    (>= 5.2))
@@ -384,7 +384,7 @@
    (= :version))
   (vcs-base
    (= :version))
-  (vcs-cli
+  (volgo-vcs-cli
    (= :version))
   (vcs-git-backend
    (= :version))
@@ -512,7 +512,7 @@
    (= :version))
   (vcs-base
    (= :version))
-  (vcs-cli
+  (volgo-vcs-cli
    (= :version))
   (vcs-git-backend
    (= :version))

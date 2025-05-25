@@ -32,6 +32,7 @@
         "Shexp",
         "Stdenv",
         "subdir",
+        "volgo",
         "worktree",
         "worktrees"
     ]

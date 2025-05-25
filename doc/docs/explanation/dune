@@ -2,5 +2,5 @@
  (package volgo-dev)
  (deps
   (package vcs)
-  (package vcs-cli))
+  (package volgo-vcs-cli))
  (preludes prelude.txt))
