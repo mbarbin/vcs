@@ -15,7 +15,7 @@
  (libraries
   base
   expect_test_helpers_core.expect_test_helpers_base
-  volgo-vcs.volgo-vcs-cli)
+  volgo_vcs_cli)
  (instrumentation
   (backend bisect_ppx))
  (lint
