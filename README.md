@@ -29,6 +29,18 @@ Explore the [example](example/) directory to get a firsthand look at how Vcs wor
 
 Our goal is to create a versatile and highly compatible library that can cater to a wide range of use cases, while also fostering community engagement. We also hope to gain practical experience with the use of various technics to build parametric libraries.
 
+## Naming is hard: Volgo vs Vcs?
+
+To publish our "Versatile OCaml Library for Git Operations" (V-O-L-G-O) to opam, we're using a packaging naming scheme where `volgo` is a namespacing prefix.
+
+However, the main module and entry point of the project is named `Vcs`. `Vcs` was also the original name for the entire project.
+
+Oftentimes in the documentation, you'll find references to the project using the name of that main library, `Vcs`, as it is meant to be named in user code, rather than by using the opam name `volgo`.
+
+The main reason for that naming duality is that, even though the project is designed such that the main library be referred to and used as `Vcs`, we didn't want to claim the `vcs.opam` name from the main opam-repository. Thus we have resorted to introducing the `volgo` name for packaging and publication purposes.
+
+*volgo-vcs* is the name of a cli built with the libraries of this project. It is distributed by the opam package of the same name (`volgo-vcs`).
+
 ## Known issues
 
 - The camel depicted in the project logo has only one hump, whereas OCamls traditionally have two. We dare to hope that, as the project matures, our mascot will grow its second hump and fully embrace its OCaml heritage.

@@ -1,8 +1,8 @@
 First we need to setup a repo in a way that satisfies the test environment. This
 includes specifics required by the GitHub Actions environment.
 
-  $ ocaml-vcs init -q .
-  $ ocaml-vcs set-user-config --user.name "Test User" --user.email "test@example.com"
+  $ volgo-vcs init -q .
+  $ volgo-vcs set-user-config --user.name "Test User" --user.email "test@example.com"
 
   $ cat > hello << EOF
   > Hello World
@@ -11,31 +11,31 @@ includes specifics required by the GitHub Actions environment.
   $ cat hello
   Hello World
 
-  $ ocaml-vcs add hello
-  $ rev0=$(ocaml-vcs commit -m "Initial commit")
+  $ volgo-vcs add hello
+  $ rev0=$(volgo-vcs commit -m "Initial commit")
 
 Making sure the branch name is deterministic.
 
-  $ ocaml-vcs rename-current-branch main
+  $ volgo-vcs rename-current-branch main
 
 Rev-parse.
 
   $ git rev-parse HEAD | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs current-revision | sed -e "s/$rev0/rev0/g"
+  $ volgo-vcs current-revision | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs current-branch
+  $ volgo-vcs current-branch
   main
 
-  $ ocaml-vcs branch-revision | sed -e "s/$rev0/rev0/g"
+  $ volgo-vcs branch-revision | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs branch-revision main | sed -e "s/$rev0/rev0/g"
+  $ volgo-vcs branch-revision main | sed -e "s/$rev0/rev0/g"
   rev0
 
-  $ ocaml-vcs branch-revision unknown-branch
+  $ volgo-vcs branch-revision unknown-branch
   Error: Branch not found. (branch_name unknown-branch)
   [123]
 
@@ -44,18 +44,18 @@ Testing a successful file show with git and via vcs.
   $ git show HEAD:hello
   Hello World
 
-  $ ocaml-vcs show-file-at-rev hello -r $rev0
+  $ volgo-vcs show-file-at-rev hello -r $rev0
   Hello World
 
 Invalid path-in-repo.
 
-  $ ocaml-vcs show-file-at-rev /hello -r $rev0
+  $ volgo-vcs show-file-at-rev /hello -r $rev0
   Error: Path is not in repo. (path /hello)
   [123]
 
 File system operations.
 
-  $ ocaml-vcs read-dir untracked
+  $ volgo-vcs read-dir untracked
   Context:
   (Vcs.read_dir
    (dir
@@ -67,15 +67,15 @@ File system operations.
 
   $ mkdir -p untracked
 
-  $ ocaml-vcs read-dir untracked
+  $ volgo-vcs read-dir untracked
   ()
 
-  $ echo "New untracked file" | ocaml-vcs save-file untracked/hello
+  $ echo "New untracked file" | volgo-vcs save-file untracked/hello
 
-  $ ocaml-vcs read-dir untracked
+  $ volgo-vcs read-dir untracked
   (hello)
 
-  $ ocaml-vcs read-dir untracked/hello
+  $ volgo-vcs read-dir untracked/hello
   Context:
   (Vcs.read_dir
    (dir
@@ -85,11 +85,11 @@ File system operations.
    "$TESTCASE_ROOT/untracked/hello: Not a directory")
   [123]
 
-  $ ocaml-vcs load-file untracked/hello
+  $ volgo-vcs load-file untracked/hello
   New untracked file
 
   $ chmod -r untracked
-  $ ocaml-vcs read-dir untracked
+  $ volgo-vcs read-dir untracked
   Context:
   (Vcs.read_dir
    (dir
@@ -104,26 +104,26 @@ File system operations.
 
 Find enclosing repo root.
 
-  $ (cd "/" && ocaml-vcs current-revision)
+  $ (cd "/" && volgo-vcs current-revision)
   Error: Failed to locate enclosing repo root from directory. (from /)
   [123]
 
-  $ ocaml-vcs find-enclosing-repo-root
+  $ volgo-vcs find-enclosing-repo-root
   .git: $TESTCASE_ROOT
 
   $ mkdir subdir
-  $ ocaml-vcs find-enclosing-repo-root --from subdir
+  $ volgo-vcs find-enclosing-repo-root --from subdir
   .git: $TESTCASE_ROOT
 
-  $ ocaml-vcs find-enclosing-repo-root --from "/"
+  $ volgo-vcs find-enclosing-repo-root --from "/"
 
   $ mkdir -p subdir/hg/otherdir
   $ touch subdir/hg/.hg
 
-  $ ocaml-vcs find-enclosing-repo-root --from subdir/hg/otherdir
+  $ volgo-vcs find-enclosing-repo-root --from subdir/hg/otherdir
   .git: $TESTCASE_ROOT
 
-  $ ocaml-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .hg
+  $ volgo-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .hg
   .hg: $TESTCASE_ROOT/subdir/hg
 
 Adding a new file under a directory.
@@ -131,15 +131,15 @@ Adding a new file under a directory.
   $ mkdir dir
   $ echo "New file" > dir/hello
 
-  $ ocaml-vcs add dir/hello
-  $ rev1=$(ocaml-vcs commit -m "Added dir/hello")
+  $ volgo-vcs add dir/hello
+  $ rev1=$(volgo-vcs commit -m "Added dir/hello")
 
-  $ ocaml-vcs ls-files
+  $ volgo-vcs ls-files
   dir/hello
   hello
-  $ ocaml-vcs ls-files --below dir
+  $ volgo-vcs ls-files --below dir
   dir/hello
-  $ ocaml-vcs ls-files --below /dir
+  $ volgo-vcs ls-files --below /dir
   Error: Path is not in repo. (path /dir)
   [123]
 
@@ -151,17 +151,17 @@ Testing an unsuccessful file show with git and via vcs.
   $ git commit -q -m "Removed hello"
   $ rev2=$(git rev-parse HEAD)
 
-  $ ocaml-vcs show-file-at-rev hello -r $rev2 2>&1 | sed -e "s/$rev2/rev2/g"
+  $ volgo-vcs show-file-at-rev hello -r $rev2 2>&1 | sed -e "s/$rev2/rev2/g"
   Path 'hello' does not exist in 'rev2'
 
 Name status.
 
-  $ ocaml-vcs name-status $rev0 $rev2
+  $ volgo-vcs name-status $rev0 $rev2
   ((Added dir/hello) (Removed hello))
 
 Num status.
 
-  $ ocaml-vcs num-status $rev0 $rev2
+  $ volgo-vcs num-status $rev0 $rev2
   (((key (One_file dir/hello))
     (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0)))))
    ((key (One_file hello))
@@ -175,13 +175,13 @@ Stabilize output.
 
 Refs.
 
-  $ ocaml-vcs refs | stabilize_output
+  $ volgo-vcs refs | stabilize_output
   (((rev $REV2)
     (ref_kind (Local_branch (branch_name main)))))
 
 Log.
 
-  $ ocaml-vcs log | stabilize_output
+  $ volgo-vcs log | stabilize_output
   ((Commit (rev $REV2)
     (parent $REV1))
    (Commit (rev $REV1)
@@ -190,47 +190,47 @@ Log.
 
 Graph.
 
-  $ ocaml-vcs graph | stabilize_output
+  $ volgo-vcs graph | stabilize_output
   ((refs (($REV2 refs/heads/main)))
    (roots ($REV0))
    (leaves (($REV2 (refs/heads/main)))))
 
 Greatest common ancestors.
 
-  $ ocaml-vcs gca
+  $ volgo-vcs gca
   ()
 
-  $ ocaml-vcs gca $rev1 | stabilize_output
+  $ volgo-vcs gca $rev1 | stabilize_output
   ($REV1)
 
-  $ ocaml-vcs gca $rev1 $rev2 | stabilize_output
+  $ volgo-vcs gca $rev1 $rev2 | stabilize_output
   ($REV1)
 
-  $ ocaml-vcs gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
+  $ volgo-vcs gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
   Error: Rev not found. (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
 Descendance.
 
-  $ ocaml-vcs descendance $rev1 $rev1
+  $ volgo-vcs descendance $rev1 $rev1
   Same_node
 
-  $ ocaml-vcs descendance $rev1 $rev2
+  $ volgo-vcs descendance $rev1 $rev2
   Strict_ancestor
 
-  $ ocaml-vcs descendance $rev2 $rev1
+  $ volgo-vcs descendance $rev2 $rev1
   Strict_descendant
 
-  $ ocaml-vcs descendance $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
+  $ volgo-vcs descendance $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
   Error: Rev not found. (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
   [123]
 
 Vcs allows to run the git command line directly if the backend supports it.
 
-  $ ocaml-vcs git rev-parse HEAD | stabilize_output
+  $ volgo-vcs git rev-parse HEAD | stabilize_output
   $REV2
 
-  $ ocaml-vcs git invalid-command 2> /dev/null
+  $ volgo-vcs git invalid-command 2> /dev/null
   [1]
 
 Worktrees. We check against a regression where the repo root of worktrees was
@@ -239,25 +239,25 @@ verify that the list of files accurately reflects the state of the tree at that
 revision.
 
   $ mkdir .worktree
-  $ ocaml-vcs git worktree add .worktree/rev1 $rev1 > /dev/null 2> /dev/null
+  $ volgo-vcs git worktree add .worktree/rev1 $rev1 > /dev/null 2> /dev/null
 
-  $ (cd .worktree/rev1 ; ocaml-vcs ls-files)
+  $ (cd .worktree/rev1 ; volgo-vcs ls-files)
   dir/hello
   hello
 
-  $ ocaml-vcs ls-files
+  $ volgo-vcs ls-files
   dir/hello
 
-  $ ocaml-vcs git worktree remove .worktree/rev1
+  $ volgo-vcs git worktree remove .worktree/rev1
 
 Vcs's help for review.
 
-  $ ocaml-vcs --help=plain
+  $ volgo-vcs --help=plain
   NAME
-         ocaml-vcs - call a command from the vcs interface
+         volgo-vcs - call a command from the vcs interface
   
   SYNOPSIS
-         ocaml-vcs COMMAND …
+         volgo-vcs COMMAND …
   
           
   
@@ -349,7 +349,7 @@ Vcs's help for review.
              Show version information.
   
   EXIT STATUS
-         ocaml-vcs exits with:
+         volgo-vcs exits with:
   
          0   on success.
   

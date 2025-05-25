@@ -1,15 +1,15 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
+(*  Volgo - a Versatile OCaml Library for Git Operations                       *)
 (*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
-(*  This file is part of Vcs.                                                  *)
+(*  This file is part of Volgo.                                                *)
 (*                                                                             *)
-(*  Vcs is free software; you can redistribute it and/or modify it under       *)
+(*  Volgo is free software; you can redistribute it and/or modify it under     *)
 (*  the terms of the GNU Lesser General Public License as published by the     *)
 (*  Free Software Foundation either version 3 of the License, or any later     *)
 (*  version, with the LGPL-3.0 Linking Exception.                              *)
 (*                                                                             *)
-(*  Vcs is distributed in the hope that it will be useful, but WITHOUT ANY     *)
+(*  Volgo is distributed in the hope that it will be useful, but WITHOUT ANY   *)
 (*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  *)
 (*  FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License and    *)
 (*  the file `NOTICE.md` at the root of this repository for more details.      *)
@@ -19,13 +19,13 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* This is a simple test to show how to use the [Vcs_git_unix] backend. *)
+(* This is a simple test to show how to use the [Volgo_git_unix] backend. *)
 
 let%expect_test "hello commit" =
   (* To use the [Vcs] API, you need a [vcs] value, which you must obtain from a
-     backend. We're using [Vcs_git_unix] for this here. It is a backend based on
+     backend. We're using [Volgo_git_unix] for this here. It is a backend based on
      [Stdlib] and running the [git] command line as an external process. *)
-  let vcs = Vcs_git_unix.create () in
+  let vcs = Volgo_git_unix.create () in
   (* The next step takes care of creating a repository and initializing the git
      users's config with some dummy values so we can use [commit] without having
      to worry about your user config on your machine. This isolates the test
@@ -41,8 +41,8 @@ let%expect_test "hello commit" =
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   (* Just a quick word about [Vcs.save_file]. This is only a part of Vcs that is
      included for convenience. Indeed, this allows a library that uses Vcs to
-     perform some basic IO while maintaining compatibility with [Vcs_git_eio]
-     and [Vcs_git_unix] clients. This dispatches to the actual backend
+     perform some basic IO while maintaining compatibility with [Volgo_git_eio]
+     and [Volgo_git_unix] clients. This dispatches to the actual backend
      implementation, which here uses [Stdlib.Out_channel] under the hood. *)
   Vcs.save_file
     vcs

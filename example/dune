@@ -1,6 +1,6 @@
 (library
  (name vcs_example)
- (public_name vcs-tests.example)
+ (public_name volgo-tests.example)
  (inline_tests)
  (flags
   :standard
@@ -15,7 +15,7 @@
   -open
   Expect_test_helpers_base
   -open
-  Vcs_base)
+  Volgo_base)
  (libraries
   base
   eio
@@ -26,11 +26,10 @@
   pp
   pplumbing.err
   unix
-  vcs
-  vcs_base
-  vcs_git_eio
-  vcs_git_unix
-  vcs_test_helpers)
+  vcs_test_helpers
+  volgo_base
+  volgo_git_eio
+  volgo_git_unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

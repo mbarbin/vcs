@@ -1,8 +1,11 @@
 (executable
  (name main)
- (public_name ocaml-vcs)
- (package vcs-cli)
+ (public_name volgo-vcs)
+ (package volgo-vcs)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries pplumbing.cmdlang-cmdliner-runner pplumbing.err vcs vcs-cli)
+ (libraries
+  pplumbing.cmdlang-cmdliner-runner
+  pplumbing.err
+  volgo-vcs.volgo-vcs-cli)
  (instrumentation
   (backend bisect_ppx)))

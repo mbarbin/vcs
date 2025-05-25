@@ -1,5 +1,5 @@
 (cram
- (package vcs-tests)
+ (package volgo-tests)
  (deps
-  %{bin:ocaml-vcs}
+  %{bin:volgo-vcs}
   (glob_files *.sexp)))

@@ -2,9 +2,9 @@
 
 ## Motivation
 
-In this directory, we test the command line `ocaml-vcs`. This command line is itself motivated by the desire to run exploratory tests using the vcs interface and the git backend available on actual repositories.
+In this directory, we test the command line `volgo-vcs`. This command line is itself motivated by the desire to run exploratory tests using the vcs interface and the git backend available on actual repositories.
 
-What we aim for in these tests is to make sure that `ocaml-vcs` is not broken in some ways, thus we would like to have good coverage of the commands it exposes.
+What we aim for in these tests is to make sure that `volgo-vcs` is not broken in some ways, thus we would like to have good coverage of the commands it exposes.
 
 This is not a test for `git` itself, and to the extent possible, the tests in this directory shall try to make little direct calls to git commands. Prefer minting a new `vcs` command that does what you need instead.
 
@@ -44,8 +44,8 @@ In the cram tests we'll do:
 Or the equivalent in `vcs`:
 
 ```sh
-  $ ocaml-vcs init -q .
-  $ ocaml-vcs set-user-config --user.name "Test User" --user.email "test@example.com"
+  $ volgo-vcs init -q .
+  $ volgo-vcs set-user-config --user.name "Test User" --user.email "test@example.com"
 ```
 
 ### Deterministic branch name
@@ -59,7 +59,7 @@ After the first commit, we run the following to force the branch name.
 Or the equivalent in `vcs`:
 
 ```sh
-  $ ocaml-vcs rename-current-branch main
+  $ volgo-vcs rename-current-branch main
 ```
 
 Note that it is not possible to run the following in the GitHub workflow actions before `git init` (this results in an error).

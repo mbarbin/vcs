@@ -1,20 +1,20 @@
 # Exploratory tests
 
-The `vcs-cli` package introduces an executable, `ocaml-vcs`, designed to bring the core functionalities of ocaml-vcs directly to your command line.
+The `volgo-vcs` opam package introduces an executable, `volgo-vcs`, designed to bring the core functionalities of the *volgo* packages directly to your command line.
 
 It's a practical tool for conducting exploratory testing within your repositories, and reproducing bugs or issues externally, for a smoother debugging process. As a live code sample, it also demonstrates the use of the library.
 
-Whether you're testing new features, diagnosing problems, or seeking to understand the library's application, `ocaml-vcs` can be a useful resource.
+Whether you're testing new features, diagnosing problems, or seeking to understand the library's application, `volgo-vcs` can be a useful resource.
 
-Below is a quick overview of the commands available in `ocaml-vcs`:
+Below is a quick overview of the commands available in `volgo-vcs`:
 
 ```bash
-$ ocaml-vcs --help=plain
+$ volgo-vcs --help=plain
 NAME
-       ocaml-vcs - call a command from the vcs interface
+       volgo-vcs - call a command from the vcs interface
 
 SYNOPSIS
-       ocaml-vcs COMMAND …
+       volgo-vcs COMMAND …
 
 
 
@@ -106,7 +106,7 @@ COMMON OPTIONS
            Show version information.
 
 EXIT STATUS
-       ocaml-vcs exits with:
+       volgo-vcs exits with:
 
        0   on success.
 

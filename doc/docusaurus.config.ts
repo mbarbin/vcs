@@ -3,7 +3,7 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'ocaml-vcs',
+  title: 'volgo-vcs',
   tagline: 'A Versatile OCaml Library for Git Operations',
   favicon: 'img/favicon.ico',
 
@@ -65,7 +65,7 @@ const config: Config = {
     image: 'img/ocaml-vcs.png',
     navbar: {
       hideOnScroll: true,
-      title: 'ocaml-vcs',
+      title: 'volgo-vcs',
       logo: {
         alt: 'Site Logo',
         src: 'img/ocaml-vcs.png',

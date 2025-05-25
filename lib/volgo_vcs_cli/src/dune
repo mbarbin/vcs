@@ -1,0 +1,35 @@
+(library
+ (name volgo_vcs_cli)
+ (public_name volgo-vcs.volgo-vcs-cli)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Fpath_sexp0
+  -open
+  Cmdlang
+  -open
+  Sexplib0
+  -open
+  Sexplib0.Sexp_conv
+  -open
+  Volgo)
+ (libraries
+  cmdlang
+  fpath-sexp0
+  pp
+  pplumbing.err
+  pplumbing.pp-tty
+  sexplib0
+  unix
+  volgo
+  volgo-git-unix)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess
+  (pps ppx_sexp_value)))

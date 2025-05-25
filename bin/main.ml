@@ -1,15 +1,15 @@
 (*******************************************************************************)
-(*  Vcs - a Versatile OCaml Library for Git Operations                         *)
+(*  Volgo - a Versatile OCaml Library for Git Operations                       *)
 (*  Copyright (C) 2024-2025 Mathieu Barbin <mathieu.barbin@gmail.com>          *)
 (*                                                                             *)
-(*  This file is part of Vcs.                                                  *)
+(*  This file is part of Volgo.                                                *)
 (*                                                                             *)
-(*  Vcs is free software; you can redistribute it and/or modify it under       *)
+(*  Volgo is free software; you can redistribute it and/or modify it under     *)
 (*  the terms of the GNU Lesser General Public License as published by the     *)
 (*  Free Software Foundation either version 3 of the License, or any later     *)
 (*  version, with the LGPL-3.0 Linking Exception.                              *)
 (*                                                                             *)
-(*  Vcs is distributed in the hope that it will be useful, but WITHOUT ANY     *)
+(*  Volgo is distributed in the hope that it will be useful, but WITHOUT ANY   *)
 (*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  *)
 (*  FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License and    *)
 (*  the file `NOTICE.md` at the root of this repository for more details.      *)
@@ -19,4 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let () = Cmdlang_cmdliner_runner.run Vcs_cli.main ~name:"ocaml-vcs" ~version:"%%VERSION%%"
+let () =
+  Cmdlang_cmdliner_runner.run Volgo_vcs_cli.main ~name:"volgo-vcs" ~version:"%%VERSION%%"
+;;
