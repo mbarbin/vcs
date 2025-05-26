@@ -109,7 +109,7 @@ end
 
 exception Uncaught_user_exn of exn * Printexc.raw_backtrace
 
-let git ?env () ~cwd ~args ~f =
+let git_unix ?env (_ : t) ~cwd ~args ~f =
   let prog = "git" in
   let env =
     match env with
@@ -185,4 +185,8 @@ let git ?env () ~cwd ~args ~f =
                ; stderr = (Lines.create !stderr_r : Lines.t)
                }]
          ])
+;;
+
+let git ?env t ~cwd ~args ~f =
+  Miou.call (fun () -> git_unix ?env t ~cwd ~args ~f) |> Miou.await_exn
 ;;

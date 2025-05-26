@@ -26,12 +26,6 @@ let%expect_test "hello commit" =
   require_does_raise [%here] (fun () ->
     Vcs_test_helpers.init vcs ~path:(Absolute_path.v (Unix.getcwd ())));
   [%expect
-    {|
-    (* CR require-failed: lib/volgo_git_miou/test/test__no_run.ml:26:21.
-       Do not 'X' this CR; instead make the required property true,
-       which will make the CR disappear.  For more information, see
-       [Expect_test_helpers_base.require]. *)
-    "did not raise"
-    |}];
+    {| ("Stdlib.Effect.Unhandled(Miou.Domains)") |}];
   ()
 ;;

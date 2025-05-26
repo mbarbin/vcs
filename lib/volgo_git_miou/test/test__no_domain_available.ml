@@ -31,13 +31,7 @@ let%expect_test "domains:0" =
     let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
     Vcs_test_helpers.init vcs ~path:(Absolute_path.v path));
   [%expect
-    {|
-    (* CR require-failed: lib/volgo_git_miou/test/test__no_domain_available.ml:30:21.
-       Do not 'X' this CR; instead make the required property true,
-       which will make the CR disappear.  For more information, see
-       [Expect_test_helpers_base.require]. *)
-    "did not raise"
-    |}];
+    {| (Miou.No_domain_available) |}];
   ()
 ;;
 
@@ -72,7 +66,7 @@ let%expect_test "domains:1" =
     |> Miou.await_exn);
   [%expect
     {|
-    (* CR require-failed: lib/volgo_git_miou/test/test__no_domain_available.ml:65:21.
+    (* CR require-failed: lib/volgo_git_miou/test/test__no_domain_available.ml:60:21.
        Do not 'X' this CR; instead make the required property true,
        which will make the CR disappear.  For more information, see
        [Expect_test_helpers_base.require]. *)
