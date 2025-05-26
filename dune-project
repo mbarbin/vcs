@@ -113,15 +113,11 @@
   (pplumbing
    (>= 0.0.13))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (volgo
    (= :version))
   (volgo-git-unix
