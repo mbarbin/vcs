@@ -20,6 +20,7 @@ depends: [
   "ppxlib" {>= "0.33"}
   "sexplib0" {>= "v0.17"}
   "volgo" {= version}
+  "volgo-git-backend" {= version}
   "volgo-git-unix" {= version}
   "odoc" {with-doc}
 ]

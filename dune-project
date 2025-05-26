@@ -120,6 +120,8 @@
    (>= v0.17))
   (volgo
    (= :version))
+  (volgo-git-backend
+   (= :version))
   (volgo-git-unix
    (= :version))))
 
