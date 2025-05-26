@@ -17,7 +17,17 @@
 
 (using mdx 0.4)
 
-(implicit_transitive_deps false)
+;; The value for the [implicit_transtive_deps] option is set during the CI
+;; depending on the OCaml compiler version.
+;;
+;; This will be set to [false] iif [ocaml-version >= 5.2].
+;;
+;; For packaging purposes with older ocaml, it is simpler atm if the option is
+;; set to [true] in the main branch.
+;;
+;; See: [.github/workflows/edit_dune_project_dot_ml].
+
+(implicit_transitive_deps true)
 
 (package
  (name volgo)
@@ -101,7 +111,7 @@
   "A command line tool for vcs operations based on the volgo libraries")
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 4.14))
   (cmdlang
    (>= 0.0.9))
   (fpath
@@ -113,16 +123,14 @@
   (pplumbing
    (>= 0.0.13))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.16))
   (volgo
+   (= :version))
+  (volgo-git-backend
    (= :version))
   (volgo-git-unix
    (= :version))))

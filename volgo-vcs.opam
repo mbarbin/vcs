@@ -10,16 +10,17 @@ doc: "https://mbarbin.github.io/vcs/"
 bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
   "dune" {>= "3.17"}
-  "ocaml" {>= "5.2"}
+  "ocaml" {>= "4.14"}
   "cmdlang" {>= "0.0.9"}
   "fpath" {>= "0.7.3"}
   "fpath-sexp0" {>= "0.2.2"}
   "pp" {>= "2.0.0"}
   "pplumbing" {>= "0.0.13"}
-  "ppx_sexp_value" {>= "v0.17" & < "v0.18"}
+  "ppx_sexp_value" {>= "v0.16"}
   "ppxlib" {>= "0.33"}
-  "sexplib0" {>= "v0.17" & < "v0.18"}
+  "sexplib0" {>= "v0.16"}
   "volgo" {= version}
+  "volgo-git-backend" {= version}
   "volgo-git-unix" {= version}
   "odoc" {with-doc}
 ]

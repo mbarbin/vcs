@@ -26,6 +26,7 @@
   sexplib0
   unix
   volgo
+  volgo-git-backend
   volgo-git-unix)
  (instrumentation
   (backend bisect_ppx))
