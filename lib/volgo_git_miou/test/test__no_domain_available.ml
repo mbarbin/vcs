@@ -23,7 +23,7 @@
    to run the blocking calls to git. In this test we monitor what happens if
    there is no such domain available. *)
 
-let%expect_test "hello commit" =
+let%expect_test "domains:0" =
   Miou_unix.run ~domains:0
   @@ fun () ->
   let vcs = Volgo_git_miou.create () in
@@ -37,7 +37,7 @@ let%expect_test "hello commit" =
    within a call to [Miou.call] when there is no other domain available. This
    should be considered a programming error. *)
 
-let%expect_test "hello commit" =
+let%expect_test "domains:1" =
   Miou_unix.run ~domains:1
   @@ fun () ->
   let vcs = Volgo_git_miou.create () in
