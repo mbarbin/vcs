@@ -1,3 +1,19 @@
+## 0.0.17 (unreleased)
+
+### Added
+
+- Add support for OCaml-4.14 to `volgo-vcs` CLI (#67, @mbarbin).
+
+### Changed
+
+- Conditional set implicit transitive deps in CI depending on the compiler version (#67, @mbarbin).
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## 0.0.16 (2025-05-25)
 
 This release contains a major repackaging of the project to make it easier to publish to opam without using the short and canonical name `vcs.opam`. The project is now named `volgo` (Versatile Ocaml Library for Git Operations).
