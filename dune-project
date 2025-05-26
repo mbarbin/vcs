@@ -229,9 +229,9 @@
    (= :version))))
 
 (package
- (name vcs-git-miou)
+ (name volgo-git-miou)
  (synopsis
-  "A Git provider for Vcs based on Vcs_git_provider for Miou programs")
+  "A Git provider for Vcs based on Volgo_git_backend for Miou programs")
  (depends
   (ocaml
    (>= 5.2))
@@ -242,26 +242,18 @@
   (fpath-sexp0
    (>= 0.2.2))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
-  (provider
-   (>= 0.0.11))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (vcs
+   (>= v0.17))
+  (volgo
    (= :version))
-  (vcs-git-blocking
+  (volgo-git-backend
    (= :version))
-  (vcs-git-provider
+  (volgo-git-unix
    (= :version))))
 
 (package
@@ -436,6 +428,8 @@
    (= :version))
   (volgo-git-eio
    (= :version))
+  (volgo-git-miou
+   (= :version))
   (volgo-git-unix
    (= :version))
   (volgo-vcs
@@ -563,6 +557,8 @@
   (volgo-git-backend
    (= :version))
   (volgo-git-eio
+   (= :version))
+  (volgo-git-miou
    (= :version))
   (volgo-git-unix
    (= :version))

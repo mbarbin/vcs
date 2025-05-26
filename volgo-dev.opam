@@ -47,6 +47,7 @@ depends: [
   "volgo-base" {= version}
   "volgo-git-backend" {= version}
   "volgo-git-eio" {= version}
+  "volgo-git-miou" {= version}
   "volgo-git-unix" {= version}
   "volgo-tests" {= version}
   "volgo-vcs" {= version}

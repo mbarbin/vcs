@@ -19,16 +19,12 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
-type t' = Vcs_git_provider.Trait.t t
+(* The library must be used from without a call to [Miou_unix.run]. *)
 
-module Impl = struct
-  include Runtime
-  include Vcs_git_provider.Make (Runtime)
-end
-
-let create () =
-  Vcs.create (Provider.T { t = Impl.create (); provider = Impl.provider () })
+let%expect_test "hello commit" =
+  let vcs = Volgo_git_miou.create () in
+  require_does_raise [%here] (fun () ->
+    Vcs_test_helpers.init vcs ~path:(Absolute_path.v (Unix.getcwd ())));
+  [%expect {| ("Stdlib.Effect.Unhandled(Miou.Domains)") |}];
+  ()
 ;;
-
-module Runtime = Runtime

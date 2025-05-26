@@ -1,6 +1,6 @@
 (library
- (name vcs_git_miou_test)
- (public_name vcs-tests.vcs_git_miou_test)
+ (name volgo_git_miou_test)
+ (public_name volgo-tests.volgo_git_miou_test)
  (inline_tests)
  (flags
   :standard
@@ -13,18 +13,20 @@
   -open
   Fpath_sexp0
   -open
-  Expect_test_helpers_base)
+  Expect_test_helpers_base
+  -open
+  Volgo)
  (libraries
   base
-  miou
-  miou.unix
   expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-sexp0
+  miou
+  miou.unix
   unix
-  vcs
-  vcs_git_miou
-  vcs_test_helpers)
+  vcs_test_helpers
+  volgo
+  volgo_git_miou)
  (instrumentation
   (backend bisect_ppx))
  (lint

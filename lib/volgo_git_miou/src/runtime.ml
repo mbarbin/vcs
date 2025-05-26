@@ -19,15 +19,15 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Impl = Vcs_git_blocking.Runtime
+module Impl = Volgo_git_unix.Runtime
 
 type t = Impl.t
 
 let create () = Impl.create ()
 let load_file t ~path = Miou.call (fun () -> Impl.load_file t ~path) |> Miou.await_exn
 
-let save_file ?perms t ~path ~file_contents =
-  Miou.call (fun () -> Impl.save_file ?perms t ~path ~file_contents) |> Miou.await_exn
+let save_file t ?perms () ~path ~file_contents =
+  Miou.call (fun () -> Impl.save_file t ?perms () ~path ~file_contents) |> Miou.await_exn
 ;;
 
 let read_dir t ~dir = Miou.call (fun () -> Impl.read_dir t ~dir) |> Miou.await_exn

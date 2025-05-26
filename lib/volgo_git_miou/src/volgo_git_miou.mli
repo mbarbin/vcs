@@ -19,13 +19,13 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a git provider for the {!module:Vcs} library, based on
-    [Miou], and {!module:Vcs_git_provider}.
+(** Implementation of a git backend for the {!module:Volgo.Vcs} library, based
+    on [Miou], and {!module:Vcs_git_backend}.
 
     This implementation is based on the [git] command line tool. We run it as an
     external program with utils from [Stdlib] and [Unix], producing the right
     command line invocation and parsing the output to produce a typed version of
-    the expected results with [Vcs_git_provider]. Note that [git] must be found
+    the expected results with [Vcs_git_backend]. Note that [git] must be found
     in the PATH of the running environment.
 
     The current implementation runs blocking calls with [Miou.call], and then
@@ -33,13 +33,11 @@
     [Miou.await_exn]. This only works if there are at least 1 extra domain
     available. *)
 
-type 'a t = ([> Vcs_git_provider.Trait.t ] as 'a) Vcs.t
-
-(** This is a convenient type alias that may be used to designate a provider
+(** This is a convenient type alias that may be used to designate a backend
     with the exact list of traits supported by this implementation. *)
-type t' = Vcs_git_provider.Trait.t t
+type t = Volgo_git_backend.Trait.t Vcs.t
 
-val create : unit -> _ t
+val create : unit -> t
 
 (** The implementation of the provider is exported for convenience and tests.
     Casual users should prefer using [Vcs] directly. *)

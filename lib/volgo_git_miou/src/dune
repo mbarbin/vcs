@@ -1,6 +1,6 @@
 (library
- (name vcs_git_miou)
- (public_name vcs-git-miou)
+ (name volgo_git_miou)
+ (public_name volgo-git-miou)
  (flags
   :standard
   -w
@@ -12,16 +12,18 @@
   -open
   Sexplib0
   -open
-  Sexplib0.Sexp_conv)
+  Sexplib0.Sexp_conv
+  -open
+  Volgo)
  (libraries
   fpath
   fpath-sexp0
   miou
   provider
   sexplib0
-  vcs
-  vcs-git-blocking
-  vcs-git-provider)
+  volgo
+  volgo-git-backend
+  volgo-git-unix)
  (instrumentation
   (backend bisect_ppx))
  (lint
