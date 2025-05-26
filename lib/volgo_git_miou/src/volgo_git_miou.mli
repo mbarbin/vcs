@@ -20,12 +20,12 @@
 (*_******************************************************************************)
 
 (** Implementation of a git backend for the {!module:Volgo.Vcs} library, based
-    on [Miou], and {!module:Vcs_git_backend}.
+    on [Miou], and {!module:Volgo_git_backend}.
 
     This implementation is based on the [git] command line tool. We run it as an
     external program with utils from [Stdlib] and [Unix], producing the right
     command line invocation and parsing the output to produce a typed version of
-    the expected results with [Vcs_git_backend]. Note that [git] must be found
+    the expected results with [Volgo_git_backend]. Note that [git] must be found
     in the PATH of the running environment.
 
     The current implementation runs blocking calls with [Miou.call], and then
