@@ -19,7 +19,6 @@
   fpath
   fpath-sexp0
   miou
-  provider
   sexplib0
   volgo
   volgo-git-backend
