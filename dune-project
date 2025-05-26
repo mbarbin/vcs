@@ -101,7 +101,7 @@
   "A command line tool for vcs operations based on the volgo libraries")
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 4.14))
   (cmdlang
    (>= 0.0.9))
   (fpath
@@ -113,11 +113,11 @@
   (pplumbing
    (>= 0.0.13))
   (ppx_sexp_value
-   (>= v0.17))
+   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (>= v0.17))
+   (>= v0.16))
   (volgo
    (= :version))
   (volgo-git-backend
