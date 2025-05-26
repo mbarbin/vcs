@@ -84,8 +84,8 @@ let%expect_test "hello commit" =
     | Error exn -> raise exn [@coverage off]);
   [%expect
     {|
-    main
-    (hello.txt)
-    |}];
+         main
+         (hello.txt)
+         |}];
   ()
 ;;
