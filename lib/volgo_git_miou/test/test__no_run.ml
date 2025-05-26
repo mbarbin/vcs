@@ -25,7 +25,6 @@ let%expect_test "hello commit" =
   let vcs = Volgo_git_miou.create () in
   require_does_raise [%here] (fun () ->
     Vcs_test_helpers.init vcs ~path:(Absolute_path.v (Unix.getcwd ())));
-  [%expect
-    {| ("Stdlib.Effect.Unhandled(Miou.Domains)") |}];
+  [%expect {| ("Stdlib.Effect.Unhandled(Miou.Domains)") |}];
   ()
 ;;

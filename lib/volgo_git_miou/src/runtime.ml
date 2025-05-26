@@ -47,13 +47,19 @@ type t = unit
 
 let create () = ()
 
-let load_file () ~path =
+let load_file_internal () ~path =
   Vcs.Private.try_with (fun () ->
     In_channel.with_open_bin (Absolute_path.to_string path) In_channel.input_all
     |> Vcs.File_contents.create)
 ;;
 
-let save_file (_ : t) ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_contents.t) =
+let save_file_internal
+      (_ : t)
+      ?(perms = 0o666)
+      ()
+      ~path
+      ~(file_contents : Vcs.File_contents.t)
+  =
   Vcs.Private.try_with (fun () ->
     let oc =
       open_out_gen
@@ -66,7 +72,7 @@ let save_file (_ : t) ?(perms = 0o666) () ~path ~(file_contents : Vcs.File_conte
       (fun () -> Out_channel.output_string oc (file_contents :> string)))
 ;;
 
-let read_dir () ~dir =
+let read_dir_internal () ~dir =
   Vcs.Private.try_with (fun () ->
     let entries = Sys.readdir (Absolute_path.to_string dir) in
     Array.sort entries ~compare:String.compare;
@@ -186,6 +192,15 @@ let git_unix ?env (_ : t) ~cwd ~args ~f =
                }]
          ])
 ;;
+
+let load_file t ~path = Miou.call (fun () -> load_file_internal t ~path) |> Miou.await_exn
+
+let save_file t ?perms () ~path ~file_contents =
+  Miou.call (fun () -> save_file_internal t ?perms () ~path ~file_contents)
+  |> Miou.await_exn
+;;
+
+let read_dir t ~dir = Miou.call (fun () -> read_dir_internal t ~dir) |> Miou.await_exn
 
 let git ?env t ~cwd ~args ~f =
   Miou.call (fun () -> git_unix ?env t ~cwd ~args ~f) |> Miou.await_exn
