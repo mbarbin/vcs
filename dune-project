@@ -241,6 +241,10 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.13))
   (ppx_sexp_conv
    (>= v0.17))
   (ppx_sexp_value

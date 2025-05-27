@@ -19,6 +19,9 @@
   fpath
   fpath-sexp0
   miou
+  pp
+  pplumbing.err
+  pplumbing.pp-tty
   sexplib0
   unix
   volgo
