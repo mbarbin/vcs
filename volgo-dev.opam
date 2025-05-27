@@ -25,6 +25,7 @@ depends: [
   "fpath-base" {>= "0.2.2"}
   "fpath-sexp0" {>= "0.2.2"}
   "mdx" {>= "2.4"}
+  "miou" {>= "0.3.0"}
   "pp" {>= "2.0.0"}
   "pplumbing" {>= "0.0.13"}
   "ppx_compare" {>= "v0.17" & < "v0.18"}
@@ -47,6 +48,7 @@ depends: [
   "volgo-base" {= version}
   "volgo-git-backend" {= version}
   "volgo-git-eio" {= version}
+  "volgo-git-miou" {= version}
   "volgo-git-unix" {= version}
   "volgo-tests" {= version}
   "volgo-vcs" {= version}

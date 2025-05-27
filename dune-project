@@ -229,6 +229,38 @@
    (= :version))))
 
 (package
+ (name volgo-git-miou)
+ (synopsis
+  "A Git provider for Vcs based on Volgo_git_backend for Miou programs")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (miou
+   (>= 0.3.0))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.13))
+  (ppx_sexp_conv
+   (>= v0.17))
+  (ppx_sexp_value
+   (>= v0.17))
+  (ppxlib
+   (>= 0.33))
+  (sexplib0
+   (>= v0.17))
+  (volgo
+   (= :version))
+  (volgo-git-backend
+   (= :version))
+  (volgo-git-unix
+   (= :version))))
+
+(package
  (name vcs-test-helpers)
  (synopsis "Helper library to write tests using vcs")
  (depends
@@ -329,6 +361,8 @@
    (and
     :with-doc
     (>= 2.4)))
+  (miou
+   (>= 0.3.0))
   (pp
    (>= 2.0.0))
   (pplumbing
@@ -399,6 +433,8 @@
   (volgo-git-backend
    (= :version))
   (volgo-git-eio
+   (= :version))
+  (volgo-git-miou
    (= :version))
   (volgo-git-unix
    (= :version))
@@ -457,6 +493,8 @@
    (>= 0.2.2))
   (mdx
    (>= 2.4))
+  (miou
+   (>= 0.3.0))
   (pp
    (>= 2.0.0))
   (pplumbing
@@ -527,6 +565,8 @@
   (volgo-git-backend
    (= :version))
   (volgo-git-eio
+   (= :version))
+  (volgo-git-miou
    (= :version))
   (volgo-git-unix
    (= :version))
