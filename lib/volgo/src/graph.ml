@@ -204,11 +204,11 @@ let greatest_common_ancestors t ~nodes =
   | node1 :: nodes ->
     let node_count = Array.length t.nodes in
     let common_ancestors =
-      let node1_ancestors = Fast_bitvector.create ~length:node_count in
+      let node1_ancestors = Fast_bitvector.create ~len:node_count in
       iter_ancestors t ~visited:node1_ancestors node1 ~f:(fun _ -> ());
       node1_ancestors
     in
-    let visited = Fast_bitvector.create ~length:node_count in
+    let visited = Fast_bitvector.create ~len:node_count in
     List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
       let (_ : Fast_bitvector.t) =
@@ -350,7 +350,7 @@ let roots t =
 (* Pre condition: ancestor < descendant. *)
 let is_strict_ancestor_internal t ~ancestor ~descendant =
   assert (ancestor < descendant);
-  let visited = Fast_bitvector.create ~length:(descendant - ancestor + 1) in
+  let visited = Fast_bitvector.create ~len:(descendant - ancestor + 1) in
   let rec loop to_visit =
     match to_visit with
     | [] -> false
@@ -410,7 +410,7 @@ let descendance t a b : Descendance.t =
 ;;
 
 let leaves t =
-  let has_children = Fast_bitvector.create ~length:(node_count t) in
+  let has_children = Fast_bitvector.create ~len:(node_count t) in
   Array.iter t.nodes ~f:(fun node ->
     match (node : Node_kind.t) with
     | Root _ -> ()

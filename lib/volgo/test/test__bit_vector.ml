@@ -25,7 +25,7 @@ module Bit_vector = struct
   let sexp_of_t = Fast_bitvector.sexp_of_t
 
   let create ~len value : t =
-    let t = Fast_bitvector.create ~length:len in
+    let t = Fast_bitvector.create ~len in
     let () = if value then Fast_bitvector.set_all t in
     t
   ;;

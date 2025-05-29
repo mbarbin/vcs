@@ -38,7 +38,7 @@
   (astring
    (>= 0.8.5))
   (fast_bitvector
-   (>= 0.0.3.1))
+   (>= 0.0.5))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -322,7 +322,7 @@
     (>= v0.17)
     (< v0.18)))
   (fast_bitvector
-   (>= 0.0.3.1))
+   (>= 0.0.5))
   (fpath
    (>= 0.7.3))
   (fpath-base
@@ -454,7 +454,7 @@
     (>= v0.17)
     (< v0.18)))
   (fast_bitvector
-   (>= 0.0.3.1))
+   (>= 0.0.5))
   (fpath
    (>= 0.7.3))
   (fpath-base
