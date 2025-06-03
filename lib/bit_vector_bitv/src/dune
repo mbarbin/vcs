@@ -3,4 +3,8 @@
  (public_name volgo-tests.bit-vector-bitv)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a -open Sexplib0)
  (libraries bit_vector_intf bitv sexplib0)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
  (preprocess no_preprocessing))
