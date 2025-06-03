@@ -19,6 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(* CR mbarbin: On second thought, what I wish to do now to make it easier to
+   test different libraries is to keep this module as a thin wrapper, and simply
+   use third-party libraries in its implementation.
+
+   This should make the PR to experiment with fast_bitvector and bitv easier to
+   review and their integration should be local to the implementation of this
+   modue only.
+
+   And we can keep (and extend) the test for the layer that we do indeed use.
+
+   That being said, we shall be free to rename things and make the API look a
+   little closer to whichever library we like best and/or combining ideas from
+   both. *)
+
 (** A naive implementation of mutable bit vectors.
 
     At some point, with some benchmarks for sanity checks, it seems desirable to
