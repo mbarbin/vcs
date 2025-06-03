@@ -12,10 +12,12 @@
   -open
   Sexplib0
   -open
-  Sexplib0.Sexp_conv)
+  Sexplib0.Sexp_conv
+  -open
+  Bit_vector_naive)
  (libraries
   astring
-  bitv
+  bit_vector_naive
   fpath
   fpath-sexp0
   pp

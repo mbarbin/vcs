@@ -1,0 +1,7 @@
+(library
+ (name bit_vector_intf)
+ (public_name volgo.bit-vector-intf)
+ (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
+ (libraries sexplib0)
+ (modules_without_implementation bit_vector_intf)
+ (preprocess no_preprocessing))

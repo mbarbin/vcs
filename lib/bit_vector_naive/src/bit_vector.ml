@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
+module Array = ArrayLabels
 
 type t = bool array
 
@@ -29,17 +29,18 @@ let sexp_of_t t =
   Sexp.Atom (Bytes.to_string b)
 ;;
 
-let create ~len value : t = Array.create ~len value
+let create ~len value : t = Array.make len value
 let length = Array.length
 let set = Array.set
 let get = Array.get
 let reset t value = Array.fill t ~pos:0 ~len:(Array.length t) value
 let copy = Array.copy
 
-let bw_and_in_place ~mutates other =
-  if Array.length mutates <> Array.length other
+let bw_and_in_place ~dest va vb =
+  let len = Array.length dest in
+  if len <> Array.length va || len <> Array.length vb
   then invalid_arg "Bit_vector.bw_and_in_place" [@coverage off];
-  for i = 0 to Array.length mutates - 1 do
-    mutates.(i) <- mutates.(i) && other.(i)
+  for i = 0 to len - 1 do
+    dest.(i) <- va.(i) && vb.(i)
   done
 ;;
