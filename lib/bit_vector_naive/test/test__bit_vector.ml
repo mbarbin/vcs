@@ -29,16 +29,16 @@ let%expect_test "bw_and_inplace" =
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 0000000000 |}];
   for i = 0 to Bit_vector.length v1 - 1 do
-    if i % 2 = 0 then Bit_vector.set v1 i true
+    if i % 2 = 0 then Bit_vector.set v1 i
   done;
   Bit_vector.bw_and_in_place ~dest:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
   [%expect {| 1010101010 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 1010101010 |}];
-  Bit_vector.reset v1 false;
+  Bit_vector.clear_all v1;
   for i = 0 to Bit_vector.length v1 - 1 do
-    if i % 3 = 0 then Bit_vector.set v1 i true
+    if i % 3 = 0 then Bit_vector.set v1 i
   done;
   Bit_vector.bw_and_in_place ~dest:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];

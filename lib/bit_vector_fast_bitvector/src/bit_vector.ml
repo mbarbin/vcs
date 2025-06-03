@@ -28,11 +28,10 @@ let create ~len value =
 ;;
 
 let length = Fast_bitvector.length
-let set = Fast_bitvector.set_to
+let set = Fast_bitvector.set
+let clear = Fast_bitvector.clear
 let get = Fast_bitvector.get
-
-(* let clear_all = Fast_bitvector.clear_all *)
-let reset t value = if value then Fast_bitvector.set_all t else Fast_bitvector.clear_all t
+let clear_all = Fast_bitvector.clear_all
 let copy = Fast_bitvector.copy
 
 let bw_and_in_place ~dest va vb =

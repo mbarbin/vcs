@@ -188,7 +188,7 @@ let iter_ancestors t ~visited node ~f =
         if Bit_vector.get visited node
         then to_visit
         else (
-          Bit_vector.set visited node true;
+          Bit_vector.set visited node;
           f node;
           prepend_parents t ~node ~prepend_to:to_visit)
       in
@@ -212,14 +212,14 @@ let greatest_common_ancestors t ~nodes =
     List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
       Bit_vector.bw_and_in_place ~dest:common_ancestors common_ancestors visited;
-      Bit_vector.reset visited false);
+      Bit_vector.clear_all visited);
     let gcas = ref [] in
     for i = node_count - 1 downto 0 do
       if Bit_vector.get common_ancestors i
       then (
         gcas := i :: !gcas;
         iter_ancestors t ~visited i ~f:(fun j ->
-          if j <> i then Bit_vector.set common_ancestors j false))
+          if j <> i then Bit_vector.clear common_ancestors j))
     done;
     !gcas
 ;;
@@ -362,7 +362,7 @@ let is_strict_ancestor_internal t ~ancestor ~descendant =
            if Bit_vector.get visited visited_index
            then to_visit
            else (
-             Bit_vector.set visited visited_index true;
+             Bit_vector.set visited visited_index;
              prepend_parents t ~node ~prepend_to:to_visit)
          in
          loop to_visit)
@@ -412,10 +412,10 @@ let leaves t =
   Array.iter t.nodes ~f:(fun node ->
     match (node : Node_kind.t) with
     | Root _ -> ()
-    | Commit { parent; _ } -> Bit_vector.set has_children parent true
+    | Commit { parent; _ } -> Bit_vector.set has_children parent
     | Merge { parent1; parent2; _ } ->
-      Bit_vector.set has_children parent1 true;
-      Bit_vector.set has_children parent2 true);
+      Bit_vector.set has_children parent1;
+      Bit_vector.set has_children parent2);
   Array.filter_mapi t.nodes ~f:(fun i _ ->
     if Bit_vector.get has_children i then None else Some i)
   |> Array.to_list

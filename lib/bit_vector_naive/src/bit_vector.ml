@@ -31,9 +31,10 @@ let sexp_of_t t =
 
 let create ~len value : t = Array.make len value
 let length = Array.length
-let set = Array.set
+let set t i = Array.set t i true
+let clear t i = Array.set t i false
 let get = Array.get
-let reset t value = Array.fill t ~pos:0 ~len:(Array.length t) value
+let clear_all t = Array.fill t ~pos:0 ~len:(Array.length t) false
 let copy = Array.copy
 
 let bw_and_in_place ~dest va vb =

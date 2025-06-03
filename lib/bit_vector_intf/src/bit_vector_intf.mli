@@ -25,9 +25,10 @@ module type S = sig
   val sexp_of_t : t -> Sexplib0.Sexp.t
   val create : len:int -> bool -> t
   val length : t -> int
-  val set : t -> int -> bool -> unit
+  val set : t -> int -> unit
+  val clear : t -> int -> unit
   val get : t -> int -> bool
-  val reset : t -> bool -> unit
+  val clear_all : t -> unit
   val copy : t -> t
 
   (** {1 In place bitwise operations} *)

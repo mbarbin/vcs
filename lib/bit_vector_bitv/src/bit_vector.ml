@@ -23,9 +23,10 @@ type t = Bitv.t
 
 let create ~len value = Bitv.create len value
 let length = Bitv.length
-let set = Bitv.set
+let set t i = Bitv.set t i true
+let clear t i = Bitv.set t i false
 let get = Bitv.get
-let reset t value = Bitv.fill t 0 (Bitv.length t) value
+let clear_all t = Bitv.fill t 0 (Bitv.length t) false
 let copy = Bitv.copy
 let bw_and_in_place = Bitv.bw_and_in_place
 let sexp_of_t t = Sexp.Atom (Bitv.L.to_string t)
