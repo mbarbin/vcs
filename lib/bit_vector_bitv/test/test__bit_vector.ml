@@ -21,6 +21,23 @@
 
 module Bit_vector = Bit_vector_bitv.Bit_vector
 
+let%expect_test "set & clear" =
+  let v = Bit_vector.create ~len:10 false in
+  print_s [%sexp (v : Bit_vector.t)];
+  [%expect {| 0000000000 |}];
+  Bit_vector.set v 0;
+  Bit_vector.set v 1;
+  print_s [%sexp (v : Bit_vector.t)];
+  [%expect {| 1100000000 |}];
+  Bit_vector.clear v 0;
+  print_s [%sexp (v : Bit_vector.t)];
+  [%expect {| 0100000000 |}];
+  Bit_vector.clear_all v;
+  print_s [%sexp (v : Bit_vector.t)];
+  [%expect {| 0000000000 |}];
+  ()
+;;
+
 let%expect_test "bitwise_and_in_place" =
   let v0 = Bit_vector.create ~len:10 true in
   print_s [%sexp (v0 : Bit_vector.t)];
@@ -46,6 +63,9 @@ let%expect_test "bitwise_and_in_place" =
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 1001001001 |}];
   let vsmall = Bit_vector.create ~len:5 true in
+  require_does_raise [%here] (fun () ->
+    Bit_vector.bitwise_and_in_place ~dest:v0 vsmall v0);
+  [%expect {| (Invalid_argument Bitv.bw_and_in_place) |}];
   require_does_raise [%here] (fun () ->
     Bit_vector.bitwise_and_in_place ~dest:v0 v0 vsmall);
   [%expect {| (Invalid_argument Bitv.bw_and_in_place) |}];

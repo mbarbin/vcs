@@ -21,6 +21,8 @@
 
 type t = Fast_bitvector.t
 
+let sexp_of_t t = Sexp.Atom (Fast_bitvector.Big_endian.to_string t)
+
 let create ~len value =
   let t = Fast_bitvector.create ~len in
   let () = if value then Fast_bitvector.set_all t in
@@ -41,5 +43,3 @@ let bitwise_and_in_place ~dest va vb =
   let (_ : Fast_bitvector.t) = Fast_bitvector.Set.intersect ~result:dest va vb in
   ()
 ;;
-
-let sexp_of_t t = Sexp.Atom (Fast_bitvector.Big_endian.to_string t)
