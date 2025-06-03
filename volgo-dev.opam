@@ -16,11 +16,13 @@ depends: [
   "base" {>= "v0.17" & < "v0.18"}
   "base_quickcheck" {>= "v0.17" & < "v0.18"}
   "bisect_ppx" {with-dev-setup & >= "2.8.3"}
+  "bitv" {>= "2.1"}
   "cmdlang" {>= "0.0.9"}
   "core" {>= "v0.17" & < "v0.18"}
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}
   "expect_test_helpers_core" {>= "v0.17" & < "v0.18"}
+  "fast_bitvector" {>= "0.0.5"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.2.2"}
   "fpath-sexp0" {>= "0.2.2"}

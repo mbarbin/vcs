@@ -305,6 +305,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   (core
@@ -319,6 +321,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (fast_bitvector
+   (>= 0.0.5))
   (fpath
    (>= 0.7.3))
   (fpath-base
@@ -435,6 +439,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   (core
@@ -449,6 +455,8 @@
    (and
     (>= v0.17)
     (< v0.18)))
+  (fast_bitvector
+   (>= 0.0.5))
   (fpath
    (>= 0.7.3))
   (fpath-base
