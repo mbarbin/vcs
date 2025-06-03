@@ -28,5 +28,5 @@ let clear t i = Bitv.set t i false
 let get = Bitv.get
 let clear_all t = Bitv.fill t 0 (Bitv.length t) false
 let copy = Bitv.copy
-let bw_and_in_place = Bitv.bw_and_in_place
+let bitwise_and_in_place = Bitv.bw_and_in_place
 let sexp_of_t t = Sexp.Atom (Bitv.L.to_string t)

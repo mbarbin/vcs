@@ -20,18 +20,38 @@
 (*_******************************************************************************)
 
 module type S = sig
+  (** This is a reduced interface for a vector of bits as used by [vcs].
+
+      We're experimenting with different implementations based on third-party
+      libraries. *)
+
   type t
 
+  (** Print the bits of [t] with the bit 0 to the left. *)
   val sexp_of_t : t -> Sexplib0.Sexp.t
+
+  (** [create ~len value] creates a new vector with [len] bits initialized to
+      [value]. *)
   val create : len:int -> bool -> t
+
+  (** Return the number of bits in [t]. *)
   val length : t -> int
+
+  (** Set the i-th bit of [t] to [true]. *)
   val set : t -> int -> unit
+
+  (** Set the i-th bit of [t] to [false]. *)
   val clear : t -> int -> unit
+
   val get : t -> int -> bool
+
+  (** Set all bits of [t] to [false]. *)
   val clear_all : t -> unit
+
+  (** Return a fresh copy of [t]. *)
   val copy : t -> t
 
   (** {1 In place bitwise operations} *)
 
-  val bw_and_in_place : dest:t -> t -> t -> unit
+  val bitwise_and_in_place : dest:t -> t -> t -> unit
 end
