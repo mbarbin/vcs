@@ -24,24 +24,6 @@
     This file is configured in [dune] as an interface only file, so we don't need to
     duplicate the interfaces it contains into an [ml] file. *)
 
-module type Process_S0 = sig
-  (** Helpers to wrap process outputs. *)
-
-  type process_output
-  type 'a result
-
-  val exit0 : process_output -> unit result
-  val exit0_and_stdout : process_output -> string result
-
-  (** A convenient wrapper to write exhaustive match on a result conditioned by
-      a list of accepted exit codes. If the exit code is not part of the
-      accepted list, the function takes care of returning an error of the
-      expected result type. *)
-  val exit_code : process_output -> accept:(int * 'a) list -> 'a result
-end
-
-module type Process_S = Process_S0 with type process_output := Git_output0.t
-
 module type S = sig
   (** The interface exported by [Vcs].
 
@@ -165,19 +147,6 @@ module type S = sig
     -> < Trait.git ; .. > t
     -> repo_root:Repo_root.t
     -> args:string list
-    -> f:(Git_output0.t -> 'a result)
+    -> f:(Git.Output.t -> 'a result)
     -> 'a result
-end
-
-module type Error_S = sig
-  (** Interface used to build non raising interfaces to [Vcs] via
-      [Vcs.Non_raising.Make]. *)
-
-  (** [t] must represent the type of errors in your monad. *)
-  type t [@@deriving sexp_of]
-
-  (** The conversion functions you need to provide. *)
-
-  val of_err : Err.t -> t
-  val to_err : t -> Err.t
 end

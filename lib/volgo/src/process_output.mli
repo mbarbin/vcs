@@ -19,31 +19,22 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-module type S = sig
-  type t
+(** Manipulating the output of process run by vcs and backends.
 
-  val git
-    :  ?env:string array
-    -> t
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-end
+    This module is used to break a dependency cycle. It serves under the hood
+    for the implemenation of the types that are exported as [Vcs.Git.Output] and
+    [Vcs.Hg.Output], although for added type safety, these 2 types are not
+    exported as being equal. *)
 
-class type t = object
-  method git :
-    'a.
-    ?env:string array
-    -> unit
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-end
+type t =
+  { exit_code : int
+  ; stdout : string
+  ; stderr : string
+  }
+[@@deriving sexp_of]
 
-module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
-  end
+module Private : sig
+  (** Exported for use by Git and Hg outputs. *)
+
+  val of_process_output : t -> t
 end

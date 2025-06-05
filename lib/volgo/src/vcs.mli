@@ -265,12 +265,12 @@ val set_user_email
 module Git = Git
 
 (** Note a non trivial behavior nuance depending on whether you are using this
-    function using the raising or non-raising API. In the raising API, [f] is
-    allowed to raise: [git] will catch any exception raised by [f], and rewrap
-    it under a proper [E err] exception with added context. In the non-raising
-    APIs, if [f] raises instead of returning an [Error], that exception would
-    escape the function [git] and be raised by [git] as an uncaught exception.
-    This would be considered a programming error.
+    function using the raising or {{!non_raising_apis} non-raising API}. In the
+    raising API, [f] is allowed to raise: [git] will catch any exception raised
+    by [f], and rewrap it under a proper [E err] exception with added context.
+    In the non-raising APIs, if [f] raises instead of returning an [Error], that
+    exception would escape the function [git] and be raised by [git] as an
+    uncaught exception. This would be considered a programming error.
 
     Some helpers are provided by the module {!module:Git} to help you build the
     [f] parameter. Non-raising modules are also included in the [Git] module
@@ -280,7 +280,7 @@ module Git = Git
     The expectation is that you should be using the [Git] module of the API you
     are using to access the [git] function, and not mix and match.
 
-    For example:
+    For example using the raising API::
 
     {[
       let git_status () : string =
@@ -288,7 +288,7 @@ module Git = Git
       ;;
     ]}
 
-    Or:
+    Or the {{!non_raising_apis} non-raising API} (result):
 
     {[
       let git_status () : string Vcs.Result.t =
@@ -327,6 +327,7 @@ module Private : sig
   module Bit_vector = Bit_vector
   module Import = Import
   module Int_table = Int_table
+  module Process_output = Process_output
   module Ref_kind_table = Ref_kind_table
   module Rev_table = Rev_table
   module Validated_string = Validated_string

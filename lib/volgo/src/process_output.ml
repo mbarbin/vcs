@@ -31,3 +31,7 @@ module T = struct
 end
 
 include T
+
+module Private = struct
+  let of_process_output t = t
+end

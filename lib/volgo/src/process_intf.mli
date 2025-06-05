@@ -19,31 +19,23 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(** Common process interfaces used in [Vcs].
+
+    This file is configured in [dune] as an interface only file, so we don't need to
+    duplicate the interfaces it contains into an [ml] file. *)
+
 module type S = sig
-  type t
+  (** Helpers to wrap process outputs. *)
 
-  val git
-    :  ?env:string array
-    -> t
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-end
+  type process_output
+  type 'a result
 
-class type t = object
-  method git :
-    'a.
-    ?env:string array
-    -> unit
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-end
+  val exit0 : process_output -> unit result
+  val exit0_and_stdout : process_output -> string result
 
-module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
-  end
+  (** A convenient wrapper to write exhaustive match on a result conditioned by
+      a list of accepted exit codes. If the exit code is not part of the
+      accepted list, the function takes care of returning an error of the
+      expected result type. *)
+  val exit_code : process_output -> accept:(int * 'a) list -> 'a result
 end

@@ -19,31 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(** Common error interfaces used in [Vcs].
+
+    This file is configured in [dune] as an interface only file, so we don't need to
+    duplicate the interfaces it contains into an [ml] file. *)
+
 module type S = sig
-  type t
+  (** Interface used to build non raising interfaces to [Vcs] via
+      [Vcs.Non_raising.Make]. *)
 
-  val git
-    :  ?env:string array
-    -> t
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-end
+  (** [t] must represent the type of errors in your monad. *)
+  type t [@@deriving sexp_of]
 
-class type t = object
-  method git :
-    'a.
-    ?env:string array
-    -> unit
-    -> cwd:Absolute_path.t
-    -> args:string list
-    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-end
+  (** The conversion functions you need to provide. *)
 
-module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
-  end
+  val of_err : Err.t -> t
+  val to_err : t -> Err.t
 end
