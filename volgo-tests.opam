@@ -47,6 +47,9 @@ depends: [
   "volgo-git-backend" {= version}
   "volgo-git-eio" {= version}
   "volgo-git-unix" {= version}
+  "volgo-hg-backend" {= version}
+  "volgo-hg-eio" {= version}
+  "volgo-hg-unix" {= version}
   "volgo-vcs" {= version}
   "sherlodoc" {with-doc & >= "0.2"}
   "odoc" {with-doc}

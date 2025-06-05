@@ -133,11 +133,42 @@
   (volgo-git-backend
    (= :version))
   (volgo-git-unix
+   (= :version))
+  (volgo-hg-backend
+   (= :version))
+  (volgo-hg-unix
    (= :version))))
 
 (package
  (name volgo-git-backend)
  (synopsis "An IO-free library that parses the output of Git commands")
+ (depends
+  (ocaml
+   (>= 4.14))
+  (astring
+   (>= 0.8.5))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.13))
+  (ppx_sexp_conv
+   (>= v0.16))
+  (ppx_sexp_value
+   (>= v0.16))
+  (ppxlib
+   (>= 0.33))
+  (sexplib0
+   (>= v0.16))
+  (volgo
+   (= :version))))
+
+(package
+ (name volgo-hg-backend)
+ (synopsis "An IO-free library that parses the output of Mercurial commands")
  (depends
   (ocaml
    (>= 4.14))
@@ -199,6 +230,44 @@
    (= :version))))
 
 (package
+ (name volgo-hg-eio)
+ (synopsis
+  "A Mercurial backend for Vcs based on Volgo_hg_backend for Eio programs")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (eio
+   (>= 1.0))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.13))
+  (ppx_sexp_conv
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppx_sexp_value
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (ppxlib
+   (>= 0.33))
+  (sexplib0
+   (and
+    (>= v0.17)
+    (< v0.18)))
+  (volgo
+   (= :version))
+  (volgo-git-eio
+   (= :version))
+  (volgo-hg-backend
+   (= :version))))
+
+(package
  (name volgo-git-unix)
  (synopsis
   "A Git backend for Vcs based on Volgo_git_backend and the Unix library")
@@ -226,6 +295,38 @@
   (volgo
    (= :version))
   (volgo-git-backend
+   (= :version))))
+
+(package
+ (name volgo-hg-unix)
+ (synopsis
+  "A Mercurial backend for Vcs based on Volgo_hg_backend and the Unix library")
+ (depends
+  (ocaml
+   (>= 4.14))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.2.2))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.13))
+  (ppx_sexp_conv
+   (>= v0.16))
+  (ppx_sexp_value
+   (>= v0.16))
+  (ppxlib
+   (>= 0.33))
+  (sexplib0
+   (>= v0.16))
+  (shexp
+   (>= v0.16))
+  (volgo
+   (= :version))
+  (volgo-git-unix
+   (= :version))
+  (volgo-hg-backend
    (= :version))))
 
 (package
@@ -402,6 +503,12 @@
    (= :version))
   (volgo-git-unix
    (= :version))
+  (volgo-hg-backend
+   (= :version))
+  (volgo-hg-eio
+   (= :version))
+  (volgo-hg-unix
+   (= :version))
   (volgo-vcs
    (= :version))
   (sherlodoc
@@ -529,6 +636,12 @@
   (volgo-git-eio
    (= :version))
   (volgo-git-unix
+   (= :version))
+  (volgo-hg-backend
+   (= :version))
+  (volgo-hg-eio
+   (= :version))
+  (volgo-hg-unix
    (= :version))
   (volgo-tests
    (= :version))
