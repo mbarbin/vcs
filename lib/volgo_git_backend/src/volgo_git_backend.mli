@@ -94,7 +94,7 @@ end
 
 module Make (Runtime : Runtime.S) : S with type t = Runtime.t
 
-(** {2 Individual Providers}
+(** {2 Individual Trait Implementation}
 
     The rest of the modules are functors that are parametrized by your
     [Runtime]. Given the ability to run a git command line, this modules return
