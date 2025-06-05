@@ -1,18 +1,17 @@
-## 0.0.17 (unreleased)
+## 0.0.17 (2025-06-05)
 
 ### Added
 
-- Add support for OCaml-4.14 to `volgo-vcs` CLI (#67, @mbarbin).
+- Add Mercurial Compatibility Mode & Backends (#70, #71, @mbarbin).
+- Add support for OCaml-4.14 to `volgo-vcs` CLI (#68, @mbarbin).
 
 ### Changed
 
 - Conditional set implicit transitive deps in CI depending on the compiler version (#67, @mbarbin).
 
-### Deprecated
-
 ### Fixed
 
-### Removed
+- Fix lint-doc warnings introduced with odoc v3 (#67, @mbarbin).
 
 ## 0.0.16 (2025-05-25)
 
