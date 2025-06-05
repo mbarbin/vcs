@@ -41,6 +41,10 @@ The main reason for that naming duality is that, even though the project is desi
 
 *volgo-vcs* is the name of a cli built with the libraries of this project. It is distributed by the opam package of the same name (`volgo-vcs`).
 
+## Mercurial Compatibility
+
+For information about Mercurial compatibility mode and how Vcs supports certain Git operations in Mercurial repositories, see [here](doc/docs/explanation/mercurial-compatibility.md).
+
 ## Known Issues
 
 - The camel depicted in the project logo has only one hump, whereas OCamls traditionally have two. We dare to hope that, as the project matures, our mascot will grow its second hump and fully embrace its OCaml heritage.

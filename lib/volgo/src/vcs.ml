@@ -25,6 +25,7 @@ module Commit_message = Commit_message
 module File_contents = File_contents
 module Git = Git
 module Graph = Graph
+module Hg = Hg
 module Log = Log
 module Mock_rev_gen = Mock_rev_gen
 module Mock_revs = Mock_revs

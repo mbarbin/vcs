@@ -308,6 +308,46 @@ val git
   -> f:(Git.Output.t -> 'a)
   -> 'a
 
+(** {1 Low level Mercurial cli}
+
+    This part of Vcs provides direct access to the ["hg"] command line interface
+    when operating in a Mercurial repository.
+
+    This is similar to the low level access provided by {!val:git} and the same
+    restrictions and advices apply. *)
+
+module Hg = Hg
+
+(** Simiar to {!val:git}, helpers are provided by the module {!module:Hg} to
+    build the [f] parameter.
+
+    The expectation is that you should be using the [Hg] module of the API you
+    are using to access the [hg] function, and not mix and match.
+
+    For example using the raising API:
+
+    {[
+      let hg_status () : string =
+        Vcs.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.exit0_and_stdout
+      ;;
+    ]}
+
+    Or the {{!non_raising_apis} non-raising API} (result):
+
+    {[
+      let hg_status () : string Vcs.Result.t =
+        Vcs.Result.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.Result.exit0_and_stdout
+      ;;
+    ]} *)
+val hg
+  :  ?env:string array
+  -> ?run_in_subdir:Path_in_repo.t
+  -> < Trait.hg ; .. > t
+  -> repo_root:Repo_root.t
+  -> args:string list
+  -> f:(Hg.Output.t -> 'a)
+  -> 'a
+
 (** {1:non_raising_apis Non-raising APIs}
 
     For convenience and to allow experimenting with different error handling

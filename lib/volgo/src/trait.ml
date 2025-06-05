@@ -21,6 +21,7 @@
 
 module Top = struct
   module Git = Git
+  module Hg = Hg
 end
 
 open! Import
@@ -30,6 +31,7 @@ module Commit = Trait_commit
 module Config = Trait_config
 module File_system = Trait_file_system
 module Git = Trait_git
+module Hg = Trait_hg
 module Init = Trait_init
 module Log = Trait_log
 module Ls_files = Trait_ls_files
@@ -45,6 +47,7 @@ class type commit = Commit.t
 class type config = Config.t
 class type file_system = File_system.t
 class type git = Git.t
+class type hg = Hg.t
 class type init = Init.t
 class type log = Log.t
 class type ls_files = Ls_files.t
@@ -61,6 +64,7 @@ class type t = object
   inherit config
   inherit file_system
   inherit git
+  inherit hg
   inherit init
   inherit log
   inherit ls_files
@@ -133,6 +137,19 @@ class unimplemented : t =
       -> ('a, Err.t) Result.t =
       fun ?env:_ () ~cwd:_ ~args:_ ~f:_ ->
         unimplemented ~trait:"Vcs.Trait.git" ~method_:"git"
+
+    (* hg *)
+
+    method hg
+      :  'a.
+         ?env:string array
+      -> unit
+      -> cwd:Absolute_path.t
+      -> args:string list
+      -> f:(Top.Hg.Output.t -> ('a, Err.t) Result.t)
+      -> ('a, Err.t) Result.t =
+      fun ?env:_ () ~cwd:_ ~args:_ ~f:_ ->
+        unimplemented ~trait:"Vcs.Trait.hg" ~method_:"hg"
 
     (* init *)
 

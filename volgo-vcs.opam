@@ -22,6 +22,8 @@ depends: [
   "volgo" {= version}
   "volgo-git-backend" {= version}
   "volgo-git-unix" {= version}
+  "volgo-hg-backend" {= version}
+  "volgo-hg-unix" {= version}
   "odoc" {with-doc}
 ]
 build: [

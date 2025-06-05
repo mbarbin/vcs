@@ -2,5 +2,5 @@
  (package volgo-dev)
  (deps
   (package volgo)
-  (package provider-tests))
+  (package volgo-tests))
  (preludes prelude.txt))

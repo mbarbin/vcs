@@ -116,6 +116,14 @@ let%expect_test "unimplemented" =
      (error
       "Trait [Vcs.Trait.git] method [git] is not available in this repository."))
     |}];
+  (* hg *)
+  test (fun () -> Vcs.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.exit0);
+  [%expect
+    {|
+    ((context (Vcs.hg ((repo_root /path/to/repo) (args (status)))))
+     (error
+      "Trait [Vcs.Trait.hg] method [hg] is not available in this repository."))
+    |}];
   (* init *)
   test (fun () -> Vcs.init vcs ~path:(Absolute_path.v "/path/to/dir"));
   [%expect

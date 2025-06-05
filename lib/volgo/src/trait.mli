@@ -113,6 +113,18 @@ module Git : sig
   end
 end
 
+class type hg = Trait_hg.t
+
+module Hg : sig
+  module type S = Trait_hg.S
+
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit hg
+    end
+  end
+end
+
 class type init = Trait_init.t
 
 module Init : sig
@@ -217,6 +229,7 @@ class type t = object
   inherit config
   inherit file_system
   inherit git
+  inherit hg
   inherit init
   inherit log
   inherit ls_files

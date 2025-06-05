@@ -32,6 +32,7 @@ jobs:
         uses: ocaml/setup-ocaml@v3
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          dune-cache: true
           opam-repositories: |
             default: https://github.com/ocaml/opam-repository.git
             mbarbin: https://github.com/mbarbin/opam-repository.git
@@ -46,7 +47,7 @@ jobs:
       # the development workflow and as part of the main CI job. These are the
       # tests that are checked for every combination of os and ocaml-compiler.
       - name: Install dependencies
-        run: opam install ./volgo.opam ./volgo-git-backend.opam ./volgo-git-unix.opam --deps-only --with-test
+        run: opam install ./volgo.opam ./volgo-git-backend.opam ./volgo-git-unix.opam ./volgo-hg-backend.opam ./volgo-hg-unix.opam --deps-only --with-test
 
       - name: Build & Run tests
-        run: opam exec -- dune build @all @runtest -p volgo,volgo-git-backend,volgo-git-unix
+        run: opam exec -- dune build @all @runtest -p volgo,volgo-git-backend,volgo-git-unix,volgo-hg-backend,volgo-hg-unix
