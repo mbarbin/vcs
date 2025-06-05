@@ -49,7 +49,7 @@ const sidebars: SidebarsConfig = {
       items: [
         { type: 'doc', id: 'explanation/README', label: 'Introduction' },
         { type: 'doc', id: 'explanation/traits', label: 'Traits' },
-        { type: 'doc', id: 'explanation/exploratory_tests', label: 'Exploratory tests' },
+        { type: 'doc', id: 'explanation/exploratory-tests', label: 'Exploratory tests' },
       ],
     },
   ],
