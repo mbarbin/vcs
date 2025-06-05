@@ -49,6 +49,8 @@ const sidebars: SidebarsConfig = {
       items: [
         { type: 'doc', id: 'explanation/README', label: 'Introduction' },
         { type: 'doc', id: 'explanation/traits', label: 'Traits' },
+        { type: 'doc', id: 'explanation/mercurial-compatibility', label: 'Mercurial Compatibility' },
+        { type: 'doc', id: 'explanation/parametrization-axes', label: 'Parametrization Axes' },
         { type: 'doc', id: 'explanation/exploratory-tests', label: 'Exploratory tests' },
       ],
     },
