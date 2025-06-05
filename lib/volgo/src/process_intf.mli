@@ -19,30 +19,23 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a Git backend for the {!module:Volgo.Vcs} library, based
-    on [Eio] and {!module:Volgo_git_backend}.
+(** Common process interfaces used in [Vcs].
 
-    This implementation is based on the [git] command line tool. We run it as an
-    external program within an [Eio] environment, producing the right command line
-    invocation and parsing the output to produce a typed version of the expected
-    results with [Volgo_git_backend]. Note that [git] must be found in the PATH of the
-    running environment. *)
+    This file is configured in [dune] as an interface only file, so we don't need to
+    duplicate the interfaces it contains into an [ml] file. *)
 
-(** This is a convenient type alias that may be used to designate a backend with
-    the exact list of traits supported by this implementation. *)
-type t = Volgo_git_backend.Trait.t Vcs.t
+module type S = sig
+  (** Helpers to wrap process outputs. *)
 
-(** [create ~env] creates a [vcs] value that can be used by the [Vcs]
-    library. *)
-val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
+  type process_output
+  type 'a result
 
-(** The implementation of the backend is exported for convenience and tests.
-    Casual users should prefer using [Vcs] directly. *)
-module Impl : Volgo_git_backend.S with type t = Runtime.t
+  val exit0 : process_output -> unit result
+  val exit0_and_stdout : process_output -> string result
 
-(** {1 Runtime}
-
-    Exposed if you need to extend it. *)
-
-module Runtime = Runtime
-module Make_runtime = Make_runtime
+  (** A convenient wrapper to write exhaustive match on a result conditioned by
+      a list of accepted exit codes. If the exit code is not part of the
+      accepted list, the function takes care of returning an error of the
+      expected result type. *)
+  val exit_code : process_output -> accept:(int * 'a) list -> 'a result
+end

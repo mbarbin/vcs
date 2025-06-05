@@ -23,7 +23,7 @@ type +'a t constraint 'a = < .. >
 
 val create : 'a -> 'a t
 
-include Vcs_interface.S with type 'a t := 'a t and type 'a result := 'a
+include Vcs_intf.S with type 'a t := 'a t and type 'a result := 'a
 
 module Private : sig
   (** This function is exposed to simplify the implementation of the [git]

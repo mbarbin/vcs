@@ -19,7 +19,7 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a git backend for the {!module:Volgo.Vcs} library, based
+(** Implementation of a Git backend for the {!module:Volgo.Vcs} library, based
     on [Stdlib] and {!module:Volgo_git_backend}.
 
     This implementation is based on the [git] command line tool. We run it as an
@@ -48,3 +48,4 @@ module Impl : Volgo_git_backend.S with type t = Runtime.t
     Exposed if you need to extend it. *)
 
 module Runtime = Runtime
+module Make_runtime = Make_runtime

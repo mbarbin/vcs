@@ -30,3 +30,4 @@ let create_class () = new Impl.c (Impl.create ())
 let create () = Vcs.create (create_class ())
 
 module Runtime = Runtime
+module Make_runtime = Make_runtime

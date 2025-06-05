@@ -19,30 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a Git backend for the {!module:Volgo.Vcs} library, based
-    on [Eio] and {!module:Volgo_git_backend}.
+(** Common error interfaces used in [Vcs].
 
-    This implementation is based on the [git] command line tool. We run it as an
-    external program within an [Eio] environment, producing the right command line
-    invocation and parsing the output to produce a typed version of the expected
-    results with [Volgo_git_backend]. Note that [git] must be found in the PATH of the
-    running environment. *)
+    This file is configured in [dune] as an interface only file, so we don't need to
+    duplicate the interfaces it contains into an [ml] file. *)
 
-(** This is a convenient type alias that may be used to designate a backend with
-    the exact list of traits supported by this implementation. *)
-type t = Volgo_git_backend.Trait.t Vcs.t
+module type S = sig
+  (** Interface used to build non raising interfaces to [Vcs] via
+      [Vcs.Non_raising.Make]. *)
 
-(** [create ~env] creates a [vcs] value that can be used by the [Vcs]
-    library. *)
-val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
+  (** [t] must represent the type of errors in your monad. *)
+  type t [@@deriving sexp_of]
 
-(** The implementation of the backend is exported for convenience and tests.
-    Casual users should prefer using [Vcs] directly. *)
-module Impl : Volgo_git_backend.S with type t = Runtime.t
+  (** The conversion functions you need to provide. *)
 
-(** {1 Runtime}
-
-    Exposed if you need to extend it. *)
-
-module Runtime = Runtime
-module Make_runtime = Make_runtime
+  val of_err : Err.t -> t
+  val to_err : t -> Err.t
+end

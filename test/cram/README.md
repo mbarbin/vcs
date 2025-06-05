@@ -2,7 +2,7 @@
 
 ## Motivation
 
-In this directory, we test the command line `volgo-vcs`. This command line is itself motivated by the desire to run exploratory tests using the vcs interface and the git backend available on actual repositories.
+In this directory, we test the command line `volgo-vcs`. This command line is itself motivated by the desire to run exploratory tests using the vcs interface and the unix backends available on actual repositories.
 
 What we aim for in these tests is to make sure that `volgo-vcs` is not broken in some ways, thus we would like to have good coverage of the commands it exposes.
 

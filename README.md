@@ -41,11 +41,11 @@ The main reason for that naming duality is that, even though the project is desi
 
 *volgo-vcs* is the name of a cli built with the libraries of this project. It is distributed by the opam package of the same name (`volgo-vcs`).
 
-## Known issues
+## Known Issues
 
 - The camel depicted in the project logo has only one hump, whereas OCamls traditionally have two. We dare to hope that, as the project matures, our mascot will grow its second hump and fully embrace its OCaml heritage.
 
-## Unknown issues
+## Unknown Issues
 
 - This is where you come in! If you discover any unknown issues, please open them on GitHub to let us know. Your contributions will help us improve this project!
 

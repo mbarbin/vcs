@@ -19,30 +19,22 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a Git backend for the {!module:Volgo.Vcs} library, based
-    on [Eio] and {!module:Volgo_git_backend}.
+(** Manipulating the output of process run by vcs and backends.
 
-    This implementation is based on the [git] command line tool. We run it as an
-    external program within an [Eio] environment, producing the right command line
-    invocation and parsing the output to produce a typed version of the expected
-    results with [Volgo_git_backend]. Note that [git] must be found in the PATH of the
-    running environment. *)
+    This module is used to break a dependency cycle. It serves under the hood
+    for the implemenation of the types that are exported as [Vcs.Git.Output] and
+    [Vcs.Hg.Output], although for added type safety, these 2 types are not
+    exported as being equal. *)
 
-(** This is a convenient type alias that may be used to designate a backend with
-    the exact list of traits supported by this implementation. *)
-type t = Volgo_git_backend.Trait.t Vcs.t
+type t =
+  { exit_code : int
+  ; stdout : string
+  ; stderr : string
+  }
+[@@deriving sexp_of]
 
-(** [create ~env] creates a [vcs] value that can be used by the [Vcs]
-    library. *)
-val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
+module Private : sig
+  (** Exported for use by Git and Hg outputs. *)
 
-(** The implementation of the backend is exported for convenience and tests.
-    Casual users should prefer using [Vcs] directly. *)
-module Impl : Volgo_git_backend.S with type t = Runtime.t
-
-(** {1 Runtime}
-
-    Exposed if you need to extend it. *)
-
-module Runtime = Runtime
-module Make_runtime = Make_runtime
+  val of_process_output : t -> t
+end

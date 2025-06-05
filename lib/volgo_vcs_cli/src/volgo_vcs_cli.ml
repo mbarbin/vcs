@@ -21,10 +21,6 @@
 
 open! Import
 
-(* The commands below are sorted alphabetically. Their name must be derived from
-   the name the associated function has in the [V.S] interface, prepending the
-   suffix "_cmd". *)
-
 let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
@@ -65,6 +61,10 @@ let relativize ~repo_root ~cwd ~path =
 ;;
 
 open Command.Std
+
+(* The commands below are sorted alphabetically. Their name must be derived from
+   the name the associated function has in the [V.S] interface, prepending the
+   suffix "_cmd". *)
 
 let add_cmd =
   Command.make

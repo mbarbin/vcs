@@ -19,30 +19,41 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Implementation of a Git backend for the {!module:Volgo.Vcs} library, based
-    on [Eio] and {!module:Volgo_git_backend}.
+(** This module implements the handling of running the git and hg processes in a
+    blocking fashion. *)
 
-    This implementation is based on the [git] command line tool. We run it as an
-    external program within an [Eio] environment, producing the right command line
-    invocation and parsing the output to produce a typed version of the expected
-    results with [Volgo_git_backend]. Note that [git] must be found in the PATH of the
-    running environment. *)
+module type S = sig
+  type t
 
-(** This is a convenient type alias that may be used to designate a backend with
-    the exact list of traits supported by this implementation. *)
-type t = Volgo_git_backend.Trait.t Vcs.t
+  val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
 
-(** [create ~env] creates a [vcs] value that can be used by the [Vcs]
-    library. *)
-val create : env:< fs : _ Eio.Path.t ; process_mgr : _ Eio.Process.mgr ; .. > -> t
+  (** {1 I/O} *)
 
-(** The implementation of the backend is exported for convenience and tests.
-    Casual users should prefer using [Vcs] directly. *)
-module Impl : Volgo_git_backend.S with type t = Runtime.t
+  include Vcs.Trait.File_system.S with type t := t
 
-(** {1 Runtime}
+  (** {1 Running the git/hg command line} *)
 
-    Exposed if you need to extend it. *)
+  type process_output
 
-module Runtime = Runtime
-module Make_runtime = Make_runtime
+  val vcs_cli
+    :  ?env:string array
+    -> t
+    -> cwd:Absolute_path.t
+    -> args:string list
+    -> f:(process_output -> ('a, Err.t) Result.t)
+    -> ('a, Err.t) Result.t
+end
+
+module type M = sig
+  val executable_basename : string
+
+  module Output : sig
+    type t
+
+    module Private : sig
+      val of_process_output : Vcs.Private.Process_output.t -> t
+    end
+  end
+end
+
+module Make (M : M) : S with type process_output := M.Output.t

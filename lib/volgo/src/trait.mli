@@ -226,3 +226,30 @@ class type t = object
   inherit rev_parse
   inherit show
 end
+
+(** This is a special class constructor that creates an object that satisfies
+    the interface defined by the class type [t], but where each of the actual
+    method implementation is a function that returns an error indicating that
+    the method is unimplemented.
+
+    This may be useful when you wish to define an object that fails at runtime
+    rather than at compile time, as a base object to extend, such as in:
+
+    {[
+      let my_vcs =
+        object
+          inherit Vcs.Trait.unimplemented
+
+          method! ...
+
+          inherit! ...
+        end
+    ]}
+
+    We do this for example in the implementation of the cli [volgo-vcs] to
+    define the [vcs] used for Mercurial repositories.
+
+    Note however that in most cases, you'd probably be better off dealing with
+    traits in a static way, by specifying and requiring [vcs] values that
+    implement the exact set of traits that you need. *)
+class unimplemented : t

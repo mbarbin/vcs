@@ -19,6 +19,11 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+module Top = struct
+  module Git = Git
+end
+
+open! Import
 module Add = Trait_add
 module Branch = Trait_branch
 module Commit = Trait_commit
@@ -65,3 +70,108 @@ class type t = object
   inherit rev_parse
   inherit show
 end
+
+class unimplemented : t =
+  (* When used through the vcs interface, the context for each method is already
+     part of the full error trace. This includes the [repo_root] and/or whatever
+     useful arguments for each of the methods in the error messages. We do not
+     want to include them here too, as they would simply be printed twice. *)
+  let unimplemented ~trait ~method_ =
+    Error
+      (Err.create
+         Pp.O.
+           [ Pp.text "Trait "
+             ++ Pp_tty.id (module String) trait
+             ++ Pp.text " method "
+             ++ Pp_tty.id (module String) method_
+             ++ Pp.text " is not available in this repository."
+           ])
+  in
+  object
+    (* add *)
+
+    method add ~repo_root:_ ~path:_ = unimplemented ~trait:"Vcs.Trait.add" ~method_:"add"
+
+    (* branch *)
+
+    method rename_current_branch ~repo_root:_ ~to_:_ =
+      unimplemented ~trait:"Vcs.Trait.branch" ~method_:"rename_current_branch"
+
+    (* commit *)
+
+    method commit ~repo_root:_ ~commit_message:_ =
+      unimplemented ~trait:"Vcs.Trait.commit" ~method_:"commit"
+
+    (* config *)
+
+    method set_user_name ~repo_root:_ ~user_name:_ =
+      unimplemented ~trait:"Vcs.Trait.config" ~method_:"set_user_name"
+
+    method set_user_email ~repo_root:_ ~user_email:_ =
+      unimplemented ~trait:"Vcs.Trait.config" ~method_:"set_user_email"
+
+    (* file_system *)
+
+    method load_file ~path:_ =
+      unimplemented ~trait:"Vcs.Trait.file_system" ~method_:"load_file"
+
+    method save_file ?perms:_ () ~path:_ ~file_contents:_ =
+      unimplemented ~trait:"Vcs.Trait.file_system" ~method_:"save_file"
+
+    method read_dir ~dir:_ =
+      unimplemented ~trait:"Vcs.Trait.file_system" ~method_:"read_dir"
+
+    (* git *)
+
+    method git
+      :  'a.
+         ?env:string array
+      -> unit
+      -> cwd:Absolute_path.t
+      -> args:string list
+      -> f:(Top.Git.Output.t -> ('a, Err.t) Result.t)
+      -> ('a, Err.t) Result.t =
+      fun ?env:_ () ~cwd:_ ~args:_ ~f:_ ->
+        unimplemented ~trait:"Vcs.Trait.git" ~method_:"git"
+
+    (* init *)
+
+    method init ~path:_ = unimplemented ~trait:"Vcs.Trait.init" ~method_:"init"
+
+    (* log *)
+
+    method all ~repo_root:_ = unimplemented ~trait:"Vcs.Trait.log" ~method_:"all"
+
+    (* ls_files *)
+
+    method ls_files ~repo_root:_ ~below:_ =
+      unimplemented ~trait:"Vcs.Trait.ls_files" ~method_:"ls_files"
+
+    (* name_status *)
+
+    method name_status ~repo_root:_ ~changed:_ =
+      unimplemented ~trait:"Vcs.Trait.name_status" ~method_:"name_status"
+
+    (* num_status *)
+
+    method num_status ~repo_root:_ ~changed:_ =
+      unimplemented ~trait:"Vcs.Trait.num_status" ~method_:"num_status"
+
+    (* refs *)
+
+    method show_ref ~repo_root:_ =
+      unimplemented ~trait:"Vcs.Trait.refs" ~method_:"show_ref"
+
+    (* rev_parse *)
+
+    method current_branch ~repo_root:_ =
+      unimplemented ~trait:"Vcs.Trait.rev_parse" ~method_:"current_branch"
+
+    method current_revision ~repo_root:_ =
+      unimplemented ~trait:"Vcs.Trait.rev_parse" ~method_:"current_revision"
+
+    (* show *)
+
+    method show_file_at_rev ~repo_root:_ ~rev:_ ~path:_ =
+      unimplemented ~trait:"Vcs.Trait.show" ~method_:"show_file_at_rev"
+  end
