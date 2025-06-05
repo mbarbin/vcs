@@ -226,6 +226,8 @@ end
 module String = struct
   include StringLabels
 
+  let to_string t = t
+
   let chop_prefix t ~prefix =
     if Astring.String.is_prefix t ~affix:prefix
     then Some (Astring.String.with_index_range t ~first:(String.length prefix))
