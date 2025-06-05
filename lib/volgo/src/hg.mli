@@ -19,50 +19,14 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type +'a t constraint 'a = < .. >
+(** Manipulating the output of processes run by vcs and backends - typically
+    the ["hg"] command.
 
-val create : 'a -> 'a t
+    In the documentation below, we are referring to examples and functions based
+    on the similar [Git] module. This is because both modules {!module:Git} and
+    this one are implemented from a shared code and interface.
 
-include Vcs_intf.S with type 'a t := 'a t and type 'a result := 'a
+    They have the same interface, but the types of their output differ, for
+    added type safety. *)
 
-module Private : sig
-  (** This function is exposed to simplify the implementation of the [git]
-      function in the non-raising APIs of Vcs. *)
-  val git
-    :  ?env:string array
-    -> ?run_in_subdir:Path_in_repo.t
-    -> < Trait.git ; .. > t
-    -> repo_root:Repo_root.t
-    -> args:string list
-    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-
-  (** Build the context for errors happening during [git]. *)
-  val make_git_err_step
-    :  ?env:string array
-    -> ?run_in_subdir:Path_in_repo.t
-    -> repo_root:Repo_root.t
-    -> args:string list
-    -> unit
-    -> Sexp.t
-
-  (** This function is exposed to simplify the implementation of the [hg]
-      function in the non-raising APIs of Vcs. *)
-  val hg
-    :  ?env:string array
-    -> ?run_in_subdir:Path_in_repo.t
-    -> < Trait.hg ; .. > t
-    -> repo_root:Repo_root.t
-    -> args:string list
-    -> f:(Hg.Output.t -> ('a, Err.t) Result.t)
-    -> ('a, Err.t) Result.t
-
-  (** Build the context for errors happening during [hg]. *)
-  val make_hg_err_step
-    :  ?env:string array
-    -> ?run_in_subdir:Path_in_repo.t
-    -> repo_root:Repo_root.t
-    -> args:string list
-    -> unit
-    -> Sexp.t
-end
+include Process_output_handler_intf.S

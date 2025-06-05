@@ -111,4 +111,20 @@ module Make (M : M) :
                   (Vcs0.Private.make_git_err_step ?env ?run_in_subdir ~repo_root ~args ())
               ]))
   ;;
+
+  let hg ?env ?run_in_subdir vcs ~repo_root ~args ~f =
+    match
+      Vcs0.Private.hg ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
+        f output |> Result.map_error ~f:M.to_err)
+    with
+    | Ok t -> Ok t
+    | Error err ->
+      Error
+        (M.of_err
+           (Err.add_context
+              err
+              [ Err.sexp
+                  (Vcs0.Private.make_hg_err_step ?env ?run_in_subdir ~repo_root ~args ())
+              ]))
+  ;;
 end

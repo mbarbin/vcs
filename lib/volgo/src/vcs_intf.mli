@@ -149,4 +149,13 @@ module type S = sig
     -> args:string list
     -> f:(Git.Output.t -> 'a result)
     -> 'a result
+
+  val hg
+    :  ?env:string array
+    -> ?run_in_subdir:Path_in_repo.t
+    -> < Trait.hg ; .. > t
+    -> repo_root:Repo_root.t
+    -> args:string list
+    -> f:(Hg.Output.t -> 'a result)
+    -> 'a result
 end

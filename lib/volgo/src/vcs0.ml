@@ -198,6 +198,16 @@ let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
     }]
 ;;
 
+let make_hg_err_step ?env ?run_in_subdir ~repo_root ~args () =
+  [%sexp
+    "Vcs.hg"
+  , { repo_root : Repo_root.t
+    ; run_in_subdir : (Path_in_repo.t option[@sexp.option])
+    ; env : (string array option[@sexp.option])
+    ; args : string list
+    }]
+;;
+
 let non_raising_git
       ?env
       ?(run_in_subdir = Path_in_repo.root)
@@ -210,6 +220,18 @@ let non_raising_git
   t#git ?env () ~cwd ~args ~f
 ;;
 
+let non_raising_hg
+      ?env
+      ?(run_in_subdir = Path_in_repo.root)
+      (t : < Trait.hg ; .. >)
+      ~repo_root
+      ~args
+      ~f
+  =
+  let cwd = Repo_root.append repo_root run_in_subdir in
+  t#hg ?env () ~cwd ~args ~f
+;;
+
 let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
   non_raising_git ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
     match f output with
@@ -218,7 +240,17 @@ let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
   |> of_result ~step:(lazy (make_git_err_step ?env ?run_in_subdir ~repo_root ~args ()))
 ;;
 
+let hg ?env ?run_in_subdir vcs ~repo_root ~args ~f =
+  non_raising_hg ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
+    match f output with
+    | ok -> Ok ok
+    | exception exn -> Error (Err.of_exn exn))
+  |> of_result ~step:(lazy (make_hg_err_step ?env ?run_in_subdir ~repo_root ~args ()))
+;;
+
 module Private = struct
   let git = non_raising_git
   let make_git_err_step = make_git_err_step
+  let hg = non_raising_hg
+  let make_hg_err_step = make_hg_err_step
 end
