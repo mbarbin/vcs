@@ -137,10 +137,26 @@ Adding a new file under a directory.
   $ volgo-vcs ls-files
   dir/hello
   hello
+
   $ volgo-vcs ls-files --below dir
   dir/hello
+
   $ volgo-vcs ls-files --below /dir
   Error: Path is not in repo. (path /dir)
+  [123]
+
+  $ volgo-vcs ls-files --below foo
+  Context:
+  (Vcs.ls_files
+   (repo_root
+    $TESTCASE_ROOT)
+   (below foo))
+  ((prog /usr/bin/git) (args (ls-files --full-name)) (exit_status Unknown)
+   (cwd
+    $TESTCASE_ROOT/foo)
+   (stdout "") (stderr ""))
+  Error:
+  "Unix.Unix_error(Unix.ENOENT, \"open\", \"$TESTCASE_ROOT/foo\")"
   [123]
 
 Testing an unsuccessful file show with git and via vcs.

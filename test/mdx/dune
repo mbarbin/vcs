@@ -1,0 +1,6 @@
+(mdx
+ (package volgo-dev)
+ (deps
+  (package volgo)
+  (package provider-tests))
+ (preludes prelude.txt))
