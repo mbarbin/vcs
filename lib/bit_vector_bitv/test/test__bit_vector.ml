@@ -48,7 +48,7 @@ let%expect_test "bitwise_and_in_place" =
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 2 = 0 then Bit_vector.set v1 i
   done;
-  Bit_vector.bitwise_and_in_place ~dest:v0 v0 v1;
+  Bit_vector.bitwise_and_in_place ~dst:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
   [%expect {| 1010101010 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
@@ -57,17 +57,15 @@ let%expect_test "bitwise_and_in_place" =
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 3 = 0 then Bit_vector.set v1 i
   done;
-  Bit_vector.bitwise_and_in_place ~dest:v0 v0 v1;
+  Bit_vector.bitwise_and_in_place ~dst:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
   [%expect {| 1000001000 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 1001001001 |}];
   let vsmall = Bit_vector.create ~len:5 true in
-  require_does_raise [%here] (fun () ->
-    Bit_vector.bitwise_and_in_place ~dest:v0 vsmall v0);
+  require_does_raise [%here] (fun () -> Bit_vector.bitwise_and_in_place ~dst:v0 vsmall v0);
   [%expect {| (Invalid_argument Bitv.bw_and_in_place) |}];
-  require_does_raise [%here] (fun () ->
-    Bit_vector.bitwise_and_in_place ~dest:v0 v0 vsmall);
+  require_does_raise [%here] (fun () -> Bit_vector.bitwise_and_in_place ~dst:v0 v0 vsmall);
   [%expect {| (Invalid_argument Bitv.bw_and_in_place) |}];
   ()
 ;;

@@ -53,5 +53,5 @@ module type S = sig
 
   (** {1 In place bitwise operations} *)
 
-  val bitwise_and_in_place : dest:t -> t -> t -> unit
+  val bitwise_and_in_place : dst:t -> t -> t -> unit
 end

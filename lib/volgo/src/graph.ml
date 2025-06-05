@@ -211,7 +211,7 @@ let greatest_common_ancestors t ~nodes =
     let visited = Bit_vector.create ~len:node_count false in
     List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
-      Bit_vector.bitwise_and_in_place ~dest:common_ancestors common_ancestors visited;
+      Bit_vector.bitwise_and_in_place ~dst:common_ancestors common_ancestors visited;
       Bit_vector.clear_all visited);
     let gcas = ref [] in
     for i = node_count - 1 downto 0 do

@@ -37,11 +37,11 @@ let get = Array.get
 let clear_all t = Array.fill t ~pos:0 ~len:(Array.length t) false
 let copy = Array.copy
 
-let bitwise_and_in_place ~dest va vb =
-  let len = Array.length dest in
+let bitwise_and_in_place ~dst va vb =
+  let len = Array.length dst in
   if len <> Array.length va || len <> Array.length vb
   then invalid_arg "Bit_vector.bitwise_and_in_place" [@coverage off];
   for i = 0 to len - 1 do
-    dest.(i) <- va.(i) && vb.(i)
+    dst.(i) <- va.(i) && vb.(i)
   done
 ;;

@@ -36,10 +36,10 @@ let get = Fast_bitvector.get
 let clear_all = Fast_bitvector.clear_all
 let copy = Fast_bitvector.copy
 
-let bitwise_and_in_place ~dest va vb =
-  let len = length dest in
+let bitwise_and_in_place ~dst va vb =
+  let len = length dst in
   if len <> length va || len <> length vb
   then invalid_arg "Bit_vector.bitwise_and_in_place" [@coverage off];
-  let (_ : Fast_bitvector.t) = Fast_bitvector.Set.intersect ~result:dest va vb in
+  let (_ : Fast_bitvector.t) = Fast_bitvector.Set.intersect ~result:dst va vb in
   ()
 ;;
