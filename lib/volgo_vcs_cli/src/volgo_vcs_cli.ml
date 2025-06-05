@@ -25,15 +25,20 @@ let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct
   type t =
-    { vcs : Volgo_git_unix.t
+    { vcs : Vcs.Trait.t Vcs.t
     ; repo_root : Vcs.Repo_root.t
     ; cwd : Absolute_path.t
     }
 end
 
-let find_enclosing_repo_root vcs ~from =
-  match Vcs.find_enclosing_repo_root vcs ~from ~store:[ Fsegment.dot_git, `Git ] with
-  | Some (`Git, repo_root) -> repo_root
+let find_enclosing_repo vcs ~from =
+  match
+    Vcs.find_enclosing_repo_root
+      vcs
+      ~from
+      ~store:[ Fsegment.dot_git, `Git; Fsegment.dot_hg, `Hg ]
+  with
+  | Some repo -> repo
   | None ->
     Err.raise
       [ Err.sexp
@@ -44,9 +49,28 @@ let find_enclosing_repo_root vcs ~from =
 ;;
 
 let initialize () =
-  let vcs = Volgo_git_unix.create () in
+  let vcs_git = Volgo_git_unix.create () in
   let cwd = Unix.getcwd () |> Absolute_path.v in
-  let repo_root = find_enclosing_repo_root vcs ~from:cwd in
+  let repo_kind, repo_root = find_enclosing_repo vcs_git ~from:cwd in
+  let vcs : Vcs.Trait.t Vcs.t =
+    match repo_kind with
+    | `Git ->
+      let runtime = Volgo_git_unix.Runtime.create () in
+      Vcs.create
+        (object
+           inherit Vcs.Trait.unimplemented
+           inherit! Volgo_git_unix.Impl.c runtime
+         end
+          :> Vcs.Trait.t)
+    | `Hg ->
+      let runtime = Volgo_hg_unix.Runtime.create () in
+      Vcs.create
+        (object
+           inherit Vcs.Trait.unimplemented
+           inherit! Volgo_hg_unix.Impl.c runtime
+         end
+          :> Vcs.Trait.t)
+  in
   { Initialized.vcs; repo_root; cwd }
 ;;
 
@@ -132,7 +156,7 @@ let find_enclosing_repo_root_cmd =
          [ "store" ]
          (Param.comma_separated (Param.validated_string (module Fsegment)))
          ~doc:"stop the search if one of these entries is found (e.g. '.hg')"
-       >>| Option.value ~default:[ Fsegment.dot_git ]
+       >>| Option.value ~default:[ Fsegment.dot_git; Fsegment.dot_hg ]
      in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let from =
@@ -182,6 +206,21 @@ let init_cmd =
      let repo_root = Vcs.init vcs ~path in
      if not quiet then print_sexp [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
      ())
+;;
+
+let hg_cmd =
+  Command.make
+    ~summary:"run the hg cli"
+    (let+ args =
+       Arg.pos_all Param.string ~docv:"ARG" ~doc:"pass the remaining args to hg"
+     in
+     let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
+     let { Vcs.Hg.Output.exit_code; stdout; stderr } =
+       Vcs.hg vcs ~repo_root ~args ~f:Fun.id
+     in
+     print_string stdout;
+     prerr_string stderr;
+     if exit_code <> 0 then exit exit_code)
 ;;
 
 let load_file_cmd =
@@ -502,6 +541,7 @@ sub commands exposed here, plus additional ones.
     ; "gca", greatest_common_ancestors_cmd
     ; "git", git_cmd
     ; "graph", graph_cmd
+    ; "hg", hg_cmd
     ; "init", init_cmd
     ; "load-file", load_file_cmd
     ; "log", log_cmd

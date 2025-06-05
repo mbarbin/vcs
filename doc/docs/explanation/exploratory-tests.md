@@ -60,6 +60,9 @@ COMMANDS
        graph [OPTION]…
            compute graph of current repo
 
+       hg [OPTION]… [ARG]…
+           run the hg cli
+
        init [--quiet] [OPTION]… path/to/root
            initialize a new repository
 
