@@ -12,9 +12,9 @@ depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "4.14"}
   "fpath" {>= "0.7.3"}
-  "fpath-sexp0" {>= "0.2.2"}
+  "fpath-sexp0" {>= "0.3.1"}
   "pp" {>= "2.0.0"}
-  "pplumbing" {>= "0.0.13"}
+  "pplumbing" {>= "0.0.14"}
   "ppx_sexp_conv" {>= "v0.16"}
   "ppx_sexp_value" {>= "v0.16"}
   "ppxlib" {>= "0.33"}
