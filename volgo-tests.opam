@@ -16,6 +16,7 @@ depends: [
   "base_quickcheck" {>= "v0.17"}
   "bisect_ppx" {with-dev-setup & >= "2.8.3"}
   "cmdlang" {>= "0.0.9"}
+  "conf-git"
   "core" {>= "v0.17"}
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}

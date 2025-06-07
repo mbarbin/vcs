@@ -35,28 +35,28 @@
 
 (rule
  (enabled_if
-  (< %{ocaml_version} 5.0))
+  (< %{ocaml_version} 5.1))
  (target stdlib_compat.ml)
  (action
   (copy stdlib_compat4xx.ml %{target})))
 
 (rule
  (enabled_if
-  (>= %{ocaml_version} 5.0))
+  (>= %{ocaml_version} 5.1))
  (target stdlib_compat.ml)
  (action
   (copy stdlib_compat5xx.ml %{target})))
 
 (rule
  (enabled_if
-  (< %{ocaml_version} 5.0))
+  (< %{ocaml_version} 5.1))
  (target stdlib_compat.mli)
  (action
   (copy stdlib_compat4xx.mli %{target})))
 
 (rule
  (enabled_if
-  (>= %{ocaml_version} 5.0))
+  (>= %{ocaml_version} 5.1))
  (target stdlib_compat.mli)
  (action
   (copy stdlib_compat5xx.mli %{target})))
