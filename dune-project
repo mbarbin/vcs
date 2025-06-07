@@ -96,6 +96,7 @@
  (depends
   (ocaml
    (>= 4.14))
+  (conf-git :with-test)
   (cmdlang
    (>= 0.0.9))
   (fpath
@@ -184,6 +185,7 @@
  (depends
   (ocaml
    (>= 5.2))
+  (conf-git :with-test)
   (eio
    (>= 1.0))
   (fpath
@@ -246,6 +248,7 @@
  (depends
   (ocaml
    (>= 4.14))
+  (conf-git :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -360,6 +363,7 @@
     (>= 2.8.3)))
   (cmdlang
    (>= 0.0.9))
+  conf-git
   (core
    (>= v0.17))
   (eio
@@ -463,6 +467,7 @@
     (>= 2.8.3)))
   (cmdlang
    (>= 0.0.9))
+  conf-git
   (core
    (>= v0.17))
   (eio
