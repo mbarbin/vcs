@@ -103,6 +103,7 @@
   (cmdlang
    (>= 0.0.9))
   (conf-git :with-test)
+  (conf-hg :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -220,6 +221,7 @@
  (depends
   (ocaml
    (>= 5.2))
+  (conf-hg :with-test)
   (eio
    (>= 1.0))
   (fpath
@@ -283,6 +285,7 @@
  (depends
   (ocaml
    (>= 4.14))
+  (conf-hg :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -366,6 +369,7 @@
   (cmdlang
    (>= 0.0.9))
   conf-git
+  conf-hg
   (core
    (>= v0.17))
   (eio
@@ -470,6 +474,7 @@
   (cmdlang
    (>= 0.0.9))
   conf-git
+  conf-hg
   (core
    (>= v0.17))
   (eio
