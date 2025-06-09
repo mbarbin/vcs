@@ -30,6 +30,10 @@
 (implicit_transitive_deps true)
 
 (package
+ (name conf-hg)
+ (allow_empty))
+
+(package
  (name volgo)
  (synopsis "A Versatile OCaml Library for Git Operations")
  (depends
