@@ -1,3 +1,21 @@
+## 0.0.18 (unreleased)
+
+### Added
+
+- Add `conf-git` dependency to tests using the `git` cli (#73, @mbarbin).
+
+### Changed
+
+- Replace `shexp` by direct use of `spawn` (#76, @mbarbin).
+
+### Deprecated
+
+### Fixed
+
+- Fix build with OCaml `5.0` (#73, @mbarbin).
+
+### Removed
+
 ## 0.0.17 (2025-06-05)
 
 ### Added
