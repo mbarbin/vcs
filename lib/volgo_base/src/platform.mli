@@ -19,7 +19,13 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type t = Vcs.Platform.t = GitHub [@@deriving hash]
+type t = Vcs.Platform.t =
+  | Bitbucket
+  | Codeberg
+  | GitHub
+  | GitLab
+  | Sourcehut
+[@@deriving hash]
 
 include module type of Vcs.Platform with type t := t
 include Comparable.S with type t := t

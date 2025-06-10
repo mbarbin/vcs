@@ -19,39 +19,48 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** A url to access a repository on a supported platform.
+module Vcs_kind : sig
+  type t = Vcs.Platform_repo.Vcs_kind.t =
+    | Git
+    | Hg
+  [@@deriving hash]
 
-    Some examples:
-
-    {[
-      [ "https://github.com/ahrefs/atd.git"; "git@github.com:mbarbin/ocaml-grpc.git" ]
-    ]} *)
-
-module Protocol : sig
-  type t =
-    | Ssh
-    | Https
-
-  include Container_key.S with type t := t
-
-  val all : t list
+  include module type of Vcs.Platform_repo.Vcs_kind with type t := t
 end
 
-type t =
+module Protocol : sig
+  type t = Vcs.Platform_repo.Protocol.t =
+    | Ssh
+    | Https
+  [@@deriving hash]
+
+  include module type of Vcs.Platform_repo.Protocol with type t := t
+end
+
+module Url : sig
+  type t = Vcs.Platform_repo.Url.t =
+    { platform : Platform.t
+    ; vcs_kind : Vcs_kind.t
+    ; user_handle : User_handle.t
+    ; repo_name : Repo_name.t
+    ; protocol : Protocol.t
+    }
+  [@@deriving hash]
+
+  include module type of Vcs.Platform_repo.Url with type t := t
+end
+
+type t = Vcs.Platform_repo.t =
   { platform : Platform.t
-  ; protocol : Protocol.t
+  ; vcs_kind : Vcs_kind.t
   ; user_handle : User_handle.t
   ; repo_name : Repo_name.t
   }
+[@@deriving hash]
 
-include Container_key.S with type t := t
-
-(** Create a complete string suitable for use with git commands, such as remote
-    add, clone, etc. *)
-val to_string : t -> string
-
-(** Parse a string into a url. *)
-val of_string : string -> (t, [ `Msg of string ]) Result.t
-
-(** A wrapper for [of_string] that raises [Invalid_argument] on invalid input. *)
-val v : string -> t
+include
+  module type of Vcs.Platform_repo
+  with type t := t
+   and module Protocol := Protocol
+   and module Url := Url
+   and module Vcs_kind := Vcs_kind

@@ -2,6 +2,7 @@
 
 ### Added
 
+- Add a `Vcs.Platform_repo` module to help using online hosting platform (#78, @mbarbin).
 - Add `conf-git` dependency to tests using the `git` cli (#73, @mbarbin).
 
 ### Changed
@@ -18,6 +19,8 @@
 - Fix build with OCaml `5.0` (#73, @mbarbin).
 
 ### Removed
+
+- Replace `Vcs.Url` by the more complete `Vcs.Platform_repo` module (#78, @mbarbin).
 
 ## 0.0.17 (2025-06-05)
 

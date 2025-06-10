@@ -75,9 +75,9 @@ val create : 'a -> 'a t
 (** {1 Creating repositories} *)
 
 module Platform = Platform
+module Platform_repo = Platform_repo
 module Repo_name = Repo_name
 module Repo_root = Repo_root
-module Url = Url
 
 (** Initialize a Git repository at the given path. This errors out if a
     repository is already initialized there. *)
