@@ -54,7 +54,7 @@ Adding a new file under a directory.
    (repo_root
     $TESTCASE_ROOT)
    (below foo))
-  ((prog /usr/bin/hg) (args (files --include ./foo/)) (exit_status (Exited 1))
+  ((prog hg) (args (files --include ./foo/)) (exit_status (Exited 1))
    (cwd
     $TESTCASE_ROOT)
    (stdout "") (stderr ""))
