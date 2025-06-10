@@ -38,6 +38,7 @@ const sidebars: SidebarsConfig = {
       label: 'Reference',
       items: [
         { type: 'doc', id: 'reference/odoc', label: 'OCaml Packages' },
+        { type: 'doc', id: 'reference/platform-repositories', label: 'Platform Repositories' },
       ],
     },
   ],
