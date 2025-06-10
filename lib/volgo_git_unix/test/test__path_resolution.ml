@@ -166,6 +166,29 @@ let%expect_test "hello path" =
         (stderr "")))
      (error "Expected exit code 0."))
     |}];
+  (* When the executable is not present in a custom PATH, we try and execute the
+     unqualified executable, which produces an [Unix.ENOENT] error. *)
+  let bin2 = Absolute_path.extend cwd (Fsegment.v "bin2") in
+  Unix.mkdir (bin2 |> Absolute_path.to_string) ~perm:0o755;
+  test_with_env
+    ~vcs
+    ~env:(Some [| Printf.sprintf "PATH=%s" (Absolute_path.to_string bin2) |])
+    ~redact_fields:[ "cwd"; "env"; "repo_root" ];
+  [%expect
+    {|
+    ((context
+       (Vcs.git (
+         (repo_root <REDACTED>)
+         (env       <REDACTED>)
+         (args (rev-parse INVALID-REF))))
+       ((prog git)
+        (args (rev-parse INVALID-REF))
+        (exit_status Unknown)
+        (cwd         <REDACTED>)
+        (stdout      "")
+        (stderr      "")))
+     (error ("Unix.Unix_error(Unix.ENOENT, \"execve\", \"git\")")))
+    |}];
   (* Under an empty environment, we expect to revert to the previous git binary. *)
   test_with_env
     ~vcs
