@@ -96,9 +96,9 @@
  (depends
   (ocaml
    (>= 4.14))
-  (conf-git :with-test)
   (cmdlang
    (>= 0.0.9))
+  (conf-git :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
