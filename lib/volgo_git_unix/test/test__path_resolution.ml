@@ -219,7 +219,7 @@ let%expect_test "hello path" =
         (cwd         <REDACTED>)
         (stdout      "")
         (stderr      "")))
-     (error (Failure "git: command not found")))
+     (error ("Unix.Unix_error(Unix.ENOENT, \"execve\", \"git\")")))
     |}];
   Option.iter save_path ~f:(fun path -> Unix.putenv "PATH" path);
   ()
