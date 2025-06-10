@@ -25,9 +25,12 @@
 module Unix = UnixLabels
 
 let command cmd =
-  let exit_code, stdout =
-    Shexp_process.capture [ Stdout ] (Shexp_process.call_exit_code cmd)
-    |> Shexp_process.eval
+  let process = Unix.open_process_in (String.concat cmd ~sep:" ") in
+  let stdout = In_channel.input_all process in
+  let exit_code =
+    match Unix.close_process_in process with
+    | WEXITED code -> code
+    | WSIGNALED _ | WSTOPPED _ -> assert false [@coverage off]
   in
   print_string stdout;
   if exit_code <> 0 then print_endline (Printf.sprintf "[%d]" exit_code)

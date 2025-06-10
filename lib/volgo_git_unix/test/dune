@@ -25,7 +25,6 @@
   fpath-sexp0
   pp
   pplumbing.err
-  shexp.process
   stdio
   unix
   vcs_test_helpers
