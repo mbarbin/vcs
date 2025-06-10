@@ -448,7 +448,7 @@
  (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 5.3))
   (ocamlformat
    (and
     :with-dev-setup
