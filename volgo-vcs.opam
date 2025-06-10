@@ -11,8 +11,8 @@ bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "4.14"}
-  "conf-git" {with-test}
   "cmdlang" {>= "0.0.9"}
+  "conf-git" {with-test}
   "fpath" {>= "0.7.3"}
   "fpath-sexp0" {>= "0.3.1"}
   "pp" {>= "2.0.0"}

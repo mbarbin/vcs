@@ -96,9 +96,9 @@
  (depends
   (ocaml
    (>= 4.14))
-  (conf-git :with-test)
   (cmdlang
    (>= 0.0.9))
+  (conf-git :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -448,7 +448,7 @@
  (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 5.3))
   (ocamlformat
    (and
     :with-dev-setup

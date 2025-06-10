@@ -6,12 +6,15 @@
 
 ### Changed
 
+- Set `prog` to the executable basename in error context for stability (#77, @mbarbin).
 - Replace `shexp` by direct use of `spawn` (#76, @mbarbin).
 
 ### Deprecated
 
 ### Fixed
 
+- Make `hg` more silent during tests for stability (#77, @mbarbin).
+- Require `5.3` for `volgo-dev` for stability (#77, @mbarbin).
 - Fix build with OCaml `5.0` (#73, @mbarbin).
 
 ### Removed

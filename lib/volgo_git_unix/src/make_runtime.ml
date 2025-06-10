@@ -251,7 +251,7 @@ let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
          err
          [ Err.sexp
              [%sexp
-               { prog : string
+               { prog = (executable_basename : string)
                ; args : string list
                ; exit_status = (!exit_status_r : Exit_status.t)
                ; cwd : Absolute_path.t

@@ -1,7 +1,7 @@
 First we need to setup a repo in a way that satisfies the test environment. This
 includes specifics required by the GitHub Actions environment.
 
-  $ hg init
+  $ hg init 2> /dev/null
 
   $ cat > hello << EOF
   > Hello World
@@ -15,7 +15,7 @@ includes specifics required by the GitHub Actions environment.
 
 Rev-parse.
 
-  $ hg log -r . --template "{node}\n" | sed -e "s/$rev0/rev0/g"
+  $ hg log -r . --template "{node}\n" 2> /dev/null | sed -e "s/$rev0/rev0/g"
   rev0
 
   $ volgo-vcs current-revision | sed -e "s/$rev0/rev0/g"
@@ -48,22 +48,12 @@ Adding a new file under a directory.
   Error: Path is not in repo. (path /dir)
   [123]
 
-  $ volgo-vcs ls-files --below foo
-  Context:
-  (Vcs.ls_files
-   (repo_root
-    $TESTCASE_ROOT)
-   (below foo))
-  ((prog /usr/bin/hg) (args (files --include ./foo/)) (exit_status (Exited 1))
-   (cwd
-    $TESTCASE_ROOT)
-   (stdout "") (stderr ""))
-  Error: Expected exit code 0.
+  $ volgo-vcs ls-files --below foo 2> /dev/null
   [123]
 
 Vcs allows to run the git command line directly if the backend supports it.
 
-  $ volgo-vcs hg -- log -r . --template "{node}" | sed -e "s/$rev1/rev1/g"
+  $ volgo-vcs hg -- log -r . --template "{node}" 2> /dev/null | sed -e "s/$rev1/rev1/g"
   rev1
 
   $ volgo-vcs hg invalid-command 2> /dev/null

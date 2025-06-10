@@ -151,7 +151,7 @@ Adding a new file under a directory.
    (repo_root
     $TESTCASE_ROOT)
    (below foo))
-  ((prog /usr/bin/git) (args (ls-files --full-name)) (exit_status Unknown)
+  ((prog git) (args (ls-files --full-name)) (exit_status Unknown)
    (cwd
     $TESTCASE_ROOT/foo)
    (stdout "") (stderr ""))
