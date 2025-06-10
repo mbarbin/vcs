@@ -20,6 +20,7 @@
 (*******************************************************************************)
 
 open! Import
+module Unix = UnixLabels
 
 module type S = sig
   type t
@@ -142,52 +143,87 @@ let create ~executable_basename =
   { executable_basename; executable }
 ;;
 
+let rec waitpid_non_intr pid =
+  try Unix.waitpid ~mode:[] pid with
+  | Unix.Unix_error (EINTR, _, _) -> waitpid_non_intr pid [@coverage off]
+;;
+
+let read_all_from_fd fd =
+  let out = In_channel.input_all (Unix.in_channel_of_descr fd) in
+  Unix.close fd;
+  out
+;;
+
 let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
-  let unix_env =
-    match env with
-    | None -> None
-    | Some env ->
-      (let env =
-         Array.map
-           ~f:(fun var ->
-             match String.lsplit2 var ~on:'=' with
-             | None -> var, ""
-             | Some var -> var)
-           env
-         |> Array.to_list
-       in
-       Some env)
-      [@coverage off]
-  in
+  let env = Option.map env ~f:Array.to_list in
+  let executable_basename = t.executable_basename in
   let prog =
     match t.executable with
-    | None -> t.executable_basename
+    | None -> executable_basename
     | Some { filename; path } ->
-      (match unix_env with
+      (match env with
        | None -> filename
        | Some bindings ->
-         (match List.find bindings ~f:(fun (var, _) -> String.equal var "PATH") with
+         (match
+            List.find_map bindings ~f:(fun var -> String.chop_prefix var ~prefix:"PATH=")
+          with
           | None -> filename
-          | Some (_, path_override) ->
-            if String.equal path path_override then filename else t.executable_basename))
-  in
-  let process =
-    Shexp_process.capture
-      [ Stderr ]
-      (Shexp_process.capture [ Stdout ] (Shexp_process.call_exit_code (prog :: args)))
+          | Some path_override ->
+            if String.equal path path_override
+            then filename
+            else (
+              match find_executable ~path:path_override ~executable_basename with
+              | None -> executable_basename
+              | Some filename -> filename)))
   in
   let exit_status_r : Exit_status.t ref = ref `Unknown in
   let stdout_r = ref "" in
   let stderr_r = ref "" in
   try
-    let context =
-      Shexp_process.Context.create ~cwd:(Path (Absolute_path.to_string cwd)) ?unix_env ()
+    let stdin_reader, stdin_writer = Spawn.safe_pipe () in
+    let stdout_reader, stdout_writer = Spawn.safe_pipe () in
+    let stderr_reader, stderr_writer = Spawn.safe_pipe () in
+    let pid =
+      Spawn.spawn
+        ?env:(env |> Option.map ~f:Spawn.Env.of_list)
+        ~cwd:(Path (Absolute_path.to_string cwd))
+        ~prog
+        ~argv:(executable_basename :: args)
+        ~stdin:stdin_reader
+        ~stdout:stdout_writer
+        ~stderr:stderr_writer
+        ()
     in
-    let (exit_code, stdout), stderr = Shexp_process.eval ~context process in
-    exit_status_r := `Exited exit_code;
+    Unix.close stdin_reader;
+    Unix.close stdin_writer;
+    Unix.close stdout_writer;
+    Unix.close stderr_writer;
+    let stdout = read_all_from_fd stdout_reader in
+    let stderr = read_all_from_fd stderr_reader in
+    let pid', process_status = waitpid_non_intr pid in
+    assert (pid = pid');
+    let exit_status =
+      match process_status with
+      | Unix.WEXITED n -> `Exited n
+      | Unix.WSIGNALED n -> `Signaled n [@coverage off]
+      | Unix.WSTOPPED n -> `Stopped n [@coverage off]
+    in
+    exit_status_r := exit_status;
     stdout_r := stdout;
     stderr_r := stderr;
-    Shexp_process.Context.dispose context;
+    let exit_code =
+      match exit_status with
+      | `Exited n -> n
+      | (`Signaled _ | `Stopped _) as exit_status ->
+        raise_notrace
+          (Err.E
+             (Err.create
+                [ Err.sexp
+                    [%sexp
+                      "process terminated abnormally"
+                    , { exit_status : [ `Signaled of int | `Stopped of int ] }]
+                ])) [@coverage off]
+    in
     (* A note regarding the [raise_notrace] below. These cases are indeed
        exercised in the test suite, however bisect_ppx inserts a coverage point
        on the outer edge of the calls, defeating the coverage reports. Thus we

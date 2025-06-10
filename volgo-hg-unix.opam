@@ -19,7 +19,6 @@ depends: [
   "ppx_sexp_value" {>= "v0.16"}
   "ppxlib" {>= "0.33"}
   "sexplib0" {>= "v0.16"}
-  "shexp" {>= "v0.16"}
   "volgo" {= version}
   "volgo-git-unix" {= version}
   "volgo-hg-backend" {= version}

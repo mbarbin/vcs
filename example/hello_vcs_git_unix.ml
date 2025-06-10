@@ -80,7 +80,7 @@ let%expect_test "hello commit" =
         (cwd         /invalid/path/)
         (stdout      "")
         (stderr      "")))
-     (error ("Unix.Unix_error(Unix.ENOENT, \"open\", \"/invalid/path/\")")))
+     (error ("Unix.Unix_error(Unix.ENOENT, \"chdir\", \"/invalid/path/\")")))
     |}];
   (* Let's also show a case where the command fails due to a user error. *)
   let () =

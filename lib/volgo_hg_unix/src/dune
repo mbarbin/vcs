@@ -21,7 +21,6 @@
   pp
   pplumbing.err
   pplumbing.pp-tty
-  shexp.process
   unix
   volgo
   volgo-git-unix

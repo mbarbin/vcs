@@ -156,7 +156,7 @@ Adding a new file under a directory.
     $TESTCASE_ROOT/foo)
    (stdout "") (stderr ""))
   Error:
-  "Unix.Unix_error(Unix.ENOENT, \"open\", \"$TESTCASE_ROOT/foo\")"
+  "Unix.Unix_error(Unix.ENOENT, \"chdir\", \"$TESTCASE_ROOT/foo\")"
   [123]
 
 Testing an unsuccessful file show with git and via vcs.

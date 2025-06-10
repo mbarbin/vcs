@@ -25,9 +25,12 @@
 module Unix = UnixLabels
 
 let command cmd =
-  let exit_code, stdout =
-    Shexp_process.capture [ Stdout ] (Shexp_process.call_exit_code cmd)
-    |> Shexp_process.eval
+  let process = Unix.open_process_in (String.concat cmd ~sep:" ") in
+  let stdout = In_channel.input_all process in
+  let exit_code =
+    match Unix.close_process_in process with
+    | WEXITED code -> code
+    | WSIGNALED _ | WSTOPPED _ -> assert false [@coverage off]
   in
   print_string stdout;
   if exit_code <> 0 then print_endline (Printf.sprintf "[%d]" exit_code)
@@ -144,7 +147,33 @@ let%expect_test "hello path" =
       | _ -> binding)
   in
   (* Under this new environment, we expect out custom git binary to be run instead. *)
-  test_with_env ~vcs ~env:(Some extended_env) ~redact_fields:[ "cwd"; "env"; "repo_root" ];
+  test_with_env
+    ~vcs
+    ~env:(Some extended_env)
+    ~redact_fields:[ "cwd"; "env"; "prog"; "repo_root" ];
+  [%expect
+    {|
+    ((context
+       (Vcs.git (
+         (repo_root <REDACTED>)
+         (env       <REDACTED>)
+         (args (rev-parse INVALID-REF))))
+       ((prog <REDACTED>)
+        (args        (rev-parse INVALID-REF))
+        (exit_status (Exited    42))
+        (cwd    <REDACTED>)
+        (stdout "Hello Git!")
+        (stderr "")))
+     (error "Expected exit code 0."))
+    |}];
+  (* When the executable is not present in a custom PATH, we try and execute the
+     unqualified executable, which produces an [Unix.ENOENT] error. *)
+  let bin2 = Absolute_path.extend cwd (Fsegment.v "bin2") in
+  Unix.mkdir (bin2 |> Absolute_path.to_string) ~perm:0o755;
+  test_with_env
+    ~vcs
+    ~env:(Some [| Printf.sprintf "PATH=%s" (Absolute_path.to_string bin2) |])
+    ~redact_fields:[ "cwd"; "env"; "repo_root" ];
   [%expect
     {|
     ((context
@@ -153,12 +182,12 @@ let%expect_test "hello path" =
          (env       <REDACTED>)
          (args (rev-parse INVALID-REF))))
        ((prog git)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    42))
-        (cwd    <REDACTED>)
-        (stdout "Hello Git!")
-        (stderr "")))
-     (error "Expected exit code 0."))
+        (args (rev-parse INVALID-REF))
+        (exit_status Unknown)
+        (cwd         <REDACTED>)
+        (stdout      "")
+        (stderr      "")))
+     (error ("Unix.Unix_error(Unix.ENOENT, \"execve\", \"git\")")))
     |}];
   (* Under an empty environment, we expect to revert to the previous git binary. *)
   test_with_env
@@ -213,7 +242,7 @@ let%expect_test "hello path" =
         (cwd         <REDACTED>)
         (stdout      "")
         (stderr      "")))
-     (error (Failure "git: command not found")))
+     (error ("Unix.Unix_error(Unix.ENOENT, \"execve\", \"git\")")))
     |}];
   Option.iter save_path ~f:(fun path -> Unix.putenv "PATH" path);
   ()

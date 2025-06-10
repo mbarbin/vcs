@@ -265,7 +265,7 @@
    (>= 0.33))
   (sexplib0
    (>= v0.16))
-  (shexp
+  (spawn
    (>= v0.16))
   (volgo
    (= :version))
@@ -294,8 +294,6 @@
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (>= v0.16))
-  (shexp
    (>= v0.16))
   (volgo
    (= :version))
@@ -414,7 +412,7 @@
    (>= 1.8.0))
   (sexp_pretty
    (>= v0.17))
-  (shexp
+  (spawn
    (>= v0.17))
   (stdio
    (>= v0.17))
@@ -516,7 +514,7 @@
    (>= 1.8.0))
   (sexp_pretty
    (>= v0.17))
-  (shexp
+  (spawn
    (>= v0.17))
   (stdio
    (>= v0.17))
