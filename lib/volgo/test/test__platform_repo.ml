@@ -206,6 +206,13 @@ let%expect_test "of_string msgs" =
       (repo_name   repo)
       (protocol    Https)))
     |}];
+  test "https://hg.sr.ht/~user/repo.git";
+  [%expect
+    {|
+    (Error (
+      Msg
+      "\"https://hg.sr.ht/~user/repo.git\": invalid url. Expected a hg repo but has a .git suffix."))
+    |}];
   (* scp-like ssh *)
   test "git@github.com:myrepo";
   [%expect

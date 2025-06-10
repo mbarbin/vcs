@@ -232,7 +232,7 @@ module Url = struct
            | Some repo_name ->
              (match vcs_kind with
               | Git -> Ok repo_name
-              | Hg -> Error "expected a hg repo with found a .git suffix")
+              | Hg -> Error "Expected a hg repo but has a .git suffix.")
          in
          let* repo_name =
            match Repo_name.of_string repo_name with
