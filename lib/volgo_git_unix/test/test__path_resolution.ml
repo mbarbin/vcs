@@ -147,7 +147,10 @@ let%expect_test "hello path" =
       | _ -> binding)
   in
   (* Under this new environment, we expect out custom git binary to be run instead. *)
-  test_with_env ~vcs ~env:(Some extended_env) ~redact_fields:[ "cwd"; "env"; "repo_root" ];
+  test_with_env
+    ~vcs
+    ~env:(Some extended_env)
+    ~redact_fields:[ "cwd"; "env"; "prog"; "repo_root" ];
   [%expect
     {|
     ((context
@@ -155,7 +158,7 @@ let%expect_test "hello path" =
          (repo_root <REDACTED>)
          (env       <REDACTED>)
          (args (rev-parse INVALID-REF))))
-       ((prog git)
+       ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    42))
         (cwd    <REDACTED>)
