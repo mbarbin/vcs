@@ -88,13 +88,13 @@ let%expect_test "hello cli" =
       print_s
         (Vcs_test_helpers.redact_sexp
            [%sexp (err : Err.t)]
-           ~fields:[ "cwd"; "repo_root"; "stderr" ])
+           ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in
   [%expect
     {|
     ((context
        (Vcs.hg ((repo_root <REDACTED>) (args (bogus))))
-       ((prog /usr/bin/hg)
+       ((prog <REDACTED>)
         (args (bogus))
         (exit_status (Exited 255))
         (cwd    <REDACTED>)
@@ -109,13 +109,13 @@ let%expect_test "hello cli" =
       print_s
         (Vcs_test_helpers.redact_sexp
            [%sexp (err : Err.t)]
-           ~fields:[ "cwd"; "repo_root"; "stderr" ])
+           ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in
   [%expect
     {|
     ((context
        (Vcs.hg ((repo_root <REDACTED>) (args (bogus))))
-       ((prog /usr/bin/hg)
+       ((prog <REDACTED>)
         (args (bogus))
         (exit_status (Exited 255))
         (cwd    <REDACTED>)
