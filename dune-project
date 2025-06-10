@@ -295,8 +295,6 @@
    (>= 0.33))
   (sexplib0
    (>= v0.16))
-  (shexp
-   (>= v0.16))
   (volgo
    (= :version))
   (volgo-git-unix
