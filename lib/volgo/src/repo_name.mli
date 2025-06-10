@@ -26,15 +26,17 @@
     ['_'].
 
     On GitHub, the name of a repository is the last part of the URL, e.g.
-    [https://github.com/$USER_HANDLE/$REPO_NAME]. For example, the repository
-    that lives at the url {{:https://github.com/mbarbin/vcs} https://github.com/mbarbin/vcs}
-    has a repo name equals to: [Repo_name.v "vcs"].
+    [https://github.com/${USER_HANDLE}/${REPO_NAME}].
+
+    For example, the repository that lives at the url
+    {{:https://github.com/mbarbin/vcs} https://github.com/mbarbin/vcs} has a
+    repo name equals to: [Repo_name.v "vcs"].
 
     This module is part of the [Vcs] library for convenience. Note that on
     GitHub, multiple users may have a fork of the same repo, and thus the
     repo_name on its own is not sufficient to uniquely define a given
     repository. For this, the GitHub {!module:User_handle} must be added. See
-    {!module:Url} for a complete url to a repository. *)
+    {!module:Platform_repo.Url} for a complete url to a repository. *)
 
 type t (** @canonical Volgo.Vcs.Repo_name.t *)
 
