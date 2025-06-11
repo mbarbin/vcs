@@ -89,6 +89,30 @@ module Config : sig
   end
 end
 
+class type current_branch = Trait_current_branch.t
+
+module Current_branch : sig
+  module type S = Trait_current_branch.S
+
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit current_branch
+    end
+  end
+end
+
+class type current_revision = Trait_current_revision.t
+
+module Current_revision : sig
+  module type S = Trait_current_revision.S
+
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit current_revision
+    end
+  end
+end
+
 class type file_system = Trait_file_system.t
 
 module File_system : sig
@@ -197,18 +221,6 @@ module Refs : sig
   end
 end
 
-class type rev_parse = Trait_rev_parse.t
-
-module Rev_parse : sig
-  module type S = Trait_rev_parse.S
-
-  module Make (X : S) : sig
-    class c : X.t -> object
-      inherit rev_parse
-    end
-  end
-end
-
 class type show = Trait_show.t
 
 module Show : sig
@@ -227,6 +239,8 @@ class type t = object
   inherit branch
   inherit commit
   inherit config
+  inherit current_branch
+  inherit current_revision
   inherit file_system
   inherit git
   inherit hg
@@ -236,7 +250,6 @@ class type t = object
   inherit name_status
   inherit num_status
   inherit refs
-  inherit rev_parse
   inherit show
 end
 

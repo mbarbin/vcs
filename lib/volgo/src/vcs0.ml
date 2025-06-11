@@ -86,17 +86,21 @@ let find_enclosing_git_repo_root t ~from =
   | Some (`Git, repo_root) -> Some repo_root
 ;;
 
-let current_branch (t : < Trait.rev_parse ; .. > t) ~repo_root =
+let current_branch (t : < Trait.current_branch ; .. > t) ~repo_root =
   t#current_branch ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
 ;;
 
-let current_revision (t : < Trait.rev_parse ; .. > t) ~repo_root =
+let current_revision (t : < Trait.current_revision ; .. > t) ~repo_root =
   t#current_revision ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_revision", { repo_root : Repo_root.t }])
 ;;
 
-let commit (t : < Trait.rev_parse ; Trait.commit ; .. > t) ~repo_root ~commit_message =
+let commit
+      (t : < Trait.commit ; Trait.current_revision ; .. > t)
+      ~repo_root
+      ~commit_message
+  =
   (let open Result.Monad_syntax in
    let* () = t#commit ~repo_root ~commit_message in
    t#current_revision ~repo_root)

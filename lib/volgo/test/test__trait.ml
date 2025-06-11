@@ -195,14 +195,14 @@ let%expect_test "unimplemented" =
     {|
     ((context (Vcs.current_branch ((repo_root /path/to/repo))))
      (error
-      "Trait [Vcs.Trait.rev_parse] method [current_branch] is not available in this repository."))
+      "Trait [Vcs.Trait.current_branch] method [current_branch] is not available in this repository."))
     |}];
   test (fun () -> Vcs.current_revision vcs ~repo_root);
   [%expect
     {|
     ((context (Vcs.current_revision ((repo_root /path/to/repo))))
      (error
-      "Trait [Vcs.Trait.rev_parse] method [current_revision] is not available in this repository."))
+      "Trait [Vcs.Trait.current_revision] method [current_revision] is not available in this repository."))
     |}];
   (* show *)
   test (fun () ->

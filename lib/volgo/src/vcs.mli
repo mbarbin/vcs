@@ -132,7 +132,7 @@ val add : < Trait.add ; .. > t -> repo_root:Repo_root.t -> path:Path_in_repo.t -
 
 (** When this succeeds, this returns the revision of the commit that was just created. *)
 val commit
-  :  < Trait.rev_parse ; Trait.commit ; .. > t
+  :  < Trait.commit ; Trait.current_revision ; .. > t
   -> repo_root:Repo_root.t
   -> commit_message:Commit_message.t
   -> Rev.t
@@ -222,10 +222,14 @@ val log : < Trait.log ; .. > t -> repo_root:Repo_root.t -> Log.t
 val refs : < Trait.refs ; .. > t -> repo_root:Repo_root.t -> Refs.t
 val graph : < Trait.log ; Trait.refs ; .. > t -> repo_root:Repo_root.t -> Graph.t
 
-(** {1 Rev parse utils} *)
+(** {1 Current branch & revision} *)
 
-val current_branch : < Trait.rev_parse ; .. > t -> repo_root:Repo_root.t -> Branch_name.t
-val current_revision : < Trait.rev_parse ; .. > t -> repo_root:Repo_root.t -> Rev.t
+val current_branch
+  :  < Trait.current_branch ; .. > t
+  -> repo_root:Repo_root.t
+  -> Branch_name.t
+
+val current_revision : < Trait.current_revision ; .. > t -> repo_root:Repo_root.t -> Rev.t
 
 (** {1 User config} *)
 

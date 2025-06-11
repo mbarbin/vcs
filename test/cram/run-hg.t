@@ -26,7 +26,8 @@ Rev-parse.
   (Vcs.current_branch
    (repo_root
     $TESTCASE_ROOT))
-  Error: Branches are not implemented in [vcs-hg].
+  Error: Trait [Vcs.Trait.current_branch] method [current_branch] is not
+  available in this repository.
   [123]
 
 Adding a new file under a directory.

@@ -29,6 +29,8 @@ module Add = Trait_add
 module Branch = Trait_branch
 module Commit = Trait_commit
 module Config = Trait_config
+module Current_branch = Trait_current_branch
+module Current_revision = Trait_current_revision
 module File_system = Trait_file_system
 module Git = Trait_git
 module Hg = Trait_hg
@@ -38,13 +40,14 @@ module Ls_files = Trait_ls_files
 module Name_status = Trait_name_status
 module Num_status = Trait_num_status
 module Refs = Trait_refs
-module Rev_parse = Trait_rev_parse
 module Show = Trait_show
 
 class type add = Add.t
 class type branch = Branch.t
 class type commit = Commit.t
 class type config = Config.t
+class type current_branch = Current_branch.t
+class type current_revision = Current_revision.t
 class type file_system = File_system.t
 class type git = Git.t
 class type hg = Hg.t
@@ -54,7 +57,6 @@ class type ls_files = Ls_files.t
 class type name_status = Name_status.t
 class type num_status = Num_status.t
 class type refs = Refs.t
-class type rev_parse = Rev_parse.t
 class type show = Show.t
 
 class type t = object
@@ -62,6 +64,8 @@ class type t = object
   inherit branch
   inherit commit
   inherit config
+  inherit current_branch
+  inherit current_revision
   inherit file_system
   inherit git
   inherit hg
@@ -71,7 +75,6 @@ class type t = object
   inherit name_status
   inherit num_status
   inherit refs
-  inherit rev_parse
   inherit show
 end
 
@@ -113,6 +116,16 @@ class unimplemented : t =
 
     method set_user_email ~repo_root:_ ~user_email:_ =
       unimplemented ~trait:"Vcs.Trait.config" ~method_:"set_user_email"
+
+    (* current_branch *)
+
+    method current_branch ~repo_root:_ =
+      unimplemented ~trait:"Vcs.Trait.current_branch" ~method_:"current_branch"
+
+    (* current_revision *)
+
+    method current_revision ~repo_root:_ =
+      unimplemented ~trait:"Vcs.Trait.current_revision" ~method_:"current_revision"
 
     (* file_system *)
 
@@ -178,14 +191,6 @@ class unimplemented : t =
 
     method show_ref ~repo_root:_ =
       unimplemented ~trait:"Vcs.Trait.refs" ~method_:"show_ref"
-
-    (* rev_parse *)
-
-    method current_branch ~repo_root:_ =
-      unimplemented ~trait:"Vcs.Trait.rev_parse" ~method_:"current_branch"
-
-    method current_revision ~repo_root:_ =
-      unimplemented ~trait:"Vcs.Trait.rev_parse" ~method_:"current_revision"
 
     (* show *)
 

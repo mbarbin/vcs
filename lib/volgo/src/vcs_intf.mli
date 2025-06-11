@@ -56,18 +56,18 @@ module type S = sig
     -> unit result
 
   val commit
-    :  < Trait.rev_parse ; Trait.commit ; .. > t
+    :  < Trait.commit ; Trait.current_revision ; .. > t
     -> repo_root:Repo_root.t
     -> commit_message:Commit_message.t
     -> Rev.t result
 
   val current_branch
-    :  < Trait.rev_parse ; .. > t
+    :  < Trait.current_branch ; .. > t
     -> repo_root:Repo_root.t
     -> Branch_name.t result
 
   val current_revision
-    :  < Trait.rev_parse ; .. > t
+    :  < Trait.current_revision ; .. > t
     -> repo_root:Repo_root.t
     -> Rev.t result
 

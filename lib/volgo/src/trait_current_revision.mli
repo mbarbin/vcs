@@ -19,8 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-module Make (Runtime : Runtime.S) : sig
-  type t = Runtime.t
+type current_revision_method = repo_root:Repo_root.t -> (Rev.t, Err.t) Result.t
 
-  include Vcs.Trait.Rev_parse.S with type t := t
+module type S = sig
+  type t
+
+  val current_revision : t -> current_revision_method
+end
+
+class type t = object
+  method current_revision : current_revision_method
+end
+
+module Make (X : S) : sig
+  class c : X.t -> object
+    inherit t
+  end
 end
