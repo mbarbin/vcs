@@ -7,6 +7,7 @@
 
 ### Changed
 
+- Split trait `rev_parse` into two smaller traits (#80, @mbarbin).
 - Set `prog` to the executable basename in error context for stability (#77, @mbarbin).
 - Replace `shexp` by direct use of `spawn` (#76, @mbarbin).
 
@@ -20,6 +21,7 @@
 
 ### Removed
 
+- Remove trait `rev_parse` (#80, @mbarbin).
 - Replace `Vcs.Url` by the more complete `Vcs.Platform_repo` module (#78, @mbarbin).
 
 ## 0.0.17 (2025-06-05)
