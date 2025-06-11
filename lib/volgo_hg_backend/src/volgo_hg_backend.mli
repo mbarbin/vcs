@@ -52,11 +52,11 @@ module Trait : sig
   class type t = object
     inherit Vcs.Trait.add
     inherit Vcs.Trait.commit
+    inherit Vcs.Trait.current_revision
     inherit Vcs.Trait.file_system
     inherit Vcs.Trait.hg
     inherit Vcs.Trait.init
     inherit Vcs.Trait.ls_files
-    inherit Vcs.Trait.rev_parse
   end
 end
 
@@ -71,11 +71,11 @@ module type S = sig
 
   module Add : Vcs.Trait.Add.S with type t = t
   module Commit : Vcs.Trait.Commit.S with type t = t
+  module Current_revision : Vcs.Trait.Current_revision.S with type t = t
   module File_system : Vcs.Trait.File_system.S with type t = t
   module Hg : Vcs.Trait.Hg.S with type t = t
   module Init : Vcs.Trait.Init.S with type t = t
   module Ls_files : Vcs.Trait.Ls_files.S with type t = t
-  module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
 end
 
 module Make (Runtime : Runtime.S) : S with type t = Runtime.t
@@ -90,9 +90,9 @@ module Make (Runtime : Runtime.S) : S with type t = Runtime.t
 
 module Add = Add
 module Commit = Commit
+module Current_revision = Current_revision
 module Init = Init
 module Ls_files = Ls_files
-module Rev_parse = Rev_parse
 
 (** {1 Tests}
 

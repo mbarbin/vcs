@@ -36,17 +36,4 @@ module Make (Runtime : Runtime.S) = struct
         | Ok _ as ok -> ok
         | Error (`Msg m) -> Error (Err.create [ Pp.text m ]) [@coverage off])
   ;;
-
-  let current_revision t ~repo_root =
-    Runtime.git
-      t
-      ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
-      ~args:[ "rev-parse"; "--verify"; "HEAD^{commit}" ]
-      ~f:(fun output ->
-        let open Result.Monad_syntax in
-        let* stdout = Vcs.Git.Result.exit0_and_stdout output in
-        match Vcs.Rev.of_string (String.strip stdout) with
-        | Ok _ as ok -> ok
-        | Error (`Msg m) -> Error (Err.create [ Pp.text m ]) [@coverage off])
-  ;;
 end

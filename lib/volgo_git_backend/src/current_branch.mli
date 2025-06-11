@@ -22,5 +22,5 @@
 module Make (Runtime : Runtime.S) : sig
   type t = Runtime.t
 
-  include Vcs.Trait.Rev_parse.S with type t := t
+  include Vcs.Trait.Current_branch.S with type t := t
 end

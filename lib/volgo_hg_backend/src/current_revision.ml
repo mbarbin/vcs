@@ -24,26 +24,6 @@ open! Import
 module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
-  let current_branch (_ : t) ~repo_root:_ =
-    (* CR-soon mbarbin: Due to the current trait architecture we have to define
-       both methods as part of this trait implementation. But in fact, I'd like
-       to defer on this one, as it involves branches which requires more work.
-
-       I would like to re-consider this trait organization, and probably
-       consider splitting it according to what each method is focused on,
-       instead of grouping them due to the git command used in their current
-       implementation (rev-parse). Once this is done, we can rather *not*
-       implement [current_branch] instead of "implementing" with a dynamic
-       error. *)
-    Error
-      (Err.create
-         Pp.O.
-           [ Pp.text "Branches are not implemented in "
-             ++ Pp_tty.kwd (module String) "vcs-hg"
-             ++ Pp.text "."
-           ])
-  ;;
-
   let current_revision t ~repo_root =
     Runtime.hg
       t
