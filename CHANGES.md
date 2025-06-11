@@ -1,4 +1,4 @@
-## 0.0.18 (unreleased)
+## 0.0.18 (2025-06-11)
 
 ### Added
 
@@ -10,8 +10,6 @@
 - Split trait `rev_parse` into two smaller traits (#80, @mbarbin).
 - Set `prog` to the executable basename in error context for stability (#77, @mbarbin).
 - Replace `shexp` by direct use of `spawn` (#76, @mbarbin).
-
-### Deprecated
 
 ### Fixed
 
