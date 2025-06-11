@@ -144,20 +144,20 @@ let num_status (t : < Trait.num_status ; .. > t) ~repo_root ~changed =
 ;;
 
 let log (t : < Trait.log ; .. > t) ~repo_root =
-  t#all ~repo_root
+  t#get_log_lines ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.log", { repo_root : Repo_root.t }])
 ;;
 
 let refs (t : < Trait.refs ; .. > t) ~repo_root =
-  t#show_ref ~repo_root
+  t#get_refs_lines ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.refs", { repo_root : Repo_root.t }])
 ;;
 
 let graph (t : < Trait.log ; Trait.refs ; .. > t) ~repo_root =
   let graph = Graph.create () in
   (let open Result.Monad_syntax in
-   let* log = t#all ~repo_root in
-   let* refs = t#show_ref ~repo_root in
+   let* log = t#get_log_lines ~repo_root in
+   let* refs = t#get_refs_lines ~repo_root in
    Graph.add_nodes graph ~log;
    Graph.set_refs graph ~refs;
    Result.return graph)

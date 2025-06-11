@@ -170,7 +170,8 @@ class unimplemented : t =
 
     (* log *)
 
-    method all ~repo_root:_ = unimplemented ~trait:"Vcs.Trait.log" ~method_:"all"
+    method get_log_lines ~repo_root:_ =
+      unimplemented ~trait:"Vcs.Trait.log" ~method_:"get_log_lines"
 
     (* ls_files *)
 
@@ -189,8 +190,8 @@ class unimplemented : t =
 
     (* refs *)
 
-    method show_ref ~repo_root:_ =
-      unimplemented ~trait:"Vcs.Trait.refs" ~method_:"show_ref"
+    method get_refs_lines ~repo_root:_ =
+      unimplemented ~trait:"Vcs.Trait.refs" ~method_:"get_refs_lines"
 
     (* show *)
 
