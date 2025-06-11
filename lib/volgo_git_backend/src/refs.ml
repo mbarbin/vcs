@@ -129,7 +129,7 @@ let parse_lines_exn ~lines =
 module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
-  let show_ref t ~repo_root =
+  let get_refs_lines t ~repo_root =
     Runtime.git
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)

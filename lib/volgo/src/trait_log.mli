@@ -19,16 +19,16 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type all_method = repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
+type get_log_lines_method = repo_root:Repo_root.t -> (Log.t, Err.t) Result.t
 
 module type S = sig
   type t
 
-  val all : t -> all_method
+  val get_log_lines : t -> get_log_lines_method
 end
 
 class type t = object
-  method all : all_method
+  method get_log_lines : get_log_lines_method
 end
 
 module Make (X : S) : sig

@@ -154,7 +154,7 @@ let%expect_test "unimplemented" =
     {|
     ((context (Vcs.log ((repo_root /path/to/repo))))
      (error
-      "Trait [Vcs.Trait.log] method [all] is not available in this repository."))
+      "Trait [Vcs.Trait.log] method [get_log_lines] is not available in this repository."))
     |}];
   (* ls_files *)
   test (fun () -> Vcs.ls_files vcs ~repo_root ~below:Vcs.Path_in_repo.root);
@@ -203,7 +203,7 @@ let%expect_test "unimplemented" =
     {|
     ((context (Vcs.refs ((repo_root /path/to/repo))))
      (error
-      "Trait [Vcs.Trait.refs] method [show_ref] is not available in this repository."))
+      "Trait [Vcs.Trait.refs] method [get_refs_lines] is not available in this repository."))
     |}];
   (* show *)
   test (fun () ->
