@@ -82,6 +82,22 @@ let%expect_test "unimplemented" =
      (error
       "Trait [Vcs.Trait.config] method [set_user_email] is not available in this repository."))
     |}];
+  (* current_branch *)
+  test (fun () -> Vcs.current_branch vcs ~repo_root);
+  [%expect
+    {|
+    ((context (Vcs.current_branch ((repo_root /path/to/repo))))
+     (error
+      "Trait [Vcs.Trait.current_branch] method [current_branch] is not available in this repository."))
+    |}];
+  (* current_revision *)
+  test (fun () -> Vcs.current_revision vcs ~repo_root);
+  [%expect
+    {|
+    ((context (Vcs.current_revision ((repo_root /path/to/repo))))
+     (error
+      "Trait [Vcs.Trait.current_revision] method [current_revision] is not available in this repository."))
+    |}];
   (* file_system *)
   test (fun () -> Vcs.load_file vcs ~path:(Absolute_path.v "/path/to/file"));
   [%expect
@@ -188,21 +204,6 @@ let%expect_test "unimplemented" =
     ((context (Vcs.refs ((repo_root /path/to/repo))))
      (error
       "Trait [Vcs.Trait.refs] method [show_ref] is not available in this repository."))
-    |}];
-  (* rev_parse *)
-  test (fun () -> Vcs.current_branch vcs ~repo_root);
-  [%expect
-    {|
-    ((context (Vcs.current_branch ((repo_root /path/to/repo))))
-     (error
-      "Trait [Vcs.Trait.current_branch] method [current_branch] is not available in this repository."))
-    |}];
-  test (fun () -> Vcs.current_revision vcs ~repo_root);
-  [%expect
-    {|
-    ((context (Vcs.current_revision ((repo_root /path/to/repo))))
-     (error
-      "Trait [Vcs.Trait.current_revision] method [current_revision] is not available in this repository."))
     |}];
   (* show *)
   test (fun () ->

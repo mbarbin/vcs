@@ -13,13 +13,15 @@ includes specifics required by the GitHub Actions environment.
   $ volgo-vcs add hello
   $ rev0=$(volgo-vcs commit -m "Initial commit")
 
-Rev-parse.
+Current revision.
 
   $ hg log -r . --template "{node}\n" 2> /dev/null | sed -e "s/$rev0/rev0/g"
   rev0
 
   $ volgo-vcs current-revision | sed -e "s/$rev0/rev0/g"
   rev0
+
+Current branch.
 
   $ volgo-vcs current-branch
   Context:
