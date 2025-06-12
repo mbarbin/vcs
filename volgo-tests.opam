@@ -71,21 +71,8 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/mbarbin/vcs.git"
-# The goal is to fix most of the failure shown by [ocaml-ci] while working on
-# proper integration of [conf-hg] in the main repository.
+# We are now depending on [conf-hg] which handles most distributions.
+# We use this extra [depexts] config to test Windows support further.
 depexts: [
-  ["mercurial"] {os-family = "alpine"}
-  ["mercurial"] {os-family = "arch"}
-  ["mercurial"] {os-distribution = "centos"}
-  ["mercurial"] {os-family = "debian"}
-  ["mercurial"] {os-family = "fedora"}
-  ["mercurial"] {os = "freebsd"}
-  ["mercurial"] {os = "macos" & os-distribution = "homebrew"}
-  ["mercurial"] {os-distribution = "nixos"}
-  ["mercurial"] {os-distribution = "ol"}
-  ["mercurial"] {os = "openbsd"}
-  ["mercurial"] {os-family = "suse" | os-family = "opensuse"}
-  ["mercurial"] {os-family = "ubuntu"}
-  ["system:hg"] {os = "win32" & os-distribution = "cygwinports"}
-  ["mercurial"] {os = "cygwin"}
+  ["mercurial"] {os = "win32" & os-distribution = "cygwin"}
 ]
