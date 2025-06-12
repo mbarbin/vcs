@@ -54,7 +54,7 @@ Adding a new file under a directory.
   $ volgo-vcs ls-files --below foo 2> /dev/null
   [123]
 
-Vcs allows to run the git command line directly if the backend supports it.
+Vcs allows to run the hg command line directly if the backend supports it.
 
   $ volgo-vcs hg -- log -r . --template "{node}" 2> /dev/null | sed -e "s/$rev1/rev1/g"
   rev1
@@ -63,7 +63,7 @@ Vcs allows to run the git command line directly if the backend supports it.
   [255]
 
 When running in a repository of a certain kind, some operations may not be
-supported. Below we attempt to run an Mercurial command in this Git repository.
+supported. Below we attempt to run a Git command in this Mercurial repository.
 
   $ volgo-vcs git not-run
   Context:

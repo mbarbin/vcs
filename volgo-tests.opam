@@ -17,6 +17,7 @@ depends: [
   "bisect_ppx" {with-dev-setup & >= "2.8.3"}
   "cmdlang" {>= "0.0.9"}
   "conf-git"
+  "conf-hg"
   "core" {>= "v0.17"}
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}

@@ -13,6 +13,7 @@ depends: [
   "ocaml" {>= "4.14"}
   "cmdlang" {>= "0.0.9"}
   "conf-git" {with-test}
+  "conf-hg" {with-test}
   "fpath" {>= "0.7.3"}
   "fpath-sexp0" {>= "0.3.1"}
   "pp" {>= "2.0.0"}
