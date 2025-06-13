@@ -1,5 +1,0 @@
-# We are now depending on [conf-hg] which handles most distributions.
-# We use this extra [depexts] config to test Windows support further.
-depexts: [
-  ["mercurial"] {os = "win32" & os-distribution = "cygwin"}
-]
