@@ -48,6 +48,7 @@ For information about Mercurial compatibility mode and how Vcs supports certain 
 
 ## Known Issues
 
+- Look for [open issues](https://github.com/mbarbin/vcs/issues) on GitHub. 
 - The camel depicted in the project logo has only one hump, whereas OCamls traditionally have two. We dare to hope that, as the project matures, our mascot will grow its second hump and fully embrace its OCaml heritage.
 
 ## Unknown Issues
