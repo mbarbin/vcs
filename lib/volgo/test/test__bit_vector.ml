@@ -37,9 +37,7 @@ module Bit_vector = struct
   let intersect_in_place ~mutates other =
     if length mutates <> length other
     then invalid_arg "Bit_vector.intersect_in_place" [@coverage off];
-    let (_ : Fast_bitvector.t) =
-      Fast_bitvector.Set.intersect ~result:mutates mutates other
-    in
+    Fast_bitvector.Set.inter ~dst:mutates mutates other;
     ()
   ;;
 end
@@ -47,27 +45,27 @@ end
 let%expect_test "intersect_in_place" =
   let v0 = Bit_vector.create ~len:10 true in
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| (LE 1111111111) |}];
+  [%expect {| (B0L 1111111111) |}];
   let v1 = Bit_vector.create ~len:10 false in
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| (LE 0000000000) |}];
+  [%expect {| (B0L 0000000000) |}];
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 2 = 0 then Bit_vector.set v1 i
   done;
   Bit_vector.intersect_in_place ~mutates:v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| (LE 0101010101) |}];
+  [%expect {| (B0L 0101010101) |}];
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| (LE 0101010101) |}];
+  [%expect {| (B0L 0101010101) |}];
   Bit_vector.clear_all v1;
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 3 = 0 then Bit_vector.set v1 i
   done;
   Bit_vector.intersect_in_place ~mutates:v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| (LE 0001000001) |}];
+  [%expect {| (B0L 0001000001) |}];
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| (LE 1001001001) |}];
+  [%expect {| (B0L 1001001001) |}];
   let vsmall = Bit_vector.create ~len:5 true in
   require_does_raise [%here] (fun () -> Bit_vector.intersect_in_place ~mutates:v0 vsmall);
   [%expect {| (Invalid_argument Bit_vector.intersect_in_place) |}];

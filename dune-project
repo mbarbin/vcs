@@ -375,7 +375,6 @@
   (eio_main
    (>= 1.0))
   (expect_test_helpers_core
-   (and
    (>= v0.17))
   (fast_bitvector
    (>= 0.1.2.2))
@@ -483,8 +482,7 @@
   (eio_main
    (>= 1.0))
   (expect_test_helpers_core
-   (and
-    (>= v0.17))
+   (>= v0.17))
   (fast_bitvector
    (>= 0.1.2.2))
   (fpath
