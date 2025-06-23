@@ -38,15 +38,15 @@
   (astring
    (>= 0.8.5))
   (fast_bitvector
-   (>= 0.0.5))
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_enumerate
    (>= v0.16))
   (ppx_sexp_conv
@@ -63,45 +63,29 @@
   (ocaml
    (>= 5.2))
   (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.2.2))
+   (>= 0.3.1))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (volgo
@@ -116,14 +100,16 @@
    (>= 4.14))
   (cmdlang
    (>= 0.0.9))
+  (conf-git :with-test)
+  (conf-hg :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_sexp_value
    (>= v0.16))
   (ppxlib
@@ -135,6 +121,10 @@
   (volgo-git-backend
    (= :version))
   (volgo-git-unix
+   (= :version))
+  (volgo-hg-backend
+   (= :version))
+  (volgo-hg-unix
    (= :version))))
 
 (package
@@ -148,11 +138,38 @@
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
+  (ppx_sexp_conv
+   (>= v0.16))
+  (ppx_sexp_value
+   (>= v0.16))
+  (ppxlib
+   (>= 0.33))
+  (sexplib0
+   (>= v0.16))
+  (volgo
+   (= :version))))
+
+(package
+ (name volgo-hg-backend)
+ (synopsis "An IO-free library that parses the output of Mercurial commands")
+ (depends
+  (ocaml
+   (>= 4.14))
+  (astring
+   (>= 0.8.5))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.3.1))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.14))
   (ppx_sexp_conv
    (>= v0.16))
   (ppx_sexp_value
@@ -171,33 +188,61 @@
  (depends
   (ocaml
    (>= 5.2))
+  (conf-git :with-test)
   (eio
    (>= 1.0))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (sexplib0
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (volgo
    (= :version))
   (volgo-git-backend
+   (= :version))))
+
+(package
+ (name volgo-hg-eio)
+ (synopsis
+  "A Mercurial backend for Vcs based on Volgo_hg_backend for Eio programs")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (conf-hg :with-test)
+  (eio
+   (>= 1.0))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.3.1))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.14))
+  (ppx_sexp_conv
+   (>= v0.17))
+  (ppx_sexp_value
+   (>= v0.17))
+  (ppxlib
+   (>= 0.33))
+  (sexplib0
+   (>= v0.17))
+  (volgo
+   (= :version))
+  (volgo-git-eio
+   (= :version))
+  (volgo-hg-backend
    (= :version))))
 
 (package
@@ -207,14 +252,15 @@
  (depends
   (ocaml
    (>= 4.14))
+  (conf-git :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_sexp_conv
    (>= v0.16))
   (ppx_sexp_value
@@ -223,11 +269,42 @@
    (>= 0.33))
   (sexplib0
    (>= v0.16))
-  (shexp
+  (spawn
    (>= v0.16))
   (volgo
    (= :version))
   (volgo-git-backend
+   (= :version))))
+
+(package
+ (name volgo-hg-unix)
+ (synopsis
+  "A Mercurial backend for Vcs based on Volgo_hg_backend and the Unix library")
+ (depends
+  (ocaml
+   (>= 4.14))
+  (conf-hg :with-test)
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.3.1))
+  (pp
+   (>= 2.0.0))
+  (pplumbing
+   (>= 0.0.14))
+  (ppx_sexp_conv
+   (>= v0.16))
+  (ppx_sexp_value
+   (>= v0.16))
+  (ppxlib
+   (>= 0.33))
+  (sexplib0
+   (>= v0.16))
+  (volgo
+   (= :version))
+  (volgo-git-unix
+   (= :version))
+  (volgo-hg-backend
    (= :version))))
 
 (package
@@ -237,47 +314,31 @@
   (ocaml
    (>= 5.2))
   (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (eio
    (>= 1.0))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (volgo
@@ -296,39 +357,34 @@
   (astring
    (>= 0.8.5))
   (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (base_quickcheck
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (bisect_ppx
    (and
     :with-dev-setup
     (>= 2.8.3)))
   (cmdlang
    (>= 0.0.9))
+  conf-git
+  conf-hg
   (core
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (eio
    (>= 1.0))
   (eio_main
    (>= 1.0))
   (expect_test_helpers_core
    (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (fast_bitvector
-   (>= 0.0.5))
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.2.2))
+   (>= 0.3.1))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (mdx
    (and
     :with-doc
@@ -336,64 +392,39 @@
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_expect
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_js_style
    (and
     :with-dev-setup
-    (>= v0.17)
-    (< v0.18)))
+    (>= v0.17)))
   (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_message
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (re
    (>= 1.8.0))
   (sexp_pretty
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (shexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
+  (spawn
+   (>= v0.17))
   (stdio
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (vcs-test-helpers
    (= :version))
   (volgo
@@ -405,6 +436,12 @@
   (volgo-git-eio
    (= :version))
   (volgo-git-unix
+   (= :version))
+  (volgo-hg-backend
+   (= :version))
+  (volgo-hg-eio
+   (= :version))
+  (volgo-hg-unix
    (= :version))
   (volgo-vcs
    (= :version))
@@ -420,7 +457,7 @@
  (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
  (depends
   (ocaml
-   (>= 5.2))
+   (>= 5.3))
   (ocamlformat
    (and
     :with-dev-setup
@@ -428,102 +465,72 @@
   (astring
    (>= 0.8.5))
   (base
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (base_quickcheck
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (bisect_ppx
    (and
     :with-dev-setup
     (>= 2.8.3)))
   (cmdlang
    (>= 0.0.9))
+  conf-git
+  conf-hg
   (core
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (eio
    (>= 1.0))
   (eio_main
    (>= 1.0))
   (expect_test_helpers_core
    (and
-    (>= v0.17)
-    (< v0.18)))
+    (>= v0.17))
   (fast_bitvector
-   (>= 0.0.5))
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-base
-   (>= 0.2.2))
+   (>= 0.3.1))
   (fpath-sexp0
-   (>= 0.2.2))
+   (>= 0.3.1))
   (mdx
    (>= 2.4))
   (pp
    (>= 2.0.0))
   (pplumbing
-   (>= 0.0.13))
+   (>= 0.0.14))
   (ppx_compare
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_enumerate
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_expect
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_hash
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_here
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_js_style
    (and
     :with-dev-setup
-    (>= v0.17)
-    (< v0.18)))
+    (>= v0.17)))
   (ppx_let
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_conv
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_message
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppx_sexp_value
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (re
    (>= 1.8.0))
   (sexp_pretty
-   (and
-    (>= v0.17)
-    (< v0.18)))
-  (shexp
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
+  (spawn
+   (>= v0.17))
   (stdio
-   (and
-    (>= v0.17)
-    (< v0.18)))
+   (>= v0.17))
   (vcs-test-helpers
    (= :version))
   (volgo
@@ -535,6 +542,12 @@
   (volgo-git-eio
    (= :version))
   (volgo-git-unix
+   (= :version))
+  (volgo-hg-backend
+   (= :version))
+  (volgo-hg-eio
+   (= :version))
+  (volgo-hg-unix
    (= :version))
   (volgo-tests
    (= :version))

@@ -54,6 +54,8 @@ module Trait : sig
     inherit Vcs.Trait.branch
     inherit Vcs.Trait.commit
     inherit Vcs.Trait.config
+    inherit Vcs.Trait.current_branch
+    inherit Vcs.Trait.current_revision
     inherit Vcs.Trait.file_system
     inherit Vcs.Trait.git
     inherit Vcs.Trait.init
@@ -62,7 +64,6 @@ module Trait : sig
     inherit Vcs.Trait.name_status
     inherit Vcs.Trait.num_status
     inherit Vcs.Trait.refs
-    inherit Vcs.Trait.rev_parse
     inherit Vcs.Trait.show
   end
 end
@@ -80,6 +81,8 @@ module type S = sig
   module Branch : Vcs.Trait.Branch.S with type t = t
   module Commit : Vcs.Trait.Commit.S with type t = t
   module Config : Vcs.Trait.Config.S with type t = t
+  module Current_branch : Vcs.Trait.Current_branch.S with type t = t
+  module Current_revision : Vcs.Trait.Current_revision.S with type t = t
   module File_system : Vcs.Trait.File_system.S with type t = t
   module Git : Vcs.Trait.Git.S with type t = t
   module Init : Vcs.Trait.Init.S with type t = t
@@ -88,13 +91,12 @@ module type S = sig
   module Name_status : Vcs.Trait.Name_status.S with type t = t
   module Num_status : Vcs.Trait.Num_status.S with type t = t
   module Refs : Vcs.Trait.Refs.S with type t = t
-  module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
   module Show : Vcs.Trait.Show.S with type t = t
 end
 
 module Make (Runtime : Runtime.S) : S with type t = Runtime.t
 
-(** {2 Individual Providers}
+(** {2 Individual Trait Implementation}
 
     The rest of the modules are functors that are parametrized by your
     [Runtime]. Given the ability to run a git command line, this modules return
@@ -105,13 +107,14 @@ module Add = Add
 module Branch = Branch
 module Commit = Commit
 module Config = Config
+module Current_branch = Current_branch
+module Current_revision = Current_revision
 module Init = Init
 module Log = Log
 module Ls_files = Ls_files
 module Name_status = Name_status
 module Num_status = Num_status
 module Refs = Refs
-module Rev_parse = Rev_parse
 module Show = Show
 
 (** {1 Tests}

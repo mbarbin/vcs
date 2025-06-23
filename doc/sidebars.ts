@@ -38,6 +38,7 @@ const sidebars: SidebarsConfig = {
       label: 'Reference',
       items: [
         { type: 'doc', id: 'reference/odoc', label: 'OCaml Packages' },
+        { type: 'doc', id: 'reference/platform-repositories', label: 'Platform Repositories' },
       ],
     },
   ],
@@ -49,7 +50,9 @@ const sidebars: SidebarsConfig = {
       items: [
         { type: 'doc', id: 'explanation/README', label: 'Introduction' },
         { type: 'doc', id: 'explanation/traits', label: 'Traits' },
-        { type: 'doc', id: 'explanation/exploratory_tests', label: 'Exploratory tests' },
+        { type: 'doc', id: 'explanation/mercurial-compatibility', label: 'Mercurial Compatibility' },
+        { type: 'doc', id: 'explanation/parametrization-axes', label: 'Parametrization Axes' },
+        { type: 'doc', id: 'explanation/exploratory-tests', label: 'Exploratory tests' },
       ],
     },
   ],

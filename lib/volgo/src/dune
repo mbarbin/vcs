@@ -27,7 +27,12 @@
   (backend bisect_ppx))
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
- (modules_without_implementation validated_string_intf vcs_interface)
+ (modules_without_implementation
+  error_intf
+  process_intf
+  process_output_handler_intf
+  validated_string_intf
+  vcs_intf)
  (preprocess
   (pps
    -unused-code-warnings=force
@@ -37,28 +42,28 @@
 
 (rule
  (enabled_if
-  (< %{ocaml_version} 5.0))
+  (< %{ocaml_version} 5.1))
  (target stdlib_compat.ml)
  (action
   (copy stdlib_compat4xx.ml %{target})))
 
 (rule
  (enabled_if
-  (>= %{ocaml_version} 5.0))
+  (>= %{ocaml_version} 5.1))
  (target stdlib_compat.ml)
  (action
   (copy stdlib_compat5xx.ml %{target})))
 
 (rule
  (enabled_if
-  (< %{ocaml_version} 5.0))
+  (< %{ocaml_version} 5.1))
  (target stdlib_compat.mli)
  (action
   (copy stdlib_compat4xx.mli %{target})))
 
 (rule
  (enabled_if
-  (>= %{ocaml_version} 5.0))
+  (>= %{ocaml_version} 5.1))
  (target stdlib_compat.mli)
  (action
   (copy stdlib_compat5xx.mli %{target})))

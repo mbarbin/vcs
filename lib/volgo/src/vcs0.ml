@@ -86,17 +86,21 @@ let find_enclosing_git_repo_root t ~from =
   | Some (`Git, repo_root) -> Some repo_root
 ;;
 
-let current_branch (t : < Trait.rev_parse ; .. > t) ~repo_root =
+let current_branch (t : < Trait.current_branch ; .. > t) ~repo_root =
   t#current_branch ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
 ;;
 
-let current_revision (t : < Trait.rev_parse ; .. > t) ~repo_root =
+let current_revision (t : < Trait.current_revision ; .. > t) ~repo_root =
   t#current_revision ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.current_revision", { repo_root : Repo_root.t }])
 ;;
 
-let commit (t : < Trait.rev_parse ; Trait.commit ; .. > t) ~repo_root ~commit_message =
+let commit
+      (t : < Trait.commit ; Trait.current_revision ; .. > t)
+      ~repo_root
+      ~commit_message
+  =
   (let open Result.Monad_syntax in
    let* () = t#commit ~repo_root ~commit_message in
    t#current_revision ~repo_root)
@@ -140,20 +144,20 @@ let num_status (t : < Trait.num_status ; .. > t) ~repo_root ~changed =
 ;;
 
 let log (t : < Trait.log ; .. > t) ~repo_root =
-  t#all ~repo_root
+  t#get_log_lines ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.log", { repo_root : Repo_root.t }])
 ;;
 
 let refs (t : < Trait.refs ; .. > t) ~repo_root =
-  t#show_ref ~repo_root
+  t#get_refs_lines ~repo_root
   |> of_result ~step:(lazy [%sexp "Vcs.refs", { repo_root : Repo_root.t }])
 ;;
 
 let graph (t : < Trait.log ; Trait.refs ; .. > t) ~repo_root =
   let graph = Graph.create () in
   (let open Result.Monad_syntax in
-   let* log = t#all ~repo_root in
-   let* refs = t#show_ref ~repo_root in
+   let* log = t#get_log_lines ~repo_root in
+   let* refs = t#get_refs_lines ~repo_root in
    Graph.add_nodes graph ~log;
    Graph.set_refs graph ~refs;
    Result.return graph)
@@ -198,6 +202,16 @@ let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
     }]
 ;;
 
+let make_hg_err_step ?env ?run_in_subdir ~repo_root ~args () =
+  [%sexp
+    "Vcs.hg"
+  , { repo_root : Repo_root.t
+    ; run_in_subdir : (Path_in_repo.t option[@sexp.option])
+    ; env : (string array option[@sexp.option])
+    ; args : string list
+    }]
+;;
+
 let non_raising_git
       ?env
       ?(run_in_subdir = Path_in_repo.root)
@@ -210,6 +224,18 @@ let non_raising_git
   t#git ?env () ~cwd ~args ~f
 ;;
 
+let non_raising_hg
+      ?env
+      ?(run_in_subdir = Path_in_repo.root)
+      (t : < Trait.hg ; .. >)
+      ~repo_root
+      ~args
+      ~f
+  =
+  let cwd = Repo_root.append repo_root run_in_subdir in
+  t#hg ?env () ~cwd ~args ~f
+;;
+
 let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
   non_raising_git ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
     match f output with
@@ -218,7 +244,17 @@ let git ?env ?run_in_subdir vcs ~repo_root ~args ~f =
   |> of_result ~step:(lazy (make_git_err_step ?env ?run_in_subdir ~repo_root ~args ()))
 ;;
 
+let hg ?env ?run_in_subdir vcs ~repo_root ~args ~f =
+  non_raising_hg ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
+    match f output with
+    | ok -> Ok ok
+    | exception exn -> Error (Err.of_exn exn))
+  |> of_result ~step:(lazy (make_hg_err_step ?env ?run_in_subdir ~repo_root ~args ()))
+;;
+
 module Private = struct
   let git = non_raising_git
   let make_git_err_step = make_git_err_step
+  let hg = non_raising_hg
+  let make_hg_err_step = make_hg_err_step
 end

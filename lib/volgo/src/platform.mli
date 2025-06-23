@@ -19,14 +19,21 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Online software development platforms where users host repositories, e.g.
-    ["GitHub"].
+(** A [platform] in vcs' terminology is an online software development service
+    where users host repositories, such as ["GitHub"].
 
-    This is used to implement convenient utils, such as utils to clone
-    repositories from GitHub, etc. *)
+    This type is used to implement utilities for interacting with various
+    platforms, for example to clone repositories.
+
+    The list of supported platforms may grow over time. *)
 
 (** @canonical Volgo.Vcs.Platform.t *)
-type t = GitHub
+type t =
+  | Bitbucket
+  | Codeberg
+  | GitHub
+  | GitLab
+  | Sourcehut
 
 include Container_key.S with type t := t
 

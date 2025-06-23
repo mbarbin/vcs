@@ -19,7 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* More tests for the [Vcs.Log] module in [lib/vcs_git_backend/test/test__log.ml]. *)
+(* More tests for the [Vcs.Log] module can be found in
+   [lib/volgo_git_backend/test/test__log.ml]. *)
 
 let%expect_test "parse_exn" =
   Eio_main.run
