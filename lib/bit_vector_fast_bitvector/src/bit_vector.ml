@@ -21,7 +21,7 @@
 
 type t = Fast_bitvector.t
 
-let sexp_of_t t = Sexp.Atom (Fast_bitvector.Big_endian.to_string t)
+let sexp_of_t t = Sexp.Atom (Fast_bitvector.Bit_zero_first.to_string t)
 
 let create ~len value =
   let t = Fast_bitvector.create ~len in
@@ -40,6 +40,6 @@ let bitwise_and_in_place ~dst va vb =
   let len = length dst in
   if len <> length va || len <> length vb
   then invalid_arg "Bit_vector.bitwise_and_in_place" [@coverage off];
-  let (_ : Fast_bitvector.t) = Fast_bitvector.Set.intersect ~result:dst va vb in
+  Fast_bitvector.Set.inter ~dst va vb;
   ()
 ;;

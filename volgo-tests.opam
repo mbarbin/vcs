@@ -21,7 +21,7 @@ depends: [
   "eio" {>= "1.0"}
   "eio_main" {>= "1.0"}
   "expect_test_helpers_core" {>= "v0.17" & < "v0.18"}
-  "fast_bitvector" {>= "0.0.5"}
+  "fast_bitvector" {>= "0.1.2.2"}
   "fpath" {>= "0.7.3"}
   "fpath-base" {>= "0.2.2"}
   "fpath-sexp0" {>= "0.2.2"}
