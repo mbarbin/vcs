@@ -21,6 +21,13 @@
 
 let%expect_test "to_string_hum" =
   List.iter Vcs.Platform.all ~f:(fun t -> print_endline (Vcs.Platform.to_string t));
-  [%expect {| GitHub |}];
+  [%expect
+    {|
+    Bitbucket
+    Codeberg
+    GitHub
+    GitLab
+    Sourcehut
+    |}];
   ()
 ;;

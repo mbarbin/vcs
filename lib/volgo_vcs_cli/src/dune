@@ -27,7 +27,9 @@
   unix
   volgo
   volgo-git-backend
-  volgo-git-unix)
+  volgo-git-unix
+  volgo-hg-backend
+  volgo-hg-unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

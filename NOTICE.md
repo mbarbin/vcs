@@ -22,7 +22,7 @@ To spawn processes in `Eio` and collect their output we've copied some code from
 
 ### Notice
 
-The file where we make use of this code is `lib/vcs_git_eio/src/runtime.ml`. We've added a notice in the file and a comment next to the code that was copied and modified, which includes `Eio_process`'s original LICENSE:
+The file where we make use of this code is `lib/volgo_git_eio/src/runtime.ml`. We've added a notice in the file and a comment next to the code that was copied and modified, which includes `Eio_process`'s original LICENSE:
 
 ```text
 MIT License
@@ -54,7 +54,7 @@ We copied the implementation of the function `Base.String.split_lines` from the 
 
 ### Notice
 
-The file where we imported the function is `lib/vcs/src/import.ml`. We've added a notice in the file and a comment next to the code that was copied and modified, which includes `Base`'s original LICENSE:
+The file where we imported the function is `lib/volgo/src/import.ml`. We've added a notice in the file and a comment next to the code that was copied and modified, which includes `Base`'s original LICENSE:
 
 ```text
 The MIT License
@@ -132,6 +132,6 @@ For example, in addition to the vcs project header, such file would carry the fo
 
 The exact list of modules that are partially derived from `Iron` is as follows:
 
-- lib/vcs/src/name_status
-- lib/vcs/src/path_in_repo
-- lib/vcs/src/repo_root
+- lib/volgo/src/name_status
+- lib/volgo/src/path_in_repo
+- lib/volgo/src/repo_root

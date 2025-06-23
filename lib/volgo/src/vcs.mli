@@ -75,9 +75,9 @@ val create : 'a -> 'a t
 (** {1 Creating repositories} *)
 
 module Platform = Platform
+module Platform_repo = Platform_repo
 module Repo_name = Repo_name
 module Repo_root = Repo_root
-module Url = Url
 
 (** Initialize a Git repository at the given path. This errors out if a
     repository is already initialized there. *)
@@ -132,7 +132,7 @@ val add : < Trait.add ; .. > t -> repo_root:Repo_root.t -> path:Path_in_repo.t -
 
 (** When this succeeds, this returns the revision of the commit that was just created. *)
 val commit
-  :  < Trait.rev_parse ; Trait.commit ; .. > t
+  :  < Trait.commit ; Trait.current_revision ; .. > t
   -> repo_root:Repo_root.t
   -> commit_message:Commit_message.t
   -> Rev.t
@@ -222,10 +222,14 @@ val log : < Trait.log ; .. > t -> repo_root:Repo_root.t -> Log.t
 val refs : < Trait.refs ; .. > t -> repo_root:Repo_root.t -> Refs.t
 val graph : < Trait.log ; Trait.refs ; .. > t -> repo_root:Repo_root.t -> Graph.t
 
-(** {1 Rev parse utils} *)
+(** {1 Current branch & revision} *)
 
-val current_branch : < Trait.rev_parse ; .. > t -> repo_root:Repo_root.t -> Branch_name.t
-val current_revision : < Trait.rev_parse ; .. > t -> repo_root:Repo_root.t -> Rev.t
+val current_branch
+  :  < Trait.current_branch ; .. > t
+  -> repo_root:Repo_root.t
+  -> Branch_name.t
+
+val current_revision : < Trait.current_revision ; .. > t -> repo_root:Repo_root.t -> Rev.t
 
 (** {1 User config} *)
 
@@ -265,12 +269,12 @@ val set_user_email
 module Git = Git
 
 (** Note a non trivial behavior nuance depending on whether you are using this
-    function using the raising or non-raising API. In the raising API, [f] is
-    allowed to raise: [git] will catch any exception raised by [f], and rewrap
-    it under a proper [E err] exception with added context. In the non-raising
-    APIs, if [f] raises instead of returning an [Error], that exception would
-    escape the function [git] and be raised by [git] as an uncaught exception.
-    This would be considered a programming error.
+    function using the raising or {{!non_raising_apis} non-raising API}. In the
+    raising API, [f] is allowed to raise: [git] will catch any exception raised
+    by [f], and rewrap it under a proper [E err] exception with added context.
+    In the non-raising APIs, if [f] raises instead of returning an [Error], that
+    exception would escape the function [git] and be raised by [git] as an
+    uncaught exception. This would be considered a programming error.
 
     Some helpers are provided by the module {!module:Git} to help you build the
     [f] parameter. Non-raising modules are also included in the [Git] module
@@ -280,7 +284,7 @@ module Git = Git
     The expectation is that you should be using the [Git] module of the API you
     are using to access the [git] function, and not mix and match.
 
-    For example:
+    For example using the raising API::
 
     {[
       let git_status () : string =
@@ -288,7 +292,7 @@ module Git = Git
       ;;
     ]}
 
-    Or:
+    Or the {{!non_raising_apis} non-raising API} (result):
 
     {[
       let git_status () : string Vcs.Result.t =
@@ -306,6 +310,46 @@ val git
   -> repo_root:Repo_root.t
   -> args:string list
   -> f:(Git.Output.t -> 'a)
+  -> 'a
+
+(** {1 Low level Mercurial cli}
+
+    This part of Vcs provides direct access to the ["hg"] command line interface
+    when operating in a Mercurial repository.
+
+    This is similar to the low level access provided by {!val:git} and the same
+    restrictions and advices apply. *)
+
+module Hg = Hg
+
+(** Simiar to {!val:git}, helpers are provided by the module {!module:Hg} to
+    build the [f] parameter.
+
+    The expectation is that you should be using the [Hg] module of the API you
+    are using to access the [hg] function, and not mix and match.
+
+    For example using the raising API:
+
+    {[
+      let hg_status () : string =
+        Vcs.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.exit0_and_stdout
+      ;;
+    ]}
+
+    Or the {{!non_raising_apis} non-raising API} (result):
+
+    {[
+      let hg_status () : string Vcs.Result.t =
+        Vcs.Result.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.Result.exit0_and_stdout
+      ;;
+    ]} *)
+val hg
+  :  ?env:string array
+  -> ?run_in_subdir:Path_in_repo.t
+  -> < Trait.hg ; .. > t
+  -> repo_root:Repo_root.t
+  -> args:string list
+  -> f:(Hg.Output.t -> 'a)
   -> 'a
 
 (** {1:non_raising_apis Non-raising APIs}
@@ -327,6 +371,7 @@ module Private : sig
   module Bit_vector = Bit_vector
   module Import = Import
   module Int_table = Int_table
+  module Process_output = Process_output
   module Ref_kind_table = Ref_kind_table
   module Rev_table = Rev_table
   module Validated_string = Validated_string

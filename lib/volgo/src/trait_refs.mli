@@ -19,16 +19,16 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-type show_ref_method = repo_root:Repo_root.t -> (Refs.t, Err.t) Result.t
+type get_refs_lines_method = repo_root:Repo_root.t -> (Refs.t, Err.t) Result.t
 
 module type S = sig
   type t
 
-  val show_ref : t -> show_ref_method
+  val get_refs_lines : t -> get_refs_lines_method
 end
 
 class type t = object
-  method show_ref : show_ref_method
+  method get_refs_lines : get_refs_lines_method
 end
 
 module Make (X : S) : sig

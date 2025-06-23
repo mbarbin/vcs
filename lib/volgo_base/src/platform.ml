@@ -21,7 +21,13 @@
 
 module T = struct
   module T0 = struct
-    type t = Vcs.Platform.t = GitHub [@@deriving hash]
+    type t = Vcs.Platform.t =
+      | Bitbucket
+      | Codeberg
+      | GitHub
+      | GitLab
+      | Sourcehut
+    [@@deriving hash]
   end
 
   include (Vcs.Platform : module type of Vcs.Platform with type t := T0.t)

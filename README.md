@@ -11,6 +11,7 @@
   <a href="https://github.com/mbarbin/vcs/actions/workflows/ci.yml"><img src="https://github.com/mbarbin/vcs/workflows/ci/badge.svg" alt="CI Status"/></a>
   <a href="https://coveralls.io/github/mbarbin/vcs?branch=main"><img src="https://coveralls.io/repos/github/mbarbin/vcs/badge.svg?branch=main" alt="Coverage Status"/></a>
   <a href="https://github.com/mbarbin/vcs/actions/workflows/deploy-doc.yml"><img src="https://github.com/mbarbin/vcs/workflows/deploy-doc/badge.svg" alt="Deploy Doc Status"/></a>
+  <a href="https://ocaml.ci.dev/github/mbarbin/vcs"><img src="https://img.shields.io/endpoint?url=https://ocaml.ci.dev/badge/mbarbin/vcs/main&logo=ocaml" alt="OCaml-CI Build Status"/></a>
 </p>
 
 Vcs is an OCaml library for interacting with Git repositories. It provides a type-safe and direct-style API to programmatically perform Git operations - ranging from creating commits and branches, to loading and navigating commit graphs in memory, computing diffs between revisions, and more.
@@ -41,11 +42,16 @@ The main reason for that naming duality is that, even though the project is desi
 
 *volgo-vcs* is the name of a cli built with the libraries of this project. It is distributed by the opam package of the same name (`volgo-vcs`).
 
-## Known issues
+## Mercurial Compatibility
 
+For information about Mercurial compatibility mode and how Vcs supports certain Git operations in Mercurial repositories, see [here](doc/docs/explanation/mercurial-compatibility.md).
+
+## Known Issues
+
+- Look for [open issues](https://github.com/mbarbin/vcs/issues) on GitHub. 
 - The camel depicted in the project logo has only one hump, whereas OCamls traditionally have two. We dare to hope that, as the project matures, our mascot will grow its second hump and fully embrace its OCaml heritage.
 
-## Unknown issues
+## Unknown Issues
 
 - This is where you come in! If you discover any unknown issues, please open them on GitHub to let us know. Your contributions will help us improve this project!
 

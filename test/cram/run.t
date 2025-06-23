@@ -120,7 +120,7 @@ Find enclosing repo root.
   $ mkdir -p subdir/hg/otherdir
   $ touch subdir/hg/.hg
 
-  $ volgo-vcs find-enclosing-repo-root --from subdir/hg/otherdir
+  $ volgo-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .git
   .git: $TESTCASE_ROOT
 
   $ volgo-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .hg
@@ -137,10 +137,26 @@ Adding a new file under a directory.
   $ volgo-vcs ls-files
   dir/hello
   hello
+
   $ volgo-vcs ls-files --below dir
   dir/hello
+
   $ volgo-vcs ls-files --below /dir
   Error: Path is not in repo. (path /dir)
+  [123]
+
+  $ volgo-vcs ls-files --below foo
+  Context:
+  (Vcs.ls_files
+   (repo_root
+    $TESTCASE_ROOT)
+   (below foo))
+  ((prog git) (args (ls-files --full-name)) (exit_status Unknown)
+   (cwd
+    $TESTCASE_ROOT/foo)
+   (stdout "") (stderr ""))
+  Error:
+  "Unix.Unix_error(Unix.ENOENT, \"chdir\", \"$TESTCASE_ROOT/foo\")"
   [123]
 
 Testing an unsuccessful file show with git and via vcs.
@@ -233,6 +249,18 @@ Vcs allows to run the git command line directly if the backend supports it.
   $ volgo-vcs git invalid-command 2> /dev/null
   [1]
 
+When running in a repository of a certain kind, some operations may not be
+supported. Below we attempt to run an Mercurial command in this Git repository.
+
+  $ volgo-vcs hg id
+  Context:
+  (Vcs.hg
+   (repo_root
+    $TESTCASE_ROOT)
+   (args id))
+  Error: Trait [Vcs.Trait.hg] method [hg] is not available in this repository.
+  [123]
+
 Worktrees. We check against a regression where the repo root of worktrees was
 not correctly computed. Below we create a worktree at a specific revision and
 verify that the list of files accurately reflects the state of the tree at that
@@ -302,6 +330,9 @@ Vcs's help for review.
   
          graph [OPTION]…
              compute graph of current repo
+  
+         hg [OPTION]… [ARG]…
+             run the hg cli
   
          init [--quiet] [OPTION]… path/to/root
              initialize a new repository

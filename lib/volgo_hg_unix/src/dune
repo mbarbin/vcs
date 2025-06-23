@@ -1,0 +1,33 @@
+(library
+ (name volgo_hg_unix)
+ (public_name volgo-hg-unix)
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Fpath_sexp0
+  -open
+  Sexplib0
+  -open
+  Sexplib0.Sexp_conv
+  -open
+  Volgo)
+ (libraries
+  fpath
+  fpath-sexp0
+  pp
+  pplumbing.err
+  pplumbing.pp-tty
+  unix
+  volgo
+  volgo-git-unix
+  volgo-hg-backend)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess
+  (pps -unused-code-warnings=force ppx_sexp_conv ppx_sexp_value)))

@@ -1,18 +1,41 @@
-## 0.0.17 (unreleased)
+## 0.0.18 (2025-06-11)
 
 ### Added
 
-- Add support for OCaml-4.14 to `volgo-vcs` CLI (#67, @mbarbin).
+- Add a `Vcs.Platform_repo` module to help using online hosting platform (#78, @mbarbin).
+- Add `conf-git` dependency to tests using the `git` cli (#73, @mbarbin).
+
+### Changed
+
+- Split trait `rev_parse` into two smaller traits (#80, @mbarbin).
+- Set `prog` to the executable basename in error context for stability (#77, @mbarbin).
+- Replace `shexp` by direct use of `spawn` (#76, @mbarbin).
+
+### Fixed
+
+- Make `hg` more silent during tests for stability (#77, @mbarbin).
+- Require `5.3` for `volgo-dev` for stability (#77, @mbarbin).
+- Fix build with OCaml `5.0` (#73, @mbarbin).
+
+### Removed
+
+- Remove trait `rev_parse` (#80, @mbarbin).
+- Replace `Vcs.Url` by the more complete `Vcs.Platform_repo` module (#78, @mbarbin).
+
+## 0.0.17 (2025-06-05)
+
+### Added
+
+- Add Mercurial Compatibility Mode & Backends (#70, #71, @mbarbin).
+- Add support for OCaml-4.14 to `volgo-vcs` CLI (#68, @mbarbin).
 
 ### Changed
 
 - Conditional set implicit transitive deps in CI depending on the compiler version (#67, @mbarbin).
 
-### Deprecated
-
 ### Fixed
 
-### Removed
+- Fix lint-doc warnings introduced with odoc v3 (#67, @mbarbin).
 
 ## 0.0.16 (2025-05-25)
 

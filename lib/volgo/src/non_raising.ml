@@ -21,8 +21,8 @@
 
 open! Import
 
-module type M = Vcs_interface.Error_S
-module type S = Vcs_interface.S
+module type M = Error_intf.S
+module type S = Vcs_intf.S
 
 module Make (M : M) :
   S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.t) Result.t = struct
@@ -109,6 +109,22 @@ module Make (M : M) :
               err
               [ Err.sexp
                   (Vcs0.Private.make_git_err_step ?env ?run_in_subdir ~repo_root ~args ())
+              ]))
+  ;;
+
+  let hg ?env ?run_in_subdir vcs ~repo_root ~args ~f =
+    match
+      Vcs0.Private.hg ?env ?run_in_subdir vcs ~repo_root ~args ~f:(fun output ->
+        f output |> Result.map_error ~f:M.to_err)
+    with
+    | Ok t -> Ok t
+    | Error err ->
+      Error
+        (M.of_err
+           (Err.add_context
+              err
+              [ Err.sexp
+                  (Vcs0.Private.make_hg_err_step ?env ?run_in_subdir ~repo_root ~args ())
               ]))
   ;;
 end

@@ -117,6 +117,7 @@ end
 module String : sig
   include module type of StringLabels
 
+  val to_string : string -> string
   val chop_prefix : string -> prefix:string -> string option
   val chop_suffix : string -> suffix:string -> string option
   val init : int -> f:(int -> char) -> string

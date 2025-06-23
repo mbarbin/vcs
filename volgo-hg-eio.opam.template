@@ -1,0 +1,15 @@
+description: """\
+
+[volgo] is a set of OCaml libraries for interacting with Git
+repositories. It provides a type-safe and direct-style API to
+programmatically perform Git operations, ranging from creating
+commits and branches to loading and navigating commit graphs in
+memory, computing diffs between revisions, and more.
+
+[Volgo_hg_eio] implements a Mercurial backend for [volgo] based on
+[eio]. It runs the [hg] CLI as a subprocess in a non-blocking
+fashion.
+
+"""
+tags: [ "eio" "git" "mercurial" "vcs" "non-blocking-io" ]
+x-maintenance-intent: [ "(latest)" ]

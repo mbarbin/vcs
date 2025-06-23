@@ -27,7 +27,7 @@ module type S = sig
     -> t
     -> cwd:Absolute_path.t
     -> args:string list
-    -> f:(Git_output0.t -> ('a, Err.t) Result.t)
+    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
     -> ('a, Err.t) Result.t
 end
 
@@ -38,7 +38,7 @@ class type t = object
     -> unit
     -> cwd:Absolute_path.t
     -> args:string list
-    -> f:(Git_output0.t -> ('a, Err.t) Result.t)
+    -> f:(Git.Output.t -> ('a, Err.t) Result.t)
     -> ('a, Err.t) Result.t
 end
 
@@ -51,7 +51,7 @@ module Make (X : S) = struct
         -> unit
         -> cwd:Absolute_path.t
         -> args:string list
-        -> f:(Git_output0.t -> ('a, Err.t) Result.t)
+        -> f:(Git.Output.t -> ('a, Err.t) Result.t)
         -> ('a, Err.t) Result.t =
         fun ?env () ~cwd ~args ~f -> X.git ?env t ~cwd ~args ~f
     end

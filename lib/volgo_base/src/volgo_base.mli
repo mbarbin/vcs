@@ -73,6 +73,7 @@ module Vcs : sig
   module Num_lines_in_diff = Num_lines_in_diff
   module Path_in_repo = Path_in_repo
   module Platform = Platform
+  module Platform_repo = Platform_repo
   module Ref_kind = Ref_kind
   module Refs = Refs
   module Remote_branch_name = Remote_branch_name
@@ -81,7 +82,6 @@ module Vcs : sig
   module Repo_root = Repo_root
   module Rev = Rev
   module Tag_name = Tag_name
-  module Url = Url
   module User_email = User_email
   module User_handle = User_handle
   module User_name = User_name
@@ -98,6 +98,7 @@ module Vcs : sig
      and module Num_lines_in_diff := Vcs.Num_lines_in_diff
      and module Path_in_repo := Vcs.Path_in_repo
      and module Platform := Vcs.Platform
+     and module Platform_repo := Vcs.Platform_repo
      and module Ref_kind := Vcs.Ref_kind
      and module Refs := Vcs.Refs
      and module Remote_branch_name := Vcs.Remote_branch_name
@@ -106,7 +107,6 @@ module Vcs : sig
      and module Repo_root := Vcs.Repo_root
      and module Rev := Vcs.Rev
      and module Tag_name := Vcs.Tag_name
-     and module Url := Vcs.Url
      and module User_email := Vcs.User_email
      and module User_handle := Vcs.User_handle
      and module User_name := Vcs.User_name

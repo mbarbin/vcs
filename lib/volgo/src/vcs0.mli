@@ -23,7 +23,7 @@ type +'a t constraint 'a = < .. >
 
 val create : 'a -> 'a t
 
-include Vcs_interface.S with type 'a t := 'a t and type 'a result := 'a
+include Vcs_intf.S with type 'a t := 'a t and type 'a result := 'a
 
 module Private : sig
   (** This function is exposed to simplify the implementation of the [git]
@@ -39,6 +39,26 @@ module Private : sig
 
   (** Build the context for errors happening during [git]. *)
   val make_git_err_step
+    :  ?env:string array
+    -> ?run_in_subdir:Path_in_repo.t
+    -> repo_root:Repo_root.t
+    -> args:string list
+    -> unit
+    -> Sexp.t
+
+  (** This function is exposed to simplify the implementation of the [hg]
+      function in the non-raising APIs of Vcs. *)
+  val hg
+    :  ?env:string array
+    -> ?run_in_subdir:Path_in_repo.t
+    -> < Trait.hg ; .. > t
+    -> repo_root:Repo_root.t
+    -> args:string list
+    -> f:(Hg.Output.t -> ('a, Err.t) Result.t)
+    -> ('a, Err.t) Result.t
+
+  (** Build the context for errors happening during [hg]. *)
+  val make_hg_err_step
     :  ?env:string array
     -> ?run_in_subdir:Path_in_repo.t
     -> repo_root:Repo_root.t

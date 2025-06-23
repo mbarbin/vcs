@@ -30,3 +30,4 @@ let create_class ~env = new Impl.c (Impl.create ~env)
 let create ~env = Vcs.create (create_class ~env)
 
 module Runtime = Runtime
+module Make_runtime = Make_runtime

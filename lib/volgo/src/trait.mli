@@ -89,6 +89,30 @@ module Config : sig
   end
 end
 
+class type current_branch = Trait_current_branch.t
+
+module Current_branch : sig
+  module type S = Trait_current_branch.S
+
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit current_branch
+    end
+  end
+end
+
+class type current_revision = Trait_current_revision.t
+
+module Current_revision : sig
+  module type S = Trait_current_revision.S
+
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit current_revision
+    end
+  end
+end
+
 class type file_system = Trait_file_system.t
 
 module File_system : sig
@@ -109,6 +133,18 @@ module Git : sig
   module Make (X : S) : sig
     class c : X.t -> object
       inherit git
+    end
+  end
+end
+
+class type hg = Trait_hg.t
+
+module Hg : sig
+  module type S = Trait_hg.S
+
+  module Make (X : S) : sig
+    class c : X.t -> object
+      inherit hg
     end
   end
 end
@@ -185,18 +221,6 @@ module Refs : sig
   end
 end
 
-class type rev_parse = Trait_rev_parse.t
-
-module Rev_parse : sig
-  module type S = Trait_rev_parse.S
-
-  module Make (X : S) : sig
-    class c : X.t -> object
-      inherit rev_parse
-    end
-  end
-end
-
 class type show = Trait_show.t
 
 module Show : sig
@@ -215,14 +239,43 @@ class type t = object
   inherit branch
   inherit commit
   inherit config
+  inherit current_branch
+  inherit current_revision
   inherit file_system
   inherit git
+  inherit hg
   inherit init
   inherit log
   inherit ls_files
   inherit name_status
   inherit num_status
   inherit refs
-  inherit rev_parse
   inherit show
 end
+
+(** This is a special class constructor that creates an object that satisfies
+    the interface defined by the class type [t], but where each of the actual
+    method implementation is a function that returns an error indicating that
+    the method is unimplemented.
+
+    This may be useful when you wish to define an object that fails at runtime
+    rather than at compile time, as a base object to extend, such as in:
+
+    {[
+      let my_vcs =
+        object
+          inherit Vcs.Trait.unimplemented
+
+          method! ...
+
+          inherit! ...
+        end
+    ]}
+
+    We do this for example in the implementation of the cli [volgo-vcs] to
+    define the [vcs] used for Mercurial repositories.
+
+    Note however that in most cases, you'd probably be better off dealing with
+    traits in a static way, by specifying and requiring [vcs] values that
+    implement the exact set of traits that you need. *)
+class unimplemented : t

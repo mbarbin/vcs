@@ -52,7 +52,7 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
 module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
-  let all t ~repo_root =
+  let get_log_lines t ~repo_root =
     Runtime.git
       t
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)

@@ -23,13 +23,14 @@ module Add = Add
 module Branch = Branch
 module Commit = Commit
 module Config = Config
+module Current_branch = Current_branch
+module Current_revision = Current_revision
 module Init = Init
 module Log = Log
 module Ls_files = Ls_files
 module Name_status = Name_status
 module Num_status = Num_status
 module Refs = Refs
-module Rev_parse = Rev_parse
 module Runtime = Runtime
 module Show = Show
 
@@ -43,6 +44,8 @@ module Trait = struct
     inherit Vcs.Trait.branch
     inherit Vcs.Trait.commit
     inherit Vcs.Trait.config
+    inherit Vcs.Trait.current_branch
+    inherit Vcs.Trait.current_revision
     inherit Vcs.Trait.file_system
     inherit Vcs.Trait.git
     inherit Vcs.Trait.init
@@ -51,7 +54,6 @@ module Trait = struct
     inherit Vcs.Trait.name_status
     inherit Vcs.Trait.num_status
     inherit Vcs.Trait.refs
-    inherit Vcs.Trait.rev_parse
     inherit Vcs.Trait.show
   end
 end
@@ -65,6 +67,8 @@ module type S = sig
   module Branch : Vcs.Trait.Branch.S with type t = t
   module Commit : Vcs.Trait.Commit.S with type t = t
   module Config : Vcs.Trait.Config.S with type t = t
+  module Current_branch : Vcs.Trait.Current_branch.S with type t = t
+  module Current_revision : Vcs.Trait.Current_revision.S with type t = t
   module File_system : Vcs.Trait.File_system.S with type t = t
   module Git : Vcs.Trait.Git.S with type t = t
   module Init : Vcs.Trait.Init.S with type t = t
@@ -73,7 +77,6 @@ module type S = sig
   module Name_status : Vcs.Trait.Name_status.S with type t = t
   module Num_status : Vcs.Trait.Num_status.S with type t = t
   module Refs : Vcs.Trait.Refs.S with type t = t
-  module Rev_parse : Vcs.Trait.Rev_parse.S with type t = t
   module Show : Vcs.Trait.Show.S with type t = t
 end
 
@@ -85,6 +88,8 @@ module Make (Runtime : Runtime.S) = struct
     module Branch = Branch.Make (Runtime)
     module Commit = Commit.Make (Runtime)
     module Config = Config.Make (Runtime)
+    module Current_branch = Current_branch.Make (Runtime)
+    module Current_revision = Current_revision.Make (Runtime)
     module File_system = Runtime
     module Git = Runtime
     module Init = Init.Make (Runtime)
@@ -93,7 +98,6 @@ module Make (Runtime : Runtime.S) = struct
     module Name_status = Name_status.Make (Runtime)
     module Num_status = Num_status.Make (Runtime)
     module Refs = Refs.Make (Runtime)
-    module Rev_parse = Rev_parse.Make (Runtime)
     module Show = Show.Make (Runtime)
   end
 
@@ -102,6 +106,8 @@ module Make (Runtime : Runtime.S) = struct
     module Branch = Vcs.Trait.Branch.Make (Impl.Branch)
     module Commit = Vcs.Trait.Commit.Make (Impl.Commit)
     module Config = Vcs.Trait.Config.Make (Impl.Config)
+    module Current_branch = Vcs.Trait.Current_branch.Make (Impl.Current_branch)
+    module Current_revision = Vcs.Trait.Current_revision.Make (Impl.Current_revision)
     module File_system = Vcs.Trait.File_system.Make (Impl.File_system)
     module Git = Vcs.Trait.Git.Make (Impl.Git)
     module Init = Vcs.Trait.Init.Make (Impl.Init)
@@ -110,7 +116,6 @@ module Make (Runtime : Runtime.S) = struct
     module Name_status = Vcs.Trait.Name_status.Make (Impl.Name_status)
     module Num_status = Vcs.Trait.Num_status.Make (Impl.Num_status)
     module Refs = Vcs.Trait.Refs.Make (Impl.Refs)
-    module Rev_parse = Vcs.Trait.Rev_parse.Make (Impl.Rev_parse)
     module Show = Vcs.Trait.Show.Make (Impl.Show)
   end
 
@@ -120,6 +125,8 @@ module Make (Runtime : Runtime.S) = struct
       inherit Class.Branch.c t
       inherit Class.Commit.c t
       inherit Class.Config.c t
+      inherit Class.Current_branch.c t
+      inherit Class.Current_revision.c t
       inherit Class.File_system.c t
       inherit Class.Git.c t
       inherit Class.Init.c t
@@ -128,7 +135,6 @@ module Make (Runtime : Runtime.S) = struct
       inherit Class.Name_status.c t
       inherit Class.Num_status.c t
       inherit Class.Refs.c t
-      inherit Class.Rev_parse.c t
       inherit Class.Show.c t
     end
 

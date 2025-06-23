@@ -26,8 +26,8 @@
     this functor to create a [Vcs] interface based on a custom error type of
     your choice. See also {!module:Vcs.Git.Non_raising.Make}. *)
 
-module type M = Vcs_interface.Error_S
-module type S = Vcs_interface.S
+module type M = Error_intf.S
+module type S = Vcs_intf.S
 
 module Make (M : M) :
   S with type 'a t := 'a Vcs0.t and type 'a result := ('a, M.t) Result.t
