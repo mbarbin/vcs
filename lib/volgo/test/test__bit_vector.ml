@@ -22,7 +22,7 @@
 module Bit_vector = struct
   type t = Fast_bitvector.t
 
-  let sexp_of_t = Fast_bitvector.Bit_zero_first.sexp_of_t
+  let sexp_of_t t = Sexp.Atom (Fast_bitvector.Bit_zero_first.to_string t)
 
   let create ~len value : t =
     let t = Fast_bitvector.create ~len in
@@ -34,40 +34,43 @@ module Bit_vector = struct
   let set = Fast_bitvector.set
   let clear_all = Fast_bitvector.clear_all
 
-  let intersect_in_place ~mutates other =
-    if length mutates <> length other
-    then invalid_arg "Bit_vector.intersect_in_place" [@coverage off];
-    Fast_bitvector.Set.inter ~dst:mutates mutates other;
+  let inter ~dst a b =
+    let len = length dst in
+    if length a <> len || length b <> len
+    then invalid_arg "Bit_vector.inter" [@coverage off];
+    Fast_bitvector.Set.inter ~dst a b;
     ()
   ;;
 end
 
-let%expect_test "intersect_in_place" =
+let%expect_test "inter" =
   let v0 = Bit_vector.create ~len:10 true in
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| (B0F 1111111111) |}];
+  [%expect {| 1111111111 |}];
   let v1 = Bit_vector.create ~len:10 false in
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| (B0F 0000000000) |}];
+  [%expect {| 0000000000 |}];
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 2 = 0 then Bit_vector.set v1 i
   done;
-  Bit_vector.intersect_in_place ~mutates:v0 v1;
+  Bit_vector.inter ~dst:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| (B0F 1010101010) |}];
+  [%expect {| 1010101010 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| (B0F 1010101010) |}];
+  [%expect {| 1010101010 |}];
   Bit_vector.clear_all v1;
   for i = 0 to Bit_vector.length v1 - 1 do
     if i % 3 = 0 then Bit_vector.set v1 i
   done;
-  Bit_vector.intersect_in_place ~mutates:v0 v1;
+  Bit_vector.inter ~dst:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
-  [%expect {| (B0F 1000001000) |}];
+  [%expect {| 1000001000 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
-  [%expect {| (B0F 1001001001) |}];
+  [%expect {| 1001001001 |}];
   let vsmall = Bit_vector.create ~len:5 true in
-  require_does_raise [%here] (fun () -> Bit_vector.intersect_in_place ~mutates:v0 vsmall);
-  [%expect {| (Invalid_argument Bit_vector.intersect_in_place) |}];
+  require_does_raise [%here] (fun () -> Bit_vector.inter ~dst:v0 vsmall v0);
+  [%expect {| (Invalid_argument Bit_vector.inter) |}];
+  require_does_raise [%here] (fun () -> Bit_vector.inter ~dst:v0 v0 vsmall);
+  [%expect {| (Invalid_argument Bit_vector.inter) |}];
   ()
 ;;
