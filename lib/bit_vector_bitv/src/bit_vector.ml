@@ -19,27 +19,14 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
+type t = Bitv.t
 
-type t = bool array
-
-let sexp_of_t t =
-  let b = Bytes.create (Array.length t) in
-  Array.iteri t ~f:(fun i x -> Bytes.set b i (if x then '1' else '0'));
-  Sexp.Atom (Bytes.to_string b)
-;;
-
-let create ~len value : t = Array.create ~len value
-let length = Array.length
-let set = Array.set
-let get = Array.get
-let reset t value = Array.fill t ~pos:0 ~len:(Array.length t) value
-let copy = Array.copy
-
-let bw_and_in_place ~mutates other =
-  if Array.length mutates <> Array.length other
-  then invalid_arg "Bit_vector.bw_and_in_place" [@coverage off];
-  for i = 0 to Array.length mutates - 1 do
-    mutates.(i) <- mutates.(i) && other.(i)
-  done
-;;
+let sexp_of_t t = Sexp.Atom (Bitv.L.to_string t)
+let create ~len value = Bitv.create len value
+let length = Bitv.length
+let set t i = Bitv.set t i true
+let clear t i = Bitv.set t i false
+let get = Bitv.get
+let clear_all t = Bitv.fill t 0 (Bitv.length t) false
+let copy = Bitv.copy
+let bitwise_and_in_place = Bitv.bw_and_in_place

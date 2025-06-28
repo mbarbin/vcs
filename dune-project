@@ -362,6 +362,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   conf-git
@@ -374,6 +376,8 @@
    (>= 1.0))
   (expect_test_helpers_core
    (>= v0.17))
+  (fast_bitvector
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-base
@@ -467,6 +471,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   conf-git
@@ -479,6 +485,8 @@
    (>= 1.0))
   (expect_test_helpers_core
    (>= v0.17))
+  (fast_bitvector
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-base

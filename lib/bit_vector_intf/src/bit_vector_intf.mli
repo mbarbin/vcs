@@ -19,20 +19,39 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** A naive implementation of mutable bit vectors.
+module type S = sig
+  (** This is a reduced interface for a vector of bits as used by [vcs].
 
-    At some point, with some benchmarks for sanity checks, it seems desirable to
-    switch to a less naive implementation. *)
+      We're experimenting with different implementations based on third-party
+      libraries. *)
 
-type t [@@deriving sexp_of]
+  type t
 
-val create : len:int -> bool -> t
-val length : t -> int
-val set : t -> int -> bool -> unit
-val get : t -> int -> bool
-val reset : t -> bool -> unit
-val copy : t -> t
+  (** Print the bits of [t] with the bit 0 to the left. *)
+  val sexp_of_t : t -> Sexplib0.Sexp.t
 
-(** {1 In place bitwise operations} *)
+  (** [create ~len value] creates a new vector with [len] bits initialized to
+      [value]. *)
+  val create : len:int -> bool -> t
 
-val bw_and_in_place : mutates:t -> t -> unit
+  (** Return the number of bits in [t]. *)
+  val length : t -> int
+
+  (** Set the i-th bit of [t] to [true]. *)
+  val set : t -> int -> unit
+
+  (** Set the i-th bit of [t] to [false]. *)
+  val clear : t -> int -> unit
+
+  val get : t -> int -> bool
+
+  (** Set all bits of [t] to [false]. *)
+  val clear_all : t -> unit
+
+  (** Return a fresh copy of [t]. *)
+  val copy : t -> t
+
+  (** {1 In place bitwise operations} *)
+
+  val bitwise_and_in_place : dst:t -> t -> t -> unit
+end

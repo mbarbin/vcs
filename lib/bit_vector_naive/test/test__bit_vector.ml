@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Bit_vector = Vcs.Private.Bit_vector
+module Bit_vector = Bit_vector_naive.Bit_vector
 
 let%expect_test "set & clear" =
   let v = Bit_vector.create ~len:10 false in

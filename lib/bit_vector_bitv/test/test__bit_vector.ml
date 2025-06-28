@@ -19,7 +19,7 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Bit_vector = Vcs.Private.Bit_vector
+module Bit_vector = Bit_vector_bitv.Bit_vector
 
 let%expect_test "set & clear" =
   let v = Bit_vector.create ~len:10 false in
@@ -64,8 +64,8 @@ let%expect_test "bitwise_and_in_place" =
   [%expect {| 1001001001 |}];
   let vsmall = Bit_vector.create ~len:5 true in
   require_does_raise [%here] (fun () -> Bit_vector.bitwise_and_in_place ~dst:v0 vsmall v0);
-  [%expect {| (Invalid_argument Bit_vector.bitwise_and_in_place) |}];
+  [%expect {| (Invalid_argument Bitv.bw_and_in_place) |}];
   require_does_raise [%here] (fun () -> Bit_vector.bitwise_and_in_place ~dst:v0 v0 vsmall);
-  [%expect {| (Invalid_argument Bit_vector.bitwise_and_in_place) |}];
+  [%expect {| (Invalid_argument Bitv.bw_and_in_place) |}];
   ()
 ;;

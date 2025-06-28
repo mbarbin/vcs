@@ -4,6 +4,13 @@ dirs=(
     # Add new directories below:
     "bin"
     "example"
+    "lib/bit_vector_intf/src"
+    "lib/bit_vector_naive/src"
+    "lib/bit_vector_naive/test"
+    "lib/bit_vector_bitv/src"
+    "lib/bit_vector_bitv/test"
+    "lib/bit_vector_fast_bitvector/src"
+    "lib/bit_vector_fast_bitvector/test"
     "lib/volgo/src"
     "lib/volgo/test"
     "lib/volgo_base/src"
