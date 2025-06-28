@@ -19,9 +19,31 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Bit_vector = Vcs.Private.Bit_vector
+module Bit_vector = struct
+  type t = Fast_bitvector.t
 
-let%expect_test "bw_and_inplace" =
+  let sexp_of_t t = Sexp.Atom (Fast_bitvector.Bit_zero_first.to_string t)
+
+  let create ~len value : t =
+    let t = Fast_bitvector.create ~len in
+    let () = if value then Fast_bitvector.set_all t in
+    t
+  ;;
+
+  let length = Fast_bitvector.length
+  let set = Fast_bitvector.set
+  let clear_all = Fast_bitvector.clear_all
+
+  let inter ~dst a b =
+    let len = length dst in
+    if length a <> len || length b <> len
+    then invalid_arg "Bit_vector.inter" [@coverage off];
+    Fast_bitvector.Set.inter ~dst a b;
+    ()
+  ;;
+end
+
+let%expect_test "inter" =
   let v0 = Bit_vector.create ~len:10 true in
   print_s [%sexp (v0 : Bit_vector.t)];
   [%expect {| 1111111111 |}];
@@ -29,24 +51,26 @@ let%expect_test "bw_and_inplace" =
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 0000000000 |}];
   for i = 0 to Bit_vector.length v1 - 1 do
-    if i % 2 = 0 then Bit_vector.set v1 i true
+    if i % 2 = 0 then Bit_vector.set v1 i
   done;
-  Bit_vector.bw_and_in_place ~mutates:v0 v1;
+  Bit_vector.inter ~dst:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
   [%expect {| 1010101010 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 1010101010 |}];
-  Bit_vector.reset v1 false;
+  Bit_vector.clear_all v1;
   for i = 0 to Bit_vector.length v1 - 1 do
-    if i % 3 = 0 then Bit_vector.set v1 i true
+    if i % 3 = 0 then Bit_vector.set v1 i
   done;
-  Bit_vector.bw_and_in_place ~mutates:v0 v1;
+  Bit_vector.inter ~dst:v0 v0 v1;
   print_s [%sexp (v0 : Bit_vector.t)];
   [%expect {| 1000001000 |}];
   print_s [%sexp (v1 : Bit_vector.t)];
   [%expect {| 1001001001 |}];
   let vsmall = Bit_vector.create ~len:5 true in
-  require_does_raise [%here] (fun () -> Bit_vector.bw_and_in_place ~mutates:v0 vsmall);
-  [%expect {| (Invalid_argument Bit_vector.bw_and_in_place) |}];
+  require_does_raise [%here] (fun () -> Bit_vector.inter ~dst:v0 vsmall v0);
+  [%expect {| (Invalid_argument Bit_vector.inter) |}];
+  require_does_raise [%here] (fun () -> Bit_vector.inter ~dst:v0 v0 vsmall);
+  [%expect {| (Invalid_argument Bit_vector.inter) |}];
   ()
 ;;

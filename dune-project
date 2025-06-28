@@ -37,6 +37,8 @@
    (>= 4.14))
   (astring
    (>= 0.8.5))
+  (fast_bitvector
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -374,6 +376,8 @@
    (>= 1.0))
   (expect_test_helpers_core
    (>= v0.17))
+  (fast_bitvector
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-base
@@ -479,6 +483,8 @@
    (>= 1.0))
   (expect_test_helpers_core
    (>= v0.17))
+  (fast_bitvector
+   (>= 0.1.2.2))
   (fpath
    (>= 0.7.3))
   (fpath-base

@@ -53,7 +53,6 @@ module User_name = User_name
 include Vcs0
 
 module Private = struct
-  module Bit_vector = Bit_vector
   module Import = Import
   module Int_table = Int_table
   module Process_output = Process_output
