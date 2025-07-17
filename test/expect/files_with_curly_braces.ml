@@ -25,6 +25,25 @@
 
 module Unix = UnixLabels
 
+let print_raw_numstat vcs ~repo_root ~src ~dst =
+  let raw_numstat =
+    Vcs.git
+      vcs
+      ~repo_root
+      ~args:
+        [ "diff"
+        ; "--numstat"
+        ; Printf.sprintf "%s..%s" (Vcs.Rev.to_string src) (Vcs.Rev.to_string dst)
+        ]
+      ~f:Vcs.Git.exit0_and_stdout
+  in
+  print_endline
+    (String.Search_pattern.replace_all
+       (String.Search_pattern.create "\t")
+       ~in_:raw_numstat
+       ~with_:" ")
+;;
+
 let%expect_test "files with curly-braces" =
   Eio_main.run
   @@ fun env ->
@@ -102,19 +121,8 @@ let%expect_test "files with curly-braces" =
       (dst        template/no-braces.txt)
       (similarity 100)))
     |}];
-  let raw_numstat =
-    Vcs.git
-      vcs
-      ~repo_root
-      ~args:
-        [ "diff"
-        ; "--numstat"
-        ; Printf.sprintf "%s..%s" (Vcs.Rev.to_string rev2) (Vcs.Rev.to_string rev3)
-        ]
-      ~f:Vcs.Git.exit0_and_stdout
-  in
-  print_endline raw_numstat;
-  [%expect {| 0	0	template/{{{ key }}.txt => no-braces.txt} |}];
+  print_raw_numstat vcs ~repo_root ~src:rev2 ~dst:rev3;
+  [%expect {| 0 0 template/{{{ key }}.txt => no-braces.txt} |}];
   print_num_status ~src:rev2 ~dst:rev3;
   [%expect
     {|
@@ -123,6 +131,78 @@ let%expect_test "files with curly-braces" =
         Two_files
         (src "template/{{ key }}.txt")
         (dst template/no-braces.txt)))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 0)
+          (deletions  0))))))
+    |}];
+  let renamed_file2 = Vcs.Path_in_repo.v "template/hello-{{ mix }}-FOO.{{ ext }}" in
+  let renamed_file3 = Vcs.Path_in_repo.v "template/hello-{{ mix }}-BAR.{{ ext }}" in
+  Vcs.git
+    vcs
+    ~repo_root
+    ~args:
+      [ "mv"
+      ; Vcs.Path_in_repo.to_string renamed_file1
+      ; Vcs.Path_in_repo.to_string renamed_file2
+      ]
+    ~f:Vcs.Git.exit0;
+  let rev4 = Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "Rename2") in
+  print_name_status ~src:rev3 ~dst:rev4;
+  [%expect
+    {|
+    ((
+      Renamed
+      (src        template/no-braces.txt)
+      (dst        "template/hello-{{ mix }}-FOO.{{ ext }}")
+      (similarity 100)))
+    |}];
+  print_raw_numstat vcs ~repo_root ~src:rev3 ~dst:rev4;
+  [%expect {| 0 0 template/{no-braces.txt => hello-{{ mix }}-FOO.{{ ext }}} |}];
+  print_num_status ~src:rev3 ~dst:rev4;
+  [%expect
+    {|
+    ((
+      (key (
+        Two_files
+        (src template/no-braces.txt)
+        (dst "template/hello-{{ mix }}-FOO.{{ ext }}")))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 0)
+          (deletions  0))))))
+    |}];
+  (* More complex case with rename part in the middle. *)
+  Vcs.git
+    vcs
+    ~repo_root
+    ~args:
+      [ "mv"
+      ; Vcs.Path_in_repo.to_string renamed_file2
+      ; Vcs.Path_in_repo.to_string renamed_file3
+      ]
+    ~f:Vcs.Git.exit0;
+  let rev5 = Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "Rename3") in
+  print_name_status ~src:rev4 ~dst:rev5;
+  [%expect
+    {|
+    ((
+      Renamed
+      (src        "template/hello-{{ mix }}-FOO.{{ ext }}")
+      (dst        "template/hello-{{ mix }}-BAR.{{ ext }}")
+      (similarity 100)))
+    |}];
+  print_raw_numstat vcs ~repo_root ~src:rev4 ~dst:rev5;
+  [%expect
+    {| 0 0 template/{hello-{{ mix }}-FOO.{{ ext }} => hello-{{ mix }}-BAR.{{ ext }}} |}];
+  print_num_status ~src:rev4 ~dst:rev5;
+  [%expect
+    {|
+    ((
+      (key (
+        Two_files
+        (src "template/hello-{{ mix }}-FOO.{{ ext }}")
+        (dst "template/hello-{{ mix }}-BAR.{{ ext }}")))
       (num_stat (
         Num_lines_in_diff (
           (insertions 0)
