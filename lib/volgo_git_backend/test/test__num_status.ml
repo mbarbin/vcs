@@ -469,6 +469,7 @@ let%expect_test "parse_lines_exn" =
     ; "7\t-\tfile"
     ; "-2\t-10\tfile"
     ; "1985\t0\tfile1 => /tmp/file2"
+    ; "12\t6\ttemplate/{{ project_slug }}.opam"
     ]
   in
   List.iter lines ~f:(fun line ->
@@ -555,6 +556,42 @@ let%expect_test "parse_lines_exn" =
            ((line "1985\t0\tfile1 => /tmp/file2")))
           (Volgo_git_backend.Munged_path.parse_exn ((path "file1 => /tmp/file2"))))
         (error (Invalid_argument "\"/tmp/file2\": not a relative path")))))
+    ("12\t6\ttemplate/{{ project_slug }}.opam" (
+      Error (
+        (context
+          (Volgo_git_backend.Num_status.parse_line_exn
+           ((line "12\t6\ttemplate/{{ project_slug }}.opam")))
+          (Volgo_git_backend.Munged_path.parse_exn ((
+            path "template/{{ project_slug }}.opam"))))
+        (error "Unexpected '{' or '}' in simple path."))))
+    |}];
+  ()
+;;
+
+let%expect_test "parse_exn - opam-package-template" =
+  Eio_main.run
+  @@ fun env ->
+  let path = Eio.Path.(Eio.Stdenv.fs env / "opam-package-template.num-status") in
+  let contents = Eio.Path.load path in
+  let lines = String.split_lines contents in
+  let () =
+    require_does_not_raise [%here] ~cr:CR_soon (fun () ->
+      let num_status = Volgo_git_backend.Num_status.parse_lines_exn ~lines in
+      print_s [%sexp (num_status : Vcs.Num_status.t)])
+  in
+  [%expect
+    {|
+    (* CR-soon require-failed: lib/volgo_git_backend/test/test__num_status.ml:LINE:COL.
+       Do not 'X' this CR; instead make the required property true,
+       which will make the CR disappear.  For more information, see
+       [Expect_test_helpers_base.require]. *)
+    ("unexpectedly raised" (
+      (context
+        (Volgo_git_backend.Num_status.parse_line_exn
+         ((line "1\t1\ttemplate/lib/{{ project_snake }}/test/dune")))
+        (Volgo_git_backend.Munged_path.parse_exn ((
+          path "template/lib/{{ project_snake }}/test/dune"))))
+      (error "Unexpected '{' or '}' in simple path.")))
     |}];
   ()
 ;;
