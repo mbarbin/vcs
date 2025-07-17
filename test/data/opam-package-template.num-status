@@ -1,0 +1,21 @@
+1	1	.github/workflows/ci.yml
+9	5	example/.github/workflows/ci.yml
+3	1	example/.ocamlformat
+1	1	example/LICENSE
+1	1	example/bin/dune
+86	20	example/dune-project
+49	0	example/example-dev.opam
+4	7	example/example-tests.opam
+12	6	example/example.opam
+9	0	example/example.opam.template
+1	1	example/lib/example/test/dune
+3	1	template/.ocamlformat
+1	1	template/LICENSE
+1	1	template/bin/dune
+86	20	template/dune-project
+9	5	template/github/workflows/ci.yml
+1	1	template/lib/{{ project_snake }}/test/dune
+49	0	template/{{ project_slug }}-dev.opam
+4	7	template/{{ project_slug }}-tests.opam
+12	6	template/{{ project_slug }}.opam
+9	0	template/{{ project_slug }}.opam.template

@@ -10,6 +10,7 @@ The repos were chosen somewhat arbitrarily, or given as part of a bug report, et
 
 - [super-master-mind](https://github.com/mbarbin/super-master-mind)
 - [eio](https://github.com/ocaml-multicore/eio.git)
+- [opam-package-template](https://github.com/mbarbin/opam-package-template)
 
 ## Files
 
@@ -51,4 +52,20 @@ This file was created by capturing the output of:
 
 ```sh
 git diff --numstat ef415fbdfe1c60cb046a89db4fd48663fc61b77e..3be614e86fb4c7b70f2547972491dd7fb170f01a
+```
+
+### opam-package-template.name-status
+
+This file was created by capturing the output of:
+
+```sh
+$ git diff --name-status 9f9ce346061935b2fbcd88ad09e93bb4da1a14dd..df36196adff434341b5d019c2494b992f23a5fe1
+```
+
+### opam-package-template.num-status
+
+This file was created by capturing the output of:
+
+```sh
+$ git diff --numstat 9f9ce346061935b2fbcd88ad09e93bb4da1a14dd..df36196adff434341b5d019c2494b992f23a5fe1
 ```
