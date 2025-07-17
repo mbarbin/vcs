@@ -34,7 +34,9 @@
  (synopsis "A Versatile OCaml Library for Git Operations")
  (depends
   (ocaml
-   (>= 4.14))
+   (and
+    (>= 4.14)
+    (< 5.4~)))
   (astring
    (>= 0.8.5))
   (fpath
