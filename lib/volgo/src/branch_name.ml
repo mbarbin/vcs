@@ -31,6 +31,7 @@ let invariant t =
     || Char.equal c '.'
     || Char.equal c '+'
     || Char.equal c '@'
+    || Char.equal c '#'
     || Char.equal c '/')
 ;;
 

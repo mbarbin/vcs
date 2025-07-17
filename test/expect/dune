@@ -25,6 +25,7 @@
   fpath-sexp0
   pp
   pplumbing.err
+  unix
   vcs_test_helpers
   volgo_base
   volgo_git_eio

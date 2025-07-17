@@ -167,7 +167,7 @@ let%expect_test "parse_exn" =
 ;;
 
 let%expect_test "Diff_status" =
-  let entries = "ADMUQI?!XRCZ" in
+  let entries = "ADMUQI?!XRTCZ" in
   String.iter entries ~f:(fun char ->
     let diff_status =
       Volgo_git_backend.Name_status.Diff_status.parse_exn
@@ -187,8 +187,10 @@ let%expect_test "Diff_status" =
     (! Bang)
     (X X)
     (R R)
+    (T T)
     (C C)
-    (Z Not_supported) |}];
+    (Z Not_supported)
+    |}];
   require_does_raise [%here] (fun () ->
     Volgo_git_backend.Name_status.Diff_status.parse_exn "");
   [%expect {| "Unexpected empty diff status." |}];
@@ -211,6 +213,7 @@ let%expect_test "parse_lines_exn" =
     ; "R\tfile10"
     ; "R35\tfile10"
     ; "R35\tfile1\tfile2"
+    ; "T\tfile1"
     ; "C\tfile11"
     ; "C75\tfile1\tfile2"
     ; "Z\tfile12"
@@ -280,6 +283,7 @@ let%expect_test "parse_lines_exn" =
         (src        file1)
         (dst        file2)
         (similarity 35))))
+    ("T\tfile1" (Ok (Modified file1)))
     ("C\tfile11" (
       Error (
         (context (

@@ -31,8 +31,8 @@ let%expect_test "of_string" =
   [%expect {| slashes/are/allowed |}];
   test "dashes-and_underscores";
   [%expect {| dashes-and_underscores |}];
-  test "other+chars@are+allowed";
-  [%expect {| other+chars@are+allowed |}];
+  test "other+chars@are+#allowed";
+  [%expect {| other+chars@are+#allowed |}];
   (* Some characters are currently not accepted. *)
   test "\\";
   [%expect {| (Error "\"\\\\\": invalid branch_name") |}];

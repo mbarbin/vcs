@@ -8,6 +8,11 @@
 
 - Make `current_branch` in the backend return an option (#87, @mbarbin).
 
+### Fixed
+
+- Handle file type changes in `name-status` diff computation (#PR, @mbarbin).
+- Allow char '#' in branch names (#PR, @mbarbin).
+
 ## 0.0.18 (2025-06-11)
 
 ### Added
