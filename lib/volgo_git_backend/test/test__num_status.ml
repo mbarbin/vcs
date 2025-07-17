@@ -470,6 +470,8 @@ let%expect_test "parse_lines_exn" =
     ; "-2\t-10\tfile"
     ; "1985\t0\tfile1 => /tmp/file2"
     ; "12\t6\ttemplate/{{ project_slug }}.opam"
+    ; "12\t6\ttemplate/{{{ project_slug }}.opam => pkg.template.opam}"
+    ; "12\t6\ttemplate/{{{ project_slug }} => pkg}.opam"
     ]
   in
   List.iter lines ~f:(fun line ->
@@ -557,13 +559,32 @@ let%expect_test "parse_lines_exn" =
           (Volgo_git_backend.Munged_path.parse_exn ((path "file1 => /tmp/file2"))))
         (error (Invalid_argument "\"/tmp/file2\": not a relative path")))))
     ("12\t6\ttemplate/{{ project_slug }}.opam" (
-      Error (
-        (context
-          (Volgo_git_backend.Num_status.parse_line_exn
-           ((line "12\t6\ttemplate/{{ project_slug }}.opam")))
-          (Volgo_git_backend.Munged_path.parse_exn ((
-            path "template/{{ project_slug }}.opam"))))
-        (error "Unexpected '{' or '}' in simple path."))))
+      Ok (
+        (key (One_file "template/{{ project_slug }}.opam"))
+        (num_stat (
+          Num_lines_in_diff (
+            (insertions 12)
+            (deletions  6)))))))
+    ("12\t6\ttemplate/{{{ project_slug }}.opam => pkg.template.opam}"
+     (Ok (
+       (key (
+         Two_files
+         (src "template/{{ project_slug }}.opam")
+         (dst template/pkg.template.opam)))
+       (num_stat (
+         Num_lines_in_diff (
+           (insertions 12)
+           (deletions  6)))))))
+    ("12\t6\ttemplate/{{{ project_slug }} => pkg}.opam"
+     (Ok (
+       (key (
+         Two_files
+         (src "template/{{ project_slug }}.opam")
+         (dst template/pkg.opam)))
+       (num_stat (
+         Num_lines_in_diff (
+           (insertions 12)
+           (deletions  6)))))))
     |}];
   ()
 ;;
@@ -574,24 +595,115 @@ let%expect_test "parse_exn - opam-package-template" =
   let path = Eio.Path.(Eio.Stdenv.fs env / "opam-package-template.num-status") in
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
-  let () =
-    require_does_not_raise [%here] ~cr:CR_soon (fun () ->
-      let num_status = Volgo_git_backend.Num_status.parse_lines_exn ~lines in
-      print_s [%sexp (num_status : Vcs.Num_status.t)])
-  in
+  let num_status = Volgo_git_backend.Num_status.parse_lines_exn ~lines in
+  print_s [%sexp (num_status : Vcs.Num_status.t)];
   [%expect
     {|
-    (* CR-soon require-failed: lib/volgo_git_backend/test/test__num_status.ml:LINE:COL.
-       Do not 'X' this CR; instead make the required property true,
-       which will make the CR disappear.  For more information, see
-       [Expect_test_helpers_base.require]. *)
-    ("unexpectedly raised" (
-      (context
-        (Volgo_git_backend.Num_status.parse_line_exn
-         ((line "1\t1\ttemplate/lib/{{ project_snake }}/test/dune")))
-        (Volgo_git_backend.Munged_path.parse_exn ((
-          path "template/lib/{{ project_snake }}/test/dune"))))
-      (error "Unexpected '{' or '}' in simple path.")))
+    (((key (One_file .github/workflows/ci.yml))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 1)
+          (deletions  1)))))
+     ((key (One_file example/.github/workflows/ci.yml))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 9)
+          (deletions  5)))))
+     ((key (One_file example/.ocamlformat))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 3)
+          (deletions  1)))))
+     ((key (One_file example/LICENSE))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 1)
+          (deletions  1)))))
+     ((key (One_file example/bin/dune))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 1)
+          (deletions  1)))))
+     ((key (One_file example/dune-project))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 86)
+          (deletions  20)))))
+     ((key (One_file example/example-dev.opam))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 49)
+          (deletions  0)))))
+     ((key (One_file example/example-tests.opam))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 4)
+          (deletions  7)))))
+     ((key (One_file example/example.opam))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 12)
+          (deletions  6)))))
+     ((key (One_file example/example.opam.template))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 9)
+          (deletions  0)))))
+     ((key (One_file example/lib/example/test/dune))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 1)
+          (deletions  1)))))
+     ((key (One_file template/.ocamlformat))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 3)
+          (deletions  1)))))
+     ((key (One_file template/LICENSE))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 1)
+          (deletions  1)))))
+     ((key (One_file template/bin/dune))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 1)
+          (deletions  1)))))
+     ((key (One_file template/dune-project))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 86)
+          (deletions  20)))))
+     ((key (One_file template/github/workflows/ci.yml))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 9)
+          (deletions  5)))))
+     ((key (One_file "template/lib/{{ project_snake }}/test/dune"))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 1)
+          (deletions  1)))))
+     ((key (One_file "template/{{ project_slug }}-dev.opam"))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 49)
+          (deletions  0)))))
+     ((key (One_file "template/{{ project_slug }}-tests.opam"))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 4)
+          (deletions  7)))))
+     ((key (One_file "template/{{ project_slug }}.opam"))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 12)
+          (deletions  6)))))
+     ((key (One_file "template/{{ project_slug }}.opam.template"))
+      (num_stat (
+        Num_lines_in_diff (
+          (insertions 9)
+          (deletions  0))))))
     |}];
   ()
 ;;

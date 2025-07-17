@@ -46,10 +46,12 @@ let parse_exn str =
             | '{' | '}' -> true
             | _ -> false)
         then
-          raise (Err.E (Err.create [ Pp.text "Unexpected '{' or '}' in simple path." ]))
+          (* Files with these characters are actually useful, such as in some
+             templating systems. *)
+          One_file (Vcs.Path_in_repo.v str)
         else One_file (Vcs.Path_in_repo.v str)
       | [ left; right ] ->
-        (match String.rsplit2 left ~on:'{' with
+        (match String.lsplit2 left ~on:'{' with
          | None ->
            if
              String.exists str ~f:(function
@@ -60,7 +62,7 @@ let parse_exn str =
              Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }
          | Some (prefix, left_of_arrow) ->
            let right_of_arrow, suffix =
-             match String.lsplit2 right ~on:'}' with
+             match String.rsplit2 right ~on:'}' with
              | Some split -> split
              | None -> raise (Err.E (Err.create [ Pp.text "Matching '}' not found." ]))
            in
