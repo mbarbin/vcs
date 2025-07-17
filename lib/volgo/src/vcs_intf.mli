@@ -66,6 +66,11 @@ module type S = sig
     -> repo_root:Repo_root.t
     -> Branch_name.t result
 
+  val current_branch_opt
+    :  < Trait.current_branch ; .. > t
+    -> repo_root:Repo_root.t
+    -> Branch_name.t option result
+
   val current_revision
     :  < Trait.current_revision ; .. > t
     -> repo_root:Repo_root.t

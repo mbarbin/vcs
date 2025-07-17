@@ -125,10 +125,21 @@ let commit_cmd =
 let current_branch_cmd =
   Command.make
     ~summary:"current branch"
-    (let+ () = Arg.return () in
+    (let+ opt =
+       Arg.flag
+         [ "opt" ]
+         ~doc:
+           "Do not fail if the repo is not currently on any branch. This effectively \
+            changes the returned type from a branch to a branch option."
+     in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
-     let branch = Vcs.current_branch vcs ~repo_root in
-     print_sexp [%sexp (branch : Vcs.Branch_name.t)];
+     (match opt with
+      | true ->
+        let branch = Vcs.current_branch_opt vcs ~repo_root in
+        print_sexp [%sexp (branch : Vcs.Branch_name.t option)]
+      | false ->
+        let branch = Vcs.current_branch vcs ~repo_root in
+        print_sexp [%sexp (branch : Vcs.Branch_name.t)]);
      ())
 ;;
 

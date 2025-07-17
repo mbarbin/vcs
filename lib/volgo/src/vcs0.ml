@@ -87,8 +87,16 @@ let find_enclosing_git_repo_root t ~from =
 ;;
 
 let current_branch (t : < Trait.current_branch ; .. > t) ~repo_root =
-  t#current_branch ~repo_root
+  (match t#current_branch ~repo_root with
+   | Error _ as err -> err
+   | Ok (Some b) -> Ok b
+   | Ok None -> Error (Err.create [ Pp.text "Not currently on any branch." ]))
   |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
+;;
+
+let current_branch_opt (t : < Trait.current_branch ; .. > t) ~repo_root =
+  t#current_branch ~repo_root
+  |> of_result ~step:(lazy [%sexp "Vcs.current_branch_opt", { repo_root : Repo_root.t }])
 ;;
 
 let current_revision (t : < Trait.current_revision ; .. > t) ~repo_root =

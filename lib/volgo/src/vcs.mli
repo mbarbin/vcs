@@ -224,10 +224,22 @@ val graph : < Trait.log ; Trait.refs ; .. > t -> repo_root:Repo_root.t -> Graph.
 
 (** {1 Current branch & revision} *)
 
+(** [current_branch] returns the branch currently checked out. This raises with
+    an error message indicating ["Not currently on any branch."] when the repo
+    is in a "detached-head" state. If you'd like to distinguish this specific
+    case from other kinds of errors, see {!current_branch_opt}. *)
 val current_branch
   :  < Trait.current_branch ; .. > t
   -> repo_root:Repo_root.t
   -> Branch_name.t
+
+(** Returns [Some current_branch], if the repo is currently checked out at a
+    given branch, or [None] when in "detached-head" state. This errors out on
+    any other error conditions. *)
+val current_branch_opt
+  :  < Trait.current_branch ; .. > t
+  -> repo_root:Repo_root.t
+  -> Branch_name.t option
 
 val current_revision : < Trait.current_revision ; .. > t -> repo_root:Repo_root.t -> Rev.t
 
