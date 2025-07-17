@@ -42,18 +42,12 @@ let%expect_test "parse" =
        Volgo_git_backend.Munged_path.parse_exn ((path "tmp => tmp2 => tmp3"))))
      (error "Too many ['=>']."))
     |}];
-  require_does_raise [%here] (fun () -> test "}");
-  [%expect
-    {|
-    ((context (Volgo_git_backend.Munged_path.parse_exn ((path }))))
-     (error "Unexpected '{' or '}' in simple path."))
-    |}];
-  require_does_raise [%here] (fun () -> test "{");
-  [%expect
-    {|
-    ((context (Volgo_git_backend.Munged_path.parse_exn ((path {))))
-     (error "Unexpected '{' or '}' in simple path."))
-    |}];
+  require_does_not_raise [%here] (fun () -> test "}");
+  [%expect {| (One_file }) |}];
+  require_does_not_raise [%here] (fun () -> test "{");
+  [%expect {| (One_file {) |}];
+  require_does_not_raise [%here] (fun () -> test "template/with-with-{{ variable }}.txt");
+  [%expect {| (One_file "template/with-with-{{ variable }}.txt") |}];
   require_does_raise [%here] (fun () -> test "a/{dir => b");
   [%expect
     {|

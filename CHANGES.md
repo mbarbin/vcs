@@ -10,6 +10,7 @@
 
 ### Fixed
 
+- Improve handling of diff when filenames have curly-braces (#89, @mbarbin).
 - Handle file type changes in `name-status` diff computation (#88, @mbarbin).
 - Allow char '#' in branch names (#88, @mbarbin).
 
