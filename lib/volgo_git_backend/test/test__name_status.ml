@@ -303,3 +303,63 @@ let%expect_test "parse_lines_exn" =
     |}];
   ()
 ;;
+
+let%expect_test "parse_exn" =
+  Eio_main.run
+  @@ fun env ->
+  let path = Eio.Path.(Eio.Stdenv.fs env / "opam-package-template.name-status") in
+  let contents = Eio.Path.load path in
+  let lines = String.split_lines contents in
+  let name_status = Volgo_git_backend.Name_status.parse_lines_exn ~lines in
+  print_s [%sexp (name_status : Vcs.Name_status.t)];
+  [%expect
+    {|
+    ((Modified .github/workflows/ci.yml)
+     (Modified example/.github/workflows/ci.yml)
+     (Modified example/.ocamlformat)
+     (Modified example/LICENSE)
+     (Modified example/bin/dune)
+     (Modified example/dune-project)
+     (Added    example/example-dev.opam)
+     (Modified example/example-tests.opam)
+     (Modified example/example.opam)
+     (Added    example/example.opam.template)
+     (Modified example/lib/example/test/dune)
+     (Modified template/.ocamlformat)
+     (Modified template/LICENSE)
+     (Modified template/bin/dune)
+     (Modified template/dune-project)
+     (Modified template/github/workflows/ci.yml)
+     (Modified "template/lib/{{ project_snake }}/test/dune")
+     (Added    "template/{{ project_slug }}-dev.opam")
+     (Modified "template/{{ project_slug }}-tests.opam")
+     (Modified "template/{{ project_slug }}.opam")
+     (Added "template/{{ project_slug }}.opam.template"))
+    |}];
+  print_s [%sexp (Vcs.Name_status.files name_status : Vcs.Path_in_repo.t list)];
+  [%expect
+    {|
+    (.github/workflows/ci.yml
+     example/.github/workflows/ci.yml
+     example/.ocamlformat
+     example/LICENSE
+     example/bin/dune
+     example/dune-project
+     example/example-dev.opam
+     example/example-tests.opam
+     example/example.opam
+     example/example.opam.template
+     example/lib/example/test/dune
+     template/.ocamlformat
+     template/LICENSE
+     template/bin/dune
+     template/dune-project
+     template/github/workflows/ci.yml
+     "template/lib/{{ project_snake }}/test/dune"
+     "template/{{ project_slug }}-dev.opam"
+     "template/{{ project_slug }}-tests.opam"
+     "template/{{ project_slug }}.opam"
+     "template/{{ project_slug }}.opam.template")
+    |}];
+  ()
+;;

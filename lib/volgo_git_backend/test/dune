@@ -62,3 +62,13 @@
 
 (rule
  (copy %{project_root}/test/data/eio.num-status eio.num-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/opam-package-template.name-status
+  opam-package-template.name-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/opam-package-template.num-status
+  opam-package-template.num-status))
