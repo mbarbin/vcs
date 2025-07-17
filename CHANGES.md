@@ -10,8 +10,8 @@
 
 ### Fixed
 
-- Handle file type changes in `name-status` diff computation (#PR, @mbarbin).
-- Allow char '#' in branch names (#PR, @mbarbin).
+- Handle file type changes in `name-status` diff computation (#88, @mbarbin).
+- Allow char '#' in branch names (#88, @mbarbin).
 
 ## 0.0.18 (2025-06-11)
 
