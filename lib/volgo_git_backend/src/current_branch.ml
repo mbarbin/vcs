@@ -32,8 +32,12 @@ module Make (Runtime : Runtime.S) = struct
       ~f:(fun output ->
         let open Result.Monad_syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
-        match Vcs.Branch_name.of_string (String.strip stdout) with
-        | Ok _ as ok -> ok
-        | Error (`Msg m) -> Error (Err.create [ Pp.text m ]) [@coverage off])
+        let stdout = stdout |> String.strip in
+        if String.equal stdout "HEAD"
+        then Ok None
+        else (
+          match Vcs.Branch_name.of_string stdout with
+          | Ok branch -> Ok (Some branch)
+          | Error (`Msg m) -> Error (Err.create [ Pp.text m ]) [@coverage off]))
   ;;
 end

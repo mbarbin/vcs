@@ -29,6 +29,25 @@ Rev-parse.
   $ volgo-vcs current-branch
   main
 
+  $ volgo-vcs current-branch --opt
+  (main)
+
+  $ git switch --detach main 2> /dev/null
+
+  $ volgo-vcs current-branch
+  Context:
+  (Vcs.current_branch
+   (repo_root
+    $TESTCASE_ROOT))
+  Error: Not currently on any branch.
+  [123]
+
+  $ volgo-vcs current-branch --opt
+  ()
+
+  $ git checkout main
+  Switched to branch 'main'
+
   $ volgo-vcs branch-revision | sed -e "s/$rev0/rev0/g"
   rev0
 
@@ -309,7 +328,7 @@ Vcs's help for review.
          commit [--message=MSG] [--quiet] [OPTION]…
              commit a file
   
-         current-branch [OPTION]…
+         current-branch [--opt] [OPTION]…
              current branch
   
          current-revision [OPTION]…

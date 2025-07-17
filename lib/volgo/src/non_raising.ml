@@ -84,6 +84,10 @@ module Make (M : M) :
     try_with (fun () -> Vcs0.current_branch vcs ~repo_root)
   ;;
 
+  let current_branch_opt vcs ~repo_root =
+    try_with (fun () -> Vcs0.current_branch_opt vcs ~repo_root)
+  ;;
+
   let current_revision vcs ~repo_root =
     try_with (fun () -> Vcs0.current_revision vcs ~repo_root)
   ;;

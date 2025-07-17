@@ -18,22 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-type current_branch_method =
-  repo_root:Repo_root.t -> (Branch_name.t option, Err.t) Result.t
-
-module type S = sig
-  type t
-
-  val current_branch : t -> current_branch_method
-end
-
-class type t = object
-  method current_branch : current_branch_method
-end
-
-module Make (X : S) : sig
-  class c : X.t -> object
-    inherit t
-  end
-end

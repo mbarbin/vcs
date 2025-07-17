@@ -19,7 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type current_branch_method = repo_root:Repo_root.t -> (Branch_name.t, Err.t) Result.t
+type current_branch_method =
+  repo_root:Repo_root.t -> (Branch_name.t option, Err.t) Result.t
 
 module type S = sig
   type t
