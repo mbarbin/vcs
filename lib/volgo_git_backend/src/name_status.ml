@@ -30,6 +30,7 @@ module Diff_status = struct
       | `D
       | `M
       | `R
+      | `T
       | `C
       | `U
       | `Q
@@ -58,6 +59,7 @@ module Diff_status = struct
     | '!' -> `Bang
     | 'X' -> `X
     | 'R' -> `R
+    | 'T' -> `T
     | 'C' -> `C
     | _ -> `Not_supported
   ;;
@@ -74,7 +76,7 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
         (match Diff_status.parse_exn status with
          | `A -> Vcs.Name_status.Change.Added (Vcs.Path_in_repo.v path)
          | `D -> Removed (Vcs.Path_in_repo.v path)
-         | `M -> Modified (Vcs.Path_in_repo.v path)
+         | `M | `T -> Modified (Vcs.Path_in_repo.v path)
          | (`R | `C) as diff_status ->
            let similarity =
              String.sub status ~pos:1 ~len:(String.length status - 1) |> Int.of_string
