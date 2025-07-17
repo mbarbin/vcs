@@ -2,11 +2,11 @@
 
 ### Added
 
-- Add function `Vcs.current_branch_opt` (#PR, @mbarbin).
+- Add function `Vcs.current_branch_opt` (#87, @mbarbin).
 
 ### Changed
 
-- Make `current_branch` in the backend return an option (#PR, @mbarbin).
+- Make `current_branch` in the backend return an option (#87, @mbarbin).
 
 ## 0.0.18 (2025-06-11)
 
