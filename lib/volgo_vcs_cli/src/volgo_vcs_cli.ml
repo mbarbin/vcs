@@ -92,13 +92,13 @@ open Command.Std
 
 let add_cmd =
   Command.make
-    ~summary:"add a file to the index"
+    ~summary:"Add a file to the index."
     (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"file"
-         ~doc:"file to add"
+         ~doc:"File to add."
      in
      let { Initialized.vcs; repo_root; cwd } = initialize () in
      let path = relativize ~repo_root ~cwd ~path in
@@ -108,14 +108,14 @@ let add_cmd =
 
 let commit_cmd =
   Command.make
-    ~summary:"commit a file"
+    ~summary:"Commit a file."
     (let+ commit_message =
        Arg.named
          [ "message"; "m" ]
          (Param.validated_string (module Vcs.Commit_message))
          ~docv:"MSG"
-         ~doc:"commit message"
-     and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"suppress output on success" in
+         ~doc:"Commit message."
+     and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"Suppress output on success." in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.commit vcs ~repo_root ~commit_message in
      if not quiet then print_sexp [%sexp (rev : Vcs.Rev.t)];
@@ -124,7 +124,7 @@ let commit_cmd =
 
 let current_branch_cmd =
   Command.make
-    ~summary:"current branch"
+    ~summary:"Print the current branch."
     (let+ opt =
        Arg.flag
          [ "opt" ]
@@ -145,7 +145,7 @@ let current_branch_cmd =
 
 let current_revision_cmd =
   Command.make
-    ~summary:"revision of HEAD"
+    ~summary:"Print the revision of HEAD."
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.current_revision vcs ~repo_root in
@@ -155,18 +155,18 @@ let current_revision_cmd =
 
 let find_enclosing_repo_root_cmd =
   Command.make
-    ~summary:"find enclosing repo root"
+    ~summary:"Find the root of the enclosing-repo."
     (let+ from =
        Arg.named_opt
          [ "from" ]
          (Param.validated_string (module Fpath))
          ~docv:"path/to/dir"
-         ~doc:"walk up from the supplied directory (default is cwd)"
+         ~doc:"Walk up from the supplied directory (default is cwd)."
      and+ store =
        Arg.named_opt
          [ "store" ]
          (Param.comma_separated (Param.validated_string (module Fsegment)))
-         ~doc:"stop the search if one of these entries is found (e.g. '.hg')"
+         ~doc:"Stop the search if one of these entries is found (e.g. '.hg')."
        >>| Option.value ~default:[ Fsegment.dot_git; Fsegment.dot_hg ]
      in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
@@ -187,9 +187,9 @@ let find_enclosing_repo_root_cmd =
 
 let git_cmd =
   Command.make
-    ~summary:"run the git cli"
+    ~summary:"Run the git cli."
     (let+ args =
-       Arg.pos_all Param.string ~docv:"ARG" ~doc:"pass the remaining args to git"
+       Arg.pos_all Param.string ~docv:"ARG" ~doc:"Pass the remaining args to git."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let { Vcs.Git.Output.exit_code; stdout; stderr } =
@@ -202,15 +202,15 @@ let git_cmd =
 
 let init_cmd =
   Command.make
-    ~summary:"initialize a new repository"
+    ~summary:"Initialize a new repository."
     (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"path/to/root"
-         ~doc:"where to initialize the repository"
+         ~doc:"Where to initialize the repository."
      and+ quiet =
-       Arg.flag [ "quiet"; "q" ] ~doc:"do not print the initialized repo root"
+       Arg.flag [ "quiet"; "q" ] ~doc:"Do not print the initialized repo root."
      in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
@@ -221,9 +221,9 @@ let init_cmd =
 
 let hg_cmd =
   Command.make
-    ~summary:"run the hg cli"
+    ~summary:"Run the hg cli."
     (let+ args =
-       Arg.pos_all Param.string ~docv:"ARG" ~doc:"pass the remaining args to hg"
+       Arg.pos_all Param.string ~docv:"ARG" ~doc:"Pass the remaining args to hg."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let { Vcs.Hg.Output.exit_code; stdout; stderr } =
@@ -236,13 +236,13 @@ let hg_cmd =
 
 let load_file_cmd =
   Command.make
-    ~summary:"print a file from the filesystem (aka cat)"
+    ~summary:"Print a file from the filesystem (aka cat)."
     (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"path/to/file"
-         ~doc:"file to load"
+         ~doc:"File to load."
      in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
@@ -253,13 +253,13 @@ let load_file_cmd =
 
 let ls_files_cmd =
   Command.make
-    ~summary:"list file"
+    ~summary:"List versioned file."
     (let+ below =
        Arg.named_opt
          [ "below" ]
          (Param.validated_string (module Fpath))
          ~docv:"PATH"
-         ~doc:"restrict the selection to path/to/subdir"
+         ~doc:"Restrict the selection to [path/to/subdir]."
      in
      let { Initialized.vcs; repo_root; cwd } = initialize () in
      let below =
@@ -274,7 +274,7 @@ let ls_files_cmd =
 
 let log_cmd =
   Command.make
-    ~summary:"show the log of current repo"
+    ~summary:"Show the log of current repo."
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let log = Vcs.log vcs ~repo_root in
@@ -284,19 +284,19 @@ let log_cmd =
 
 let name_status_cmd =
   Command.make
-    ~summary:"show a summary of the diff between 2 revs"
+    ~summary:"Show a summary of the diff between 2 revs."
     (let+ src =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Vcs.Rev))
          ~docv:"BASE"
-         ~doc:"base revision"
+         ~doc:"The base revision."
      and+ dst =
        Arg.pos
          ~pos:1
          (Param.validated_string (module Vcs.Rev))
          ~docv:"TIP"
-         ~doc:"tip revision"
+         ~doc:"The tip revision."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
@@ -306,19 +306,19 @@ let name_status_cmd =
 
 let num_status_cmd =
   Command.make
-    ~summary:"show a summary of the number of lines of diff between 2 revs"
+    ~summary:"Show a summary of the number of lines of diff between 2 revs."
     (let+ src =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Vcs.Rev))
          ~docv:"BASE"
-         ~doc:"base revision"
+         ~doc:"The base revision."
      and+ dst =
        Arg.pos
          ~pos:1
          (Param.validated_string (module Vcs.Rev))
          ~docv:"TIP"
-         ~doc:"tip revision"
+         ~doc:"The tip revision."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
@@ -328,13 +328,13 @@ let num_status_cmd =
 
 let read_dir_cmd =
   Command.make
-    ~summary:"print the list of files in a directory"
+    ~summary:"Print the list of files in a directory."
     (let+ dir =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"path/to/dir"
-         ~doc:"dir to read"
+         ~doc:"Director to read."
      in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let dir = Absolute_path.relativize ~root:cwd dir in
@@ -345,13 +345,13 @@ let read_dir_cmd =
 
 let rename_current_branch_cmd =
   Command.make
-    ~summary:"move/rename a branch to a new name"
+    ~summary:"Move/rename a branch to a new name."
     (let+ branch_name =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Vcs.Branch_name))
          ~docv:"branch"
-         ~doc:"new name to rename to"
+         ~doc:"New name to rename the current branch to."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      Vcs.rename_current_branch vcs ~repo_root ~to_:branch_name;
@@ -360,7 +360,7 @@ let rename_current_branch_cmd =
 
 let refs_cmd =
   Command.make
-    ~summary:"show the refs of current repo"
+    ~summary:"Show the refs of current repo."
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let refs = Vcs.refs vcs ~repo_root in
@@ -370,13 +370,13 @@ let refs_cmd =
 
 let save_file_cmd =
   Command.make
-    ~summary:"save stdin to a file from the filesystem (aka tee)"
+    ~summary:"Save stdin to a file from the filesystem (aka tee)."
     (let+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"FILE"
-         ~doc:"path to file where to save the contents to"
+         ~doc:"Path to file where to save the contents to."
      in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
@@ -389,19 +389,19 @@ let save_file_cmd =
 
 let set_user_config_cmd =
   Command.make
-    ~summary:"set the user config"
+    ~summary:"Changes some settings in the user config."
     (let+ user_name =
        Arg.named
          [ "user.name" ]
          (Param.validated_string (module Vcs.User_name))
          ~docv:"USER"
-         ~doc:"user name"
+         ~doc:"Specify the config user-name"
      and+ user_email =
        Arg.named
          [ "user.email" ]
          (Param.validated_string (module Vcs.User_email))
          ~docv:"EMAIL"
-         ~doc:"user email"
+         ~doc:"Specify the config user-email"
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      Vcs.set_user_name vcs ~repo_root ~user_name;
@@ -411,19 +411,19 @@ let set_user_config_cmd =
 
 let show_file_at_rev_cmd =
   Command.make
-    ~summary:"show the contents of file at a given revision"
+    ~summary:"Show the contents of file at a given revision."
     (let+ rev =
        Arg.named
          [ "rev"; "r" ]
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"
-         ~doc:"revision to show"
+         ~doc:"The revision to show."
      and+ path =
        Arg.pos
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"FILE"
-         ~doc:"path to file"
+         ~doc:"Path to file to show."
      in
      let { Initialized.vcs; repo_root; cwd } = initialize () in
      let path = relativize ~repo_root ~cwd ~path in
@@ -432,7 +432,7 @@ let show_file_at_rev_cmd =
       | `Present contents -> print_string (contents :> string)
       | `Absent ->
         Printf.eprintf
-          "Path '%s' does not exist in '%s'"
+          "Path '%s' does not exist in '%s'."
           (Vcs.Path_in_repo.to_string path)
           (Vcs.Rev.to_string rev));
      ())
@@ -440,7 +440,7 @@ let show_file_at_rev_cmd =
 
 let graph_cmd =
   Command.make
-    ~summary:"compute graph of current repo"
+    ~summary:"Compute graph of current repo."
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
@@ -452,13 +452,13 @@ let graph_cmd =
 
 let branch_revision_cmd =
   Command.make
-    ~summary:"revision of a branch"
+    ~summary:"Get the revision of a branch."
     (let+ branch_name =
        Arg.pos_opt
          ~pos:0
          (Param.validated_string (module Vcs.Branch_name))
          ~docv:"BRANCH"
-         ~doc:"which branch"
+         ~doc:"Specify which branch to select (defaults to $(b,current-branch))."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let branch_name =
@@ -487,11 +487,19 @@ let branch_revision_cmd =
 
 let descendance_cmd =
   Command.make
-    ~summary:"print descendance relation between 2 revisions"
+    ~summary:"Print descendance relation between 2 revisions."
     (let+ rev1 =
-       Arg.pos ~pos:0 (Param.validated_string (module Vcs.Rev)) ~docv:"REV" ~doc:"rev1"
+       Arg.pos
+         ~pos:0
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"REV"
+         ~doc:"The rev1."
      and+ rev2 =
-       Arg.pos ~pos:1 (Param.validated_string (module Vcs.Rev)) ~docv:"REV" ~doc:"rev2"
+       Arg.pos
+         ~pos:1
+         (Param.validated_string (module Vcs.Rev))
+         ~docv:"REV"
+         ~doc:"The rev2."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
@@ -509,12 +517,12 @@ let descendance_cmd =
 
 let greatest_common_ancestors_cmd =
   Command.make
-    ~summary:"print greatest common ancestors of revisions"
+    ~summary:"Print greatest common ancestors of revisions."
     (let+ revs =
        Arg.pos_all
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"
-         ~doc:"all revisions that must descend from the gcas"
+         ~doc:"All revisions that must descend from the gcas."
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
@@ -534,14 +542,11 @@ let greatest_common_ancestors_cmd =
 
 let main =
   Command.group
-    ~summary:"call a command from the vcs interface"
+    ~summary:"Call a command from the vcs interface."
     ~readme:(fun () ->
-      {|
-This is an executable to test the Version Control System (vcs) library.
-
-We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the
-sub commands exposed here, plus additional ones.
-|})
+      "This is an executable to test the Version Control System (vcs) library.\n\n\
+       We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the sub \
+       commands exposed here, plus additional ones.")
     [ "add", add_cmd
     ; "branch-revision", branch_revision_cmd
     ; "commit", commit_cmd

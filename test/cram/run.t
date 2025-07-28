@@ -187,7 +187,7 @@ Testing an unsuccessful file show with git and via vcs.
   $ rev2=$(git rev-parse HEAD)
 
   $ volgo-vcs show-file-at-rev hello -r $rev2 2>&1 | sed -e "s/$rev2/rev2/g"
-  Path 'hello' does not exist in 'rev2'
+  Path 'hello' does not exist in 'rev2'.
 
 Name status.
 
@@ -301,12 +301,10 @@ Vcs's help for review.
 
   $ volgo-vcs --help=plain
   NAME
-         volgo-vcs - call a command from the vcs interface
+         volgo-vcs - Call a command from the vcs interface.
   
   SYNOPSIS
          volgo-vcs COMMAND …
-  
-          
   
          This is an executable to test the Version Control System (vcs)
          library.
@@ -316,78 +314,76 @@ Vcs's help for review.
          We expect a 1:1 mapping between the function exposed in the [Vcs.S]
          and the sub commands exposed here, plus additional ones.
   
-          
-  
   COMMANDS
          add [OPTION]… file
-             add a file to the index
+             Add a file to the index.
   
          branch-revision [OPTION]… [BRANCH]
-             revision of a branch
+             Get the revision of a branch.
   
          commit [--message=MSG] [--quiet] [OPTION]…
-             commit a file
+             Commit a file.
   
          current-branch [--opt] [OPTION]…
-             current branch
+             Print the current branch.
   
          current-revision [OPTION]…
-             revision of HEAD
+             Print the revision of HEAD.
   
          descendance [OPTION]… REV REV
-             print descendance relation between 2 revisions
+             Print descendance relation between 2 revisions.
   
          find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
          [OPTION]…
-             find enclosing repo root
+             Find the root of the enclosing-repo.
   
          gca [OPTION]… [REV]…
-             print greatest common ancestors of revisions
+             Print greatest common ancestors of revisions.
   
          git [OPTION]… [ARG]…
-             run the git cli
+             Run the git cli.
   
          graph [OPTION]…
-             compute graph of current repo
+             Compute graph of current repo.
   
          hg [OPTION]… [ARG]…
-             run the hg cli
+             Run the hg cli.
   
          init [--quiet] [OPTION]… path/to/root
-             initialize a new repository
+             Initialize a new repository.
   
          load-file [OPTION]… path/to/file
-             print a file from the filesystem (aka cat)
+             Print a file from the filesystem (aka cat).
   
          log [OPTION]…
-             show the log of current repo
+             Show the log of current repo.
   
          ls-files [--below=PATH] [OPTION]…
-             list file
+             List versioned file.
   
          name-status [OPTION]… BASE TIP
-             show a summary of the diff between 2 revs
+             Show a summary of the diff between 2 revs.
   
          num-status [OPTION]… BASE TIP
-             show a summary of the number of lines of diff between 2 revs
+             Show a summary of the number of lines of diff between 2 revs.
   
          read-dir [OPTION]… path/to/dir
-             print the list of files in a directory
+             Print the list of files in a directory.
   
          refs [OPTION]…
-             show the refs of current repo
+             Show the refs of current repo.
   
          rename-current-branch [OPTION]… branch
-             move/rename a branch to a new name
+             Move/rename a branch to a new name.
   
          save-file [OPTION]… FILE
-             save stdin to a file from the filesystem (aka tee)
+             Save stdin to a file from the filesystem (aka tee).
   
          set-user-config [--user.email=EMAIL] [--user.name=USER] [OPTION]…
-             set the user config
+             Changes some settings in the user config.
   
          show-file-at-rev [--rev=REV] [OPTION]… FILE
-             show the contents of file at a given revision
+             Show the contents of file at a given revision.
   
   COMMON OPTIONS
          --help[=FMT] (default=auto)
