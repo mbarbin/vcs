@@ -19,16 +19,16 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** [Volgo_hg_backend] is a helper library to build git backends for the [Vcs]
-    library based on the [Mercurial] cli.
+(** [Volgo_hg_backend] is a helper library to build Mercurial backends for the
+    [Vcs] library based on the Mercurial cli [hg].
 
     Given the ability to run a [hg] process, [Volgo_hg_backend] knows what
     command to run, how to parse its output and how to interpret its exit code
     to turn it into a typed result.
 
     [Volgo_hg_backend] is not meant to be used directly by a user. Rather it is
-    one of the building blocks involved in creating a git backend for the [Vcs]
-    library.
+    one of the building blocks involved in creating a Mercurial backend for the
+    [Vcs] library.
 
     [Volgo_hg_backend] has currently two instantiations as part of its
     distribution (packaged separately to keep the dependencies isolated).
@@ -40,7 +40,7 @@
     is available and documented in the [hg] cli man pages, but this is not
     always possible, so the implementation uses some kind of best effort
     strategy. Also, to avoid running into [hg version] issues, we're trying to
-    rely on mercurial commands that have been there for a while. *)
+    rely on Mercurial commands that have been there for a while. *)
 
 module Runtime = Runtime
 

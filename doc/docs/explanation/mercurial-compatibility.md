@@ -4,7 +4,7 @@ Vcs is fundamentally a Git-centric library, but it also provides a *compatibilit
 
 ## Introduction
 
-The mercurial compatibility in vcs is not a full Mercurial backend based on a generic VCS abstraction. Instead, it is a pragmatic approach: if a Git operation (represented as a "Trait" in volgo's terminology) can be mapped to an equivalent or similar operation in Mercurial, then that operation may be supported in the Mercurial backend.
+The Mercurial compatibility in vcs is not a full Mercurial backend based on a generic VCS abstraction. Instead, it is a pragmatic approach: if a Git operation (represented as a "Trait" in volgo's terminology) can be mapped to an equivalent or similar operation in Mercurial, then that operation may be supported in the Mercurial backend.
 
 All types, names, and semantics in Vcs remain Git-centric. For example, concepts like branches, commits, and diffs are interpreted as they are in Git. The Mercurial backend attempts to provide compatible behavior where possible, but does not attempt to fully generalize or abstract over the differences between Git and Mercurial.
 
