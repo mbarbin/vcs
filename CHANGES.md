@@ -1,3 +1,10 @@
+## 0.0.20 (2025-08-14)
+
+### Changed
+
+- Removed some build dependencies from kernel parts (#92, #93, #94, #95, @mbarbin).
+- Update CRs Actions workflows (#90, #91, @mbarbin).
+
 ## 0.0.19 (2025-07-22)
 
 ### Added
