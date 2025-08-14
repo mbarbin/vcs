@@ -28,7 +28,26 @@ module Line = struct
     { rev : Rev.t
     ; ref_kind : Ref_kind.t
     }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun { rev = rev__002_; ref_kind = ref_kind__004_ } ->
+       let bnds__001_ = ([] : _ Stdlib.List.t) in
+       let bnds__001_ =
+         let arg__005_ = Ref_kind.sexp_of_t ref_kind__004_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "ref_kind"; arg__005_ ] :: bnds__001_
+          : _ Stdlib.List.t)
+       in
+       let bnds__001_ =
+         let arg__003_ = Rev.sexp_of_t rev__002_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__003_ ] :: bnds__001_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List bnds__001_
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal =
     (fun a__001_ b__002_ ->
@@ -44,7 +63,13 @@ end
 module T = struct
   [@@@coverage off]
 
-  type t = Line.t list [@@deriving sexp_of]
+  type t = Line.t list [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun x__006_ -> sexp_of_list Line.sexp_of_t x__006_ : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal a b = equal_list Line.equal a b
 end

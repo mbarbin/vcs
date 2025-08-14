@@ -22,8 +22,18 @@
 (** An [Vcs] API in the style of
     {{:https://erratique.ch/software/rresult/doc/Rresult/index.html#usage} Rresult}. *)
 
-type err = [ `Vcs of Err.t ] [@@deriving sexp_of]
-type 'a t = ('a, err) Result.t [@@deriving sexp_of]
+type err = [ `Vcs of Err.t ] [@@deriving_inline sexp_of]
+
+val sexp_of_err : err -> Sexplib0.Sexp.t
+
+[@@@deriving.end]
+
+type 'a t = ('a, err) Result.t [@@deriving_inline sexp_of]
+
+val sexp_of_t : ('a -> Sexplib0.Sexp.t) -> 'a t -> Sexplib0.Sexp.t
+
+[@@@deriving.end]
+
 type 'a result = 'a t
 
 (** {1 Utils}

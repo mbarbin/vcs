@@ -21,7 +21,11 @@
 
 (** Creating mock revisions for use in expect tests. *)
 
-type t [@@deriving sexp_of]
+type t [@@deriving_inline sexp_of]
+
+val sexp_of_t : t -> Sexplib0.Sexp.t
+
+[@@@deriving.end]
 
 val create : name:string -> t
 

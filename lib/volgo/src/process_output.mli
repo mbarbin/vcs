@@ -31,7 +31,11 @@ type t =
   ; stdout : string
   ; stderr : string
   }
-[@@deriving sexp_of]
+[@@deriving_inline sexp_of]
+
+val sexp_of_t : t -> Sexplib0.Sexp.t
+
+[@@@deriving.end]
 
 module Private : sig
   (** Exported for use by Git and Hg outputs. *)

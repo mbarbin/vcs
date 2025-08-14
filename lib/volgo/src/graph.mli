@@ -29,7 +29,11 @@
     of what needs to be sent to a process holding such a value in memory to
     complete its view of a graph. *)
 
-type t [@@deriving sexp_of]
+type t [@@deriving_inline sexp_of]
+
+val sexp_of_t : t -> Sexplib0.Sexp.t
+
+[@@@deriving.end]
 
 (** Create an empty graph that has no nodes. *)
 val create : unit -> t
@@ -94,7 +98,11 @@ module Node_kind : sig
         ; parent1 : Node.t
         ; parent2 : Node.t
         }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+
+  [@@@deriving.end]
 
   val equal : t -> t -> bool
 
@@ -253,7 +261,11 @@ module Subgraph : sig
     { log : Log.t
     ; refs : Refs.t
     }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+
+  [@@@deriving.end]
 
   val is_empty : t -> bool
 end
@@ -270,7 +282,11 @@ val of_subgraph : Subgraph.t -> t
 (** {1 Summary} *)
 
 module Summary : sig
-  type t [@@deriving sexp_of]
+  type t [@@deriving_inline sexp_of]
+
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+
+  [@@@deriving.end]
 end
 
 (** Print a summary for use in expect test and quick exploratory tests *)

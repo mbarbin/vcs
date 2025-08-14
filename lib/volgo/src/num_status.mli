@@ -39,7 +39,11 @@ module Change : sig
     type t =
       | Num_lines_in_diff of Num_lines_in_diff.t
       | Binary_file
-    [@@deriving sexp_of]
+    [@@deriving_inline sexp_of]
+
+    val sexp_of_t : t -> Sexplib0.Sexp.t
+
+    [@@@deriving.end]
 
     val equal : t -> t -> bool
   end
@@ -48,12 +52,20 @@ module Change : sig
     { key : Key.t
     ; num_stat : Num_stat.t
     }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+
+  [@@@deriving.end]
 
   val equal : t -> t -> bool
 end
 
-type t = Change.t list [@@deriving sexp_of]
+type t = Change.t list [@@deriving_inline sexp_of]
+
+val sexp_of_t : t -> Sexplib0.Sexp.t
+
+[@@@deriving.end]
 
 module Changed : sig
   (** Specifies which {!type:Num_status.t} we want to compute. *)
@@ -62,7 +74,11 @@ module Changed : sig
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+
+  [@@@deriving.end]
 
   val equal : t -> t -> bool
 end

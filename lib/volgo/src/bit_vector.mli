@@ -24,7 +24,11 @@
     At some point, with some benchmarks for sanity checks, it seems desirable to
     switch to a less naive implementation. *)
 
-type t [@@deriving sexp_of]
+type t [@@deriving_inline sexp_of]
+
+val sexp_of_t : t -> Sexplib0.Sexp.t
+
+[@@@deriving.end]
 
 val create : len:int -> bool -> t
 val length : t -> int
