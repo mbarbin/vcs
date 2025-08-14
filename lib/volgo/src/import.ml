@@ -228,8 +228,8 @@ module Result = struct
   type ('a, 'b) t = ('a, 'b) Result.t =
     | Ok of 'a
     | Error of 'b
-  [@@deriving_inline sexp_of]
 
+  (* Not checked with deriving_inline due some formatting unstability. *)
   let sexp_of_t
     :  'a 'b.
        ('a -> Sexplib0.Sexp.t)
@@ -252,8 +252,6 @@ module Result = struct
        -> (a__007_, b__008_) t
        -> Sexplib0.Sexp.t)
   ;;
-
-  [@@@deriving.end]
 
   include (Result : module type of Result with type ('a, 'b) t := ('a, 'b) t)
 

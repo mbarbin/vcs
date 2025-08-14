@@ -21,19 +21,15 @@
 
 open! Import
 
-type err = Err.t [@@deriving_inline sexp_of]
+type err = Err.t
 
-let sexp_of_err = (Err.sexp_of_t : err -> Sexplib0.Sexp.t)
+let sexp_of_err = Err.sexp_of_t
 
-[@@@deriving.end]
-
-type 'a t = ('a, err) Result.t [@@deriving_inline sexp_of]
+type 'a t = ('a, err) Result.t
 
 let sexp_of_t : 'a. ('a -> Sexplib0.Sexp.t) -> 'a t -> Sexplib0.Sexp.t =
   fun _of_a__001_ -> fun x__002_ -> Result.sexp_of_t _of_a__001_ sexp_of_err x__002_
 ;;
-
-[@@@deriving.end]
 
 module Non_raising_M = struct
   type t = err
