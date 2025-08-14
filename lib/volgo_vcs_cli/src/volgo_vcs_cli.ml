@@ -481,12 +481,14 @@ let branch_revision_cmd =
        with
        | Some ref -> ref.rev
        | None ->
+         (* This is covered but bisect_ppx adds an unvisitable coverage point at
+            the out-edge, thus turning off. *)
          Err.raise
            Pp.O.
              [ Pp.text "Branch "
                ++ Pp_tty.id (module Vcs.Branch_name) branch_name
                ++ Pp.text " not found."
-             ]
+             ] [@coverage off]
      in
      print_sexp (rev |> Vcs.Rev.sexp_of_t);
      ())
