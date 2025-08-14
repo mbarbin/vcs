@@ -133,10 +133,6 @@
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.14))
-  (ppx_sexp_conv
-   (>= v0.16))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.16))
   (volgo
@@ -158,10 +154,6 @@
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.14))
-  (ppx_sexp_conv
-   (>= v0.16))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.16))
   (volgo
@@ -185,10 +177,6 @@
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.14))
-  (ppx_sexp_conv
-   (>= v0.17))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.17))
   (volgo
@@ -214,10 +202,6 @@
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.14))
-  (ppx_sexp_conv
-   (>= v0.17))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.17))
   (volgo
@@ -243,10 +227,6 @@
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.14))
-  (ppx_sexp_conv
-   (>= v0.16))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.16))
   (spawn
@@ -272,10 +252,6 @@
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.14))
-  (ppx_sexp_conv
-   (>= v0.16))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.16))
   (volgo
