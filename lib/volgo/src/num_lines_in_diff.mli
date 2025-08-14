@@ -30,12 +30,8 @@ type t =
   { insertions : int
   ; deletions : int
   }
-[@@deriving_inline sexp_of]
 
-val sexp_of_t : t -> Sexplib0.Sexp.t
-
-[@@@deriving.end]
-
+val sexp_of_t : t -> Sexp.t
 val compare : t -> t -> int
 val equal : t -> t -> bool
 val zero : t

@@ -57,20 +57,14 @@ module Change : sig
         ; dst : Path_in_repo.t
         ; similarity : int
         }
-  [@@deriving_inline sexp_of]
 
-  val sexp_of_t : t -> Sexplib0.Sexp.t
-
-  [@@@deriving.end]
-
+  val sexp_of_t : t -> Sexp.t
   val equal : t -> t -> bool
 end
 
-type t = Change.t list [@@deriving_inline sexp_of]
+type t = Change.t list
 
 val sexp_of_t : t -> Sexplib0.Sexp.t
-
-[@@@deriving.end]
 
 (** Returns the set of files that are involved by the changes, either at [src]
     or [dst]. *)
@@ -89,11 +83,7 @@ module Changed : sig
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving_inline sexp_of]
 
-  val sexp_of_t : t -> Sexplib0.Sexp.t
-
-  [@@@deriving.end]
-
+  val sexp_of_t : t -> Sexp.t
   val equal : t -> t -> bool
 end

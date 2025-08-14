@@ -29,11 +29,8 @@ module type S = sig
       ; stdout : string
       ; stderr : string
       }
-    [@@deriving_inline sexp_of]
 
-    val sexp_of_t : t -> Sexplib0.Sexp.t
-
-    [@@@deriving.end]
+    val sexp_of_t : t -> Sexp.t
 
     module Private : sig
       val of_process_output : Process_output.t -> t
