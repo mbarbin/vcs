@@ -93,7 +93,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.hg ((repo_root <REDACTED>) (args (bogus))))
+       (Vcs.hg (repo_root <REDACTED>) (args (bogus)))
        ((prog <REDACTED>)
         (args (bogus))
         (exit_status (Exited 255))
@@ -114,7 +114,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.hg ((repo_root <REDACTED>) (args (bogus))))
+       (Vcs.hg (repo_root <REDACTED>) (args (bogus)))
        ((prog <REDACTED>)
         (args (bogus))
         (exit_status (Exited 255))

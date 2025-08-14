@@ -51,10 +51,10 @@
    (>= v0.16))
   (ppx_sexp_conv
    (>= v0.16))
-  (ppx_sexp_value
-   (>= v0.16))
   (ppxlib
-   (>= 0.33))))
+   (>= 0.33))
+  (sexplib0
+   (>= v0.16))))
 
 (package
  (name volgo-base)

@@ -94,9 +94,11 @@ module T = struct
     type t = Node_kind.t array
 
     let sexp_of_t t =
-      Array.mapi t ~f:(fun i node -> i, node)
+      t
+      |> Array.mapi ~f:(fun node node_kind ->
+        Sexp.List [ node |> Node.sexp_of_t; node_kind |> Node_kind.sexp_of_t ])
       |> Array.rev
-      |> [%sexp_of: (Node.t * Node_kind.t) array]
+      |> Array.sexp_of_t Fun.id
     ;;
   end
 
@@ -107,8 +109,8 @@ module T = struct
       let revs = Rev_table.to_seq t |> Array.of_seq in
       Array.sort revs ~compare:(fun (_, n1) (_, n2) -> Int.compare n2 n1);
       revs
-      |> Array.map ~f:(fun (rev, index) -> index, rev)
-      |> [%sexp_of: (Node.t * Rev.t) array]
+      |> Array.sexp_of_t (fun (rev, index) ->
+        Sexp.List [ index |> Node.sexp_of_t; rev |> Rev.sexp_of_t ])
     ;;
   end
 
@@ -122,7 +124,10 @@ module T = struct
         |> Array.map ~f:(fun (n, refs) -> n, List.sort refs ~compare:Ref_kind.compare)
       in
       Array.sort revs ~compare:(fun (n1, _) (n2, _) -> Int.compare n2 n1);
-      revs |> [%sexp_of: (Node.t * Ref_kind.t list) array]
+      revs
+      |> Array.sexp_of_t (fun (node, ref_kinds) ->
+        Sexp.List
+          [ node |> Node.sexp_of_t; ref_kinds |> List.sexp_of_t Ref_kind.sexp_of_t ])
     ;;
   end
 
@@ -134,7 +139,11 @@ module T = struct
     }
 
   let sexp_of_t { nodes; revs; refs = _; reverse_refs } =
-    [%sexp { nodes : Nodes.t; revs : Revs.t; refs = (reverse_refs : Reverse_refs.t) }]
+    Sexp.List
+      [ sexp_field (module Nodes) "nodes" nodes
+      ; sexp_field (module Revs) "revs" revs
+      ; sexp_field (module Reverse_refs) "refs" reverse_refs
+      ]
   ;;
 end
 
@@ -234,7 +243,7 @@ let refs t =
 
 let set_ref t ~rev ~ref_kind =
   match Rev_table.find t.revs rev with
-  | None -> Err.raise [ Pp.text "Rev not found."; Err.sexp [%sexp (rev : Rev.t)] ]
+  | None -> Err.raise [ Pp.text "Rev not found."; Err.sexp (rev |> Rev.sexp_of_t) ]
   | Some index ->
     (match Ref_kind_table.find t.refs ref_kind with
      | None -> ()
@@ -283,7 +292,7 @@ let add_nodes t ~log =
       | Some node -> node
       | None ->
         Err.raise
-          [ Pp.text "Parent not found."; Err.sexp [%sexp (line : Log.Line.t)] ]
+          [ Pp.text "Parent not found."; Err.sexp (line |> Log.Line.sexp_of_t) ]
         [@coverage off]
     in
     match (line : Log.Line.t) with
@@ -316,7 +325,7 @@ let add_nodes t ~log =
       | None ->
         Err.raise
           [ Pp.text "Node not found during the building of new nodes (internal error)."
-          ; Err.sexp [%sexp { rev : Rev.t }]
+          ; Err.sexp (sexp_field (module Rev) "rev" rev)
           ] [@coverage off]
     in
     Queue.to_seq new_nodes
@@ -534,7 +543,11 @@ let check_index_exn t ~index =
   then
     Err.raise
       [ Pp.text "Node index out of bounds."
-      ; Err.sexp [%sexp { index : int; node_count : int }]
+      ; Err.sexp
+          (List
+             [ sexp_field (module Int) "index" index
+             ; sexp_field (module Int) "node_count" node_count
+             ])
       ]
 ;;
 

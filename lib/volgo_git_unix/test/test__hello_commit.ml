@@ -89,7 +89,7 @@ let%expect_test "read_dir" =
   in
   [%expect
     {|
-    ((context (Vcs.read_dir ((dir /invalid))))
+    ((context (Vcs.read_dir (dir /invalid)))
      (error (Sys_error "/invalid: No such file or directory")))
     |}];
   ()

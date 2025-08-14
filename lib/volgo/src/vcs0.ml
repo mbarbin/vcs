@@ -30,31 +30,53 @@ let of_result ~step = function
   | Error err -> raise (Err.E (Err.add_context err [ Err.sexp (Lazy.force step) ]))
 ;;
 
+let step_trace fct fields = Sexp.List (Atom fct :: fields)
+
 let load_file (t : < Trait.file_system ; .. > t) ~path =
   t#load_file ~path
-  |> of_result ~step:(lazy [%sexp "Vcs.load_file", { path : Absolute_path.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace "Vcs.load_file" [ sexp_field (module Absolute_path) "path" path ]))
 ;;
 
 let save_file ?perms (t : < Trait.file_system ; .. > t) ~path ~file_contents =
   t#save_file ?perms () ~path ~file_contents
   |> of_result
        ~step:
-         (lazy [%sexp "Vcs.save_file", { perms : int option; path : Absolute_path.t }])
+         (lazy
+           (step_trace
+              "Vcs.save_file"
+              [ sexp_field' (Option.sexp_of_t Int.sexp_of_t) "perms" perms
+              ; sexp_field (module Absolute_path) "path" path
+              ]))
 ;;
 
 let read_dir (t : < Trait.file_system ; .. > t) ~dir =
   t#read_dir ~dir
-  |> of_result ~step:(lazy [%sexp "Vcs.read_dir", { dir : Absolute_path.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace "Vcs.read_dir" [ sexp_field (module Absolute_path) "dir" dir ]))
 ;;
 
 let add (t : < Trait.add ; .. > t) ~repo_root ~path =
   t#add ~repo_root ~path
   |> of_result
-       ~step:(lazy [%sexp "Vcs.add", { repo_root : Repo_root.t; path : Path_in_repo.t }])
+       ~step:
+         (lazy
+           (step_trace
+              "Vcs.add"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module Path_in_repo) "path" path
+              ]))
 ;;
 
 let init (t : < Trait.init ; .. > t) ~path =
-  t#init ~path |> of_result ~step:(lazy [%sexp "Vcs.init", { path : Absolute_path.t }])
+  t#init ~path
+  |> of_result
+       ~step:
+         (lazy (step_trace "Vcs.init" [ sexp_field (module Absolute_path) "path" path ]))
 ;;
 
 let find_enclosing_repo_root t ~from ~store =
@@ -91,17 +113,32 @@ let current_branch (t : < Trait.current_branch ; .. > t) ~repo_root =
    | Error _ as err -> err
    | Ok (Some b) -> Ok b
    | Ok None -> Error (Err.create [ Pp.text "Not currently on any branch." ]))
-  |> of_result ~step:(lazy [%sexp "Vcs.current_branch", { repo_root : Repo_root.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace
+              "Vcs.current_branch"
+              [ sexp_field (module Repo_root) "repo_root" repo_root ]))
 ;;
 
 let current_branch_opt (t : < Trait.current_branch ; .. > t) ~repo_root =
   t#current_branch ~repo_root
-  |> of_result ~step:(lazy [%sexp "Vcs.current_branch_opt", { repo_root : Repo_root.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace
+              "Vcs.current_branch_opt"
+              [ sexp_field (module Repo_root) "repo_root" repo_root ]))
 ;;
 
 let current_revision (t : < Trait.current_revision ; .. > t) ~repo_root =
   t#current_revision ~repo_root
-  |> of_result ~step:(lazy [%sexp "Vcs.current_revision", { repo_root : Repo_root.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace
+              "Vcs.current_revision"
+              [ sexp_field (module Repo_root) "repo_root" repo_root ]))
 ;;
 
 let commit
@@ -112,7 +149,12 @@ let commit
   (let open Result.Monad_syntax in
    let* () = t#commit ~repo_root ~commit_message in
    t#current_revision ~repo_root)
-  |> of_result ~step:(lazy [%sexp "Vcs.commit", { repo_root : Repo_root.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace
+              "Vcs.commit"
+              [ sexp_field (module Repo_root) "repo_root" repo_root ]))
 ;;
 
 let ls_files (t : < Trait.ls_files ; .. > t) ~repo_root ~below =
@@ -120,7 +162,11 @@ let ls_files (t : < Trait.ls_files ; .. > t) ~repo_root ~below =
   |> of_result
        ~step:
          (lazy
-           [%sexp "Vcs.ls_files", { repo_root : Repo_root.t; below : Path_in_repo.t }])
+           (step_trace
+              "Vcs.ls_files"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module Path_in_repo) "below" below
+              ]))
 ;;
 
 let rename_current_branch (t : < Trait.branch ; .. > t) ~repo_root ~to_ =
@@ -128,8 +174,11 @@ let rename_current_branch (t : < Trait.branch ; .. > t) ~repo_root ~to_ =
   |> of_result
        ~step:
          (lazy
-           [%sexp
-             "Vcs.rename_current_branch", { repo_root : Repo_root.t; to_ : Branch_name.t }])
+           (step_trace
+              "Vcs.rename_current_branch"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module Branch_name) "to_" to_
+              ]))
 ;;
 
 let name_status (t : < Trait.name_status ; .. > t) ~repo_root ~changed =
@@ -137,9 +186,11 @@ let name_status (t : < Trait.name_status ; .. > t) ~repo_root ~changed =
   |> of_result
        ~step:
          (lazy
-           [%sexp
-             "Vcs.name_status"
-           , { repo_root : Repo_root.t; changed : Name_status.Changed.t }])
+           (step_trace
+              "Vcs.name_status"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module Name_status.Changed) "changed" changed
+              ]))
 ;;
 
 let num_status (t : < Trait.num_status ; .. > t) ~repo_root ~changed =
@@ -147,18 +198,27 @@ let num_status (t : < Trait.num_status ; .. > t) ~repo_root ~changed =
   |> of_result
        ~step:
          (lazy
-           [%sexp
-             "Vcs.num_status", { repo_root : Repo_root.t; changed : Num_status.Changed.t }])
+           (step_trace
+              "Vcs.num_status"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module Num_status.Changed) "changed" changed
+              ]))
 ;;
 
 let log (t : < Trait.log ; .. > t) ~repo_root =
   t#get_log_lines ~repo_root
-  |> of_result ~step:(lazy [%sexp "Vcs.log", { repo_root : Repo_root.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace "Vcs.log" [ sexp_field (module Repo_root) "repo_root" repo_root ]))
 ;;
 
 let refs (t : < Trait.refs ; .. > t) ~repo_root =
   t#get_refs_lines ~repo_root
-  |> of_result ~step:(lazy [%sexp "Vcs.refs", { repo_root : Repo_root.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace "Vcs.refs" [ sexp_field (module Repo_root) "repo_root" repo_root ]))
 ;;
 
 let graph (t : < Trait.log ; Trait.refs ; .. > t) ~repo_root =
@@ -169,7 +229,12 @@ let graph (t : < Trait.log ; Trait.refs ; .. > t) ~repo_root =
    Graph.add_nodes graph ~log;
    Graph.set_refs graph ~refs;
    Result.return graph)
-  |> of_result ~step:(lazy [%sexp "Vcs.graph", { repo_root : Repo_root.t }])
+  |> of_result
+       ~step:
+         (lazy
+           (step_trace
+              "Vcs.graph"
+              [ sexp_field (module Repo_root) "repo_root" repo_root ]))
 ;;
 
 let set_user_name (t : < Trait.config ; .. > t) ~repo_root ~user_name =
@@ -177,8 +242,11 @@ let set_user_name (t : < Trait.config ; .. > t) ~repo_root ~user_name =
   |> of_result
        ~step:
          (lazy
-           [%sexp
-             "Vcs.set_user_name", { repo_root : Repo_root.t; user_name : User_name.t }])
+           (step_trace
+              "Vcs.set_user_name"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module User_name) "user_name" user_name
+              ]))
 ;;
 
 let set_user_email (t : < Trait.config ; .. > t) ~repo_root ~user_email =
@@ -186,8 +254,11 @@ let set_user_email (t : < Trait.config ; .. > t) ~repo_root ~user_email =
   |> of_result
        ~step:
          (lazy
-           [%sexp
-             "Vcs.set_user_email", { repo_root : Repo_root.t; user_email : User_email.t }])
+           (step_trace
+              "Vcs.set_user_email"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module User_email) "user_email" user_email
+              ]))
 ;;
 
 let show_file_at_rev (t : < Trait.show ; .. > t) ~repo_root ~rev ~path =
@@ -195,29 +266,38 @@ let show_file_at_rev (t : < Trait.show ; .. > t) ~repo_root ~rev ~path =
   |> of_result
        ~step:
          (lazy
-           [%sexp
-             "Vcs.show_file_at_rev"
-           , { repo_root : Repo_root.t; rev : Rev.t; path : Path_in_repo.t }])
+           (step_trace
+              "Vcs.show_file_at_rev"
+              [ sexp_field (module Repo_root) "repo_root" repo_root
+              ; sexp_field (module Rev) "rev" rev
+              ; sexp_field (module Path_in_repo) "path" path
+              ]))
 ;;
 
 let make_git_err_step ?env ?run_in_subdir ~repo_root ~args () =
-  [%sexp
+  step_trace
     "Vcs.git"
-  , { repo_root : Repo_root.t
-    ; run_in_subdir : (Path_in_repo.t option[@sexp.option])
-    ; env : (string array option[@sexp.option])
-    ; args : string list
-    }]
+    (List.filter_opt
+       [ Some (sexp_field (module Repo_root) "repo_root" repo_root)
+       ; Option.map run_in_subdir ~f:(fun run_in_subdir ->
+           sexp_field (module Path_in_repo) "run_in_subdir" run_in_subdir)
+       ; Option.map env ~f:(fun env ->
+           sexp_field' (Array.sexp_of_t String.sexp_of_t) "env" env)
+       ; Some (sexp_field' (List.sexp_of_t String.sexp_of_t) "args" args)
+       ])
 ;;
 
 let make_hg_err_step ?env ?run_in_subdir ~repo_root ~args () =
-  [%sexp
+  step_trace
     "Vcs.hg"
-  , { repo_root : Repo_root.t
-    ; run_in_subdir : (Path_in_repo.t option[@sexp.option])
-    ; env : (string array option[@sexp.option])
-    ; args : string list
-    }]
+    (List.filter_opt
+       [ Some (sexp_field (module Repo_root) "repo_root" repo_root)
+       ; Option.map run_in_subdir ~f:(fun run_in_subdir ->
+           sexp_field (module Path_in_repo) "run_in_subdir" run_in_subdir)
+       ; Option.map env ~f:(fun env ->
+           sexp_field' (Array.sexp_of_t String.sexp_of_t) "env" env)
+       ; Some (sexp_field' (List.sexp_of_t String.sexp_of_t) "args" args)
+       ])
 ;;
 
 let non_raising_git

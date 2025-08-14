@@ -44,7 +44,11 @@ module Result_impl = struct
       Error
         (Err.create
            [ Pp.text "Unexpected exit code."
-           ; Err.sexp [%sexp { accepted_codes : int list = List.map accept ~f:fst }]
+           ; Err.sexp
+               (sexp_field'
+                  (List.sexp_of_t Int.sexp_of_t)
+                  "accepted_codes"
+                  (List.map accept ~f:fst))
            ])
   ;;
 end

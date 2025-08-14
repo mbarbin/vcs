@@ -68,9 +68,9 @@ let%expect_test "small graph" =
   [%expect
     {|
     ((context
-       (Vcs.add (
+       (Vcs.add
          (repo_root <REDACTED>)
-         (path      unknown-file.txt)))
+         (path      unknown-file.txt))
        ((prog git)
         (args        (add    unknown-file.txt))
         (exit_status (Exited 128))
@@ -96,7 +96,7 @@ let%expect_test "small graph" =
   [%expect
     {|
     ((context
-       (Vcs.commit ((repo_root <REDACTED>)))
+       (Vcs.commit (repo_root <REDACTED>))
        ((prog git)
         (args (commit -m "Nothing to commit"))
         (exit_status (Exited 1))
@@ -181,9 +181,9 @@ let%expect_test "small graph" =
   [%expect
     {|
     ((context
-       (Vcs.ls_files (
+       (Vcs.ls_files
          (repo_root <REDACTED>)
-         (below     dir)))
+         (below     dir))
        ((prog git)
         (args (ls-files --full-name))
         (exit_status Unknown)

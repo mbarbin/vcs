@@ -35,9 +35,9 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.add (
-         (repo_root /path/to/repo)
-         (path      foo))))
+       Vcs.add
+       (repo_root /path/to/repo)
+       (path      foo)))
      (error
       "Trait [Vcs.Trait.add] method [add] is not available in this repository."))
     |}];
@@ -46,9 +46,9 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.rename_current_branch (
-         (repo_root /path/to/repo)
-         (to_       foo))))
+       Vcs.rename_current_branch
+       (repo_root /path/to/repo)
+       (to_       foo)))
      (error
       "Trait [Vcs.Trait.branch] method [rename_current_branch] is not available in this repository."))
     |}];
@@ -56,7 +56,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "_"));
   [%expect
     {|
-    ((context (Vcs.commit ((repo_root /path/to/repo))))
+    ((context (Vcs.commit (repo_root /path/to/repo)))
      (error
       "Trait [Vcs.Trait.commit] method [commit] is not available in this repository."))
     |}];
@@ -65,9 +65,9 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.set_user_name (
-         (repo_root /path/to/repo)
-         (user_name user1))))
+       Vcs.set_user_name
+       (repo_root /path/to/repo)
+       (user_name user1)))
      (error
       "Trait [Vcs.Trait.config] method [set_user_name] is not available in this repository."))
     |}];
@@ -76,9 +76,9 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.set_user_email (
-         (repo_root  /path/to/repo)
-         (user_email user1@mail.com))))
+       Vcs.set_user_email
+       (repo_root  /path/to/repo)
+       (user_email user1@mail.com)))
      (error
       "Trait [Vcs.Trait.config] method [set_user_email] is not available in this repository."))
     |}];
@@ -86,7 +86,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.current_branch vcs ~repo_root);
   [%expect
     {|
-    ((context (Vcs.current_branch ((repo_root /path/to/repo))))
+    ((context (Vcs.current_branch (repo_root /path/to/repo)))
      (error
       "Trait [Vcs.Trait.current_branch] method [current_branch] is not available in this repository."))
     |}];
@@ -94,7 +94,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.current_revision vcs ~repo_root);
   [%expect
     {|
-    ((context (Vcs.current_revision ((repo_root /path/to/repo))))
+    ((context (Vcs.current_revision (repo_root /path/to/repo)))
      (error
       "Trait [Vcs.Trait.current_revision] method [current_revision] is not available in this repository."))
     |}];
@@ -102,7 +102,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.load_file vcs ~path:(Absolute_path.v "/path/to/file"));
   [%expect
     {|
-    ((context (Vcs.load_file ((path /path/to/file))))
+    ((context (Vcs.load_file (path /path/to/file)))
      (error
       "Trait [Vcs.Trait.file_system] method [load_file] is not available in this repository."))
     |}];
@@ -113,14 +113,14 @@ let%expect_test "unimplemented" =
       ~file_contents:(Vcs.File_contents.create "Hello"));
   [%expect
     {|
-    ((context (Vcs.save_file ((perms ()) (path /path/to/file))))
+    ((context (Vcs.save_file (perms ()) (path /path/to/file)))
      (error
       "Trait [Vcs.Trait.file_system] method [save_file] is not available in this repository."))
     |}];
   test (fun () -> Vcs.read_dir vcs ~dir:(Absolute_path.v "/path/to/dir"));
   [%expect
     {|
-    ((context (Vcs.read_dir ((dir /path/to/dir))))
+    ((context (Vcs.read_dir (dir /path/to/dir)))
      (error
       "Trait [Vcs.Trait.file_system] method [read_dir] is not available in this repository."))
     |}];
@@ -128,7 +128,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.git vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Git.exit0);
   [%expect
     {|
-    ((context (Vcs.git ((repo_root /path/to/repo) (args (status)))))
+    ((context (Vcs.git (repo_root /path/to/repo) (args (status))))
      (error
       "Trait [Vcs.Trait.git] method [git] is not available in this repository."))
     |}];
@@ -136,7 +136,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.exit0);
   [%expect
     {|
-    ((context (Vcs.hg ((repo_root /path/to/repo) (args (status)))))
+    ((context (Vcs.hg (repo_root /path/to/repo) (args (status))))
      (error
       "Trait [Vcs.Trait.hg] method [hg] is not available in this repository."))
     |}];
@@ -144,7 +144,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.init vcs ~path:(Absolute_path.v "/path/to/dir"));
   [%expect
     {|
-    ((context (Vcs.init ((path /path/to/dir))))
+    ((context (Vcs.init (path /path/to/dir)))
      (error
       "Trait [Vcs.Trait.init] method [init] is not available in this repository."))
     |}];
@@ -152,7 +152,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.log vcs ~repo_root);
   [%expect
     {|
-    ((context (Vcs.log ((repo_root /path/to/repo))))
+    ((context (Vcs.log (repo_root /path/to/repo)))
      (error
       "Trait [Vcs.Trait.log] method [get_log_lines] is not available in this repository."))
     |}];
@@ -161,9 +161,9 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.ls_files (
-         (repo_root /path/to/repo)
-         (below     ./))))
+       Vcs.ls_files
+       (repo_root /path/to/repo)
+       (below     ./)))
      (error
       "Trait [Vcs.Trait.ls_files] method [ls_files] is not available in this repository."))
     |}];
@@ -173,12 +173,12 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.name_status (
-         (repo_root /path/to/repo)
-         (changed (
-           Between
-           (src 3e8f3b8084fe4864ab5ecf955a8cf5093e8f3b80)
-           (dst 8f2865699c137a14c65ae28b83fde96b8f286569))))))
+       Vcs.name_status
+       (repo_root /path/to/repo)
+       (changed (
+         Between
+         (src 3e8f3b8084fe4864ab5ecf955a8cf5093e8f3b80)
+         (dst 8f2865699c137a14c65ae28b83fde96b8f286569)))))
      (error
       "Trait [Vcs.Trait.name_status] method [name_status] is not available in this repository."))
     |}];
@@ -188,12 +188,12 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.num_status (
-         (repo_root /path/to/repo)
-         (changed (
-           Between
-           (src 3e8f3b8084fe4864ab5ecf955a8cf5093e8f3b80)
-           (dst 8f2865699c137a14c65ae28b83fde96b8f286569))))))
+       Vcs.num_status
+       (repo_root /path/to/repo)
+       (changed (
+         Between
+         (src 3e8f3b8084fe4864ab5ecf955a8cf5093e8f3b80)
+         (dst 8f2865699c137a14c65ae28b83fde96b8f286569)))))
      (error
       "Trait [Vcs.Trait.num_status] method [num_status] is not available in this repository."))
     |}];
@@ -201,7 +201,7 @@ let%expect_test "unimplemented" =
   test (fun () -> Vcs.refs vcs ~repo_root);
   [%expect
     {|
-    ((context (Vcs.refs ((repo_root /path/to/repo))))
+    ((context (Vcs.refs (repo_root /path/to/repo)))
      (error
       "Trait [Vcs.Trait.refs] method [get_refs_lines] is not available in this repository."))
     |}];
@@ -211,10 +211,10 @@ let%expect_test "unimplemented" =
   [%expect
     {|
     ((context (
-       Vcs.show_file_at_rev (
-         (repo_root /path/to/repo)
-         (rev       3e8f3b8084fe4864ab5ecf955a8cf5093e8f3b80)
-         (path      foo))))
+       Vcs.show_file_at_rev
+       (repo_root /path/to/repo)
+       (rev       3e8f3b8084fe4864ab5ecf955a8cf5093e8f3b80)
+       (path      foo)))
      (error
       "Trait [Vcs.Trait.show] method [show_file_at_rev] is not available in this repository."))
     |}];

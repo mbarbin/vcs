@@ -107,7 +107,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog git)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
@@ -137,7 +137,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog git)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
@@ -163,7 +163,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog git)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
@@ -193,7 +193,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog git)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
@@ -227,7 +227,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root /bogus) (args (rev-parse --abbrev-ref HEAD))))
+       (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
        ((prog git)
         (args (rev-parse --abbrev-ref HEAD))
         (exit_status Unknown)
@@ -263,7 +263,7 @@ let%expect_test "hello cli" =
     {|
     (Error (
       (context
-        (Vcs.git ((repo_root /bogus) (args (rev-parse --abbrev-ref HEAD))))
+        (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
         ((prog git)
          (args (rev-parse --abbrev-ref HEAD))
          (exit_status Unknown)
@@ -285,7 +285,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus)))
        ((prog git)
         (args (rev-parse --abbrev-ref bogus))
         (exit_status (Exited 128))
@@ -321,7 +321,7 @@ let%expect_test "hello cli" =
     {|
     (Error (
       (context
-        (Vcs.git ((repo_root /bogus) (args (rev-parse --abbrev-ref HEAD))))
+        (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
         ((prog git)
          (args (rev-parse --abbrev-ref HEAD))
          (exit_status Unknown)
@@ -362,7 +362,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse --abbrev-ref HEAD))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref HEAD)))
        ((prog git)
         (args (rev-parse --abbrev-ref HEAD))
         (exit_status Unknown)
@@ -375,7 +375,7 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus)))
        ((prog git)
         (args (rev-parse --abbrev-ref bogus))
         (exit_status (Exited 128))

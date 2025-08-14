@@ -73,7 +73,7 @@ let%expect_test "hello commit" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root /invalid/path) (args ())))
+       (Vcs.git (repo_root /invalid/path) (args ()))
        ((prog <REDACTED>)
         (args ())
         (exit_status Unknown)
@@ -100,7 +100,7 @@ let%expect_test "hello commit" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))

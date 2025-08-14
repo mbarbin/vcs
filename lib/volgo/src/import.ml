@@ -21,9 +21,24 @@
 
 open! Stdlib_compat
 
+module type To_sexpable = sig
+  type t
+
+  val sexp_of_t : t -> Sexp.t
+end
+
+let sexp_field' (type a) (sexp_of_a : a -> Sexp.t) field a =
+  Sexp.List [ Atom field; sexp_of_a a ]
+;;
+
+let sexp_field (type a) (module M : To_sexpable with type t = a) field a =
+  sexp_field' M.sexp_of_t field a
+;;
+
 module Array = struct
   include ArrayLabels
 
+  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_array
   let create ~len a = make len a
 
   let filter_mapi t ~f =
@@ -101,7 +116,13 @@ module Hashtbl = struct
 
     let add_exn t ~key ~data =
       if mem t key
-      then raise (E [%sexp "Hashtbl.add_exn: key already present", { key : H.t }])
+      then
+        raise
+          (E
+             (List
+                [ Atom "Hashtbl.add_exn: key already present"
+                ; sexp_field (module H) "key" key
+                ]))
       else add t ~key ~data
     ;;
 
@@ -158,11 +179,14 @@ module Int = struct
     aux 0 initial_skip_count;
     Buffer.contents buffer
   ;;
+
+  let sexp_of_t t = Sexp.Atom (to_string_hum t)
 end
 
 module List = struct
   include ListLabels
 
+  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_list
   let dedup_and_sort t ~compare = sort_uniq t ~cmp:compare
 
   let hd = function
@@ -179,6 +203,7 @@ end
 module Option = struct
   include Option
 
+  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_option
   let map t ~f = map f t
   let some_if cond a = if cond then Some a else None
 end
@@ -226,6 +251,7 @@ end
 module String = struct
   include StringLabels
 
+  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_string
   let to_string t = t
 
   let chop_prefix t ~prefix =

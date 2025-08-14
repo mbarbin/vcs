@@ -24,6 +24,7 @@ open! Stdlib_compat
 module Array : sig
   include module type of ArrayLabels
 
+  val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
   val create : len:int -> 'a -> 'a array
   val filter_mapi : 'a array -> f:(int -> 'a -> 'b option) -> 'b array
   val rev : 'a array -> 'a array
@@ -59,6 +60,7 @@ end
 module Int : sig
   include module type of Int
 
+  val sexp_of_t : t -> Sexp.t
   val incr : int ref -> unit
   val max_value : int
   val of_string : string -> int
@@ -69,6 +71,7 @@ end
 module List : sig
   include module type of ListLabels
 
+  val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
   val dedup_and_sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
   val filter_opt : 'a option list -> 'a list
   val find : 'a list -> f:('a -> bool) -> 'a option
@@ -80,6 +83,7 @@ end
 module Option : sig
   include module type of Option
 
+  val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
   val map : 'a option -> f:('a -> 'b) -> 'b option
   val some_if : bool -> 'a -> 'a option
 end
@@ -117,6 +121,7 @@ end
 module String : sig
   include module type of StringLabels
 
+  val sexp_of_t : t -> Sexp.t
   val to_string : string -> string
   val chop_prefix : string -> prefix:string -> string option
   val chop_suffix : string -> suffix:string -> string option
@@ -138,3 +143,14 @@ val equal_int : int -> int -> bool
 val equal_string : string -> string -> bool
 val equal_list : ('a -> 'a -> bool) -> 'a list -> 'a list -> bool
 val hash_string : string -> int
+
+(** {1 Sexp helper} *)
+
+module type To_sexpable = sig
+  type t
+
+  val sexp_of_t : t -> Sexp.t
+end
+
+val sexp_field : (module To_sexpable with type t = 'a) -> string -> 'a -> Sexp.t
+val sexp_field' : ('a -> Sexp.t) -> string -> 'a -> Sexp.t
