@@ -45,8 +45,8 @@ module Diff_status : sig
     | `X
     | `Not_supported
     ]
-  [@@deriving sexp_of]
 
+  val sexp_of_t : t -> Sexp.t
   val parse_exn : string -> t
 end
 

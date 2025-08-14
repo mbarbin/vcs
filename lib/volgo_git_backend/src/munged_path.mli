@@ -47,7 +47,7 @@ type t = Vcs.Num_status.Key.t =
       { src : Vcs.Path_in_repo.t
       ; dst : Vcs.Path_in_repo.t
       }
-[@@deriving sexp_of]
 
+val sexp_of_t : t -> Sexp.t
 val equal : t -> t -> bool
 val parse_exn : string -> t

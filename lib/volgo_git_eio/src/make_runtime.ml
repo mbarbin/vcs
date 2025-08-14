@@ -135,7 +135,18 @@ module Exit_status = struct
     [ `Exited of int
     | `Signaled of int
     ]
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (function
+     | `Exited v__001_ ->
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Exited"; sexp_of_int v__001_ ]
+     | `Signaled v__002_ ->
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Signaled"; sexp_of_int v__002_ ]
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 end
 
 module Lines = struct
