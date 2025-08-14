@@ -13,7 +13,14 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries astring fpath fpath-sexp0 pp pplumbing.err pplumbing.pp-tty)
+ (libraries
+  astring
+  fpath
+  fpath-sexp0
+  pp
+  pplumbing.err
+  pplumbing.pp-tty
+  sexplib0)
  (modules
   (:standard \ stdlib_compat4xx stdlib_compat5xx))
  (instrumentation
