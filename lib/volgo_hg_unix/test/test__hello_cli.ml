@@ -103,6 +103,39 @@ let%expect_test "hello cli" =
      (error "Expected exit code 0."))
     |}];
   let () =
+    match
+      Vcs.hg
+        vcs
+        ~env:[| "HELLO=env" |]
+        ~run_in_subdir:Vcs.Path_in_repo.root
+        ~repo_root
+        ~args:[ "bogus" ]
+        ~f:Vcs.Hg.exit0
+    with
+    | _ -> assert false
+    | exception Err.E err ->
+      print_s
+        (Vcs_test_helpers.redact_sexp
+           [%sexp (err : Err.t)]
+           ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
+  in
+  [%expect
+    {|
+    ((context
+       (Vcs.hg
+         (repo_root     <REDACTED>)
+         (run_in_subdir ./)
+         (env  (HELLO=env))
+         (args (bogus)))
+       ((prog <REDACTED>)
+        (args (bogus))
+        (exit_status (Exited 255))
+        (cwd    <REDACTED>)
+        (stdout "")
+        (stderr <REDACTED>)))
+     (error "Expected exit code 0."))
+    |}];
+  let () =
     match Vcs.Result.hg vcs ~repo_root ~args:[ "bogus" ] ~f:Vcs.Hg.Result.exit0 with
     | Ok _ -> assert false
     | Error err ->

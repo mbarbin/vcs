@@ -92,10 +92,15 @@ let%expect_test "hello cli" =
   (* Cases where the command fails. *)
   let () =
     match
-      Vcs.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
-        if output.exit_code = 0
-        then assert false [@coverage off]
-        else failwith "Hello invalid exit code")
+      Vcs.git
+        vcs
+        ~run_in_subdir:Vcs.Path_in_repo.root
+        ~repo_root
+        ~args:[ "rev-parse"; "INVALID-REF" ]
+        ~f:(fun output ->
+          if output.exit_code = 0
+          then assert false [@coverage off]
+          else failwith "Hello invalid exit code")
     with
     | _ -> assert false [@coverage off]
     | exception Err.E err ->
@@ -107,7 +112,10 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
+       (Vcs.git
+         (repo_root     <REDACTED>)
+         (run_in_subdir ./)
+         (args (rev-parse INVALID-REF)))
        ((prog git)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))

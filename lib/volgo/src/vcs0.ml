@@ -128,7 +128,8 @@ let current_branch_opt (t : < Trait.current_branch ; .. > t) ~repo_root =
          (lazy
            (step_trace
               "Vcs.current_branch_opt"
-              [ sexp_field (module Repo_root) "repo_root" repo_root ]))
+              [ sexp_field (module Repo_root) "repo_root" repo_root ])
+           [@coverage off])
 ;;
 
 let current_revision (t : < Trait.current_revision ; .. > t) ~repo_root =
@@ -234,7 +235,8 @@ let graph (t : < Trait.log ; Trait.refs ; .. > t) ~repo_root =
          (lazy
            (step_trace
               "Vcs.graph"
-              [ sexp_field (module Repo_root) "repo_root" repo_root ]))
+              [ sexp_field (module Repo_root) "repo_root" repo_root ])
+           [@coverage off])
 ;;
 
 let set_user_name (t : < Trait.config ; .. > t) ~repo_root ~user_name =
