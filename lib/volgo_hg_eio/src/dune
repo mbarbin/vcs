@@ -29,5 +29,4 @@
   (backend bisect_ppx))
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
- (preprocess
-  (pps -unused-code-warnings=force ppx_sexp_conv)))
+ (preprocess no_preprocessing))

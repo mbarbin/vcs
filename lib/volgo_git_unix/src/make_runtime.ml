@@ -113,7 +113,21 @@ module Exit_status = struct
     | `Stopped of int
     | `Unknown
     ]
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (function
+     | `Exited v__001_ ->
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Exited"; sexp_of_int v__001_ ]
+     | `Signaled v__002_ ->
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Signaled"; sexp_of_int v__002_ ]
+     | `Stopped v__003_ ->
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Stopped"; sexp_of_int v__003_ ]
+     | `Unknown -> Sexplib0.Sexp.Atom "Unknown"
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 end
 
 module Lines = struct

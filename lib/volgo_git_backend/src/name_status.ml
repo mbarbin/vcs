@@ -40,7 +40,27 @@ module Diff_status = struct
       | `X
       | `Not_supported
       ]
-    [@@deriving sexp_of]
+    [@@deriving_inline sexp_of]
+
+    let sexp_of_t =
+      (function
+       | `A -> Sexplib0.Sexp.Atom "A"
+       | `D -> Sexplib0.Sexp.Atom "D"
+       | `M -> Sexplib0.Sexp.Atom "M"
+       | `R -> Sexplib0.Sexp.Atom "R"
+       | `T -> Sexplib0.Sexp.Atom "T"
+       | `C -> Sexplib0.Sexp.Atom "C"
+       | `U -> Sexplib0.Sexp.Atom "U"
+       | `Q -> Sexplib0.Sexp.Atom "Q"
+       | `I -> Sexplib0.Sexp.Atom "I"
+       | `Question_mark -> Sexplib0.Sexp.Atom "Question_mark"
+       | `Bang -> Sexplib0.Sexp.Atom "Bang"
+       | `X -> Sexplib0.Sexp.Atom "X"
+       | `Not_supported -> Sexplib0.Sexp.Atom "Not_supported"
+       : t -> Sexplib0.Sexp.t)
+    ;;
+
+    [@@@deriving.end]
   end
 
   include T

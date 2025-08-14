@@ -29,7 +29,21 @@ module Status_code = struct
       | Dash
       | Num of int
       | Other of string
-    [@@deriving sexp_of]
+    [@@deriving_inline sexp_of]
+
+    let sexp_of_t =
+      (function
+       | Dash -> Sexplib0.Sexp.Atom "Dash"
+       | Num arg0__001_ ->
+         let res0__002_ = sexp_of_int arg0__001_ in
+         Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Num"; res0__002_ ]
+       | Other arg0__003_ ->
+         let res0__004_ = sexp_of_string arg0__003_ in
+         Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Other"; res0__004_ ]
+       : t -> Sexplib0.Sexp.t)
+    ;;
+
+    [@@@deriving.end]
   end
 
   include T
