@@ -55,7 +55,7 @@ Rev-parse.
   rev0
 
   $ volgo-vcs branch-revision unknown-branch
-  Error: Branch not found. (branch_name unknown-branch)
+  Error: Branch [unknown-branch] not found.
   [123]
 
 Testing a successful file show with git and via vcs.

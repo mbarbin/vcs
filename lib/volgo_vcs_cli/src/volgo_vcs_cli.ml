@@ -481,15 +481,12 @@ let branch_revision_cmd =
        with
        | Some ref -> ref.rev
        | None ->
-         raise
-           (Err.E
-              (Err.create
-                 [ Err.sexp
-                     (List
-                        [ Atom "Branch not found."
-                        ; sexp_field (module Vcs.Branch_name) "branch_name" branch_name
-                        ])
-                 ]))
+         Err.raise
+           Pp.O.
+             [ Pp.text "Branch "
+               ++ Pp_tty.id (module Vcs.Branch_name) branch_name
+               ++ Pp.text " not found."
+             ]
      in
      print_sexp (rev |> Vcs.Rev.sexp_of_t);
      ())
