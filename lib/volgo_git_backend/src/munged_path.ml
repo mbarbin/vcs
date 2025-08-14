@@ -79,7 +79,9 @@ let parse_exn str =
          (Err.add_context
             err
             [ Err.sexp
-                [%sexp
-                  "Volgo_git_backend.Munged_path.parse_exn", { path = (str : string) }]
+                (Sexp.List
+                   [ Sexp.Atom "Volgo_git_backend.Munged_path.parse_exn"
+                   ; sexp_field (module String) "path" str
+                   ])
             ]))
 ;;

@@ -30,4 +30,4 @@
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
  (modules_without_implementation runtime)
  (preprocess
-  (pps -unused-code-warnings=force ppx_sexp_conv ppx_sexp_value)))
+  (pps -unused-code-warnings=force ppx_sexp_conv)))

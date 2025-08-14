@@ -139,8 +139,6 @@
    (>= 0.0.14))
   (ppx_sexp_conv
    (>= v0.16))
-  (ppx_sexp_value
-   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (sexplib0
@@ -165,8 +163,6 @@
   (pplumbing
    (>= 0.0.14))
   (ppx_sexp_conv
-   (>= v0.16))
-  (ppx_sexp_value
    (>= v0.16))
   (ppxlib
    (>= 0.33))
@@ -194,8 +190,6 @@
   (pplumbing
    (>= 0.0.14))
   (ppx_sexp_conv
-   (>= v0.17))
-  (ppx_sexp_value
    (>= v0.17))
   (ppxlib
    (>= 0.33))
@@ -226,8 +220,6 @@
    (>= 0.0.14))
   (ppx_sexp_conv
    (>= v0.17))
-  (ppx_sexp_value
-   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (sexplib0
@@ -257,8 +249,6 @@
    (>= 0.0.14))
   (ppx_sexp_conv
    (>= v0.16))
-  (ppx_sexp_value
-   (>= v0.16))
   (ppxlib
    (>= 0.33))
   (sexplib0
@@ -287,8 +277,6 @@
   (pplumbing
    (>= 0.0.14))
   (ppx_sexp_conv
-   (>= v0.16))
-  (ppx_sexp_value
    (>= v0.16))
   (ppxlib
    (>= 0.33))

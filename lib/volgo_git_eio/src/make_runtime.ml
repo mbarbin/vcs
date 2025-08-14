@@ -143,9 +143,9 @@ module Lines = struct
 
   let sexp_of_t (t : t) =
     match t with
-    | [] -> [%sexp ""]
-    | [ hd ] -> [%sexp (hd : string)]
-    | _ :: _ :: _ as lines -> [%sexp (lines : string list)]
+    | [] -> Sexp.Atom ""
+    | [ hd ] -> Sexp.Atom (hd : string)
+    | _ :: _ :: _ as lines -> Sexp.List (List.map lines ~f:(fun line -> Sexp.Atom line))
   ;;
 
   let create string : t = String.split_lines string
@@ -193,7 +193,7 @@ let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
         (Err.E
            (Err.create
               [ Pp.text "Process exited abnormally."
-              ; (Err.sexp [%sexp { signal : int }] [@coverage off])
+              ; (Err.sexp (sexp_field (module Int) "signal" signal) [@coverage off])
               ])) [@coverage off]
     | `Exited exit_code ->
       (* A note regarding the [raise_notrace] below. These cases are indeed
@@ -222,14 +222,20 @@ let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
       (Err.add_context
          err
          [ Err.sexp
-             [%sexp
-               { prog : string
-               ; args : string list
-               ; exit_status = (!exit_status_r : [ Exit_status.t | `Unknown ])
-               ; cwd = (snd cwd : string)
-               ; stdout = (Lines.create !stdout_r : Lines.t)
-               ; stderr = (Lines.create !stderr_r : Lines.t)
-               }]
+             (Sexp.List
+                [ sexp_field (module String) "prog" prog
+                ; sexp_field' (List.sexp_of_t String.sexp_of_t) "args" args
+                ; sexp_field'
+                    (fun x ->
+                       match x with
+                       | #Exit_status.t as e -> Exit_status.sexp_of_t e
+                       | `Unknown -> Sexp.Atom "Unknown")
+                    "exit_status"
+                    !exit_status_r
+                ; sexp_field (module String) "cwd" (snd cwd)
+                ; sexp_field (module Lines) "stdout" (Lines.create !stdout_r)
+                ; sexp_field (module Lines) "stderr" (Lines.create !stderr_r)
+                ])
          ])
 ;;
 
