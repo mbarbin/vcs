@@ -27,7 +27,18 @@ module Vcs_kind = struct
   type t =
     | Git
     | Hg
-  [@@deriving enumerate, sexp_of]
+  [@@deriving_inline enumerate, sexp_of]
+
+  let all = ([ Git; Hg ] : t list)
+
+  let sexp_of_t =
+    (function
+     | Git -> Sexplib0.Sexp.Atom "Git"
+     | Hg -> Sexplib0.Sexp.Atom "Hg"
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
@@ -44,7 +55,40 @@ type t =
   ; user_handle : User_handle.t
   ; repo_name : Repo_name.t
   }
-[@@deriving sexp_of]
+[@@deriving_inline sexp_of]
+
+let sexp_of_t =
+  (fun { platform = platform__002_
+       ; vcs_kind = vcs_kind__004_
+       ; user_handle = user_handle__006_
+       ; repo_name = repo_name__008_
+       } ->
+     let bnds__001_ = ([] : _ Stdlib.List.t) in
+     let bnds__001_ =
+       let arg__009_ = Repo_name.sexp_of_t repo_name__008_ in
+       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "repo_name"; arg__009_ ] :: bnds__001_
+        : _ Stdlib.List.t)
+     in
+     let bnds__001_ =
+       let arg__007_ = User_handle.sexp_of_t user_handle__006_ in
+       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "user_handle"; arg__007_ ] :: bnds__001_
+        : _ Stdlib.List.t)
+     in
+     let bnds__001_ =
+       let arg__005_ = Vcs_kind.sexp_of_t vcs_kind__004_ in
+       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "vcs_kind"; arg__005_ ] :: bnds__001_
+        : _ Stdlib.List.t)
+     in
+     let bnds__001_ =
+       let arg__003_ = Platform.sexp_of_t platform__002_ in
+       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "platform"; arg__003_ ] :: bnds__001_
+        : _ Stdlib.List.t)
+     in
+     Sexplib0.Sexp.List bnds__001_
+   : t -> Sexplib0.Sexp.t)
+;;
+
+[@@@deriving.end]
 
 let compare = (Stdlib.compare : t -> t -> int)
 let equal = (( = ) : t -> t -> bool)
@@ -57,7 +101,18 @@ module Protocol = struct
   type t =
     | Ssh
     | Https
-  [@@deriving enumerate, sexp_of]
+  [@@deriving_inline enumerate, sexp_of]
+
+  let all = ([ Ssh; Https ] : t list)
+
+  let sexp_of_t =
+    (function
+     | Ssh -> Sexplib0.Sexp.Atom "Ssh"
+     | Https -> Sexplib0.Sexp.Atom "Https"
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
@@ -72,7 +127,18 @@ module Ssh_syntax = struct
   type t =
     | Scp_like
     | Url_style
-  [@@deriving enumerate, sexp_of]
+  [@@deriving_inline enumerate, sexp_of]
+
+  let all = ([ Scp_like; Url_style ] : t list)
+
+  let sexp_of_t =
+    (function
+     | Scp_like -> Sexplib0.Sexp.Atom "Scp_like"
+     | Url_style -> Sexplib0.Sexp.Atom "Url_style"
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
@@ -94,7 +160,46 @@ module Url = struct
     ; repo_name : Repo_name.t
     ; protocol : Protocol.t
     }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun { platform = platform__011_
+         ; vcs_kind = vcs_kind__013_
+         ; user_handle = user_handle__015_
+         ; repo_name = repo_name__017_
+         ; protocol = protocol__019_
+         } ->
+       let bnds__010_ = ([] : _ Stdlib.List.t) in
+       let bnds__010_ =
+         let arg__020_ = Protocol.sexp_of_t protocol__019_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "protocol"; arg__020_ ] :: bnds__010_
+          : _ Stdlib.List.t)
+       in
+       let bnds__010_ =
+         let arg__018_ = Repo_name.sexp_of_t repo_name__017_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "repo_name"; arg__018_ ] :: bnds__010_
+          : _ Stdlib.List.t)
+       in
+       let bnds__010_ =
+         let arg__016_ = User_handle.sexp_of_t user_handle__015_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "user_handle"; arg__016_ ] :: bnds__010_
+          : _ Stdlib.List.t)
+       in
+       let bnds__010_ =
+         let arg__014_ = Vcs_kind.sexp_of_t vcs_kind__013_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "vcs_kind"; arg__014_ ] :: bnds__010_
+          : _ Stdlib.List.t)
+       in
+       let bnds__010_ =
+         let arg__012_ = Platform.sexp_of_t platform__011_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "platform"; arg__012_ ] :: bnds__010_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List bnds__010_
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)

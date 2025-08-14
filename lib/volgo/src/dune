@@ -26,15 +26,22 @@
  (instrumentation
   (backend bisect_ppx))
  (lint
-  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+  (pps
+   -unused-code-warnings=force
+   ;; Actual linters
+   ppx_js_style
+   -allow-let-operators
+   -check-doc-comments
+   ;; Ppx used with deriving_inline
+   ppx_enumerate
+   ppx_sexp_conv))
  (modules_without_implementation
   error_intf
   process_intf
   process_output_handler_intf
   validated_string_intf
   vcs_intf)
- (preprocess
-  (pps -unused-code-warnings=force ppx_enumerate ppx_sexp_conv)))
+ (preprocess no_preprocessing))
 
 (rule
  (enabled_if

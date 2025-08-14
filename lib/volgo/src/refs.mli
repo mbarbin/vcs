@@ -34,13 +34,14 @@ module Line : sig
     { rev : Rev.t
     ; ref_kind : Ref_kind.t
     }
-  [@@deriving sexp_of]
 
+  val sexp_of_t : t -> Sexp.t
   val equal : t -> t -> bool
 end
 
-type t = Line.t list [@@deriving sexp_of]
+type t = Line.t list
 
+val sexp_of_t : t -> Sexp.t
 val equal : t -> t -> bool
 
 (** {1 Accessors} *)

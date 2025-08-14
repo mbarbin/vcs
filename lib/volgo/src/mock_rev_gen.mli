@@ -21,8 +21,9 @@
 
 (** Creating mock revisions for use in expect tests. *)
 
-type t [@@deriving sexp_of]
+type t
 
+val sexp_of_t : t -> Sexp.t
 val create : name:string -> t
 
 (** This is the main function provided by the module. Given a state, return a

@@ -62,7 +62,59 @@ module Change = struct
         ; dst : Path_in_repo.t
         ; similarity : int
         }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (function
+     | Added arg0__001_ ->
+       let res0__002_ = Path_in_repo.sexp_of_t arg0__001_ in
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Added"; res0__002_ ]
+     | Removed arg0__003_ ->
+       let res0__004_ = Path_in_repo.sexp_of_t arg0__003_ in
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Removed"; res0__004_ ]
+     | Modified arg0__005_ ->
+       let res0__006_ = Path_in_repo.sexp_of_t arg0__005_ in
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Modified"; res0__006_ ]
+     | Copied { src = src__008_; dst = dst__010_; similarity = similarity__012_ } ->
+       let bnds__007_ = ([] : _ Stdlib.List.t) in
+       let bnds__007_ =
+         let arg__013_ = sexp_of_int similarity__012_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "similarity"; arg__013_ ] :: bnds__007_
+          : _ Stdlib.List.t)
+       in
+       let bnds__007_ =
+         let arg__011_ = Path_in_repo.sexp_of_t dst__010_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__011_ ] :: bnds__007_
+          : _ Stdlib.List.t)
+       in
+       let bnds__007_ =
+         let arg__009_ = Path_in_repo.sexp_of_t src__008_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__009_ ] :: bnds__007_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Copied" :: bnds__007_)
+     | Renamed { src = src__015_; dst = dst__017_; similarity = similarity__019_ } ->
+       let bnds__014_ = ([] : _ Stdlib.List.t) in
+       let bnds__014_ =
+         let arg__020_ = sexp_of_int similarity__019_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "similarity"; arg__020_ ] :: bnds__014_
+          : _ Stdlib.List.t)
+       in
+       let bnds__014_ =
+         let arg__018_ = Path_in_repo.sexp_of_t dst__017_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__018_ ] :: bnds__014_
+          : _ Stdlib.List.t)
+       in
+       let bnds__014_ =
+         let arg__016_ = Path_in_repo.sexp_of_t src__015_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__016_ ] :: bnds__014_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Renamed" :: bnds__014_)
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal =
     (fun a__001_ b__002_ ->
@@ -94,7 +146,13 @@ module Change = struct
 end
 
 module T = struct
-  type t = Change.t list [@@deriving sexp_of]
+  type t = Change.t list [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun x__021_ -> sexp_of_list Change.sexp_of_t x__021_ : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 end
 
 include T
@@ -138,7 +196,26 @@ module Changed = struct
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun (Between { src = src__023_; dst = dst__025_ }) ->
+       let bnds__022_ = ([] : _ Stdlib.List.t) in
+       let bnds__022_ =
+         let arg__026_ = Rev.sexp_of_t dst__025_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__026_ ] :: bnds__022_
+          : _ Stdlib.List.t)
+       in
+       let bnds__022_ =
+         let arg__024_ = Rev.sexp_of_t src__023_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__024_ ] :: bnds__022_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Between" :: bnds__022_)
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal =
     (fun a__034_ b__035_ ->

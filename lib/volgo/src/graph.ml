@@ -46,7 +46,53 @@ module Node_kind = struct
           ; parent1 : Node.t
           ; parent2 : Node.t
           }
-    [@@deriving sexp_of]
+    [@@deriving_inline sexp_of]
+
+    let sexp_of_t =
+      (function
+       | Root { rev = rev__002_ } ->
+         let bnds__001_ = ([] : _ Stdlib.List.t) in
+         let bnds__001_ =
+           let arg__003_ = Rev.sexp_of_t rev__002_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__003_ ] :: bnds__001_
+            : _ Stdlib.List.t)
+         in
+         Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Root" :: bnds__001_)
+       | Commit { rev = rev__005_; parent = parent__007_ } ->
+         let bnds__004_ = ([] : _ Stdlib.List.t) in
+         let bnds__004_ =
+           let arg__008_ = Node.sexp_of_t parent__007_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "parent"; arg__008_ ] :: bnds__004_
+            : _ Stdlib.List.t)
+         in
+         let bnds__004_ =
+           let arg__006_ = Rev.sexp_of_t rev__005_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__006_ ] :: bnds__004_
+            : _ Stdlib.List.t)
+         in
+         Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Commit" :: bnds__004_)
+       | Merge { rev = rev__010_; parent1 = parent1__012_; parent2 = parent2__014_ } ->
+         let bnds__009_ = ([] : _ Stdlib.List.t) in
+         let bnds__009_ =
+           let arg__015_ = Node.sexp_of_t parent2__014_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "parent2"; arg__015_ ] :: bnds__009_
+            : _ Stdlib.List.t)
+         in
+         let bnds__009_ =
+           let arg__013_ = Node.sexp_of_t parent1__012_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "parent1"; arg__013_ ] :: bnds__009_
+            : _ Stdlib.List.t)
+         in
+         let bnds__009_ =
+           let arg__011_ = Rev.sexp_of_t rev__010_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__011_ ] :: bnds__009_
+            : _ Stdlib.List.t)
+         in
+         Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Merge" :: bnds__009_)
+       : t -> Sexplib0.Sexp.t)
+    ;;
+
+    [@@@deriving.end]
 
     let equal =
       (fun a__001_ b__002_ ->
@@ -395,7 +441,20 @@ module Descendance = struct
     | Strict_ancestor
     | Strict_descendant
     | Other
-  [@@deriving enumerate, sexp_of]
+  [@@deriving_inline enumerate, sexp_of]
+
+  let all = ([ Same_node; Strict_ancestor; Strict_descendant; Other ] : t list)
+
+  let sexp_of_t =
+    (function
+     | Same_node -> Sexplib0.Sexp.Atom "Same_node"
+     | Strict_ancestor -> Sexplib0.Sexp.Atom "Strict_ancestor"
+     | Strict_descendant -> Sexplib0.Sexp.Atom "Strict_descendant"
+     | Other -> Sexplib0.Sexp.Atom "Other"
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let compare = (compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
@@ -440,7 +499,26 @@ module Subgraph = struct
       { log : Log.t
       ; refs : Refs.t
       }
-    [@@deriving sexp_of]
+    [@@deriving_inline sexp_of]
+
+    let sexp_of_t =
+      (fun { log = log__017_; refs = refs__019_ } ->
+         let bnds__016_ = ([] : _ Stdlib.List.t) in
+         let bnds__016_ =
+           let arg__020_ = Refs.sexp_of_t refs__019_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "refs"; arg__020_ ] :: bnds__016_
+            : _ Stdlib.List.t)
+         in
+         let bnds__016_ =
+           let arg__018_ = Log.sexp_of_t log__017_ in
+           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "log"; arg__018_ ] :: bnds__016_
+            : _ Stdlib.List.t)
+         in
+         Sexplib0.Sexp.List bnds__016_
+       : t -> Sexplib0.Sexp.t)
+    ;;
+
+    [@@@deriving.end]
   end
 
   include T
@@ -513,7 +591,60 @@ module Summary = struct
     ; leaves : (Rev.t * string list) list
     ; subgraphs : t list [@sexp_drop_if List.is_empty]
     }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let rec sexp_of_t =
+    (let (drop_if__037_ : t list -> Stdlib.Bool.t) = List.is_empty in
+     fun { refs = refs__022_
+         ; roots = roots__028_
+         ; leaves = leaves__030_
+         ; subgraphs = subgraphs__038_
+         } ->
+       let bnds__021_ = ([] : _ Stdlib.List.t) in
+       let bnds__021_ =
+         if drop_if__037_ subgraphs__038_
+         then bnds__021_
+         else (
+           let arg__040_ = (sexp_of_list sexp_of_t) subgraphs__038_ in
+           let bnd__039_ =
+             Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "subgraphs"; arg__040_ ]
+           in
+           (bnd__039_ :: bnds__021_ : _ Stdlib.List.t))
+       in
+       let bnds__021_ =
+         let arg__031_ =
+           sexp_of_list
+             (fun (arg0__032_, arg1__033_) ->
+                let res0__034_ = Rev.sexp_of_t arg0__032_
+                and res1__035_ = sexp_of_list sexp_of_string arg1__033_ in
+                Sexplib0.Sexp.List [ res0__034_; res1__035_ ])
+             leaves__030_
+         in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "leaves"; arg__031_ ] :: bnds__021_
+          : _ Stdlib.List.t)
+       in
+       let bnds__021_ =
+         let arg__029_ = sexp_of_list Rev.sexp_of_t roots__028_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "roots"; arg__029_ ] :: bnds__021_
+          : _ Stdlib.List.t)
+       in
+       let bnds__021_ =
+         let arg__023_ =
+           sexp_of_list
+             (fun (arg0__024_, arg1__025_) ->
+                let res0__026_ = Rev.sexp_of_t arg0__024_
+                and res1__027_ = sexp_of_string arg1__025_ in
+                Sexplib0.Sexp.List [ res0__026_; res1__027_ ])
+             refs__022_
+         in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "refs"; arg__023_ ] :: bnds__021_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List bnds__021_
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 end
 
 let rec summary t =

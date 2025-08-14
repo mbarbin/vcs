@@ -19,7 +19,15 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t = [ `Vcs of Err.t ] [@@deriving sexp_of]
+type t = [ `Vcs of Err.t ] [@@deriving_inline sexp_of]
+
+let sexp_of_t =
+  (fun (`Vcs v__001_) ->
+     Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Vcs"; Err.sexp_of_t v__001_ ]
+   : t -> Sexplib0.Sexp.t)
+;;
+
+[@@@deriving.end]
 
 let of_err err = `Vcs err
 let to_err (`Vcs err) = err

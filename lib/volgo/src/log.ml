@@ -35,7 +35,53 @@ module Line = struct
         ; parent1 : Rev.t
         ; parent2 : Rev.t
         }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (function
+     | Root { rev = rev__002_ } ->
+       let bnds__001_ = ([] : _ Stdlib.List.t) in
+       let bnds__001_ =
+         let arg__003_ = Rev.sexp_of_t rev__002_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__003_ ] :: bnds__001_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Root" :: bnds__001_)
+     | Commit { rev = rev__005_; parent = parent__007_ } ->
+       let bnds__004_ = ([] : _ Stdlib.List.t) in
+       let bnds__004_ =
+         let arg__008_ = Rev.sexp_of_t parent__007_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "parent"; arg__008_ ] :: bnds__004_
+          : _ Stdlib.List.t)
+       in
+       let bnds__004_ =
+         let arg__006_ = Rev.sexp_of_t rev__005_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__006_ ] :: bnds__004_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Commit" :: bnds__004_)
+     | Merge { rev = rev__010_; parent1 = parent1__012_; parent2 = parent2__014_ } ->
+       let bnds__009_ = ([] : _ Stdlib.List.t) in
+       let bnds__009_ =
+         let arg__015_ = Rev.sexp_of_t parent2__014_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "parent2"; arg__015_ ] :: bnds__009_
+          : _ Stdlib.List.t)
+       in
+       let bnds__009_ =
+         let arg__013_ = Rev.sexp_of_t parent1__012_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "parent1"; arg__013_ ] :: bnds__009_
+          : _ Stdlib.List.t)
+       in
+       let bnds__009_ =
+         let arg__011_ = Rev.sexp_of_t rev__010_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__011_ ] :: bnds__009_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Merge" :: bnds__009_)
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal =
     (fun a__001_ b__002_ ->
@@ -66,7 +112,13 @@ end
 module T = struct
   [@@@coverage off]
 
-  type t = Line.t list [@@deriving sexp_of]
+  type t = Line.t list [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun x__016_ -> sexp_of_list Line.sexp_of_t x__016_ : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal a b = equal_list Line.equal a b
 end

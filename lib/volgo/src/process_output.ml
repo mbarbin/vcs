@@ -27,7 +27,31 @@ module T = struct
     ; stdout : string
     ; stderr : string
     }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun { exit_code = exit_code__002_; stdout = stdout__004_; stderr = stderr__006_ } ->
+       let bnds__001_ = ([] : _ Stdlib.List.t) in
+       let bnds__001_ =
+         let arg__007_ = sexp_of_string stderr__006_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "stderr"; arg__007_ ] :: bnds__001_
+          : _ Stdlib.List.t)
+       in
+       let bnds__001_ =
+         let arg__005_ = sexp_of_string stdout__004_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "stdout"; arg__005_ ] :: bnds__001_
+          : _ Stdlib.List.t)
+       in
+       let bnds__001_ =
+         let arg__003_ = sexp_of_int exit_code__002_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "exit_code"; arg__003_ ] :: bnds__001_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List bnds__001_
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 end
 
 include T

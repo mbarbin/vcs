@@ -21,8 +21,13 @@
 
 (** An [Vcs] API based on [Result] and [Vcs.Err]. *)
 
-type err = Err.t [@@deriving sexp_of]
-type 'a t = ('a, err) Result.t [@@deriving sexp_of]
+type err = Err.t
+
+val sexp_of_err : err -> Sexp.t
+
+type 'a t = ('a, err) Result.t
+
+val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
 
 (** {1 Non raising API}
 

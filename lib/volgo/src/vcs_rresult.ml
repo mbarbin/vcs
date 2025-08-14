@@ -21,8 +21,16 @@
 
 open! Import
 
-type err = Vcs_rresult0.t [@@deriving sexp_of]
-type 'a t = ('a, err) Result.t [@@deriving sexp_of]
+type err = Vcs_rresult0.t
+
+let sexp_of_err = Vcs_rresult0.sexp_of_t
+
+type 'a t = ('a, err) Result.t
+
+let sexp_of_t : 'a. ('a -> Sexplib0.Sexp.t) -> 'a t -> Sexplib0.Sexp.t =
+  fun _of_a__001_ -> fun x__002_ -> Result.sexp_of_t _of_a__001_ sexp_of_err x__002_
+;;
+
 type 'a result = 'a t
 
 include Non_raising.Make (Vcs_rresult0)

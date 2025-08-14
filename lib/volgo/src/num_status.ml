@@ -30,7 +30,30 @@ module Key = struct
         { src : Path_in_repo.t
         ; dst : Path_in_repo.t
         }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (function
+     | One_file arg0__001_ ->
+       let res0__002_ = Path_in_repo.sexp_of_t arg0__001_ in
+       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "One_file"; res0__002_ ]
+     | Two_files { src = src__004_; dst = dst__006_ } ->
+       let bnds__003_ = ([] : _ Stdlib.List.t) in
+       let bnds__003_ =
+         let arg__007_ = Path_in_repo.sexp_of_t dst__006_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__007_ ] :: bnds__003_
+          : _ Stdlib.List.t)
+       in
+       let bnds__003_ =
+         let arg__005_ = Path_in_repo.sexp_of_t src__004_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__005_ ] :: bnds__003_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Two_files" :: bnds__003_)
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let compare =
     (fun a__001_ b__002_ ->
@@ -74,7 +97,18 @@ module Change = struct
     type t =
       | Num_lines_in_diff of Num_lines_in_diff.t
       | Binary_file
-    [@@deriving sexp_of]
+    [@@deriving_inline sexp_of]
+
+    let sexp_of_t =
+      (function
+       | Num_lines_in_diff arg0__008_ ->
+         let res0__009_ = Num_lines_in_diff.sexp_of_t arg0__008_ in
+         Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Num_lines_in_diff"; res0__009_ ]
+       | Binary_file -> Sexplib0.Sexp.Atom "Binary_file"
+       : t -> Sexplib0.Sexp.t)
+    ;;
+
+    [@@@deriving.end]
 
     let equal =
       (fun a__008_ b__009_ ->
@@ -95,7 +129,26 @@ module Change = struct
     { key : Key.t
     ; num_stat : Num_stat.t
     }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun { key = key__011_; num_stat = num_stat__013_ } ->
+       let bnds__010_ = ([] : _ Stdlib.List.t) in
+       let bnds__010_ =
+         let arg__014_ = Num_stat.sexp_of_t num_stat__013_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "num_stat"; arg__014_ ] :: bnds__010_
+          : _ Stdlib.List.t)
+       in
+       let bnds__010_ =
+         let arg__012_ = Key.sexp_of_t key__011_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "key"; arg__012_ ] :: bnds__010_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List bnds__010_
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal =
     (fun a__014_ b__015_ ->
@@ -109,7 +162,13 @@ module Change = struct
 end
 
 module T = struct
-  type t = Change.t list [@@deriving sexp_of]
+  type t = Change.t list [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun x__015_ -> sexp_of_list Change.sexp_of_t x__015_ : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 end
 
 include T
@@ -122,7 +181,26 @@ module Changed = struct
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving sexp_of]
+  [@@deriving_inline sexp_of]
+
+  let sexp_of_t =
+    (fun (Between { src = src__017_; dst = dst__019_ }) ->
+       let bnds__016_ = ([] : _ Stdlib.List.t) in
+       let bnds__016_ =
+         let arg__020_ = Rev.sexp_of_t dst__019_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__020_ ] :: bnds__016_
+          : _ Stdlib.List.t)
+       in
+       let bnds__016_ =
+         let arg__018_ = Rev.sexp_of_t src__017_ in
+         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__018_ ] :: bnds__016_
+          : _ Stdlib.List.t)
+       in
+       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Between" :: bnds__016_)
+     : t -> Sexplib0.Sexp.t)
+  ;;
+
+  [@@@deriving.end]
 
   let equal =
     (fun a__022_ b__023_ ->

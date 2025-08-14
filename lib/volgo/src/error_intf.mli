@@ -29,7 +29,9 @@ module type S = sig
       [Vcs.Non_raising.Make]. *)
 
   (** [t] must represent the type of errors in your monad. *)
-  type t [@@deriving sexp_of]
+  type t
+
+  val sexp_of_t : t -> Sexp.t
 
   (** The conversion functions you need to provide. *)
 

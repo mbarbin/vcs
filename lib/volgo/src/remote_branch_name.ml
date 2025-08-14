@@ -27,7 +27,26 @@ type t =
   { remote_name : Remote_name.t
   ; branch_name : Branch_name.t
   }
-[@@deriving sexp_of]
+[@@deriving_inline sexp_of]
+
+let sexp_of_t =
+  (fun { remote_name = remote_name__002_; branch_name = branch_name__004_ } ->
+     let bnds__001_ = ([] : _ Stdlib.List.t) in
+     let bnds__001_ =
+       let arg__005_ = Branch_name.sexp_of_t branch_name__004_ in
+       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "branch_name"; arg__005_ ] :: bnds__001_
+        : _ Stdlib.List.t)
+     in
+     let bnds__001_ =
+       let arg__003_ = Remote_name.sexp_of_t remote_name__002_ in
+       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "remote_name"; arg__003_ ] :: bnds__001_
+        : _ Stdlib.List.t)
+     in
+     Sexplib0.Sexp.List bnds__001_
+   : t -> Sexplib0.Sexp.t)
+;;
+
+[@@@deriving.end]
 
 let compare =
   (fun a__001_ b__002_ ->
