@@ -47,12 +47,6 @@
    (>= 2.0.0))
   (pplumbing
    (>= 0.0.14))
-  (ppx_enumerate
-   (>= v0.16))
-  (ppx_sexp_conv
-   (>= v0.16))
-  (ppxlib
-   (>= 0.33))
   (sexplib0
    (>= v0.16))))
 
