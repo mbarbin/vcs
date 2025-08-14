@@ -483,24 +483,23 @@ let%expect_test "parse_lines_exn" =
     {|
     ("" (
       Error (
-        (context (Volgo_git_backend.Num_status.parse_line_exn ((line ""))))
+        (context (Volgo_git_backend.Num_status.parse_line_exn (line "")))
         (error "Unexpected output from git diff."))))
     (file (
       Error (
-        (context (Volgo_git_backend.Num_status.parse_line_exn ((line file))))
+        (context (Volgo_git_backend.Num_status.parse_line_exn (line file)))
         (error "Unexpected output from git diff."))))
     ("A\tB" (
       Error (
-        (context (Volgo_git_backend.Num_status.parse_line_exn ((line "A\tB"))))
+        (context (Volgo_git_backend.Num_status.parse_line_exn (line "A\tB")))
         (error "Unexpected output from git diff."))))
     ("A\tB\tC\tD" (
       Error (
-        (context (
-          Volgo_git_backend.Num_status.parse_line_exn ((line "A\tB\tC\tD"))))
+        (context (Volgo_git_backend.Num_status.parse_line_exn (line "A\tB\tC\tD")))
         (error "Unexpected output from git diff."))))
     ("A\tB\tC" (
       Error (
-        (context (Volgo_git_backend.Num_status.parse_line_exn ((line "A\tB\tC"))))
+        (context (Volgo_git_backend.Num_status.parse_line_exn (line "A\tB\tC")))
         (error "Unexpected output from git diff." (
           (insertions (Other A))
           (deletions  (Other B)))))))
@@ -535,19 +534,18 @@ let%expect_test "parse_lines_exn" =
     ("-\t10\tfile" (
       Error (
         (context (
-          Volgo_git_backend.Num_status.parse_line_exn ((line "-\t10\tfile"))))
+          Volgo_git_backend.Num_status.parse_line_exn (line "-\t10\tfile")))
         (error "Unexpected output from git diff." (
           (insertions Dash) (deletions (Num 10)))))))
     ("7\t-\tfile" (
       Error (
-        (context (
-          Volgo_git_backend.Num_status.parse_line_exn ((line "7\t-\tfile"))))
+        (context (Volgo_git_backend.Num_status.parse_line_exn (line "7\t-\tfile")))
         (error "Unexpected output from git diff." (
           (insertions (Num 7)) (deletions Dash))))))
     ("-2\t-10\tfile" (
       Error (
         (context (
-          Volgo_git_backend.Num_status.parse_line_exn ((line "-2\t-10\tfile"))))
+          Volgo_git_backend.Num_status.parse_line_exn (line "-2\t-10\tfile")))
         (error "Unexpected output from git diff." (
           (insertions (Other -2))
           (deletions  (Other -10)))))))
@@ -555,8 +553,8 @@ let%expect_test "parse_lines_exn" =
       Error (
         (context
           (Volgo_git_backend.Num_status.parse_line_exn
-           ((line "1985\t0\tfile1 => /tmp/file2")))
-          (Volgo_git_backend.Munged_path.parse_exn ((path "file1 => /tmp/file2"))))
+           (line "1985\t0\tfile1 => /tmp/file2"))
+          (Volgo_git_backend.Munged_path.parse_exn (path "file1 => /tmp/file2")))
         (error (Invalid_argument "\"/tmp/file2\": not a relative path")))))
     ("12\t6\ttemplate/{{ project_slug }}.opam" (
       Ok (

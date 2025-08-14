@@ -80,7 +80,7 @@ let%expect_test "invalid lines" =
   require_does_raise [%here] (fun () -> test "");
   [%expect
     {|
-    ((context (Volgo_git_backend.Log.parse_log_line_exn ((line ""))))
+    ((context (Volgo_git_backend.Log.parse_log_line_exn (line "")))
      (error (Invalid_argument "\"\": invalid rev")))
     |}];
   require_does_raise [%here] (fun () ->
@@ -90,9 +90,9 @@ let%expect_test "invalid lines" =
   [%expect
     {|
     ((context (
-       Volgo_git_backend.Log.parse_log_line_exn ((
+       Volgo_git_backend.Log.parse_log_line_exn (
          line
-         "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b"))))
+         "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b")))
      (error "Too many words (expected 1, 2, or 3)."))
     |}];
   ()

@@ -228,54 +228,59 @@ let%expect_test "parse_lines_exn" =
     {|
     ("" (
       Error (
-        (context (Volgo_git_backend.Name_status.parse_line_exn ((line ""))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "")))
         (error "Unexpected output from git status."))))
     (file (
       Error (
-        (context (Volgo_git_backend.Name_status.parse_line_exn ((line file))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line file)))
         (error "Unexpected output from git status."))))
     ("A\tfile1" (Ok (Added file1)))
     ("D\tfile2" (Ok (Removed file2)))
     ("M\tfile3" (Ok (Modified file3)))
     ("U\tfile4" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "U\tfile4"))))
-        (error "Unexpected status:" (U U)))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "U\tfile4")))
+        (error "Unexpected status:" (
+          (status U)
+          (other  U))))))
     ("Q\tfile5" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "Q\tfile5"))))
-        (error "Unexpected status:" (Q Q)))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "Q\tfile5")))
+        (error "Unexpected status:" (
+          (status Q)
+          (other  Q))))))
     ("I\tfile6" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "I\tfile6"))))
-        (error "Unexpected status:" (I I)))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "I\tfile6")))
+        (error "Unexpected status:" (
+          (status I)
+          (other  I))))))
     ("?\tfile7" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "?\tfile7"))))
-        (error "Unexpected status:" (? Question_mark)))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "?\tfile7")))
+        (error "Unexpected status:" (
+          (status ?)
+          (other  Question_mark))))))
     ("!\tfile8" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "!\tfile8"))))
-        (error "Unexpected status:" (! Bang)))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "!\tfile8")))
+        (error "Unexpected status:" (
+          (status !)
+          (other  Bang))))))
     ("X\tfile9" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "X\tfile9"))))
-        (error "Unexpected status:" (X X)))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "X\tfile9")))
+        (error "Unexpected status:" (
+          (status X)
+          (other  X))))))
     ("R\tfile10" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "R\tfile10"))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "R\tfile10")))
         (error (Failure "Int.of_string: \"\"")))))
     ("R35\tfile10" (
       Error (
         (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "R35\tfile10"))))
+          Volgo_git_backend.Name_status.parse_line_exn (line "R35\tfile10")))
         (error "Unexpected output from git status."))))
     ("R35\tfile1\tfile2" (
       Ok (
@@ -286,8 +291,7 @@ let%expect_test "parse_lines_exn" =
     ("T\tfile1" (Ok (Modified file1)))
     ("C\tfile11" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "C\tfile11"))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "C\tfile11")))
         (error (Failure "Int.of_string: \"\"")))))
     ("C75\tfile1\tfile2" (
       Ok (
@@ -297,9 +301,10 @@ let%expect_test "parse_lines_exn" =
         (similarity 75))))
     ("Z\tfile12" (
       Error (
-        (context (
-          Volgo_git_backend.Name_status.parse_line_exn ((line "Z\tfile12"))))
-        (error "Unexpected status:" (Z Not_supported)))))
+        (context (Volgo_git_backend.Name_status.parse_line_exn (line "Z\tfile12")))
+        (error "Unexpected status:" (
+          (status Z)
+          (other  Not_supported))))))
     |}];
   ()
 ;;

@@ -63,8 +63,10 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
                     (Err.create
                        [ Pp.text "Unexpected output from git diff."
                        ; Err.sexp
-                           [%sexp
-                             { insertions : Status_code.t; deletions : Status_code.t }]
+                           (Sexp.List
+                              [ sexp_field (module Status_code) "insertions" insertions
+                              ; sexp_field (module Status_code) "deletions" deletions
+                              ])
                        ])))
         })
   with
@@ -75,7 +77,10 @@ let parse_line_exn ~line : Vcs.Num_status.Change.t =
          (Err.add_context
             err
             [ Err.sexp
-                [%sexp "Volgo_git_backend.Num_status.parse_line_exn", { line : string }]
+                (Sexp.List
+                   [ Sexp.Atom "Volgo_git_backend.Num_status.parse_line_exn"
+                   ; sexp_field (module String) "line" line
+                   ])
             ]))
 ;;
 

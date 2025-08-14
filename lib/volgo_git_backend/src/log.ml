@@ -44,8 +44,10 @@ let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
          (Err.add_context
             err
             [ Err.sexp
-                [%sexp
-                  "Volgo_git_backend.Log.parse_log_line_exn", { line = (str : string) }]
+                (Sexp.List
+                   [ Sexp.Atom "Volgo_git_backend.Log.parse_log_line_exn"
+                   ; sexp_field (module String) "line" str
+                   ])
             ]))
 ;;
 

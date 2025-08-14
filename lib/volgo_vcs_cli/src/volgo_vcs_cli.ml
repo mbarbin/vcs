@@ -42,9 +42,10 @@ let find_enclosing_repo vcs ~from =
   | None ->
     Err.raise
       [ Err.sexp
-          [%sexp
-            "Failed to locate enclosing repo root from directory."
-          , { from : Absolute_path.t }]
+          (List
+             [ Atom "Failed to locate enclosing repo root from directory."
+             ; sexp_field (module Absolute_path) "from" from
+             ])
       ]
 ;;
 
@@ -81,7 +82,13 @@ let relativize ~repo_root ~cwd ~path =
   with
   | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
   | None ->
-    Err.raise [ Err.sexp [%sexp "Path is not in repo.", { path : Absolute_path.t }] ]
+    Err.raise
+      [ Err.sexp
+          (List
+             [ Atom "Path is not in repo."
+             ; sexp_field (module Absolute_path) "path" path
+             ])
+      ]
 ;;
 
 open Command.Std
@@ -118,7 +125,7 @@ let commit_cmd =
      and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"Suppress output on success." in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.commit vcs ~repo_root ~commit_message in
-     if not quiet then print_sexp [%sexp (rev : Vcs.Rev.t)];
+     if not quiet then print_sexp (rev |> Vcs.Rev.sexp_of_t);
      ())
 ;;
 
@@ -136,10 +143,10 @@ let current_branch_cmd =
      (match opt with
       | true ->
         let branch = Vcs.current_branch_opt vcs ~repo_root in
-        print_sexp [%sexp (branch : Vcs.Branch_name.t option)]
+        print_sexp (branch |> Option.sexp_of_t Vcs.Branch_name.sexp_of_t)
       | false ->
         let branch = Vcs.current_branch vcs ~repo_root in
-        print_sexp [%sexp (branch : Vcs.Branch_name.t)]);
+        print_sexp (branch |> Vcs.Branch_name.sexp_of_t));
      ())
 ;;
 
@@ -149,7 +156,7 @@ let current_revision_cmd =
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.current_revision vcs ~repo_root in
-     print_sexp [%sexp (rev : Vcs.Rev.t)];
+     print_sexp (rev |> Vcs.Rev.sexp_of_t);
      ())
 ;;
 
@@ -215,7 +222,7 @@ let init_cmd =
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
      let repo_root = Vcs.init vcs ~path in
-     if not quiet then print_sexp [%sexp (repo_root : Vcs.Repo_root.t)] [@coverage off];
+     if not quiet then print_sexp (repo_root |> Vcs.Repo_root.sexp_of_t) [@coverage off];
      ())
 ;;
 
@@ -278,7 +285,7 @@ let log_cmd =
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let log = Vcs.log vcs ~repo_root in
-     print_sexp [%sexp (log : Vcs.Log.t)];
+     print_sexp (log |> Vcs.Log.sexp_of_t);
      ())
 ;;
 
@@ -300,7 +307,7 @@ let name_status_cmd =
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
-     print_sexp [%sexp (name_status : Vcs.Name_status.t)];
+     print_sexp (name_status |> Vcs.Name_status.sexp_of_t);
      ())
 ;;
 
@@ -322,7 +329,7 @@ let num_status_cmd =
      in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
-     print_sexp [%sexp (num_status : Vcs.Num_status.t)];
+     print_sexp (num_status |> Vcs.Num_status.sexp_of_t);
      ())
 ;;
 
@@ -339,7 +346,7 @@ let read_dir_cmd =
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let dir = Absolute_path.relativize ~root:cwd dir in
      let entries = Vcs.read_dir vcs ~dir in
-     print_sexp [%sexp (entries : Fsegment.t list)];
+     print_sexp (entries |> List.sexp_of_t Fsegment.sexp_of_t);
      ())
 ;;
 
@@ -364,7 +371,7 @@ let refs_cmd =
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let refs = Vcs.refs vcs ~repo_root in
-     print_sexp [%sexp (refs : Vcs.Refs.t)];
+     print_sexp (refs |> Vcs.Refs.sexp_of_t);
      ())
 ;;
 
@@ -444,7 +451,7 @@ let graph_cmd =
     (let+ () = Arg.return () in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
-     print_sexp [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
+     print_sexp (Vcs.Graph.summary graph |> Vcs.Graph.Summary.sexp_of_t);
      ())
 ;;
 
@@ -474,14 +481,16 @@ let branch_revision_cmd =
        with
        | Some ref -> ref.rev
        | None ->
-         raise
-           (Err.E
-              (Err.create
-                 [ Err.sexp
-                     [%sexp "Branch not found.", { branch_name : Vcs.Branch_name.t }]
-                 ]))
+         (* This is covered but bisect_ppx adds an unvisitable coverage point at
+            the out-edge, thus turning off. *)
+         Err.raise
+           Pp.O.
+             [ Pp.text "Branch "
+               ++ Pp_tty.id (module Vcs.Branch_name) branch_name
+               ++ Pp.text " not found."
+             ] [@coverage off]
      in
-     print_sexp [%sexp (rev : Vcs.Rev.t)];
+     print_sexp (rev |> Vcs.Rev.sexp_of_t);
      ())
 ;;
 
@@ -506,12 +515,15 @@ let descendance_cmd =
      let find_node ~rev =
        match Vcs.Graph.find_rev graph ~rev with
        | Some node -> node
-       | None -> Err.raise [ Err.sexp [%sexp "Rev not found.", { rev : Vcs.Rev.t }] ]
+       | None ->
+         Err.raise
+           Pp.O.
+             [ Pp.text "Rev " ++ Pp_tty.id (module Vcs.Rev) rev ++ Pp.text " not found." ]
      in
      let node1 = find_node ~rev:rev1 in
      let node2 = find_node ~rev:rev2 in
      let descendance = Vcs.Graph.descendance graph node1 node2 in
-     print_sexp [%sexp (descendance : Vcs.Graph.Descendance.t)];
+     print_sexp (descendance |> Vcs.Graph.Descendance.sexp_of_t);
      ())
 ;;
 
@@ -530,13 +542,17 @@ let greatest_common_ancestors_cmd =
        List.map revs ~f:(fun rev ->
          match Vcs.Graph.find_rev graph ~rev with
          | Some node -> node
-         | None -> Err.raise [ Err.sexp [%sexp "Rev not found.", { rev : Vcs.Rev.t }] ])
+         | None ->
+           Err.raise
+             Pp.O.
+               [ Pp.text "Rev " ++ Pp_tty.id (module Vcs.Rev) rev ++ Pp.text " not found."
+               ])
      in
      let gca =
        Vcs.Graph.greatest_common_ancestors graph ~nodes
        |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
      in
-     print_sexp [%sexp (gca : Vcs.Rev.t list)];
+     print_sexp (gca |> List.sexp_of_t Vcs.Rev.sexp_of_t);
      ())
 ;;
 

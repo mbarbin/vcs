@@ -121,9 +121,9 @@ module Lines = struct
 
   let sexp_of_t (t : t) =
     match t with
-    | [] -> [%sexp ""]
-    | [ hd ] -> [%sexp (hd : string)]
-    | _ :: _ :: _ as lines -> [%sexp (lines : string list)]
+    | [] -> Sexp.Atom ""
+    | [ hd ] -> Sexp.Atom (hd : string)
+    | _ :: _ :: _ as lines -> Sexp.List (List.map lines ~f:(fun line -> Sexp.Atom line))
   ;;
 
   let create string : t = String.split_lines string
@@ -219,9 +219,10 @@ let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
           (Err.E
              (Err.create
                 [ Err.sexp
-                    [%sexp
-                      "process terminated abnormally"
-                    , { exit_status : [ `Signaled of int | `Stopped of int ] }]
+                    (List
+                       [ Atom "process terminated abnormally"
+                       ; sexp_field (module Exit_status) "exit_status" exit_status
+                       ])
                 ])) [@coverage off]
     in
     (* A note regarding the [raise_notrace] below. These cases are indeed
@@ -250,14 +251,14 @@ let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
       (Err.add_context
          err
          [ Err.sexp
-             [%sexp
-               { prog = (executable_basename : string)
-               ; args : string list
-               ; exit_status = (!exit_status_r : Exit_status.t)
-               ; cwd : Absolute_path.t
-               ; stdout = (Lines.create !stdout_r : Lines.t)
-               ; stderr = (Lines.create !stderr_r : Lines.t)
-               }]
+             (List
+                [ sexp_field (module String) "prog" executable_basename
+                ; sexp_field' (List.sexp_of_t String.sexp_of_t) "args" args
+                ; sexp_field (module Exit_status) "exit_status" !exit_status_r
+                ; sexp_field (module Absolute_path) "cwd" cwd
+                ; sexp_field (module Lines) "stdout" (Lines.create !stdout_r)
+                ; sexp_field (module Lines) "stderr" (Lines.create !stderr_r)
+                ])
          ])
 ;;
 

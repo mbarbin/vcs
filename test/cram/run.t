@@ -55,7 +55,7 @@ Rev-parse.
   rev0
 
   $ volgo-vcs branch-revision unknown-branch
-  Error: Branch not found. (branch_name unknown-branch)
+  Error: Branch [unknown-branch] not found.
   [123]
 
 Testing a successful file show with git and via vcs.
@@ -242,7 +242,7 @@ Greatest common ancestors.
   ($REV1)
 
   $ volgo-vcs gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
-  Error: Rev not found. (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
+  Error: Rev [2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e] not found.
   [123]
 
 Descendance.
@@ -257,7 +257,7 @@ Descendance.
   Strict_descendant
 
   $ volgo-vcs descendance $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
-  Error: Rev not found. (rev 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e)
+  Error: Rev [2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e] not found.
   [123]
 
 Vcs allows to run the git command line directly if the backend supports it.

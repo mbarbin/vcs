@@ -95,7 +95,11 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
              (Err.E
                 (Err.create
                    [ Pp.text "Unexpected status:"
-                   ; Err.sexp [%sexp (status : string), (other : Diff_status.t)]
+                   ; Err.sexp
+                       (Sexp.List
+                          [ sexp_field (module String) "status" status
+                          ; sexp_field (module Diff_status) "other" other
+                          ])
                    ]))))
   with
   | Ok t -> t
@@ -105,7 +109,10 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
          (Err.add_context
             err
             [ Err.sexp
-                [%sexp "Volgo_git_backend.Name_status.parse_line_exn", { line : string }]
+                (Sexp.List
+                   [ Sexp.Atom "Volgo_git_backend.Name_status.parse_line_exn"
+                   ; sexp_field (module String) "line" line
+                   ])
             ]))
 ;;
 
