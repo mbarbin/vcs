@@ -34,9 +34,7 @@
  (synopsis "A Versatile OCaml Library for Git Operations")
  (depends
   (ocaml
-   (and
-    (>= 4.14)
-    (< 5.4~)))
+   (>= 4.14))
   (astring
    (>= 0.8.5))
   (fpath
@@ -303,7 +301,9 @@
  (synopsis "Tests & Examples for volgo")
  (depends
   (ocaml
-   (>= 5.2))
+   (and
+    (>= 5.2)
+    (< 5.4~)))
   (ocamlformat
    (and
     :with-dev-setup
@@ -408,7 +408,9 @@
  (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
  (depends
   (ocaml
-   (>= 5.3))
+   (and
+    (>= 5.3)
+    (< 5.4~)))
   (ocamlformat
    (and
     :with-dev-setup
