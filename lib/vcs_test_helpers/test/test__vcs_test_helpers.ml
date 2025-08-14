@@ -76,7 +76,7 @@ let%expect_test "redact_sexp" =
   [%expect
     {|
     ((context
-       (Vcs.init ((path /invalid/path)))
+       (Vcs.init (path /invalid/path))
        ((prog git)
         (args (init .))
         (exit_status Unknown)
@@ -89,7 +89,7 @@ let%expect_test "redact_sexp" =
   [%expect
     {|
     ((context
-       (Vcs.init ((path /invalid/path)))
+       (Vcs.init (path /invalid/path))
        ((prog git)
         (args (init .))
         (exit_status Unknown)
@@ -103,7 +103,7 @@ let%expect_test "redact_sexp" =
   [%expect
     {|
     ((context
-       (Vcs.init ((path /invalid/path)))
+       (Vcs.init (path /invalid/path))
        ((prog git)
         (args (init .))
         (exit_status Unknown)

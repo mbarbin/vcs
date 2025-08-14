@@ -72,7 +72,7 @@ let%expect_test "detached-head" =
   in
   [%expect
     {|
-    ((context (Vcs.current_branch ((repo_root <REDACTED>))))
+    ((context (Vcs.current_branch (repo_root <REDACTED>)))
      (error "Not currently on any branch."))
     |}];
   let current_branch_opt = Vcs.Result.current_branch_opt vcs ~repo_root in

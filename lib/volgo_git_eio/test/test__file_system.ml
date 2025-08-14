@@ -55,7 +55,7 @@ let%expect_test "read_dir" =
       print_s
         (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
   in
-  [%expect {| ((context (Vcs.read_dir ((dir <REDACTED>)))) (error <REDACTED>)) |}];
+  [%expect {| ((context (Vcs.read_dir (dir <REDACTED>))) (error <REDACTED>)) |}];
   let () =
     (* [Vcs.read_dir] errors out when called on an existing file rather than a
        directory. *)
@@ -70,6 +70,6 @@ let%expect_test "read_dir" =
       print_s
         (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "dir"; "error" ])
   in
-  [%expect {| ((context (Vcs.read_dir ((dir <REDACTED>)))) (error <REDACTED>)) |}];
+  [%expect {| ((context (Vcs.read_dir (dir <REDACTED>))) (error <REDACTED>)) |}];
   ()
 ;;

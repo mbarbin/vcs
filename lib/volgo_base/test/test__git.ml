@@ -58,6 +58,6 @@ let%expect_test "exit_code" =
   [%expect {| (Ok other) |}];
   (* Same remark as in [exit0] regarding the error trace. *)
   test { exit_code = 1; stdout = ""; stderr = "" };
-  [%expect {| (Error ("Unexpected exit code." ((accepted_codes (0 42))))) |}];
+  [%expect {| (Error ("Unexpected exit code." (accepted_codes (0 42)))) |}];
   ()
 ;;

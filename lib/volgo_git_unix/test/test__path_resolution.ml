@@ -81,7 +81,7 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
@@ -126,10 +126,10 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git (
+       (Vcs.git
          (repo_root <REDACTED>)
          (env       <REDACTED>)
-         (args (rev-parse INVALID-REF))))
+         (args (rev-parse INVALID-REF)))
        ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
@@ -154,10 +154,10 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git (
+       (Vcs.git
          (repo_root <REDACTED>)
          (env       <REDACTED>)
-         (args (rev-parse INVALID-REF))))
+         (args (rev-parse INVALID-REF)))
        ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    42))
@@ -177,10 +177,10 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git (
+       (Vcs.git
          (repo_root <REDACTED>)
          (env       <REDACTED>)
-         (args (rev-parse INVALID-REF))))
+         (args (rev-parse INVALID-REF)))
        ((prog git)
         (args (rev-parse INVALID-REF))
         (exit_status Unknown)
@@ -197,10 +197,10 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git (
+       (Vcs.git
          (repo_root <REDACTED>)
          (env       <REDACTED>)
-         (args (rev-parse INVALID-REF))))
+         (args (rev-parse INVALID-REF)))
        ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    128))
@@ -217,7 +217,7 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog <REDACTED>)
         (args        (rev-parse INVALID-REF))
         (exit_status (Exited    42))
@@ -235,7 +235,7 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git ((repo_root <REDACTED>) (args (rev-parse INVALID-REF))))
+       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
        ((prog git)
         (args (rev-parse INVALID-REF))
         (exit_status Unknown)

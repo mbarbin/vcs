@@ -125,7 +125,7 @@ let%expect_test "Int_table.add_exn" =
   Int_table.add_exn table ~key:1_234 ~data:"one";
   require_does_raise [%here] (fun () ->
     Int_table.add_exn table ~key:1_234 ~data:"one prime");
-  [%expect {| ("Hashtbl.add_exn: key already present" ((key 1_234))) |}];
+  [%expect {| ("Hashtbl.add_exn: key already present" (key 1_234)) |}];
   ()
 ;;
 
