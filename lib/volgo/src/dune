@@ -34,11 +34,7 @@
   validated_string_intf
   vcs_intf)
  (preprocess
-  (pps
-   -unused-code-warnings=force
-   ppx_enumerate
-   ppx_sexp_conv
-   ppx_sexp_value)))
+  (pps -unused-code-warnings=force ppx_enumerate ppx_sexp_conv)))
 
 (rule
  (enabled_if
