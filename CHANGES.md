@@ -1,3 +1,9 @@
+## 0.0.21 (unreleased)
+
+### Changed
+
+- Replace naive bit_vector module by bitv (#96, @mbarbin).
+
 ## 0.0.20 (2025-08-14)
 
 ### Changed

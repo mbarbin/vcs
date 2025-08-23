@@ -2,6 +2,7 @@
     "cSpell.words": [
         "alphanum",
         "astring",
+        "bitv",
         "chdir",
         "cmdlang",
         "cmdliner",
@@ -9,6 +10,7 @@
         "fpath",
         "fsegment",
         "functors",
+        "gcas",
         "gitk",
         "intf",
         "janestreet",

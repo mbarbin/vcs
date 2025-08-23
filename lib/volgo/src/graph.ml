@@ -240,10 +240,10 @@ let iter_ancestors t ~visited node ~f =
     | [] -> ()
     | node :: to_visit ->
       let to_visit =
-        if Bit_vector.get visited node
+        if Bitv.get visited node
         then to_visit
         else (
-          Bit_vector.set visited node true;
+          Bitv.set visited node true;
           f node;
           prepend_parents t ~node ~prepend_to:to_visit)
       in
@@ -259,22 +259,22 @@ let greatest_common_ancestors t ~nodes =
   | node1 :: nodes ->
     let node_count = Array.length t.nodes in
     let common_ancestors =
-      let node1_ancestors = Bit_vector.create ~len:node_count false in
+      let node1_ancestors = Bitv.create node_count false in
       iter_ancestors t ~visited:node1_ancestors node1 ~f:(fun _ -> ());
       node1_ancestors
     in
-    let visited = Bit_vector.create ~len:node_count false in
+    let visited = Bitv.create node_count false in
     List.iter nodes ~f:(fun node ->
       iter_ancestors t ~visited node ~f:(fun _ -> ());
-      Bit_vector.bw_and_in_place ~mutates:common_ancestors visited;
-      Bit_vector.reset visited false);
+      Bitv.bw_and_in_place ~dst:common_ancestors common_ancestors visited;
+      Bitv.fill visited 0 (Bitv.length visited) false);
     let gcas = ref [] in
     for i = node_count - 1 downto 0 do
-      if Bit_vector.get common_ancestors i
+      if Bitv.get common_ancestors i
       then (
         gcas := i :: !gcas;
         iter_ancestors t ~visited i ~f:(fun j ->
-          if j <> i then Bit_vector.set common_ancestors j false))
+          if j <> i then Bitv.set common_ancestors j false))
     done;
     !gcas
 ;;
@@ -403,7 +403,7 @@ let roots t =
 (* Pre condition: ancestor < descendant. *)
 let is_strict_ancestor_internal t ~ancestor ~descendant =
   assert (ancestor < descendant);
-  let visited = Bit_vector.create ~len:(descendant - ancestor + 1) false in
+  let visited = Bitv.create (descendant - ancestor + 1) false in
   let rec loop to_visit =
     match to_visit with
     | [] -> false
@@ -414,10 +414,10 @@ let is_strict_ancestor_internal t ~ancestor ~descendant =
        | Less ->
          let to_visit =
            let visited_index = node - ancestor in
-           if Bit_vector.get visited visited_index
+           if Bitv.get visited visited_index
            then to_visit
            else (
-             Bit_vector.set visited visited_index true;
+             Bitv.set visited visited_index true;
              prepend_parents t ~node ~prepend_to:to_visit)
          in
          loop to_visit)
@@ -476,16 +476,16 @@ let descendance t a b : Descendance.t =
 ;;
 
 let leaves t =
-  let has_children = Bit_vector.create ~len:(node_count t) false in
+  let has_children = Bitv.create (node_count t) false in
   Array.iter t.nodes ~f:(fun node ->
     match (node : Node_kind.t) with
     | Root _ -> ()
-    | Commit { parent; _ } -> Bit_vector.set has_children parent true
+    | Commit { parent; _ } -> Bitv.set has_children parent true
     | Merge { parent1; parent2; _ } ->
-      Bit_vector.set has_children parent1 true;
-      Bit_vector.set has_children parent2 true);
+      Bitv.set has_children parent1 true;
+      Bitv.set has_children parent2 true);
   Array.filter_mapi t.nodes ~f:(fun i _ ->
-    if Bit_vector.get has_children i then None else Some i)
+    if Bitv.get has_children i then None else Some i)
   |> Array.to_list
 ;;
 
