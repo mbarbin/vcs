@@ -334,7 +334,7 @@ val git
 
 module Hg = Hg
 
-(** Simiar to {!val:git}, helpers are provided by the module {!module:Hg} to
+(** Similar to {!val:git}, helpers are provided by the module {!module:Hg} to
     build the [f] parameter.
 
     The expectation is that you should be using the [Hg] module of the API you
