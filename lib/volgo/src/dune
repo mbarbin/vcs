@@ -15,6 +15,7 @@
   Sexplib0.Sexp_conv)
  (libraries
   astring
+  bitv
   fpath
   fpath-sexp0
   pp

@@ -37,6 +37,8 @@
    (>= 4.14))
   (astring
    (>= 0.8.5))
+  (bitv
+   (>= 2.1))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -318,6 +320,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   conf-git
@@ -425,6 +429,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   conf-git

@@ -16,6 +16,7 @@ depends: [
   "base" {>= "v0.17"}
   "base_quickcheck" {>= "v0.17"}
   "bisect_ppx" {with-dev-setup & >= "2.8.3"}
+  "bitv" {>= "2.1"}
   "cmdlang" {>= "0.0.9"}
   "conf-git"
   "conf-hg"
