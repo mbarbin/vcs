@@ -23,6 +23,7 @@
   Volgo)
  (libraries
   base
+  bitv
   eio
   eio_main
   expect_test_helpers_core.expect_test_helpers_base
