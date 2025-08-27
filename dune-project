@@ -320,6 +320,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   conf-git
@@ -427,6 +429,8 @@
    (and
     :with-dev-setup
     (>= 2.8.3)))
+  (bitv
+   (>= 2.1))
   (cmdlang
    (>= 0.0.9))
   conf-git
