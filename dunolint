@@ -1,0 +1,31 @@
+(lang dunolint 1.0)
+
+;; Build & vcs
+(skip_paths
+  _build/**
+  _coverage/**
+  _opam/**
+  .git/**)
+
+;; Docusaurus build & Co.
+(skip_paths
+  doc/.docusaurus/**
+  doc/build/**
+  doc/node_modules/**)
+
+;; Everything is instrumented
+(rule
+ (enforce (dune (instrumentation (backend bisect_ppx)))))
+
+;; We use linters via pps
+(rule
+ (enforce
+  (dune
+   (library
+    (lint
+     (pps
+      (and
+       (pp ppx_js_style)
+       (flag (name -allow-let-operators) (param none) (applies_to (pp ppx_js_style)))
+       (flag (name -check-doc-comments)  (param none) (applies_to (pp ppx_js_style)))
+       )))))))
