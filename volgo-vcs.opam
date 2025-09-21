@@ -12,12 +12,14 @@ depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "4.14"}
   "cmdlang" {>= "0.0.9"}
+  "cmdlang-cmdliner-err-runner" {>= "0.0.16"}
   "conf-git" {with-test}
   "conf-hg" {with-test}
   "fpath" {>= "0.7.3"}
   "fpath-sexp0" {>= "0.3.1"}
   "pp" {>= "2.0.0"}
-  "pplumbing" {>= "0.0.14"}
+  "pplumbing-err" {>= "0.0.16"}
+  "pplumbing-pp-tty" {>= "0.0.16"}
   "sexplib0" {>= "v0.16"}
   "volgo" {= version}
   "volgo-git-backend" {= version}

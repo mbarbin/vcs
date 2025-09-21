@@ -10,6 +10,8 @@
   -open
   Fpath_sexp0
   -open
+  Pplumbing_err
+  -open
   Sexplib0
   -open
   Sexplib0.Sexp_conv
@@ -20,7 +22,7 @@
   fpath
   fpath-sexp0
   pp
-  pplumbing.err
+  pplumbing-err
   sexplib0
   volgo
   volgo-git-backend)
