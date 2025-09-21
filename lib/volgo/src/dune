@@ -10,6 +10,10 @@
   -open
   Fpath_sexp0
   -open
+  Pplumbing_pp_tty
+  -open
+  Pplumbing_err
+  -open
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
@@ -19,8 +23,8 @@
   fpath
   fpath-sexp0
   pp
-  pplumbing.err
-  pplumbing.pp-tty
+  pplumbing-err
+  pplumbing-pp-tty
   sexplib0)
  (modules
   (:standard \ stdlib_compat4xx stdlib_compat5xx))

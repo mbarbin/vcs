@@ -45,8 +45,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.16))))
 
@@ -64,8 +66,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (ppx_compare
    (>= v0.17))
   (ppx_enumerate
@@ -94,6 +98,8 @@
    (>= 4.14))
   (cmdlang
    (>= 0.0.9))
+  (cmdlang-cmdliner-err-runner
+   (>= 0.0.16))
   (conf-git :with-test)
   (conf-hg :with-test)
   (fpath
@@ -102,8 +108,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.16))
   (volgo
@@ -131,8 +139,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.16))
   (volgo
@@ -152,8 +162,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.16))
   (volgo
@@ -175,8 +187,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.17))
   (volgo
@@ -200,8 +214,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.17))
   (volgo
@@ -225,8 +241,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.16))
   (spawn
@@ -250,8 +268,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (sexplib0
    (>= v0.16))
   (volgo
@@ -277,8 +297,10 @@
    (>= 0.3.1))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (ppx_compare
    (>= v0.17))
   (ppx_enumerate
@@ -324,6 +346,8 @@
    (>= 2.1))
   (cmdlang
    (>= 0.0.9))
+  (cmdlang-cmdliner-err-runner
+   (>= 0.0.16))
   conf-git
   conf-hg
   (core
@@ -346,8 +370,10 @@
     (>= 2.4)))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (ppx_compare
    (>= v0.17))
   (ppx_enumerate
@@ -433,6 +459,8 @@
    (>= 2.1))
   (cmdlang
    (>= 0.0.9))
+  (cmdlang-cmdliner-err-runner
+   (>= 0.0.16))
   conf-git
   conf-hg
   (core
@@ -453,8 +481,10 @@
    (>= 2.4))
   (pp
    (>= 2.0.0))
-  (pplumbing
-   (>= 0.0.14))
+  (pplumbing-err
+   (>= 0.0.16))
+  (pplumbing-pp-tty
+   (>= 0.0.16))
   (ppx_compare
    (>= v0.17))
   (ppx_enumerate

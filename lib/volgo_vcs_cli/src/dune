@@ -10,6 +10,10 @@
   -open
   Fpath_sexp0
   -open
+  Pplumbing_pp_tty
+  -open
+  Pplumbing_err
+  -open
   Cmdlang
   -open
   Sexplib0
@@ -21,8 +25,8 @@
   cmdlang
   fpath-sexp0
   pp
-  pplumbing.err
-  pplumbing.pp-tty
+  pplumbing-err
+  pplumbing-pp-tty
   sexplib0
   unix
   volgo

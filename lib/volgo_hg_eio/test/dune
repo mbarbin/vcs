@@ -13,6 +13,8 @@
   -open
   Fpath_sexp0
   -open
+  Pplumbing_err
+  -open
   Expect_test_helpers_base
   -open
   Volgo)
@@ -24,7 +26,7 @@
   fpath
   fpath-sexp0
   pp
-  pplumbing.err
+  pplumbing-err
   unix
   vcs_test_helpers
   volgo

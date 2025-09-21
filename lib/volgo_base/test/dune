@@ -16,6 +16,8 @@
   -open
   Base
   -open
+  Pplumbing_err
+  -open
   Fpath_sexp0
   -open
   Expect_test_helpers_base
@@ -29,7 +31,7 @@
   fpath
   fpath-sexp0
   pp
-  pplumbing.err
+  pplumbing-err
   volgo
   volgo_base
   volgo_git_backend)
