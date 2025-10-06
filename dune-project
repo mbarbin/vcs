@@ -348,6 +348,8 @@
    (>= 0.0.9))
   (cmdlang-cmdliner-err-runner
    (>= 0.0.16))
+  (cmdliner
+   (< 2.0))
   conf-git
   conf-hg
   (core
@@ -461,6 +463,8 @@
    (>= 0.0.9))
   (cmdlang-cmdliner-err-runner
    (>= 0.0.16))
+  (cmdliner
+   (< 2.0))
   conf-git
   conf-hg
   (core
