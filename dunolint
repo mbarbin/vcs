@@ -1,31 +1,71 @@
 (lang dunolint 1.0)
 
-;; Build & vcs
-(skip_paths
-  _build/**
-  _coverage/**
-  _opam/**
-  .git/**)
-
-;; Docusaurus build & Co.
-(skip_paths
-  doc/.docusaurus/**
-  doc/build/**
-  doc/node_modules/**)
-
 ;; Everything is instrumented
-(rule
- (enforce (dune (instrumentation (backend bisect_ppx)))))
-
-;; We use linters via pps
 (rule
  (enforce
   (dune
-   (library
-    (lint
-     (pps
+   (instrumentation
+    (backend bisect_ppx)))))
+
+;; Test lib naming
+(rule
+ (cond
+  ((path
+    (glob **/test/*))
+   (enforce
+    (dune
+     (library
       (and
-       (pp ppx_js_style)
-       (flag (name -allow-let-operators) (param none) (applies_to (pp ppx_js_style)))
-       (flag (name -check-doc-comments)  (param none) (applies_to (pp ppx_js_style)))
-       )))))))
+       (public_name
+        (is_prefix volgo-tests.))
+       (name
+        (is_suffix _test)))))))))
+
+;; Configure the ppx_js_style linter
+(rule
+ (enforce
+  (dune
+   (lint
+    (pps
+     (and
+      (pp ppx_js_style)
+      (flag
+       (name -allow-let-operators)
+       (param none)
+       (applies_to
+        (pp ppx_js_style)))
+      (flag
+       (name -check-doc-comments)
+       (param none)
+       (applies_to
+        (pp ppx_js_style)))))))))
+
+;; Configure ppx flags
+(rule
+ (cond
+  ((dune
+    (preprocess (pps true)))
+   (enforce
+    (dune
+     (preprocess
+      (pps
+       (flag
+        (name -unused-code-warnings)
+        (param
+         (equals force))
+        (applies_to driver)))))))))
+
+;; With the exceptions of two libraries we made a deliberate effort not to
+;; depend on ppx except in dev mode for the user facing libraries in this
+;; project. Let's enforce this going forward.
+(rule
+ (cond
+  ((path
+    (or
+     (glob **/volgo_base/**)
+     (glob **/vcs_test_helpers/**)))
+   return)
+  ((path (glob **/src/*))
+   (enforce
+    (dune
+     (preprocess no_preprocessing))))))
