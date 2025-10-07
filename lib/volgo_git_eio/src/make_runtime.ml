@@ -237,10 +237,9 @@ let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
                 [ sexp_field (module String) "prog" prog
                 ; sexp_field' (List.sexp_of_t String.sexp_of_t) "args" args
                 ; sexp_field'
-                    (fun x ->
-                       match x with
-                       | #Exit_status.t as e -> Exit_status.sexp_of_t e
-                       | `Unknown -> Sexp.Atom "Unknown")
+                    (function
+                      | #Exit_status.t as e -> Exit_status.sexp_of_t e
+                      | `Unknown -> Sexp.Atom "Unknown")
                     "exit_status"
                     !exit_status_r
                 ; sexp_field (module String) "cwd" (snd cwd)
