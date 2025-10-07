@@ -211,10 +211,12 @@ let%expect_test "parse_lines_exn" =
     ; "!\tfile8"
     ; "X\tfile9"
     ; "R\tfile10"
+    ; "Rbl\tfile10"
     ; "R35\tfile10"
     ; "R35\tfile1\tfile2"
     ; "T\tfile1"
     ; "C\tfile11"
+    ; "Cbl\tfile1"
     ; "C75\tfile1\tfile2"
     ; "Z\tfile12"
     ]
@@ -276,7 +278,16 @@ let%expect_test "parse_lines_exn" =
     ("R\tfile10" (
       Error (
         (context (Volgo_git_backend.Name_status.parse_line_exn (line "R\tfile10")))
-        (error (Failure "Int.of_string: \"\"")))))
+        (error
+         "Git diff status 'R' expected to be followed by an integer."
+         "Data parsed was \"\" (not an int)."))))
+    ("Rbl\tfile10" (
+      Error (
+        (context (
+          Volgo_git_backend.Name_status.parse_line_exn (line "Rbl\tfile10")))
+        (error
+         "Git diff status 'R' expected to be followed by an integer."
+         "Data parsed was \"bl\" (not an int)."))))
     ("R35\tfile10" (
       Error (
         (context (
@@ -292,7 +303,16 @@ let%expect_test "parse_lines_exn" =
     ("C\tfile11" (
       Error (
         (context (Volgo_git_backend.Name_status.parse_line_exn (line "C\tfile11")))
-        (error (Failure "Int.of_string: \"\"")))))
+        (error
+         "Git diff status 'C' expected to be followed by an integer."
+         "Data parsed was \"\" (not an int)."))))
+    ("Cbl\tfile1" (
+      Error (
+        (context (
+          Volgo_git_backend.Name_status.parse_line_exn (line "Cbl\tfile1")))
+        (error
+         "Git diff status 'C' expected to be followed by an integer."
+         "Data parsed was \"bl\" (not an int)."))))
     ("C75\tfile1\tfile2" (
       Ok (
         Copied

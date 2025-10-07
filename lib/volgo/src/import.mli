@@ -63,7 +63,6 @@ module Int : sig
   val sexp_of_t : t -> Sexp.t
   val incr : int ref -> unit
   val max_value : int
-  val of_string : string -> int
   val of_string_opt : string -> int option
   val to_string_hum : int -> string
 end

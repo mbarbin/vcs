@@ -99,7 +99,18 @@ let parse_line_exn ~line : Vcs.Name_status.Change.t =
          | `M | `T -> Modified (Vcs.Path_in_repo.v path)
          | (`R | `C) as diff_status ->
            let similarity =
-             String.sub status ~pos:1 ~len:(String.length status - 1) |> Int.of_string
+             let data = String.sub status ~pos:1 ~len:(String.length status - 1) in
+             match Int.of_string_opt data with
+             | Some i -> i
+             | None ->
+               raise
+                 (Err.E
+                    (Err.create
+                       [ Pp.textf
+                           "Git diff status '%s' expected to be followed by an integer."
+                           (Diff_status.sexp_of_t diff_status |> Sexp.to_string_hum)
+                       ; Pp.textf "Data parsed was %S (not an int)." data
+                       ]))
            in
            let path2 =
              match List.hd rest with
