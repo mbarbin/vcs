@@ -235,8 +235,7 @@ let log_line t ~node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.re
    [visited] is taken as an input so we can re-use the same array multiple
    times, rather than re-allocating it. *)
 let iter_ancestors t ~visited node ~f =
-  let rec loop to_visit =
-    match to_visit with
+  let rec loop = function
     | [] -> ()
     | node :: to_visit ->
       let to_visit =
@@ -404,8 +403,7 @@ let roots t =
 let is_strict_ancestor_internal t ~ancestor ~descendant =
   assert (ancestor < descendant);
   let visited = Bitv.create (descendant - ancestor + 1) false in
-  let rec loop to_visit =
-    match to_visit with
+  let rec loop = function
     | [] -> false
     | node :: to_visit ->
       (match Int.compare ancestor node |> Ordering.of_int with

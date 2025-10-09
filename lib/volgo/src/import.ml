@@ -145,12 +145,6 @@ module Int = struct
 
   let incr = incr
   let max_value = max_int
-
-  let of_string s =
-    try int_of_string s with
-    | _ -> failwith (Printf.sprintf "Int.of_string: %S" s)
-  ;;
-
   let of_string_opt = int_of_string_opt
 
   let to_string_hum n =
