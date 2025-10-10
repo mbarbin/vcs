@@ -328,20 +328,12 @@
    (and
     (>= 5.2)
     (< 5.4~)))
-  (ocamlformat
-   (and
-    :with-dev-setup
-    (= 0.27.0)))
   (astring
    (>= 0.8.5))
   (base
    (>= v0.17))
   (base_quickcheck
    (>= v0.17))
-  (bisect_ppx
-   (and
-    :with-dev-setup
-    (>= 2.8.3)))
   (bitv
    (>= 2.1))
   (cmdlang
@@ -388,10 +380,6 @@
    (>= v0.17))
   (ppx_here
    (>= v0.17))
-  (ppx_js_style
-   (and
-    :with-dev-setup
-    (>= v0.17)))
   (ppx_let
    (>= v0.17))
   (ppx_sexp_conv
@@ -446,9 +434,7 @@
     (>= 5.3)
     (< 5.4~)))
   (ocamlformat
-   (and
-    :with-dev-setup
-    (= 0.27.0)))
+   (= 0.27.0))
   (astring
    (>= 0.8.5))
   (base
@@ -456,9 +442,7 @@
   (base_quickcheck
    (>= v0.17))
   (bisect_ppx
-   (and
-    :with-dev-setup
-    (>= 2.8.3)))
+   (>= 2.8.3))
   (bitv
    (>= 2.1))
   (cmdlang
@@ -504,9 +488,7 @@
   (ppx_here
    (>= v0.17))
   (ppx_js_style
-   (and
-    :with-dev-setup
-    (>= v0.17)))
+   (>= v0.17))
   (ppx_let
    (>= v0.17))
   (ppx_sexp_conv

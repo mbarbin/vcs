@@ -10,11 +10,9 @@ bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "5.2" & < "5.4~"}
-  "ocamlformat" {with-dev-setup & = "0.27.0"}
   "astring" {>= "0.8.5"}
   "base" {>= "v0.17"}
   "base_quickcheck" {>= "v0.17"}
-  "bisect_ppx" {with-dev-setup & >= "2.8.3"}
   "bitv" {>= "2.1"}
   "cmdlang" {>= "0.0.9"}
   "cmdlang-cmdliner-err-runner" {>= "0.0.16"}
@@ -37,7 +35,6 @@ depends: [
   "ppx_expect" {>= "v0.17"}
   "ppx_hash" {>= "v0.17"}
   "ppx_here" {>= "v0.17"}
-  "ppx_js_style" {with-dev-setup & >= "v0.17"}
   "ppx_let" {>= "v0.17"}
   "ppx_sexp_conv" {>= "v0.17"}
   "ppx_sexp_message" {>= "v0.17"}
