@@ -14,7 +14,7 @@ depends: [
   "conf-hg" {with-test}
   "eio" {>= "1.0"}
   "fpath" {>= "0.7.3"}
-  "fpath-sexp0" {>= "0.3.1"}
+  "fpath-sexp0" {>= "0.4.0"}
   "pp" {>= "2.0.0"}
   "pplumbing-err" {>= "0.0.16"}
   "pplumbing-pp-tty" {>= "0.0.16"}
