@@ -29,9 +29,9 @@ let%expect_test "of_string" =
   test "/";
   [%expect {| (Ok /) |}];
   test ".";
-  [%expect {| (Error (Msg "\".\": not an absolute path")) |}];
+  [%expect {| (Error (Msg "\".\" is not an absolute path")) |}];
   test "foo/bar";
-  [%expect {| (Error (Msg "\"foo/bar\": not an absolute path")) |}];
+  [%expect {| (Error (Msg "\"foo/bar\" is not an absolute path")) |}];
   test "/foo/bar";
   [%expect {| (Ok /foo/bar) |}];
   test "/tmp/my-repo";
@@ -44,7 +44,7 @@ let%expect_test "v" =
   require_does_raise [%here] (fun () -> test "");
   [%expect {| (Invalid_argument "\"\": invalid path") |}];
   require_does_raise [%here] (fun () -> test "foo/bar");
-  [%expect {| (Invalid_argument "\"foo/bar\": not an absolute path") |}];
+  [%expect {| (Invalid_argument "\"foo/bar\" is not an absolute path") |}];
   test "/foo/bar";
   [%expect {| /foo/bar |}];
   ()

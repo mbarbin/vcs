@@ -33,7 +33,7 @@ let%expect_test "parse" =
   [%expect
     {|
     ((context (Volgo_git_backend.Munged_path.parse_exn (path "/tmp => /tmp")))
-     (error (Invalid_argument "\"/tmp\": not a relative path")))
+     (error (Invalid_argument "\"/tmp\" is not a relative path")))
     |}];
   require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
   [%expect

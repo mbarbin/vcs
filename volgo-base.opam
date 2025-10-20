@@ -12,7 +12,7 @@ depends: [
   "ocaml" {>= "5.2"}
   "base" {>= "v0.17"}
   "fpath" {>= "0.7.3"}
-  "fpath-base" {>= "0.3.1"}
+  "fpath-base" {>= "0.4.0"}
   "pp" {>= "2.0.0"}
   "pplumbing-err" {>= "0.0.16"}
   "pplumbing-pp-tty" {>= "0.0.16"}

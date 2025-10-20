@@ -555,7 +555,7 @@ let%expect_test "parse_lines_exn" =
           (Volgo_git_backend.Num_status.parse_line_exn
            (line "1985\t0\tfile1 => /tmp/file2"))
           (Volgo_git_backend.Munged_path.parse_exn (path "file1 => /tmp/file2")))
-        (error (Invalid_argument "\"/tmp/file2\": not a relative path")))))
+        (error (Invalid_argument "\"/tmp/file2\" is not a relative path")))))
     ("12\t6\ttemplate/{{ project_slug }}.opam" (
       Ok (
         (key (One_file "template/{{ project_slug }}.opam"))

@@ -30,9 +30,9 @@ let%expect_test "of_string" =
   test ".";
   [%expect {| (Ok ./) |}];
   test "/";
-  [%expect {| (Error (Msg "\"/\": not a relative path")) |}];
+  [%expect {| (Error (Msg "\"/\" is not a relative path")) |}];
   test "/a/foo";
-  [%expect {| (Error (Msg "\"/a/foo\": not a relative path")) |}];
+  [%expect {| (Error (Msg "\"/a/foo\" is not a relative path")) |}];
   test "a/foo/bar";
   [%expect {| (Ok a/foo/bar) |}];
   (* We do keep the trailing slashes if present syntactically. Although we do
