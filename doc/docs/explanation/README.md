@@ -1,6 +1,6 @@
 # Explanation
 
-Welcome to the Explanation section of the `vcs` documentation. Here, we delve into the details of how `vcs` works, its design principles, and our future plans. This section is intended to provide a deeper understanding of the project for developers and contributors.
+Welcome to the Explanation section of the `vcs` documentation. This section covers how `vcs` works, its design principles, and our future plans.
 
 ## Design principles
 
