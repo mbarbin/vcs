@@ -11,7 +11,7 @@ bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "5.3" & < "5.4~"}
-  "ocamlformat" {= "0.27.0"}
+  "ocamlformat" {= "0.28.1"}
   "astring" {>= "0.8.5"}
   "base" {>= "v0.17"}
   "base_quickcheck" {>= "v0.17"}
