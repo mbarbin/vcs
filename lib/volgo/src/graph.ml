@@ -592,7 +592,7 @@ module Summary = struct
   [@@deriving_inline sexp_of]
 
   let rec sexp_of_t =
-    (let (drop_if__037_ : t list -> Stdlib.Bool.t) = List.is_empty in
+    (let drop_if__037_ : t list -> Stdlib.Bool.t = List.is_empty in
      fun { refs = refs__022_
          ; roots = roots__028_
          ; leaves = leaves__030_
