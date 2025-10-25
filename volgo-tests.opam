@@ -9,7 +9,7 @@ doc: "https://mbarbin.github.io/vcs/"
 bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
   "dune" {>= "3.17"}
-  "ocaml" {>= "5.2" & < "5.4~"}
+  "ocaml" {>= "5.2"}
   "astring" {>= "0.8.5"}
   "base" {>= "v0.17"}
   "base_quickcheck" {>= "v0.17"}
