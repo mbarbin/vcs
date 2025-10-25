@@ -297,9 +297,7 @@
  (synopsis "Tests & Examples for volgo")
  (depends
   (ocaml
-   (and
-    (>= 5.2)
-    (< 5.4~)))
+   (>= 5.2))
   (bitv
    (>= 2.1))
   (cmdlang
@@ -393,9 +391,7 @@
  (allow_empty)
  (depends
   (ocaml
-   (and
-    (>= 5.3)
-    (< 5.4~)))
+   (>= 5.3))
   (ocamlformat
    (= 0.29.0))
   (bisect_ppx
