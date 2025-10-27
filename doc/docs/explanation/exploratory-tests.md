@@ -43,8 +43,7 @@ COMMANDS
        descendance [OPTION]… REV REV
            Print descendance relation between 2 revisions.
 
-       find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
-       [OPTION]…
+       find-enclosing-repo-root [--from=path/to/dir] [--store=VAL] [OPTION]…
            Find the root of the enclosing-repo.
 
        gca [OPTION]… [REV]…

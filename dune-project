@@ -325,9 +325,7 @@
  (synopsis "Tests & Examples for volgo")
  (depends
   (ocaml
-   (and
-    (>= 5.2)
-    (< 5.4~)))
+   (>= 5.2))
   (astring
    (>= 0.8.5))
   (base
@@ -430,9 +428,7 @@
  (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
  (depends
   (ocaml
-   (and
-    (>= 5.3)
-    (< 5.4~)))
+   (>= 5.4))
   (ocamlformat
    (= 0.28.1))
   (astring
