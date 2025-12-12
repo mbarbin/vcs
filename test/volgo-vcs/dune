@@ -1,6 +1,6 @@
 (library
  (name volgo_vcs_cli_test)
- (public_name volgo-tests.volgo_vcs_cli_test)
+ (package volgo-tests)
  (inline_tests)
  (flags
   :standard

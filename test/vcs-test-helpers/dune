@@ -1,6 +1,6 @@
 (library
  (name vcs_test_helpers_test)
- (public_name volgo-tests.vcs_test_helpers_test)
+ (package volgo-tests)
  (inline_tests)
  (flags
   :standard

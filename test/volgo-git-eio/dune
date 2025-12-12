@@ -1,6 +1,6 @@
 (library
  (name volgo_git_eio_test)
- (public_name volgo-tests.volgo_git_eio_test)
+ (package volgo-tests)
  (inline_tests)
  (flags
   :standard

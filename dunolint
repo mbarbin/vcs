@@ -11,13 +11,12 @@
 (rule
  (cond
   ((path
-    (glob **/test/*))
+    (glob test/**))
    (enforce
     (dune
      (library
       (and
-       (public_name
-        (is_prefix volgo-tests.))
+       (not (has_field public_name))
        (name
         (is_suffix _test)))))))))
 
