@@ -1,6 +1,6 @@
 (library
- (name volgo_hg_eio_test)
- (public_name volgo-tests.volgo_hg_eio_test)
+ (name volgo_git_eio_test)
+ (package volgo-tests)
  (inline_tests)
  (flags
   :standard
@@ -30,7 +30,7 @@
   unix
   vcs_test_helpers
   volgo
-  volgo_hg_eio)
+  volgo_git_eio)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -1,6 +1,6 @@
 (library
- (name volgo_git_unix_test)
- (public_name volgo-tests.volgo_git_unix_test)
+ (name volgo_vcs_cli_test)
+ (package volgo-tests)
  (inline_tests)
  (flags
   :standard
@@ -11,27 +11,11 @@
   -open
   Base
   -open
-  Fpath_sexp0
-  -open
-  Pplumbing_err
-  -open
-  Stdio
-  -open
-  Expect_test_helpers_base
-  -open
-  Volgo)
+  Expect_test_helpers_base)
  (libraries
   base
   expect_test_helpers_core.expect_test_helpers_base
-  fpath
-  fpath-sexp0
-  pp
-  pplumbing-err
-  stdio
-  unix
-  vcs_test_helpers
-  volgo
-  volgo_git_unix)
+  volgo_vcs_cli)
  (instrumentation
   (backend bisect_ppx))
  (lint

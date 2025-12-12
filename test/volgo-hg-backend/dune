@@ -1,6 +1,6 @@
 (library
- (name volgo_git_eio_test)
- (public_name volgo-tests.volgo_git_eio_test)
+ (name volgo_hg_backend_test)
+ (package volgo-tests)
  (inline_tests)
  (flags
   :standard
@@ -11,10 +11,6 @@
   -open
   Base
   -open
-  Fpath_sexp0
-  -open
-  Pplumbing_err
-  -open
   Expect_test_helpers_base
   -open
   Volgo)
@@ -23,14 +19,8 @@
   eio
   eio_main
   expect_test_helpers_core.expect_test_helpers_base
-  fpath
-  fpath-sexp0
-  pp
-  pplumbing-err
-  unix
-  vcs_test_helpers
   volgo
-  volgo_git_eio)
+  volgo_hg_backend)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -1,6 +1,6 @@
 (library
- (name volgo_hg_unix_test)
- (public_name volgo-tests.volgo_hg_unix_test)
+ (name volgo_git_unix_test)
+ (package volgo-tests)
  (inline_tests)
  (flags
   :standard
@@ -31,7 +31,7 @@
   unix
   vcs_test_helpers
   volgo
-  volgo_hg_unix)
+  volgo_git_unix)
  (instrumentation
   (backend bisect_ppx))
  (lint

@@ -1,6 +1,6 @@
 (library
- (name volgo_test)
- (public_name volgo-tests.volgo_test)
+ (name volgo_git_backend_test)
+ (package volgo-tests)
  (inline_tests
   (deps
    (glob_files *.name-status)
@@ -16,25 +16,15 @@
   -open
   Base
   -open
-  Fpath_sexp0
-  -open
-  Pplumbing_err
-  -open
   Expect_test_helpers_base
   -open
   Volgo)
  (libraries
   base
-  bitv
   eio
   eio_main
   expect_test_helpers_core.expect_test_helpers_base
-  fpath
-  fpath-sexp0
-  pp
-  pplumbing-err
   volgo
-  volgo_base
   volgo_git_backend)
  (instrumentation
   (backend bisect_ppx))
@@ -69,3 +59,16 @@
 
 (rule
  (copy %{project_root}/test/data/super-master-mind.log super-master-mind.log))
+
+(rule
+ (copy %{project_root}/test/data/eio.num-status eio.num-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/opam-package-template.name-status
+  opam-package-template.name-status))
+
+(rule
+ (copy
+  %{project_root}/test/data/opam-package-template.num-status
+  opam-package-template.num-status))
