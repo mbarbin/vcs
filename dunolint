@@ -61,10 +61,10 @@
  (cond
   ((path
     (or
-     (glob **/volgo_base/**)
-     (glob **/vcs_test_helpers/**)))
+     (glob src/volgo-base/*)
+     (glob src/vcs-test-helpers/*)))
    return)
-  ((path (glob **/src/*))
+  ((path (glob src/**))
    (enforce
     (dune
      (preprocess no_preprocessing))))))
