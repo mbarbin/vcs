@@ -11,14 +11,15 @@
 (rule
  (cond
   ((path
-    (glob test/**))
+    (or
+     (glob test/**)
+     (glob example/**)))
    (enforce
     (dune
      (library
       (and
        (not (has_field public_name))
-       (name
-        (is_suffix _test)))))))))
+       (name (is_suffix _test)))))))))
 
 ;; Configure the ppx_js_style linter
 (rule
