@@ -50,11 +50,11 @@ SOFTWARE.
 
 ## A note about Base.String.split_lines
 
-We copied the implementation of the function `Base.String.split_lines` from the [Base](https://github.com/janestreet/base) project. `Base` is released under `MIT`.
+We copied the implementation of some functions from the [Base](https://github.com/janestreet/base) project. `Base` is released under `MIT`.
 
 ### Notice
 
-The file where we imported the function is `src/stdlib/volgo_stdlib.ml`. We've added a notice in the file and a comment next to the code that was copied and modified, which includes `Base`'s original LICENSE:
+The file where we imported the functions is `src/stdlib/volgo_stdlib.ml`. We've added a notice in the file and a comment next to the code that was copied and modified, which includes `Base`'s original LICENSE:
 
 ```text
 The MIT License
@@ -79,6 +79,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+The license of base is also included [here](third-party-license/janestreet/base/LICENSE.md).
 
 ## A note about Iron
 
@@ -127,6 +129,8 @@ For example, in addition to the vcs project header, such file would carry the fo
  * Changes: ...
  *)
 ```
+
+The full license of iron is included [here](third-party-license/janestreet/iron/LICENSE).
 
 #### List of modules
 
