@@ -11,26 +11,12 @@
   -open
   Base
   -open
-  Fpath_sexp0
-  -open
-  Pplumbing_err
-  -open
   Expect_test_helpers_base
-  -open
-  Volgo
   -open
   Volgo_stdlib)
  (libraries
   base
-  bitv
   expect_test_helpers_core.expect_test_helpers_base
-  fpath
-  fpath-sexp0
-  pp
-  pplumbing-err
-  volgo
-  volgo_base
-  volgo_git_backend
   volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
@@ -39,11 +25,7 @@
  (preprocess
   (pps
    -unused-code-warnings=force
-   ppx_compare
-   ppx_enumerate
    ppx_expect
-   ppx_hash
    ppx_here
-   ppx_let
    ppx_sexp_conv
    ppx_sexp_value)))
