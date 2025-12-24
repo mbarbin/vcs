@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 type err = Vcs_rresult0.t
 
 let sexp_of_err = Vcs_rresult0.sexp_of_t

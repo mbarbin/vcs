@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let parse_log_line_exn ~line:str : Vcs.Log.Line.t =
   match
     Vcs.Private.try_with (fun () ->

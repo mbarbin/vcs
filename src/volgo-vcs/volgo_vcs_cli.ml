@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
 
 module Initialized = struct

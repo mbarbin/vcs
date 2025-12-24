@@ -18,7 +18,9 @@
   -open
   Sexplib0.Sexp_conv
   -open
-  Volgo)
+  Volgo
+  -open
+  Volgo_stdlib)
  (libraries
   astring
   fpath
@@ -27,7 +29,8 @@
   pplumbing-err
   pplumbing-pp-tty
   sexplib0
-  volgo)
+  volgo
+  volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint

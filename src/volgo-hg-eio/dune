@@ -16,7 +16,9 @@
   -open
   Sexplib0.Sexp_conv
   -open
-  Volgo)
+  Volgo
+  -open
+  Volgo_stdlib)
  (libraries
   eio
   fpath
@@ -26,7 +28,8 @@
   sexplib0
   volgo
   volgo-git-eio
-  volgo-hg-backend)
+  volgo-hg-backend
+  volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint

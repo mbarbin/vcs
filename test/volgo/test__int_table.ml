@@ -19,4 +19,12 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-include Vcs.Private.Import
+let%expect_test "Int_table.add_exn" =
+  let module Int_table = Vcs.Private.Int_table in
+  let table = Int_table.create 3 in
+  Int_table.add_exn table ~key:1_234 ~data:"one";
+  require_does_raise [%here] (fun () ->
+    Int_table.add_exn table ~key:1_234 ~data:"one prime");
+  [%expect {| ("Hashtbl.add_exn: key already present" (key 1_234)) |}];
+  ()
+;;

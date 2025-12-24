@@ -42,7 +42,6 @@
  * removed the logic pertaining to the repo root in which the program started.
  *)
 
-open! Import
 include Absolute_path
 
 let of_absolute_path t = t

@@ -19,7 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
 include Container_key.String_impl
 
 let invariant t = (not (String.is_empty t)) && String.length t <= 512

@@ -43,7 +43,6 @@
  * related to [.fe] files.
  *)
 
-open! Import
 include Relative_path
 
 let root = Relative_path.empty

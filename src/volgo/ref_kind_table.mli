@@ -19,4 +19,4 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-include Import.Hashtbl.S_extended with type key = Ref_kind.t
+include Hashtbl.S_extended with type key = Ref_kind.t

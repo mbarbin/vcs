@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 module T = struct
   type t = Vcs.Num_status.Key.t =
     | One_file of Vcs.Path_in_repo.t

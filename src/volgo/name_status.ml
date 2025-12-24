@@ -43,8 +43,6 @@
  * which are available in Git.
  *)
 
-open! Import
-
 module Change = struct
   [@@@coverage off]
 

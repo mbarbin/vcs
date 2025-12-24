@@ -19,11 +19,9 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-module Import = Vcs.Private.Import
-
 let%expect_test "Char.is_whitespace" =
   let test c ~expect =
-    let is_whitespace = Import.Char.is_whitespace c in
+    let is_whitespace = Char.is_whitespace c in
     print_s [%sexp { char = (c : char); is_whitespace : bool }];
     require_equal [%here] (module Bool) is_whitespace expect
   in
@@ -77,7 +75,7 @@ let%expect_test "Char.is_whitespace" =
 ;;
 
 let%expect_test "Int.to_string_hum" =
-  let test i = print_endline (Import.Int.to_string_hum i) in
+  let test i = print_endline (Int.to_string_hum i) in
   List.iter
     ~f:test
     [ 0
@@ -119,19 +117,9 @@ let%expect_test "Int.to_string_hum" =
   ()
 ;;
 
-let%expect_test "Int_table.add_exn" =
-  let module Int_table = Vcs.Private.Int_table in
-  let table = Int_table.create 3 in
-  Int_table.add_exn table ~key:1_234 ~data:"one";
-  require_does_raise [%here] (fun () ->
-    Int_table.add_exn table ~key:1_234 ~data:"one prime");
-  [%expect {| ("Hashtbl.add_exn: key already present" (key 1_234)) |}];
-  ()
-;;
-
 let%expect_test "String.split_lines" =
   let test s =
-    let lines = Import.String.split_lines s in
+    let lines = String.split_lines s in
     print_s [%sexp (lines : string list)]
   in
   test "";
@@ -152,7 +140,7 @@ let%expect_test "String.split_lines" =
 ;;
 
 let%expect_test "equal_list" =
-  let test a b = Import.equal_list Int.equal a b in
+  let test a b = equal_list Int.equal a b in
   let r = [ 1; 2; 3 ] in
   require [%here] (test r r);
   require [%here] (test [ 1; 2; 3 ] [ 1; 2; 3 ]);
