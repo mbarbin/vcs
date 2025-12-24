@@ -360,10 +360,6 @@
    (>= 0.4.0))
   (fpath-sexp0
    (>= 0.4.0))
-  (mdx
-   (and
-    :with-doc
-    (>= 2.4)))
   (pp
    (>= 2.0.0))
   (pplumbing-err
@@ -417,17 +413,12 @@
   (volgo-hg-unix
    (= :version))
   (volgo-vcs
-   (= :version))
-  (sherlodoc
-   (and
-    :with-doc
-    (>= 0.2)))))
+   (= :version))))
 
 (package
  (name volgo-dev)
- (synopsis
-  "Package to regroup dev targets for the volgo project, documentation, and more")
- (allow_empty) ; The package is attached to stanza in doc/ however dune doesn't see it.
+ (synopsis "Package to regroup dev targets, documentation, and more")
+ (allow_empty)
  (depends
   (ocaml
    (and
@@ -435,78 +426,16 @@
     (< 5.4~)))
   (ocamlformat
    (= 0.28.1))
-  (astring
-   (>= 0.8.5))
-  (base
-   (>= v0.17))
-  (base_quickcheck
-   (>= v0.17))
   (bisect_ppx
    (>= 2.8.3))
-  (bitv
-   (>= 2.1))
-  (cmdlang
-   (>= 0.0.9))
-  (cmdlang-cmdliner-err-runner
-   (>= 0.0.16))
   (cmdliner
    (and
     (>= 1.3.0)
     (< 2.0)))
   conf-git
   conf-hg
-  (core
-   (>= v0.17))
-  (eio
-   (>= 1.0))
-  (eio_main
-   (>= 1.0))
-  (expect_test_helpers_core
-   (>= v0.17))
-  (fpath
-   (>= 0.7.3))
-  (fpath-base
-   (>= 0.4.0))
-  (fpath-sexp0
-   (>= 0.4.0))
   (mdx
    (>= 2.4))
-  (pp
-   (>= 2.0.0))
-  (pplumbing-err
-   (>= 0.0.16))
-  (pplumbing-pp-tty
-   (>= 0.0.16))
-  (ppx_compare
-   (>= v0.17))
-  (ppx_enumerate
-   (>= v0.17))
-  (ppx_expect
-   (>= v0.17))
-  (ppx_hash
-   (>= v0.17))
-  (ppx_here
-   (>= v0.17))
-  (ppx_js_style
-   (>= v0.17))
-  (ppx_let
-   (>= v0.17))
-  (ppx_sexp_conv
-   (>= v0.17))
-  (ppx_sexp_message
-   (>= v0.17))
-  (ppx_sexp_value
-   (>= v0.17))
-  (ppxlib
-   (>= 0.33))
-  (re
-   (>= 1.8.0))
-  (sexp_pretty
-   (>= v0.17))
-  (spawn
-   (>= v0.17))
-  (stdio
-   (>= v0.17))
   (vcs-test-helpers
    (= :version))
   (volgo
@@ -530,6 +459,4 @@
   (volgo-vcs
    (= :version))
   (sherlodoc
-   (and
-    :with-doc
-    (>= 0.2)))))
+   (>= 0.2))))
