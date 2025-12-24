@@ -1,3 +1,22 @@
+## 0.0.22 (unreleased)
+
+### Added
+
+- Added `dunolint` config and workflow (#99, #104, @mbarbin).
+
+### Changed
+
+- Refactor pkg directory structure (#116, @mbarbin).
+- Upgrade to and require fixes from `fpath-base.0.4.0` (#109, @mbarbin).
+- Made some internal refactors suggested by the Zanuda linter (#106, @mbarbin).
+- Upgrade `pplumbing-*` dependencies (#101, @mbarbin).
+- Upgrade `crs` (#100, #108, @mbarbin).
+- Upgrade `docusaurus` (#97, @mbarbin).
+
+### Removed
+
+- Replace `pplumbing` dependency by separate pkgs (#101, @mbarbin).
+
 ## 0.0.21 (2025-08-27)
 
 ### Changed
