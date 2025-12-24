@@ -22,7 +22,7 @@
 (** This file is used when compiling with older versions of OCaml where the
     [hash] and [seeded_hash] functions were not available in the stdlib.
 
-    It is included to the [import] file thanks to a build rule configured in
+    It is made available as [stdlib_compat.ml] via a build rule configured in
     [dune] which is conditioned on the value of the [ocaml_version] variable. *)
 
 module Int : sig
