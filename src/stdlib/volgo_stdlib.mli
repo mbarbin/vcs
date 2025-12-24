@@ -20,6 +20,8 @@
 (*_******************************************************************************)
 
 open! Stdlib_compat
+module Dyn = Dyn
+module Ordering = Ordering
 
 module Array : sig
   include module type of ArrayLabels
@@ -85,15 +87,6 @@ module Option : sig
   val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
   val map : 'a option -> f:('a -> 'b) -> 'b option
   val some_if : bool -> 'a -> 'a option
-end
-
-module Ordering : sig
-  type t =
-    | Less
-    | Equal
-    | Greater
-
-  val of_int : int -> t
 end
 
 module Queue : sig

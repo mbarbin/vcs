@@ -53,6 +53,8 @@
    When this is the case, we clearly indicate it next to the copied function. *)
 
 open! Stdlib_compat
+module Dyn = Dyn
+module Ordering = Ordering
 
 module type To_sexpable = sig
   type t
@@ -233,15 +235,6 @@ module Option = struct
   let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_option
   let map t ~f = map f t
   let some_if cond a = if cond then Some a else None
-end
-
-module Ordering = struct
-  type t =
-    | Less
-    | Equal
-    | Greater
-
-  let of_int i = if i < 0 then Less else if i = 0 then Equal else Greater
 end
 
 module Queue = struct

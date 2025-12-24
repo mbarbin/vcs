@@ -405,9 +405,9 @@ let is_strict_ancestor_internal t ~ancestor ~descendant =
     | [] -> false
     | node :: to_visit ->
       (match Int.compare ancestor node |> Ordering.of_int with
-       | Equal -> true
-       | Greater -> loop to_visit
-       | Less ->
+       | Eq -> true
+       | Gt -> loop to_visit
+       | Lt ->
          let to_visit =
            let visited_index = node - ancestor in
            if Bitv.get visited visited_index
@@ -460,12 +460,12 @@ end
 
 let descendance t a b : Descendance.t =
   match Int.compare a b |> Ordering.of_int with
-  | Equal -> Same_node
-  | Less ->
+  | Eq -> Same_node
+  | Lt ->
     if is_strict_ancestor_internal t ~ancestor:a ~descendant:b
     then Strict_ancestor
     else Other
-  | Greater ->
+  | Gt ->
     if is_strict_ancestor_internal t ~ancestor:b ~descendant:a
     then Strict_descendant
     else Other

@@ -39,10 +39,14 @@
    (>= 0.8.5))
   (bitv
    (>= 2.1))
+  (dyn
+   (>= 3.17))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.4.0))
+  (ordering
+   (>= 3.17))
   (pp
    (>= 2.0.0))
   (pplumbing-err
