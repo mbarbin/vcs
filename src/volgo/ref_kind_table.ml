@@ -19,4 +19,4 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-include Import.Hashtbl.Make (Ref_kind)
+include Hashtbl.Make (Ref_kind)

@@ -1,6 +1,7 @@
 # List of directories for headache.sh
 # Add new directories below. Lines starting with '#' are ignored.
 example
+src/stdlib
 src/vcs-test-helpers
 src/volgo
 src/volgo-base
@@ -13,6 +14,7 @@ src/volgo-hg-unix
 src/volgo-vcs
 src/volgo-vcs/bin
 test/expect
+test/stdlib
 test/vcs-test-helpers
 test/volgo
 test/volgo-base

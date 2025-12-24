@@ -1,5 +1,5 @@
 (library
- (name vcs_example_test)
+ (name volgo_stdlib_test)
  (package volgo-tests)
  (inline_tests)
  (flags
@@ -17,23 +17,20 @@
   -open
   Expect_test_helpers_base
   -open
-  Volgo_base
+  Volgo
   -open
   Volgo_stdlib)
  (libraries
   base
-  eio
-  eio_main
+  bitv
   expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-sexp0
   pp
   pplumbing-err
-  unix
-  vcs_test_helpers
+  volgo
   volgo_base
-  volgo_git_eio
-  volgo_git_unix
+  volgo_git_backend
   volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
