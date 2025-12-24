@@ -346,8 +346,6 @@
     (< 2.0)))
   conf-git
   conf-hg
-  (core
-   (>= v0.17))
   (eio
    (>= 1.0))
   (eio_main
