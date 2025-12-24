@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let parse_ref_kind_exn str : Vcs.Ref_kind.t =
   match
     Vcs.Private.try_with (fun () ->

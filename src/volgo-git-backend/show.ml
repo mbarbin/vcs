@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let interpret_output (output : Vcs.Git.Output.t) =
   Vcs.Git.Result.exit_code output ~accept:[ 0, `Present; 128, `Absent ]
   |> Result.map ~f:(function

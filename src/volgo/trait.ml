@@ -24,7 +24,6 @@ module Top = struct
   module Hg = Hg
 end
 
-open! Import
 module Add = Trait_add
 module Branch = Trait_branch
 module Commit = Trait_commit

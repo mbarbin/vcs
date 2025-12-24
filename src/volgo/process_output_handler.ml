@@ -19,7 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
 module Output = Process_output
 
 module type S = Process_intf.S with type process_output := Output.t

@@ -380,7 +380,6 @@ module Private : sig
       of [Vcs]. This is used e.g. by tests or libraries with strong ties to
       [Vcs]. Do not use. *)
 
-  module Import = Import
   module Int_table = Int_table
   module Process_output = Process_output
   module Ref_kind_table = Ref_kind_table
