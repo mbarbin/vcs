@@ -434,6 +434,10 @@
   conf-hg
   (mdx
    (>= 2.4))
+  (ppx_js_style
+   (>= v0.17))
+  (ppxlib
+   (>= 0.33))
   (vcs-test-helpers
    (= :version))
   (volgo
