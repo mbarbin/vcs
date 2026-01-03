@@ -1,6 +1,7 @@
 (lang dunolint 1.0)
 
 ;; Everything is instrumented
+
 (rule
  (enforce
   (dune
@@ -8,6 +9,7 @@
     (backend bisect_ppx)))))
 
 ;; Test lib naming
+
 (rule
  (cond
   ((path
@@ -18,10 +20,16 @@
     (dune
      (library
       (and
-       (not (has_field public_name))
-       (name (is_suffix _test)))))))))
+       (not
+        (has_field public_name))
+       (has_field inline_tests)
+       (package
+        (equals volgo-tests))
+       (name
+        (is_suffix _test)))))))))
 
 ;; Configure the ppx_js_style linter
+
 (rule
  (enforce
   (dune
@@ -41,6 +49,7 @@
         (pp ppx_js_style)))))))))
 
 ;; Configure ppx flags
+
 (rule
  (cond
   ((dune
@@ -49,8 +58,7 @@
       (or
        (pp ppx_compare)
        (pp ppx_enumerate)
-       (pp ppx_sexp_conv)
-      ))))
+       (pp ppx_sexp_conv)))))
    (enforce
     (dune
      (preprocess
@@ -64,6 +72,7 @@
 ;; With the exceptions of two libraries we made a deliberate effort not to
 ;; depend on ppx except in dev mode for the user facing libraries in this
 ;; project. Let's enforce this going forward.
+
 (rule
  (cond
   ((path
@@ -71,7 +80,8 @@
      (glob src/volgo-base/*)
      (glob src/vcs-test-helpers/*)))
    return)
-  ((path (glob src/**))
+  ((path
+    (glob src/**))
    (enforce
     (dune
      (preprocess no_preprocessing))))))
