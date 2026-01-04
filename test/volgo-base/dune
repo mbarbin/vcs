@@ -16,9 +16,9 @@
   -open
   Base
   -open
-  Pplumbing_err
-  -open
   Fpath_sexp0
+  -open
+  Pplumbing_err
   -open
   Expect_test_helpers_base
   -open
