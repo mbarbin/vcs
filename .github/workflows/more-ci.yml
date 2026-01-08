@@ -54,10 +54,6 @@ jobs:
       #     janestreet-bleeding: https://github.com/janestreet/opam-repository.git
       #     janestreet-bleeding-external: https://github.com/janestreet/opam-repository.git#external-packages
 
-      # Setting `(implicit_transitive_deps VALUE)` conditionally based on the compiler version.
-      - name: Edit dune-project
-        run: opam exec -- ocaml .github/workflows/edit_dune_project_dot_ml "${{ matrix.ocaml-compiler }}"
-
       - name: Environment setup
         run: |
           if [ "${{ matrix.ocaml-compiler }}" = "4.14.x" ]; then
