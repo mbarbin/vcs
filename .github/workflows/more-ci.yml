@@ -30,6 +30,7 @@ jobs:
         ocaml-compiler:
           - 5.3.x
           - 5.2.x
+          - 4.14.x
         exclude:
           # We exclude the combination already tested in the 'ci' workflow.
           - os: ubuntu-latest
@@ -57,11 +58,21 @@ jobs:
       - name: Edit dune-project
         run: opam exec -- ocaml .github/workflows/edit_dune_project_dot_ml "${{ matrix.ocaml-compiler }}"
 
+      - name: Environment setup
+        run: |
+          if [ "${{ matrix.ocaml-compiler }}" = "4.14.x" ]; then
+            echo "PACKAGES=volgo,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-hg-backend,volgo-hg-unix" >> "$GITHUB_ENV"
+            echo "OPAM_PACKAGES=./volgo.opam ./volgo-vcs.opam ./volgo-git-backend.opam ./volgo-git-unix.opam ./volgo-hg-backend.opam ./volgo-hg-unix.opam" >> "$GITHUB_ENV"
+          else
+            echo "PACKAGES=volgo,volgo-base,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-git-eio,volgo-hg-backend,volgo-hg-unix,volgo-hg-eio,vcs-test-helpers,volgo-tests" >> "$GITHUB_ENV"
+            echo "OPAM_PACKAGES=./volgo.opam ./volgo-base.opam ./volgo-vcs.opam ./volgo-git-backend.opam ./volgo-git-unix.opam ./volgo-git-eio.opam ./volgo-hg-backend.opam ./volgo-hg-unix.opam ./volgo-hg-eio.opam ./vcs-test-helpers.opam ./volgo-tests.opam" >> "$GITHUB_ENV"
+          fi
+
       # We build and run tests for a subset of packages. More tests are run in
       # the development workflow and as part of the main CI job. These are the
       # tests that are checked for every combination of os and ocaml-compiler.
       - name: Install dependencies
-        run: opam install ./volgo.opam ./volgo-base.opam ./volgo-vcs.opam ./volgo-git-backend.opam ./volgo-git-unix.opam ./volgo-git-eio.opam ./volgo-hg-backend.opam ./volgo-hg-unix.opam ./volgo-hg-eio.opam ./vcs-test-helpers.opam ./volgo-tests.opam --deps-only --with-test
+        run: opam install ${{ env.OPAM_PACKAGES }} --deps-only --with-test
 
       - name: Build & Run tests
-        run: opam exec -- dune build @all @runtest --only-packages=volgo,volgo-base,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-git-eio,volgo-hg-backend,volgo-hg-unix,volgo-hg-eio,vcs-test-helpers,volgo-tests
+        run: opam exec -- dune build @all @runtest --only-packages=${{ env.PACKAGES }}
