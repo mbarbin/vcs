@@ -20,7 +20,19 @@
 (*_******************************************************************************)
 
 open! Stdlib_compat
+module Code_error = Code_error
 module Dyn = Dyn
+
+module Dynable : sig
+  module type S = sig
+    type t
+
+    val to_dyn : t -> Dyn.t
+  end
+end
+
+val print_dyn : Dyn.t -> unit
+
 module Ordering = Ordering
 
 module Array : sig
@@ -31,6 +43,14 @@ module Array : sig
   val filter_mapi : 'a array -> f:(int -> 'a -> 'b option) -> 'b array
   val rev : 'a array -> 'a array
   val sort : 'a array -> compare:('a -> 'a -> int) -> unit
+end
+
+module Bool : sig
+  include module type of struct
+    include Stdlib.Bool
+  end
+
+  val to_dyn : t -> Dyn.t
 end
 
 module Char : sig
@@ -113,11 +133,11 @@ end
 module String : sig
   include module type of StringLabels
 
+  val to_dyn : t -> Dyn.t
   val sexp_of_t : t -> Sexp.t
   val to_string : string -> string
   val chop_prefix : string -> prefix:string -> string option
   val chop_suffix : string -> suffix:string -> string option
-  val init : int -> f:(int -> char) -> string
   val is_empty : string -> bool
   val lsplit2 : string -> on:char -> (string * string) option
   val rsplit2 : string -> on:char -> (string * string) option
@@ -146,3 +166,14 @@ end
 
 val sexp_field : (module To_sexpable with type t = 'a) -> string -> 'a -> Sexp.t
 val sexp_field' : ('a -> Sexp.t) -> string -> 'a -> Sexp.t
+
+(** {1 Test helpers} *)
+
+module With_equal_and_dyn : sig
+  module type S = sig
+    type t
+
+    val equal : t -> t -> bool
+    val to_dyn : t -> Dyn.t
+  end
+end

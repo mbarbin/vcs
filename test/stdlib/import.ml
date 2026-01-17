@@ -19,16 +19,23 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
+let require cond = if not cond then failwith "Required condition does not hold."
 
-let%expect_test "equal_list" =
-  let test a b = equal_list Int.equal a b in
-  let r = [ 1; 2; 3 ] in
-  require (test r r);
-  require (test [ 1; 2; 3 ] [ 1; 2; 3 ]);
-  require (test [] []);
-  require (not (test [ 1; 2; 3 ] [ 1; 2 ]));
-  require (not (test [ 1; 2; 3 ] [ 1; 2; 4 ]));
-  require (not (test [] [ 1 ]));
-  ()
+let require_does_raise f =
+  match f () with
+  | _ -> Code_error.raise "Did not raise." []
+  | exception e -> print_endline (Stdlib.Printexc.to_string e)
+;;
+
+let require_equal
+      (type a)
+      (module M : With_equal_and_dyn.S with type t = a)
+      (v1 : a)
+      (v2 : a)
+  =
+  if not (M.equal v1 v2)
+  then
+    Code_error.raise
+      "Values are not equal."
+      [ "v1", v1 |> M.to_dyn; "v2", v2 |> M.to_dyn ]
 ;;

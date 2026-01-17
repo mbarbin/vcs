@@ -19,16 +19,18 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
+type t =
+  { message : string
+  ; data : (string * Dyn.t) list
+  }
 
-let%expect_test "equal_list" =
-  let test a b = equal_list Int.equal a b in
-  let r = [ 1; 2; 3 ] in
-  require (test r r);
-  require (test [ 1; 2; 3 ] [ 1; 2; 3 ]);
-  require (test [] []);
-  require (not (test [ 1; 2; 3 ] [ 1; 2 ]));
-  require (not (test [ 1; 2; 3 ] [ 1; 2; 4 ]));
-  require (not (test [] [ 1 ]));
-  ()
+exception E of t
+
+let raise message data = raise (E { message; data })
+let to_dyn { message; data } = Dyn.Tuple [ Dyn.String message; Record data ]
+
+let () =
+  Printexc.register_printer (function
+    | E t -> Some (Dyn.to_string (to_dyn t))
+    | _ -> None [@coverage off])
 ;;

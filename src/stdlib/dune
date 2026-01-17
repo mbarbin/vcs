@@ -11,7 +11,7 @@
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries astring dyn ordering sexplib0)
+ (libraries dyn ordering pp sexplib0)
  (modules
   (:standard \ stdlib_compat4xx stdlib_compat5xx))
  (instrumentation

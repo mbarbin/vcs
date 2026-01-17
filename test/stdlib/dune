@@ -9,18 +9,11 @@
   -warn-error
   +a
   -open
-  Base
-  -open
-  Expect_test_helpers_base
-  -open
   Volgo_stdlib)
- (libraries
-  base
-  expect_test_helpers_core.expect_test_helpers_base
-  volgo_stdlib)
+ (libraries volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
  (preprocess
-  (pps ppx_expect ppx_here ppx_sexp_value)))
+  (pps ppx_expect)))

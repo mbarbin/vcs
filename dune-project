@@ -35,8 +35,6 @@
  (depends
   (ocaml
    (>= 4.14))
-  (astring
-   (>= 0.8.5))
   (bitv
    (>= 2.1))
   (dyn
@@ -158,8 +156,6 @@
  (depends
   (ocaml
    (>= 4.14))
-  (astring
-   (>= 0.8.5))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -332,8 +328,6 @@
    (and
     (>= 5.2)
     (< 5.4~)))
-  (astring
-   (>= 0.8.5))
   (base
    (>= v0.17))
   (base_quickcheck
