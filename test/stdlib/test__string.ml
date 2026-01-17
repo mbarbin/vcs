@@ -171,3 +171,11 @@ let%expect_test "rsplit2" =
   [%expect {||}];
   ()
 ;;
+
+(* [rsplit2] relies on [String.rindex_from_opt] accepting [-1] as a valid index
+   (for the empty string case) as stated it its documentation in the stdlib. *)
+let%expect_test "rindex_from_opt with index -1" =
+  require (Option.is_none (String.rindex_from_opt "" (-1) ':'));
+  [%expect {||}];
+  ()
+;;
