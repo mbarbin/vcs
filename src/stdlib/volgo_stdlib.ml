@@ -298,25 +298,33 @@ module String = struct
   let to_string t = t
 
   let chop_prefix t ~prefix =
-    if Astring.String.is_prefix t ~affix:prefix
-    then Some (Astring.String.with_index_range t ~first:(String.length prefix))
+    if starts_with ~prefix t
+    then (
+      let prefix_len = length prefix in
+      Some (sub t ~pos:prefix_len ~len:(length t - prefix_len)))
     else None
   ;;
 
   let chop_suffix t ~suffix =
-    if Astring.String.is_suffix t ~affix:suffix
-    then
-      Some
-        (Astring.String.with_index_range
-           t
-           ~last:(String.length t - String.length suffix - 1))
+    if ends_with ~suffix t
+    then Some (sub t ~pos:0 ~len:(length t - length suffix))
     else None
   ;;
 
-  let init len ~f = String.init len f
-  let is_empty = Astring.String.is_empty
-  let lsplit2 t ~on = Astring.String.cut ~sep:(String.make 1 on) t
-  let rsplit2 t ~on = Astring.String.cut ~sep:(String.make 1 on) t ~rev:true
+  let is_empty t = length t = 0
+
+  let lsplit2 t ~on =
+    match index_from_opt t 0 on with
+    | None -> None
+    | Some i -> Some (sub t ~pos:0 ~len:i, sub t ~pos:(i + 1) ~len:(length t - i - 1))
+  ;;
+
+  let rsplit2 t ~on =
+    let len = length t in
+    match rindex_from_opt t (len - 1) on with
+    | None -> None
+    | Some i -> Some (sub t ~pos:0 ~len:i, sub t ~pos:(i + 1) ~len:(len - i - 1))
+  ;;
 
   (* The function [split_lines] below was copied from [Base.String0.split_lines]
      version [v0.17] which is released under MIT and may be found at

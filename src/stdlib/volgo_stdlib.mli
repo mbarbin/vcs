@@ -117,7 +117,6 @@ module String : sig
   val to_string : string -> string
   val chop_prefix : string -> prefix:string -> string option
   val chop_suffix : string -> suffix:string -> string option
-  val init : int -> f:(int -> char) -> string
   val is_empty : string -> bool
   val lsplit2 : string -> on:char -> (string * string) option
   val rsplit2 : string -> on:char -> (string * string) option

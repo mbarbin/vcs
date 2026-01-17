@@ -35,8 +35,6 @@
  (depends
   (ocaml
    (>= 4.14))
-  (astring
-   (>= 0.8.5))
   (bitv
    (>= 2.1))
   (dyn
