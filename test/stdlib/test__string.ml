@@ -19,25 +19,27 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+open! Import
+
 let%expect_test "split_lines" =
   let test s =
     let lines = String.split_lines s in
-    print_s [%sexp (lines : string list)]
+    print_dyn (Dyn.list Dyn.string lines)
   in
   test "";
-  [%expect {| () |}];
+  [%expect {| [] |}];
   test "\n";
-  [%expect {| ("") |}];
+  [%expect {| [ "" ] |}];
   test "Hello\r\nWorld";
-  [%expect {| (Hello World) |}];
+  [%expect {| [ "Hello"; "World" ] |}];
   test "Hello\nWorld";
-  [%expect {| (Hello World) |}];
+  [%expect {| [ "Hello"; "World" ] |}];
   test "Hello\r\nWorld\r\n";
-  [%expect {| (Hello World) |}];
+  [%expect {| [ "Hello"; "World" ] |}];
   test "Hello\nWorld\n";
-  [%expect {| (Hello World) |}];
+  [%expect {| [ "Hello"; "World" ] |}];
   test "Hello\nWorld\n\n";
-  [%expect {| (Hello World "") |}];
+  [%expect {| [ "Hello"; "World"; "" ] |}];
   ()
 ;;
 
@@ -45,7 +47,7 @@ module String_option = struct
   type t = string option
 
   let equal = Option.equal String.equal
-  let sexp_of_t = Option.sexp_of_t String.sexp_of_t
+  let to_dyn t = Dyn.option Dyn.string t
 end
 
 module String_pair_option = struct
@@ -53,34 +55,35 @@ module String_pair_option = struct
 
   (* Polymorphic equality is adequate for this test type. *)
   let equal = Stdlib.( = )
-  let sexp_of_t t = Option.sexp_of_t (fun (a, b) -> List [ Atom a; Atom b ]) t
+  let to_dyn t = Dyn.option (fun (a, b) -> Dyn.Tuple [ Dyn.string a; Dyn.string b ]) t
 end
 
-(* Exercise the [sexp_of_t] functions to ensure they are not dead code. *)
+(* Exercise the [to_dyn] functions to ensure they are not dead code. *)
 let%expect_test "sexp_of_t coverage" =
-  print_s (String_option.sexp_of_t (Some "hello"));
-  [%expect {| (hello) |}];
-  print_s (String_option.sexp_of_t None);
-  [%expect {| () |}];
-  print_s (String_pair_option.sexp_of_t (Some ("a", "b")));
-  [%expect {| ((a b)) |}];
-  print_s (String_pair_option.sexp_of_t None);
-  [%expect {| () |}];
+  let print (type a) (module M : Dynable.S with type t = a) (t : a) =
+    print_dyn (M.to_dyn t)
+  in
+  print (module String_option) (Some "hello");
+  [%expect {| Some "hello" |}];
+  print (module String_option) None;
+  [%expect {| None |}];
+  print (module String_pair_option) (Some ("a", "b"));
+  [%expect {| Some ("a", "b") |}];
+  print (module String_pair_option) None;
+  [%expect {| None |}];
   ()
 ;;
 
 (* We rely on [String.sub] accepting [pos = length t] when [len = 0]. *)
 let%expect_test "sub with pos = length t and len = 0" =
   let t = "hello" in
-  require_equal [%here] (module String) (String.sub t ~pos:(String.length t) ~len:0) "";
+  require_equal (module String) (String.sub t ~pos:(String.length t) ~len:0) "";
   [%expect {||}];
   ()
 ;;
 
 let%expect_test "is_empty" =
-  let require str ~expect =
-    require_equal [%here] (module Bool) (String.is_empty str) expect
-  in
+  let require str ~expect = require_equal (module Bool) (String.is_empty str) expect in
   require "" ~expect:true;
   require "a" ~expect:false;
   require "hello" ~expect:false;
@@ -91,14 +94,10 @@ let%expect_test "is_empty" =
 
 let%expect_test "chop_prefix" =
   let require_some str ~prefix ~expect =
-    require_equal
-      [%here]
-      (module String_option)
-      (String.chop_prefix str ~prefix)
-      (Some expect)
+    require_equal (module String_option) (String.chop_prefix str ~prefix) (Some expect)
   in
   let require_none str ~prefix =
-    require_equal [%here] (module String_option) (String.chop_prefix str ~prefix) None
+    require_equal (module String_option) (String.chop_prefix str ~prefix) None
   in
   require_some "hello world" ~prefix:"hello " ~expect:"world";
   require_some "hello" ~prefix:"hello" ~expect:"";
@@ -115,14 +114,10 @@ let%expect_test "chop_prefix" =
 
 let%expect_test "chop_suffix" =
   let require_some str ~suffix ~expect =
-    require_equal
-      [%here]
-      (module String_option)
-      (String.chop_suffix str ~suffix)
-      (Some expect)
+    require_equal (module String_option) (String.chop_suffix str ~suffix) (Some expect)
   in
   let require_none str ~suffix =
-    require_equal [%here] (module String_option) (String.chop_suffix str ~suffix) None
+    require_equal (module String_option) (String.chop_suffix str ~suffix) None
   in
   require_some "hello world" ~suffix:"world" ~expect:"hello ";
   require_some "hello" ~suffix:"hello" ~expect:"";
@@ -139,14 +134,10 @@ let%expect_test "chop_suffix" =
 
 let%expect_test "lsplit2" =
   let require_some str ~on ~expect =
-    require_equal
-      [%here]
-      (module String_pair_option)
-      (String.lsplit2 str ~on)
-      (Some expect)
+    require_equal (module String_pair_option) (String.lsplit2 str ~on) (Some expect)
   in
   let require_none str ~on =
-    require_equal [%here] (module String_pair_option) (String.lsplit2 str ~on) None
+    require_equal (module String_pair_option) (String.lsplit2 str ~on) None
   in
   require_some "hello:world" ~on:':' ~expect:("hello", "world");
   require_some ":hello" ~on:':' ~expect:("", "hello");
@@ -163,14 +154,10 @@ let%expect_test "lsplit2" =
 
 let%expect_test "rsplit2" =
   let require_some str ~on ~expect =
-    require_equal
-      [%here]
-      (module String_pair_option)
-      (String.rsplit2 str ~on)
-      (Some expect)
+    require_equal (module String_pair_option) (String.rsplit2 str ~on) (Some expect)
   in
   let require_none str ~on =
-    require_equal [%here] (module String_pair_option) (String.rsplit2 str ~on) None
+    require_equal (module String_pair_option) (String.rsplit2 str ~on) None
   in
   require_some "hello:world" ~on:':' ~expect:("hello", "world");
   require_some ":hello" ~on:':' ~expect:("", "hello");

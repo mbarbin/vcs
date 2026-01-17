@@ -21,67 +21,31 @@
 
 open! Import
 
-let%expect_test "Char.is_whitespace" =
-  let require c ~expect = require_equal (module Bool) (Char.is_whitespace c) expect in
-  List.iter ~f:(fun c -> require c ~expect:true) [ ' '; '\t'; '\n'; '\011'; '\012'; '\r' ];
-  List.iter
-    ~f:(fun c -> require c ~expect:false)
-    [ 'a'; 'A'; '0'; '9'; 'z'; 'Z'; '1'; '8'; 'x'; 'X' ];
+let%expect_test "require" =
+  require true;
   [%expect {||}];
+  require_does_raise (fun () -> require false);
+  [%expect {| Failure("Required condition does not hold.") |}]
+;;
+
+let%expect_test "require_does_raise" =
+  require_does_raise (fun () -> failwith "Hello Exn");
+  [%expect {| Failure("Hello Exn") |}];
   ()
 ;;
 
-let%expect_test "Int.to_string_hum" =
-  let test i = print_endline (Int.to_string_hum i) in
-  List.iter
-    ~f:test
-    [ 0
-    ; 42
-    ; 421
-    ; 1_234
-    ; 12_345
-    ; 123_456
-    ; 1_234_567
-    ; 12_345_678
-    ; -3
-    ; -99
-    ; -123
-    ; -1_234
-    ; -12_345
-    ; -123_456
-    ; -1_234_567
-    ; -12_345_678
-    ];
-  [%expect
-    {|
-    0
-    42
-    421
-    1_234
-    12_345
-    123_456
-    1_234_567
-    12_345_678
-    -3
-    -99
-    -123
-    -1_234
-    -12_345
-    -123_456
-    -1_234_567
-    -12_345_678
-    |}];
+let%expect_test "require_does_raise did not raise" =
+  (match require_does_raise ignore with
+   | () -> assert false
+   | exception exn -> print_string (Printexc.to_string exn));
+  [%expect {| ("Did not raise.", {}) |}];
   ()
 ;;
 
-let%expect_test "equal_list" =
-  let test a b = equal_list Int.equal a b in
-  let r = [ 1; 2; 3 ] in
-  require (test r r);
-  require (test [ 1; 2; 3 ] [ 1; 2; 3 ]);
-  require (test [] []);
-  require (not (test [ 1; 2; 3 ] [ 1; 2 ]));
-  require (not (test [ 1; 2; 3 ] [ 1; 2; 4 ]));
-  require (not (test [] [ 1 ]));
+let%expect_test "require_equal not equal" =
+  (match require_equal (module String) "zero" "42" with
+   | () -> assert false
+   | exception exn -> print_string (Printexc.to_string exn));
+  [%expect {| ("Values are not equal.", { v1 = "zero"; v2 = "42" }) |}];
   ()
 ;;

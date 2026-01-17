@@ -53,7 +53,20 @@
    When this is the case, we clearly indicate it next to the copied function. *)
 
 open! Stdlib_compat
+module Code_error = Code_error
 module Dyn = Dyn
+
+module Dynable = struct
+  module type S = sig
+    type t
+
+    val to_dyn : t -> Dyn.t
+  end
+end
+
+let print pp = Format.printf "%a@." Pp.to_fmt pp
+let print_dyn dyn = print (Dyn.pp dyn)
+
 module Ordering = Ordering
 
 module type To_sexpable = sig
@@ -102,6 +115,12 @@ module Array = struct
   ;;
 
   let sort t ~compare = sort t ~cmp:compare
+end
+
+module Bool = struct
+  include Bool
+
+  let to_dyn = Dyn.bool
 end
 
 module Char = struct
@@ -295,6 +314,7 @@ module String = struct
   include StringLabels
 
   let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_string
+  let to_dyn = Dyn.string
   let to_string t = t
 
   let chop_prefix t ~prefix =
@@ -381,3 +401,12 @@ let equal_int = Int.equal
 let equal_string = String.equal
 let equal_list eq a b = List.equal ~eq a b
 let hash_string = String.hash
+
+module With_equal_and_dyn = struct
+  module type S = sig
+    type t
+
+    val equal : t -> t -> bool
+    val to_dyn : t -> Dyn.t
+  end
+end

@@ -19,69 +19,23 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
+let require cond = if not cond then failwith "Required condition does not hold."
 
-let%expect_test "Char.is_whitespace" =
-  let require c ~expect = require_equal (module Bool) (Char.is_whitespace c) expect in
-  List.iter ~f:(fun c -> require c ~expect:true) [ ' '; '\t'; '\n'; '\011'; '\012'; '\r' ];
-  List.iter
-    ~f:(fun c -> require c ~expect:false)
-    [ 'a'; 'A'; '0'; '9'; 'z'; 'Z'; '1'; '8'; 'x'; 'X' ];
-  [%expect {||}];
-  ()
+let require_does_raise f =
+  match f () with
+  | _ -> Code_error.raise "Did not raise." []
+  | exception e -> print_endline (Stdlib.Printexc.to_string e)
 ;;
 
-let%expect_test "Int.to_string_hum" =
-  let test i = print_endline (Int.to_string_hum i) in
-  List.iter
-    ~f:test
-    [ 0
-    ; 42
-    ; 421
-    ; 1_234
-    ; 12_345
-    ; 123_456
-    ; 1_234_567
-    ; 12_345_678
-    ; -3
-    ; -99
-    ; -123
-    ; -1_234
-    ; -12_345
-    ; -123_456
-    ; -1_234_567
-    ; -12_345_678
-    ];
-  [%expect
-    {|
-    0
-    42
-    421
-    1_234
-    12_345
-    123_456
-    1_234_567
-    12_345_678
-    -3
-    -99
-    -123
-    -1_234
-    -12_345
-    -123_456
-    -1_234_567
-    -12_345_678
-    |}];
-  ()
-;;
-
-let%expect_test "equal_list" =
-  let test a b = equal_list Int.equal a b in
-  let r = [ 1; 2; 3 ] in
-  require (test r r);
-  require (test [ 1; 2; 3 ] [ 1; 2; 3 ]);
-  require (test [] []);
-  require (not (test [ 1; 2; 3 ] [ 1; 2 ]));
-  require (not (test [ 1; 2; 3 ] [ 1; 2; 4 ]));
-  require (not (test [] [ 1 ]));
-  ()
+let require_equal
+      (type a)
+      (module M : With_equal_and_dyn.S with type t = a)
+      (v1 : a)
+      (v2 : a)
+  =
+  if not (M.equal v1 v2)
+  then
+    Code_error.raise
+      "Values are not equal."
+      [ "v1", v1 |> M.to_dyn; "v2", v2 |> M.to_dyn ]
 ;;
