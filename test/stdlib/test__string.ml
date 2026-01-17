@@ -19,6 +19,28 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+let%expect_test "split_lines" =
+  let test s =
+    let lines = String.split_lines s in
+    print_s [%sexp (lines : string list)]
+  in
+  test "";
+  [%expect {| () |}];
+  test "\n";
+  [%expect {| ("") |}];
+  test "Hello\r\nWorld";
+  [%expect {| (Hello World) |}];
+  test "Hello\nWorld";
+  [%expect {| (Hello World) |}];
+  test "Hello\r\nWorld\r\n";
+  [%expect {| (Hello World) |}];
+  test "Hello\nWorld\n";
+  [%expect {| (Hello World) |}];
+  test "Hello\nWorld\n\n";
+  [%expect {| (Hello World "") |}];
+  ()
+;;
+
 module String_option = struct
   type t = string option
 

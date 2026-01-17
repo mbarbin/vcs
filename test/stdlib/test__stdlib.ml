@@ -117,28 +117,6 @@ let%expect_test "Int.to_string_hum" =
   ()
 ;;
 
-let%expect_test "String.split_lines" =
-  let test s =
-    let lines = String.split_lines s in
-    print_s [%sexp (lines : string list)]
-  in
-  test "";
-  [%expect {| () |}];
-  test "\n";
-  [%expect {| ("") |}];
-  test "Hello\r\nWorld";
-  [%expect {| (Hello World) |}];
-  test "Hello\nWorld";
-  [%expect {| (Hello World) |}];
-  test "Hello\r\nWorld\r\n";
-  [%expect {| (Hello World) |}];
-  test "Hello\nWorld\n";
-  [%expect {| (Hello World) |}];
-  test "Hello\nWorld\n\n";
-  [%expect {| (Hello World "") |}];
-  ()
-;;
-
 let%expect_test "equal_list" =
   let test a b = equal_list Int.equal a b in
   let r = [ 1; 2; 3 ] in
