@@ -21,14 +21,12 @@
 
 open! Import
 
-let%expect_test "equal_list" =
-  let test a b = equal_list Int.equal a b in
-  let r = [ 1; 2; 3 ] in
-  require (test r r);
-  require (test [ 1; 2; 3 ] [ 1; 2; 3 ]);
-  require (test [] []);
-  require (not (test [ 1; 2; 3 ] [ 1; 2 ]));
-  require (not (test [ 1; 2; 3 ] [ 1; 2; 4 ]));
-  require (not (test [] [ 1 ]));
+let%expect_test "Char.is_whitespace" =
+  let require c ~expect = require_equal (module Bool) (Char.is_whitespace c) expect in
+  List.iter ~f:(fun c -> require c ~expect:true) [ ' '; '\t'; '\n'; '\011'; '\012'; '\r' ];
+  List.iter
+    ~f:(fun c -> require c ~expect:false)
+    [ 'a'; 'A'; '0'; '9'; 'z'; 'Z'; '1'; '8'; 'x'; 'X' ];
+  [%expect {||}];
   ()
 ;;
