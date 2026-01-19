@@ -27,7 +27,7 @@
 ;;
 ;; See: [.github/workflows/edit_dune_project_dot_ml].
 
-(implicit_transitive_deps true)
+(implicit_transitive_deps false)
 
 (package
  (name volgo)
@@ -39,8 +39,6 @@
    (>= 2.1))
   (dyn
    (>= 3.17))
-  (fpath
-   (>= 0.7.3))
   (fpath-sexp0
    (>= 0.4.0))
   (ordering
