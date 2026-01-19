@@ -110,5 +110,7 @@ let%expect_test "equal-and-compare" =
   [%expect {| Lt |}];
   cmp t1 t4;
   [%expect {| Lt |}];
+  cmp t4 t1;
+  [%expect {| Gt |}];
   ()
 ;;
