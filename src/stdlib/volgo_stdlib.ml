@@ -268,7 +268,7 @@ module Result = struct
     | Ok of 'a
     | Error of 'b
 
-  (* Not checked with deriving_inline due some formatting unstability. *)
+  (* Not checked with deriving_inline due some formatting instability. *)
   let sexp_of_t
     :  'a 'b.
        ('a -> Sexplib0.Sexp.t)
