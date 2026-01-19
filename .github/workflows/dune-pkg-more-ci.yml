@@ -1,0 +1,65 @@
+# Additional CI workflow using setup-dune (dune package management).
+# This workflow is intended to eventually replace more-ci.yml.
+#
+# This tests across multiple operating systems and OCaml versions, but skips
+# steps not necessary for every combination (linting, coverage, etc.).
+
+name: dune-pkg-more-ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        ocaml-version:
+          - "5.3"
+          - "5.2"
+          - "4.14"
+        exclude:
+          # Exclude the combination already tested in the main ci workflow.
+          - os: ubuntu-latest
+            ocaml-version: "5.3"
+
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Environment setup
+        run: |
+          echo "DUNE_WORKSPACE=$PWD/dune-workspace-${{ matrix.ocaml-version }}" >> "$GITHUB_ENV"
+          if [ "${{ matrix.ocaml-version }}" = "4.14" ]; then
+            echo "PACKAGES=volgo,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-hg-backend,volgo-hg-unix" >> "$GITHUB_ENV"
+          else
+            echo "PACKAGES=volgo,volgo-base,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-git-eio,volgo-hg-backend,volgo-hg-unix,volgo-hg-eio,vcs-test-helpers,volgo-tests" >> "$GITHUB_ENV"
+          fi
+
+      - name: Setup Dune
+        uses: mbarbin/setup-dune@1c4b81012f25bcff3ddc4cb2533cc8066802388f # v2.0.0+patched
+        with:
+          workspace: ${{ env.DUNE_WORKSPACE }}
+          cache-prefix: ${{ matrix.ocaml-version }}
+          only-packages: ${{ env.PACKAGES }}
+          steps: install-dune enable-pkg lazy-update-depexts install-gpatch install-depexts
+
+      - name: Build & Run tests
+        run: dune build @all @runtest --only-packages=${{ env.PACKAGES }}
