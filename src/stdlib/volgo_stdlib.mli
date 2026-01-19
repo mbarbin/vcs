@@ -19,6 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(** Extending [Stdlib] for use in the project.
+
+    {1 Internal Library - Not for External Use}
+
+    This library is meant to be an internal component of the Volgo project. It
+    is shared across multiple OCaml packages within the project. We have not
+    found a way to mark it as private in the dune build system, but it should be
+    treated as private.
+
+    {b Warning:} In particular, this library is not intended for use outside of
+    the Volgo project. Its interface is subject to breaking changes at any time,
+    without following semver or any other stability and backward compatibility
+    guidelines. *)
+
 open! Stdlib_compat
 module Code_error = Code_error
 module Dyn = Dyn
