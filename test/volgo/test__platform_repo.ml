@@ -21,24 +21,24 @@
 
 let%expect_test "to_string o of_string" =
   let ts =
-    let open List.Let_syntax in
-    let%bind platform = Vcs.Platform.all in
-    let%bind vcs_kind =
+    let ( let* ) x f = List.concat_map x ~f in
+    let* platform = Vcs.Platform.all in
+    let* vcs_kind =
       match platform with
       | GitHub | GitLab | Codeberg -> [ Vcs.Platform_repo.Vcs_kind.Git ]
       | Bitbucket | Sourcehut -> Vcs.Platform_repo.Vcs_kind.all
     in
     let user_handle = Vcs.User_handle.v "user" in
     let repo_name = Vcs.Repo_name.v "repo" in
-    let%bind protocol = Vcs.Platform_repo.Protocol.all in
-    let%bind ssh_syntax =
+    let* protocol = Vcs.Platform_repo.Protocol.all in
+    let* ssh_syntax =
       match protocol with
       | Https -> [ Vcs.Platform_repo.Ssh_syntax.Url_style ]
       | Ssh -> Vcs.Platform_repo.Ssh_syntax.all
     in
-    return
-      ( { Vcs.Platform_repo.Url.platform; vcs_kind; user_handle; repo_name; protocol }
+    [ ( { Vcs.Platform_repo.Url.platform; vcs_kind; user_handle; repo_name; protocol }
       , ssh_syntax )
+    ]
   in
   List.iter ts ~f:(fun (t, ssh_syntax) ->
     let str = Vcs.Platform_repo.Url.to_string t ~ssh_syntax in

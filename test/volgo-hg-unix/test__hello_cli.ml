@@ -67,7 +67,7 @@ let%expect_test "hello cli" =
         ~repo_root
         ~args:(List.concat [ [ "log" ]; [ "-r"; "." ]; [ "--template"; "{node}" ] ])
         ~f:(fun output ->
-          let ( let* ) x f = Result.bind x ~f in
+          let open Result.Monad_syntax in
           let* stdout = Vcs.Hg.Result.exit0_and_stdout output in
           match Vcs.Rev.of_string (String.strip stdout) with
           | Ok _ as ok -> ok

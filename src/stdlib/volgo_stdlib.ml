@@ -67,7 +67,15 @@ end
 let print pp = Format.printf "%a@." Pp.to_fmt pp
 let print_dyn dyn = print (Dyn.pp dyn)
 
-module Ordering = Ordering
+module Ordering = struct
+  include Ordering
+
+  let to_dyn = function
+    | Lt -> Dyn.Variant ("Lt", [])
+    | Eq -> Dyn.Variant ("Eq", [])
+    | Gt -> Dyn.Variant ("Gt", [])
+  ;;
+end
 
 module type To_sexpable = sig
   type t
@@ -235,6 +243,7 @@ module List = struct
   include ListLabels
 
   let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_list
+  let concat_map t ~f = concat_map ~f t
   let dedup_and_sort t ~compare = sort_uniq t ~cmp:compare
 
   let hd = function
@@ -245,13 +254,16 @@ module List = struct
   let filter_opt t = filter_map t ~f:Fun.id
   let find t ~f = find_opt t ~f
   let fold t ~init ~f = fold_left ~f ~init t
+  let iter t ~f = iter t ~f
   let sort t ~compare = sort t ~cmp:compare
+  let count t ~f = fold t ~init:0 ~f:(fun acc e -> acc + if f e then 1 else 0)
 end
 
 module Option = struct
   include Option
 
   let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_option
+  let iter t ~f = iter f t
   let map t ~f = map f t
   let some_if cond a = if cond then Some a else None
 end

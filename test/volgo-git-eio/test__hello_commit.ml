@@ -47,7 +47,7 @@ let%expect_test "hello commit" =
       (Vcs.Result.show_file_at_rev
          vcs
          ~repo_root
-         ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.value_exn ~here:[%here])
+         ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.get)
          ~path:hello_file
        : [ `Present of Vcs.File_contents.t | `Absent ] Vcs.Result.t)];
   [%expect {| (Ok (Present "Hello World!")) |}];

@@ -142,7 +142,7 @@ let%expect_test "hello path" =
      executable resolution. *)
   let extended_env =
     Array.map env ~f:(fun binding ->
-      match String.lsplit2_exn binding ~on:'=' with
+      match String.lsplit2 binding ~on:'=' |> Option.get with
       | "PATH", value -> Printf.sprintf "PATH=%s:%s" (Absolute_path.to_string bin) value
       | _ -> binding)
   in

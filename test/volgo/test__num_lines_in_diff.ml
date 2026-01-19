@@ -100,15 +100,15 @@ let%expect_test "equal-and-compare" =
   require_not_equal [%here] (module Vcs.Num_lines_in_diff) t1 t4;
   [%expect {||}];
   let cmp a b =
-    print_s [%sexp (Vcs.Num_lines_in_diff.compare a b |> Ordering.of_int : Ordering.t)]
+    print_dyn (Vcs.Num_lines_in_diff.compare a b |> Ordering.of_int |> Ordering.to_dyn)
   in
   cmp t1 t1;
-  [%expect {| Equal |}];
+  [%expect {| Eq |}];
   cmp t1 t2;
-  [%expect {| Equal |}];
+  [%expect {| Eq |}];
   cmp t1 t3;
-  [%expect {| Less |}];
+  [%expect {| Lt |}];
   cmp t1 t4;
-  [%expect {| Less |}];
+  [%expect {| Lt |}];
   ()
 ;;

@@ -38,10 +38,9 @@ let print_raw_numstat vcs ~repo_root ~src ~dst =
       ~f:Vcs.Git.exit0_and_stdout
   in
   print_endline
-    (String.Search_pattern.replace_all
-       (String.Search_pattern.create "\t")
-       ~in_:raw_numstat
-       ~with_:" ")
+    (String.map raw_numstat ~f:(function
+       | '\t' -> ' '
+       | c -> c))
 ;;
 
 let%expect_test "files with curly-braces" =

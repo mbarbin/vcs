@@ -20,11 +20,14 @@
 (*******************************************************************************)
 
 (* A utility to map the revisions to short and stable keys ("rev0", "rev1", etc). *)
+
+module Rev_table = Vcs.Private.Rev_table
+
 let map_sexp =
   let next = ref (-1) in
-  let revs = Hashtbl.create (module Vcs.Rev) in
+  let revs = Rev_table.create 128 in
   let redact rev =
-    match Hashtbl.find revs rev with
+    match Rev_table.find revs rev with
     | Some redacted -> redacted
     | None ->
       let redacted =
@@ -32,7 +35,7 @@ let map_sexp =
         let n = !next in
         Printf.sprintf "rev%d" n
       in
-      Hashtbl.set revs ~key:rev ~data:redacted;
+      Rev_table.add_exn revs ~key:rev ~data:redacted;
       redacted
   in
   let rec aux sexp : Sexp.t =

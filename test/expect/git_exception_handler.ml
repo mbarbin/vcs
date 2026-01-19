@@ -67,7 +67,7 @@ module Handler_scenario = struct
   let to_string (t : t) =
     match [%sexp_of: t] t with
     | List _ -> assert false
-    | Atom atom -> String.lowercase atom
+    | Atom atom -> String.lowercase_ascii atom
   ;;
 end
 

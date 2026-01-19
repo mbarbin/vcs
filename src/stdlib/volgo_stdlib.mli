@@ -47,7 +47,13 @@ end
 
 val print_dyn : Dyn.t -> unit
 
-module Ordering = Ordering
+module Ordering : sig
+  include module type of struct
+    include Ordering
+  end
+
+  val to_dyn : t -> Dyn.t
+end
 
 module Array : sig
   include module type of ArrayLabels
@@ -107,11 +113,14 @@ module List : sig
   include module type of ListLabels
 
   val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
+  val concat_map : 'a list -> f:('a -> 'b list) -> 'b list
+  val count : 'a list -> f:('a -> bool) -> int
   val dedup_and_sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
   val filter_opt : 'a option list -> 'a list
   val find : 'a list -> f:('a -> bool) -> 'a option
   val fold : 'a list -> init:'b -> f:('b -> 'a -> 'b) -> 'b
   val hd : 'a list -> 'a option
+  val iter : 'a list -> f:('a -> unit) -> unit
   val sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
 end
 
@@ -119,6 +128,7 @@ module Option : sig
   include module type of Option
 
   val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
+  val iter : 'a t -> f:('a -> unit) -> unit
   val map : 'a option -> f:('a -> 'b) -> 'b option
   val some_if : bool -> 'a -> 'a option
 end
