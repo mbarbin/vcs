@@ -43,10 +43,10 @@ let%expect_test "graph" =
   List.iter refs ~f:(fun { rev; ref_kind } -> Vcs.Graph.set_ref graph ~rev ~ref_kind);
   let refs = Vcs.Graph.refs graph in
   List.iter refs ~f:(fun { rev; ref_kind } ->
-    let node = Vcs.Graph.find_ref graph ~ref_kind |> Option.value_exn ~here:[%here] in
+    let node = Vcs.Graph.find_ref graph ~ref_kind |> Option.get in
     let rev' = Vcs.Graph.rev graph ~node in
     require_equal [%here] (module Vcs.Rev) rev rev';
-    let node' = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
+    let node' = Vcs.Graph.find_rev graph ~rev |> Option.get in
     require_equal [%here] (module Vcs.Graph.Node) node node';
     let parents =
       Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
@@ -180,13 +180,13 @@ let%expect_test "graph" =
     Vcs.Graph.find_ref
       graph
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "main" })
-    |> Option.value_exn ~here:[%here]
+    |> Option.get
   in
   let subrepo =
     Vcs.Graph.find_ref
       graph
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "subrepo" })
-    |> Option.value_exn ~here:[%here]
+    |> Option.get
   in
   let progress_bar =
     Vcs.Graph.find_ref
@@ -198,15 +198,15 @@ let%expect_test "graph" =
                ; branch_name = Vcs.Branch_name.v "progress-bar"
                }
            })
-    |> Option.value_exn ~here:[%here]
+    |> Option.get
   in
   let tag_0_0_1 =
     Vcs.Graph.find_ref graph ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.1" })
-    |> Option.value_exn ~here:[%here]
+    |> Option.get
   in
   let tag_0_0_2 =
     Vcs.Graph.find_ref graph ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "0.0.2" })
-    |> Option.value_exn ~here:[%here]
+    |> Option.get
   in
   List.iter [ main; subrepo; progress_bar; tag_0_0_1; tag_0_0_2 ] ~f:(fun node ->
     print_s
@@ -274,7 +274,7 @@ let%expect_test "graph" =
   let root_node = Vcs.Rev.v "da46f0d60bfbb9dc9340e95f5625c10815c24af7" in
   let tip = Vcs.Rev.v "2e4fbeae154ec896262decf1ab3bee5687b93f21" in
   (* ref_kind. *)
-  let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
+  let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.get in
   let ref_kind rev =
     let node = node_exn rev in
     let line = Vcs.Graph.log_line graph ~node in
@@ -379,7 +379,7 @@ let%expect_test "add_nodes" =
        the nodes, to make it more alike what happens in the actual use cases. *)
     List.concat
       [ [ Vcs.Log.Line.Root { rev = revs.(0) }; Vcs.Log.Line.Root { rev = revs.(1) } ]
-      ; List.init 4 ~f:(fun i ->
+      ; List.init ~len:4 ~f:(fun i ->
           Vcs.Log.Line.Commit { rev = revs.(i + 2); parent = revs.(i + 1) })
       ]
   in
@@ -399,7 +399,7 @@ let%expect_test "add_nodes" =
   [%expect {| 7 |}];
   (* This graph has a merge node (r.6) which present some corner cases for the
      logic in [is_strict_ancestor] that are hard to cover otherwise. *)
-  let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
+  let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.get in
   print_s [%sexp (Vcs.Graph.log graph : Vcs.Log.t)];
   [%expect
     {|
@@ -482,7 +482,7 @@ end = struct
 
   let create graph = { graph; mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" }
   let rev t = Vcs.Mock_rev_gen.next t.mock_rev_gen
-  let node t ~rev = Vcs.Graph.find_rev t.graph ~rev |> Option.value_exn ~here:[%here]
+  let node t ~rev = Vcs.Graph.find_rev t.graph ~rev |> Option.get
 
   let tag t ~rev tag_name =
     Vcs.Graph.set_ref t.graph ~rev ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v tag_name })
@@ -557,11 +557,11 @@ let%expect_test "greatest_common_ancestors" =
   gcas [ r1; root2 ];
   [%expect {| ((gcas ())) |}];
   let r2 =
-    List.fold (List.init 10 ~f:ignore) ~init:r1 ~f:(fun parent () ->
+    List.fold (List.init ~len:10 ~f:ignore) ~init:r1 ~f:(fun parent () ->
       Mock.commit t ~parent)
   in
   let r3 =
-    List.fold (List.init 10 ~f:ignore) ~init:m1 ~f:(fun parent () ->
+    List.fold (List.init ~len:10 ~f:ignore) ~init:m1 ~f:(fun parent () ->
       Mock.commit t ~parent)
   in
   gcas [ r2; r3 ];

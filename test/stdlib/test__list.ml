@@ -19,42 +19,11 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* This is a simple test to make sure we can initialize a repo and commit a
-   file, and verify the mock rev mapping. *)
+open! Import
 
-let%expect_test "hello commit" =
-  Eio_main.run
-  @@ fun env ->
-  Eio.Switch.run
-  @@ fun sw ->
-  let vcs = Volgo_git_eio.create ~env in
-  let mock_revs = Vcs.Mock_revs.create () in
-  let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
-  let hello_file = Vcs.Path_in_repo.v "hello.txt" in
-  Vcs.save_file
-    vcs
-    ~path:(Vcs.Repo_root.append repo_root hello_file)
-    ~file_contents:(Vcs.File_contents.create "Hello World!");
-  Vcs.add vcs ~repo_root ~path:hello_file;
-  let rev =
-    Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
-  in
-  let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
-  print_s
-    [%sexp
-      (Vcs.Result.show_file_at_rev
-         vcs
-         ~repo_root
-         ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.get)
-         ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Vcs.Result.t)];
-  [%expect {| (Ok (Present "Hello World!")) |}];
-  print_s
-    [%sexp
-      (Vcs.Result.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Vcs.Result.t)];
-  [%expect {| (Ok (Present "Hello World!")) |}];
+let%expect_test "List.count" =
+  let test li ~f = print_dyn (List.count li ~f |> Dyn.int) in
+  test [ 0; 1; 2 ] ~f:(fun i -> i mod 2 = 0);
+  [%expect {| 2 |}];
   ()
 ;;

@@ -19,7 +19,9 @@
   -open
   Expect_test_helpers_base
   -open
-  Volgo)
+  Volgo
+  -open
+  Volgo_stdlib)
  (libraries
   base
   expect_test_helpers_core.expect_test_helpers_base
@@ -31,7 +33,8 @@
   unix
   vcs_test_helpers
   volgo
-  volgo_git_unix)
+  volgo_git_unix
+  volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint

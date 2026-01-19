@@ -22,7 +22,9 @@
   -open
   Expect_test_helpers_base
   -open
-  Volgo)
+  Volgo
+  -open
+  Volgo_stdlib)
  (libraries
   base
   bitv
@@ -35,7 +37,8 @@
   pplumbing-err
   volgo
   volgo_base
-  volgo_git_backend)
+  volgo_git_backend
+  volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint

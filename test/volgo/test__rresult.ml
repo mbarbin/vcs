@@ -47,29 +47,30 @@ let%expect_test "error_to_msg" =
 
 let%expect_test "open_error" =
   (* Here we simulate a program where the type for errors changes as we go. *)
+  let open Result.Monad_syntax in
   let result =
-    let%bind.Result () = Result.return () in
+    let* () = Result.return () in
     Result.return ()
   in
   print_s [%sexp (result : (unit, unit) Result.t)];
   [%expect {| (Ok ()) |}];
   let result =
-    let%bind.Result () = result in
-    let%bind.Result () = (Result.return () : (unit, [ `My_int_error of int ]) Result.t) in
+    let* () = result in
+    let* () = (Result.return () : (unit, [ `My_int_error of int ]) Result.t) in
     Result.return ()
   in
   print_s [%sexp (result : (unit, [ `My_int_error of int ]) Result.t)];
   [%expect {| (Ok ()) |}];
   let result =
-    let%bind.Result () =
+    let* () =
       match result with
       | Ok _ as r -> r
       | Error (`My_int_error _) as r -> r [@coverage off]
     in
     let ok = (Ok () : unit Vcs.Rresult.t) in
-    let%bind.Result () = Vcs.Rresult.open_error ok in
+    let* () = Vcs.Rresult.open_error ok in
     let error = Error (`Vcs (Err.create [ Pp.text "Vcs_error" ])) in
-    let%bind.Result () = Vcs.Rresult.open_error error in
+    let* () = Vcs.Rresult.open_error error in
     (Result.return () [@coverage off])
   in
   print_s [%sexp (result : (unit, [ `My_int_error of int | `Vcs of Err.t ]) Result.t)];

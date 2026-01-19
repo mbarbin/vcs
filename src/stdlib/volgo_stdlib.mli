@@ -19,6 +19,20 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
+(** Extending [Stdlib] for use in the project.
+
+    {1 Internal Library - Not for External Use}
+
+    This library is meant to be an internal component of the Volgo project. It
+    is shared across multiple OCaml packages within the project. We have not
+    found a way to mark it as private in the dune build system, but it should be
+    treated as private.
+
+    {b Warning:} In particular, this library is not intended for use outside of
+    the Volgo project. Its interface is subject to breaking changes at any time,
+    without following semver or any other stability and backward compatibility
+    guidelines. *)
+
 open! Stdlib_compat
 module Code_error = Code_error
 module Dyn = Dyn
@@ -33,7 +47,13 @@ end
 
 val print_dyn : Dyn.t -> unit
 
-module Ordering = Ordering
+module Ordering : sig
+  include module type of struct
+    include Ordering
+  end
+
+  val to_dyn : t -> Dyn.t
+end
 
 module Array : sig
   include module type of ArrayLabels
@@ -93,11 +113,14 @@ module List : sig
   include module type of ListLabels
 
   val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
+  val concat_map : 'a list -> f:('a -> 'b list) -> 'b list
+  val count : 'a list -> f:('a -> bool) -> int
   val dedup_and_sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
   val filter_opt : 'a option list -> 'a list
   val find : 'a list -> f:('a -> bool) -> 'a option
   val fold : 'a list -> init:'b -> f:('b -> 'a -> 'b) -> 'b
   val hd : 'a list -> 'a option
+  val iter : 'a list -> f:('a -> unit) -> unit
   val sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
 end
 
@@ -105,6 +128,7 @@ module Option : sig
   include module type of Option
 
   val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
+  val iter : 'a t -> f:('a -> unit) -> unit
   val map : 'a option -> f:('a -> 'b) -> 'b option
   val some_if : bool -> 'a -> 'a option
 end

@@ -18,6 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-include module type of Vcs.Git
-module Or_error : S with type 'a result := ('a, Vcs_or_error0.t) Stdlib.Result.t

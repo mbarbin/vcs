@@ -68,7 +68,7 @@ let%expect_test "node hash" =
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let rev () = Vcs.Mock_rev_gen.next mock_rev_gen in
   let graph = Vcs.Graph.create () in
-  let node ~rev = Vcs.Graph.find_rev graph ~rev |> Option.value_exn ~here:[%here] in
+  let node ~rev = Vcs.Graph.find_rev graph ~rev |> Option.get in
   let root () =
     let rev = rev () in
     Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Root { rev } ];

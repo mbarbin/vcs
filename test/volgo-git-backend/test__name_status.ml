@@ -174,7 +174,9 @@ let%expect_test "Diff_status" =
         (Printf.sprintf "%c something" char)
     in
     print_s
-      [%sexp (char : Char.t), (diff_status : Volgo_git_backend.Name_status.Diff_status.t)]);
+      [%sexp
+        (char |> Sexplib0.Sexp_conv.sexp_of_char : Sexp.t)
+      , (diff_status : Volgo_git_backend.Name_status.Diff_status.t)]);
   [%expect
     {|
     (A A)
