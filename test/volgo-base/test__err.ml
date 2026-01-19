@@ -26,11 +26,7 @@ let%expect_test "to_error" =
   test (Err.create [ Pp.text "Hello" ]);
   [%expect {| Hello |}];
   test (Err.add_context (Err.create [ Err.sexp [%sexp Hello] ]) [ Err.sexp [%sexp Step] ]);
-  [%expect
-    {|
-    ((context Step)
-     (error   Hello))
-    |}];
+  [%expect {| ((context Step) (error Hello)) |}];
   test (Err.create [ Pp.text "Hello"; Err.sexp [%sexp Step] ]);
   [%expect {| (Hello Step) |}];
   ()

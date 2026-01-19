@@ -148,13 +148,9 @@ let%expect_test "eio" =
          print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd" ]);
          [%expect
            {|
-           ((context (
-              (prog git)
-              (args (rev-parse --abbrev-ref HEAD))
-              (exit_status (Exited 0))
-              (cwd    <REDACTED>)
-              (stdout error)
-              (stderr "")))
+           ((context
+             ((prog git) (args (rev-parse --abbrev-ref HEAD)) (exit_status (Exited 0))
+              (cwd <REDACTED>) (stdout error) (stderr "")))
             (error "Expected exit code 0."))
            |}])
     | Raise_failure ->
@@ -207,13 +203,9 @@ let%expect_test "blocking" =
            (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd"; "prog" ]);
          [%expect
            {|
-           ((context (
-              (prog <REDACTED>)
-              (args (rev-parse --abbrev-ref HEAD))
-              (exit_status (Exited 0))
-              (cwd    <REDACTED>)
-              (stdout error)
-              (stderr "")))
+           ((context
+             ((prog <REDACTED>) (args (rev-parse --abbrev-ref HEAD))
+              (exit_status (Exited 0)) (cwd <REDACTED>) (stdout error) (stderr "")))
             (error "Expected exit code 0."))
            |}])
     | Raise_failure ->

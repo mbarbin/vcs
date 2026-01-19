@@ -42,14 +42,15 @@ let%expect_test "parse_exn" =
       }];
   [%expect
     {|
-     ((tags (0.0.1 0.0.2 0.0.3 0.0.3-preview.1))
-      (local_branches (gh-pages main subrepo))
-      (remote_branches (
-        ((remote_name origin) (branch_name 0.0.3-preview))
-        ((remote_name origin) (branch_name gh-pages))
-        ((remote_name origin) (branch_name main))
-        ((remote_name origin) (branch_name progress-bar))
-        ((remote_name origin) (branch_name progress-bar.2))))) |}];
+    ((tags (0.0.1 0.0.2 0.0.3 0.0.3-preview.1))
+     (local_branches (gh-pages main subrepo))
+     (remote_branches
+      (((remote_name origin) (branch_name 0.0.3-preview))
+       ((remote_name origin) (branch_name gh-pages))
+       ((remote_name origin) (branch_name main))
+       ((remote_name origin) (branch_name progress-bar))
+       ((remote_name origin) (branch_name progress-bar.2)))))
+    |}];
   ()
 ;;
 
@@ -86,10 +87,9 @@ let%expect_test "parse_ref_kind_exn" =
   test_ref_kind "refs/remotes/origin/main";
   [%expect
     {|
-    (Remote_branch (
-      remote_branch_name (
-        (remote_name origin)
-        (branch_name main)))) |}];
+    (Remote_branch
+     (remote_branch_name ((remote_name origin) (branch_name main))))
+    |}];
   test_ref_kind "refs/tags/0.0.1";
   [%expect {| (Tag (tag_name 0.0.1)) |}];
   ()
@@ -112,13 +112,13 @@ let%expect_test "dereferenced" =
   [%expect
     {|
     ((rev 1185512b92d612b25613f2e5b473e5231185512b)
-     (ref_kind (Local_branch (branch_name main)))
-     (dereferenced false)) |}];
+     (ref_kind (Local_branch (branch_name main))) (dereferenced false))
+    |}];
   test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main^{}";
   [%expect
     {|
     ((rev 1185512b92d612b25613f2e5b473e5231185512b)
-     (ref_kind (Local_branch (branch_name main)))
-     (dereferenced true)) |}];
+     (ref_kind (Local_branch (branch_name main))) (dereferenced true))
+    |}];
   ()
 ;;

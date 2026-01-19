@@ -63,16 +63,8 @@ let%expect_test "parse" =
   test "a/simple/path";
   [%expect {| (One_file a/simple/path) |}];
   test "a/simple/path => another/path";
-  [%expect
-    {|
-    (Two_files
-      (src a/simple/path)
-      (dst another/path)) |}];
+  [%expect {| (Two_files (src a/simple/path) (dst another/path)) |}];
   test "a/{simple => not/so/simple}/path";
-  [%expect
-    {|
-    (Two_files
-      (src a/simple/path)
-      (dst a/not/so/simple/path)) |}];
+  [%expect {| (Two_files (src a/simple/path) (dst a/not/so/simple/path)) |}];
   ()
 ;;

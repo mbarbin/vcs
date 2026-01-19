@@ -26,11 +26,7 @@ let%expect_test "sexp_of_t" =
     [%sexp
       (Err.add_context (Err.create [ Err.sexp [%sexp Hello] ]) [ Err.sexp [%sexp Step] ]
        : Err.t)];
-  [%expect
-    {|
-    ((context Step)
-     (error   Hello))
-    |}];
+  [%expect {| ((context Step) (error Hello)) |}];
   print_s [%sexp (Err.create [ Pp.verbatim "Hello" ] : Err.t)];
   [%expect {| Hello |}];
   print_s [%sexp (Err.create [ Pp.text "Hello"; Err.sexp [%sexp Step] ] : Err.t)];
@@ -77,11 +73,7 @@ let%expect_test "add_context" =
   [%expect {| Hello |}];
   let err = Err.add_context err [ Pp.verbatim "Step_1" ] in
   print_s [%sexp (err : Err.t)];
-  [%expect
-    {|
-    ((context Step_1)
-     (error   Hello))
-    |}];
+  [%expect {| ((context Step_1) (error Hello)) |}];
   let err = Err.add_context err [ Err.sexp [%sexp Step_2, { x = 42 }] ] in
   print_s [%sexp (err : Err.t)];
   [%expect {| ((context (Step_2 ((x 42))) Step_1) (error Hello)) |}];
@@ -91,10 +83,6 @@ let%expect_test "add_context" =
 let%expect_test "init" =
   print_s
     [%sexp (Err.add_context (Err.create [ Pp.text "Hello" ]) [ Pp.text "Step" ] : Err.t)];
-  [%expect
-    {|
-    ((context Step)
-     (error   Hello))
-    |}];
+  [%expect {| ((context Step) (error Hello)) |}];
   ()
 ;;

@@ -92,14 +92,9 @@ let%expect_test "hello cli" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.hg (repo_root <REDACTED>) (args (bogus)))
-       ((prog <REDACTED>)
-        (args (bogus))
-        (exit_status (Exited 255))
-        (cwd    <REDACTED>)
-        (stdout "")
-        (stderr <REDACTED>)))
+    ((context (Vcs.hg (repo_root <REDACTED>) (args (bogus)))
+      ((prog <REDACTED>) (args (bogus)) (exit_status (Exited 255))
+       (cwd <REDACTED>) (stdout "") (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
   let () =
@@ -122,17 +117,10 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.hg
-         (repo_root     <REDACTED>)
-         (run_in_subdir ./)
-         (env  (HELLO=env))
-         (args (bogus)))
-       ((prog <REDACTED>)
-        (args (bogus))
-        (exit_status (Exited 255))
-        (cwd    <REDACTED>)
-        (stdout "")
-        (stderr <REDACTED>)))
+      (Vcs.hg (repo_root <REDACTED>) (run_in_subdir ./) (env (HELLO=env))
+       (args (bogus)))
+      ((prog <REDACTED>) (args (bogus)) (exit_status (Exited 255))
+       (cwd <REDACTED>) (stdout "") (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
   let () =
@@ -146,14 +134,9 @@ let%expect_test "hello cli" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.hg (repo_root <REDACTED>) (args (bogus)))
-       ((prog <REDACTED>)
-        (args (bogus))
-        (exit_status (Exited 255))
-        (cwd    <REDACTED>)
-        (stdout "")
-        (stderr <REDACTED>)))
+    ((context (Vcs.hg (repo_root <REDACTED>) (args (bogus)))
+      ((prog <REDACTED>) (args (bogus)) (exit_status (Exited 255))
+       (cwd <REDACTED>) (stdout "") (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
   ()

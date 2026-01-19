@@ -34,28 +34,18 @@ let%expect_test "files" =
   print_s [%sexp (name_status : Vcs.Name_status.t)];
   [%expect
     {|
-    ((Added    added_file)
-     (Removed  removed_file)
-     (Modified modified_file)
-     (Copied
-       (src        original_copied_file)
-       (dst        new_copied_file)
-       (similarity 75))
-     (Renamed
-       (src        original_renamed_file)
-       (dst        new_renamed_file)
-       (similarity 100))) |}];
+    ((Added added_file) (Removed removed_file) (Modified modified_file)
+     (Copied (src original_copied_file) (dst new_copied_file) (similarity 75))
+     (Renamed (src original_renamed_file) (dst new_renamed_file)
+      (similarity 100)))
+    |}];
   let files = Vcs.Name_status.files name_status in
   print_s [%sexp (files : Set.M(Vcs.Path_in_repo).t)];
   [%expect
     {|
-    (added_file
-     modified_file
-     new_copied_file
-     new_renamed_file
-     original_copied_file
-     original_renamed_file
-     removed_file) |}];
+    (added_file modified_file new_copied_file new_renamed_file
+     original_copied_file original_renamed_file removed_file)
+    |}];
   let files_at_src = Vcs.Name_status.files_at_src name_status in
   print_s [%sexp (files_at_src : Set.M(Vcs.Path_in_repo).t)];
   [%expect

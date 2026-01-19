@@ -80,14 +80,10 @@ let%expect_test "hello path" =
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "prog"; "repo_root"; "stderr" ];
   [%expect
     {|
-    ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
-       ((prog <REDACTED>)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)))
+    ((context (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
+      ((prog <REDACTED>) (args (rev-parse INVALID-REF))
+       (exit_status (Exited 128)) (cwd <REDACTED>) (stdout INVALID-REF)
+       (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
   let bin = Absolute_path.extend cwd (Fsegment.v "bin") in
@@ -126,16 +122,11 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git
-         (repo_root <REDACTED>)
-         (env       <REDACTED>)
-         (args (rev-parse INVALID-REF)))
-       ((prog <REDACTED>)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)))
+      (Vcs.git (repo_root <REDACTED>) (env <REDACTED>)
+       (args (rev-parse INVALID-REF)))
+      ((prog <REDACTED>) (args (rev-parse INVALID-REF))
+       (exit_status (Exited 128)) (cwd <REDACTED>) (stdout INVALID-REF)
+       (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
   (* If we extend the environment in a way that changes PATH, we rerun the
@@ -154,16 +145,10 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git
-         (repo_root <REDACTED>)
-         (env       <REDACTED>)
-         (args (rev-parse INVALID-REF)))
-       ((prog <REDACTED>)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    42))
-        (cwd    <REDACTED>)
-        (stdout "Hello Git!")
-        (stderr "")))
+      (Vcs.git (repo_root <REDACTED>) (env <REDACTED>)
+       (args (rev-parse INVALID-REF)))
+      ((prog <REDACTED>) (args (rev-parse INVALID-REF)) (exit_status (Exited 42))
+       (cwd <REDACTED>) (stdout "Hello Git!") (stderr "")))
      (error "Expected exit code 0."))
     |}];
   (* When the executable is not present in a custom PATH, we try and execute the
@@ -177,16 +162,10 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git
-         (repo_root <REDACTED>)
-         (env       <REDACTED>)
-         (args (rev-parse INVALID-REF)))
-       ((prog git)
-        (args (rev-parse INVALID-REF))
-        (exit_status Unknown)
-        (cwd         <REDACTED>)
-        (stdout      "")
-        (stderr      "")))
+      (Vcs.git (repo_root <REDACTED>) (env <REDACTED>)
+       (args (rev-parse INVALID-REF)))
+      ((prog git) (args (rev-parse INVALID-REF)) (exit_status Unknown)
+       (cwd <REDACTED>) (stdout "") (stderr "")))
      (error ("Unix.Unix_error(Unix.ENOENT, \"execve\", \"git\")")))
     |}];
   (* Under an empty environment, we expect to revert to the previous git binary. *)
@@ -197,16 +176,11 @@ let%expect_test "hello path" =
   [%expect
     {|
     ((context
-       (Vcs.git
-         (repo_root <REDACTED>)
-         (env       <REDACTED>)
-         (args (rev-parse INVALID-REF)))
-       ((prog <REDACTED>)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)))
+      (Vcs.git (repo_root <REDACTED>) (env <REDACTED>)
+       (args (rev-parse INVALID-REF)))
+      ((prog <REDACTED>) (args (rev-parse INVALID-REF))
+       (exit_status (Exited 128)) (cwd <REDACTED>) (stdout INVALID-REF)
+       (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
   (* The initial PATH under which the [vcs] is created is used to pre locate the executable. *)
@@ -216,14 +190,9 @@ let%expect_test "hello path" =
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "env"; "prog"; "repo_root" ];
   [%expect
     {|
-    ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
-       ((prog <REDACTED>)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    42))
-        (cwd    <REDACTED>)
-        (stdout "Hello Git!")
-        (stderr "")))
+    ((context (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
+      ((prog <REDACTED>) (args (rev-parse INVALID-REF)) (exit_status (Exited 42))
+       (cwd <REDACTED>) (stdout "Hello Git!") (stderr "")))
      (error "Expected exit code 0."))
     |}];
   (* Let's monitor the behavior when no Git executable is found in the PATH. In
@@ -234,14 +203,9 @@ let%expect_test "hello path" =
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "env"; "repo_root" ];
   [%expect
     {|
-    ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
-       ((prog git)
-        (args (rev-parse INVALID-REF))
-        (exit_status Unknown)
-        (cwd         <REDACTED>)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
+      ((prog git) (args (rev-parse INVALID-REF)) (exit_status Unknown)
+       (cwd <REDACTED>) (stdout "") (stderr "")))
      (error ("Unix.Unix_error(Unix.ENOENT, \"execve\", \"git\")")))
     |}];
   Option.iter save_path ~f:(fun path -> Unix.putenv "PATH" path);

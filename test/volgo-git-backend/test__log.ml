@@ -65,18 +65,18 @@ let%expect_test "invalid lines" =
   test "b6951031b698697eb05f414d1f34000bb171a694 3dd9b4627aaa36f76c3097f9f31172f481b9229f";
   [%expect
     {|
-    (Commit
-      (rev    b6951031b698697eb05f414d1f34000bb171a694)
-      (parent 3dd9b4627aaa36f76c3097f9f31172f481b9229f)) |}];
+    (Commit (rev b6951031b698697eb05f414d1f34000bb171a694)
+     (parent 3dd9b4627aaa36f76c3097f9f31172f481b9229f))
+    |}];
   test
     "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f \
      d3a24cbfad0a681280ecfe021d40b69fb0b9c589";
   [%expect
     {|
-    (Merge
-      (rev     3bf5092cc55bff4c3ba546c771e17ab8d29cce65)
-      (parent1 aff8c9c8601e68a41a3bb695ea4a276e2446061f)
-      (parent2 d3a24cbfad0a681280ecfe021d40b69fb0b9c589)) |}];
+    (Merge (rev 3bf5092cc55bff4c3ba546c771e17ab8d29cce65)
+     (parent1 aff8c9c8601e68a41a3bb695ea4a276e2446061f)
+     (parent2 d3a24cbfad0a681280ecfe021d40b69fb0b9c589))
+    |}];
   require_does_raise [%here] (fun () -> test "");
   [%expect
     {|
