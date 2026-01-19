@@ -75,41 +75,26 @@ let%expect_test "redact_sexp" =
   print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error" ]);
   [%expect
     {|
-    ((context
-       (Vcs.init (path /invalid/path))
-       ((prog git)
-        (args (init .))
-        (exit_status Unknown)
-        (cwd         /invalid/path)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.init (path /invalid/path))
+      ((prog git) (args (init .)) (exit_status Unknown) (cwd /invalid/path)
+       (stdout "") (stderr "")))
      (error <REDACTED>))
     |}];
   print_s (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "context/cwd" ]);
   [%expect
     {|
-    ((context
-       (Vcs.init (path /invalid/path))
-       ((prog git)
-        (args (init .))
-        (exit_status Unknown)
-        (cwd         <REDACTED>)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.init (path /invalid/path))
+      ((prog git) (args (init .)) (exit_status Unknown) (cwd <REDACTED>)
+       (stdout "") (stderr "")))
      (error <REDACTED>))
     |}];
   print_s
     (Vcs_test_helpers.redact_sexp error ~fields:[ "error"; "context/stderr"; "cwd" ]);
   [%expect
     {|
-    ((context
-       (Vcs.init (path /invalid/path))
-       ((prog git)
-        (args (init .))
-        (exit_status Unknown)
-        (cwd         <REDACTED>)
-        (stdout      "")
-        (stderr      <REDACTED>)))
+    ((context (Vcs.init (path /invalid/path))
+      ((prog git) (args (init .)) (exit_status Unknown) (cwd <REDACTED>)
+       (stdout "") (stderr <REDACTED>)))
      (error <REDACTED>))
     |}];
   (* Adding corner cases, such as empty nested fields. *)
@@ -124,12 +109,7 @@ let%expect_test "redact_sexp" =
   print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[]);
   [%expect {| (("" empty) ("" ("" empty)) (error error)) |}];
   print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[ "" ]);
-  [%expect
-    {|
-    ((""    <REDACTED>)
-     (""    <REDACTED>)
-     (error error))
-    |}];
+  [%expect {| (("" <REDACTED>) ("" <REDACTED>) (error error)) |}];
   print_s (Vcs_test_helpers.redact_sexp sexp ~fields:[ "/" ]);
   [%expect {| (("" empty) ("" ("" <REDACTED>)) (error error)) |}];
   ()

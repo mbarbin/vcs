@@ -112,16 +112,10 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git
-         (repo_root     <REDACTED>)
-         (run_in_subdir ./)
-         (args (rev-parse INVALID-REF)))
-       ((prog git)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)))
+      (Vcs.git (repo_root <REDACTED>) (run_in_subdir ./)
+       (args (rev-parse INVALID-REF)))
+      ((prog git) (args (rev-parse INVALID-REF)) (exit_status (Exited 128))
+       (cwd <REDACTED>) (stdout INVALID-REF) (stderr <REDACTED>)))
      (error (Failure "Hello invalid exit code")))
     |}];
   let () =
@@ -144,14 +138,9 @@ let%expect_test "hello cli" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
-       ((prog git)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)))
+    ((context (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
+      ((prog git) (args (rev-parse INVALID-REF)) (exit_status (Exited 128))
+       (cwd <REDACTED>) (stdout INVALID-REF) (stderr <REDACTED>)))
      (error "Hello invalid exit code"))
     |}];
   let () =
@@ -170,14 +159,9 @@ let%expect_test "hello cli" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
-       ((prog git)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)))
+    ((context (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
+      ((prog git) (args (rev-parse INVALID-REF)) (exit_status (Exited 128))
+       (cwd <REDACTED>) (stdout INVALID-REF) (stderr <REDACTED>)))
      (error "Hello invalid exit code."))
     |}];
   let () =
@@ -200,14 +184,9 @@ let%expect_test "hello cli" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
-       ((prog git)
-        (args        (rev-parse INVALID-REF))
-        (exit_status (Exited    128))
-        (cwd    <REDACTED>)
-        (stdout INVALID-REF)
-        (stderr <REDACTED>)))
+    ((context (Vcs.git (repo_root <REDACTED>) (args (rev-parse INVALID-REF)))
+      ((prog git) (args (rev-parse INVALID-REF)) (exit_status (Exited 128))
+       (cwd <REDACTED>) (stdout INVALID-REF) (stderr <REDACTED>)))
      (error "Hello invalid exit code."))
     |}];
   (* Here we characterize some unintended ways the API may be abused. *)
@@ -234,14 +213,9 @@ let%expect_test "hello cli" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
-       ((prog git)
-        (args (rev-parse --abbrev-ref HEAD))
-        (exit_status Unknown)
-        (cwd         /bogus/)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
+      ((prog git) (args (rev-parse --abbrev-ref HEAD)) (exit_status Unknown)
+       (cwd /bogus/) (stdout "") (stderr "")))
      (error <REDACTED>))
     |}];
   (* Another difference is that you do not get the context when the [f] helper
@@ -269,15 +243,10 @@ let%expect_test "hello cli" =
        ~fields:[ "error" ]);
   [%expect
     {|
-    (Error (
-      (context
-        (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
-        ((prog git)
-         (args (rev-parse --abbrev-ref HEAD))
-         (exit_status Unknown)
-         (cwd         /bogus/)
-         (stdout      "")
-         (stderr      "")))
+    (Error
+     ((context (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
+       ((prog git) (args (rev-parse --abbrev-ref HEAD)) (exit_status Unknown)
+        (cwd /bogus/) (stdout "") (stderr "")))
       (error <REDACTED>)))
     |}];
   (* And you do get the context when the helper returns an error. *)
@@ -293,13 +262,10 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus)))
-       ((prog git)
-        (args (rev-parse --abbrev-ref bogus))
-        (exit_status (Exited 128))
-        (cwd    <REDACTED>)
-        (stdout bogus)
-        (stderr <REDACTED>)))
+      (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus)))
+      ((prog git) (args (rev-parse --abbrev-ref bogus))
+       (exit_status (Exited 128)) (cwd <REDACTED>) (stdout bogus)
+       (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
   (* 2. Let's look now at [Vcs.Or_error.git]. It is meant to be used with a
@@ -327,15 +293,10 @@ let%expect_test "hello cli" =
        ~fields:[ "error" ]);
   [%expect
     {|
-    (Error (
-      (context
-        (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
-        ((prog git)
-         (args (rev-parse --abbrev-ref HEAD))
-         (exit_status Unknown)
-         (cwd         /bogus/)
-         (stdout      "")
-         (stderr      "")))
+    (Error
+     ((context (Vcs.git (repo_root /bogus) (args (rev-parse --abbrev-ref HEAD)))
+       ((prog git) (args (rev-parse --abbrev-ref HEAD)) (exit_status Unknown)
+        (cwd /bogus/) (stdout "") (stderr "")))
       (error <REDACTED>)))
     |}];
   (* However when your handler [f] raises, the function will raise too, and you
@@ -370,26 +331,19 @@ let%expect_test "hello cli" =
   [%expect
     {|
     ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref HEAD)))
-       ((prog git)
-        (args (rev-parse --abbrev-ref HEAD))
-        (exit_status Unknown)
-        (cwd         <REDACTED>)
-        (stdout      "")
-        (stderr      <REDACTED>)))
+      (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref HEAD)))
+      ((prog git) (args (rev-parse --abbrev-ref HEAD)) (exit_status Unknown)
+       (cwd <REDACTED>) (stdout "") (stderr <REDACTED>)))
      (error <REDACTED>))
     |}];
   abbrev_ref_does_raise "bogus" ~redact_fields:[ "cwd"; "repo_root"; "stderr" ];
   [%expect
     {|
     ((context
-       (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus)))
-       ((prog git)
-        (args (rev-parse --abbrev-ref bogus))
-        (exit_status (Exited 128))
-        (cwd    <REDACTED>)
-        (stdout bogus)
-        (stderr <REDACTED>)))
+      (Vcs.git (repo_root <REDACTED>) (args (rev-parse --abbrev-ref bogus)))
+      ((prog git) (args (rev-parse --abbrev-ref bogus))
+       (exit_status (Exited 128)) (cwd <REDACTED>) (stdout bogus)
+       (stderr <REDACTED>)))
      (error (Failure "Unexpected error code")))
     |}];
   ()

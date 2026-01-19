@@ -21,10 +21,7 @@
 
 let%expect_test "zero" =
   print_s [%sexp (Vcs.Num_lines_in_diff.zero : Vcs.Num_lines_in_diff.t)];
-  [%expect
-    {|
-    ((insertions 0)
-     (deletions  0)) |}];
+  [%expect {| ((insertions 0) (deletions 0)) |}];
   require [%here] (Vcs.Num_lines_in_diff.is_zero Vcs.Num_lines_in_diff.zero);
   [%expect {||}];
   require_equal
@@ -48,10 +45,7 @@ let%expect_test "add" =
   let t1 = { Vcs.Num_lines_in_diff.insertions = 1; deletions = 2 } in
   let t2 = { Vcs.Num_lines_in_diff.insertions = 3; deletions = 4 } in
   print_s [%sexp (Vcs.Num_lines_in_diff.(t1 + t2) : Vcs.Num_lines_in_diff.t)];
-  [%expect
-    {|
-    ((insertions 4)
-     (deletions  6)) |}];
+  [%expect {| ((insertions 4) (deletions 6)) |}];
   require_equal
     [%here]
     (module Vcs.Num_lines_in_diff)
@@ -59,10 +53,7 @@ let%expect_test "add" =
     Vcs.Num_lines_in_diff.(t1 + t2);
   [%expect {||}];
   print_s [%sexp (Vcs.Num_lines_in_diff.sum [ t1; t2 ] : Vcs.Num_lines_in_diff.t)];
-  [%expect
-    {|
-    ((insertions 4)
-     (deletions  6)) |}];
+  [%expect {| ((insertions 4) (deletions 6)) |}];
   ()
 ;;
 

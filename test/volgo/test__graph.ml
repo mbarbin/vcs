@@ -64,39 +64,29 @@ let%expect_test "graph" =
     ((ref_kind (Local_branch (branch_name subrepo)))
      (rev 2e4fbeae154ec896262decf1ab3bee5687b93f21)
      (parents (3820ba70563c65ee9f6d516b8e70eb5ea8173d45)))
-    ((ref_kind (
-       Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name 0.0.3-preview)))))
+    ((ref_kind
+      (Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name 0.0.3-preview)))))
      (rev 8e0e6821261f8baaff7bf4d6820c41417bab91eb)
      (parents (1887c81ebf9b84c548bc35038f7af82a18eb77bf)))
-    ((ref_kind (
-       Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name gh-pages)))))
+    ((ref_kind
+      (Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name gh-pages)))))
      (rev 7135b7f4790562e94d9122365478f0d39f5ffead)
      (parents (ad9e24e4ee719d71b07ce29597818461b38c9e4a)))
-    ((ref_kind (
-       Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name main)))))
+    ((ref_kind
+      (Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name main)))))
      (rev 2e4fbeae154ec896262decf1ab3bee5687b93f21)
      (parents (3820ba70563c65ee9f6d516b8e70eb5ea8173d45)))
-    ((ref_kind (
-       Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name progress-bar)))))
+    ((ref_kind
+      (Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name progress-bar)))))
      (rev a2cc521adbc8dcbd4855968698176e8af54f6550)
      (parents (4fbe82806f16bac64c099fa28300efe4a3c7c478)))
-    ((ref_kind (
-       Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name progress-bar.2)))))
+    ((ref_kind
+      (Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name progress-bar.2)))))
      (rev 7500919364fb176946e7598051ca7247addc3d15)
      (parents (ad01432770d3f696cf9312a6a45a559e3d2ac814)))
     ((ref_kind (Tag (tag_name 0.0.1)))
@@ -110,42 +100,44 @@ let%expect_test "graph" =
      (parents (6e463fbe6765015b8427f004f856ee4d77cc9ccd)))
     ((ref_kind (Tag (tag_name 0.0.3-preview.1)))
      (rev 1887c81ebf9b84c548bc35038f7af82a18eb77bf)
-     (parents (b258b0cde128083c4f05bcf276bcc1322f1d36a2))) |}];
+     (parents (b258b0cde128083c4f05bcf276bcc1322f1d36a2)))
+    |}];
   print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
   [%expect
     {|
-    ((refs (
-       (7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages)
+    ((refs
+      ((7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages)
        (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/main)
        (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/subrepo)
        (8e0e6821261f8baaff7bf4d6820c41417bab91eb
         refs/remotes/origin/0.0.3-preview)
        (7135b7f4790562e94d9122365478f0d39f5ffead refs/remotes/origin/gh-pages)
        (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/remotes/origin/main)
-       (a2cc521adbc8dcbd4855968698176e8af54f6550 refs/remotes/origin/progress-bar)
+       (a2cc521adbc8dcbd4855968698176e8af54f6550
+        refs/remotes/origin/progress-bar)
        (7500919364fb176946e7598051ca7247addc3d15
         refs/remotes/origin/progress-bar.2)
        (1892d4980ee74945eb98f67be26b745f96c0f482 refs/tags/0.0.1)
        (0d4750ff594236a4bd970e1c90b8bbad80fcadff refs/tags/0.0.2)
        (fc8e67fbc47302b7da682e9a7da626790bb59eaa refs/tags/0.0.3)
        (1887c81ebf9b84c548bc35038f7af82a18eb77bf refs/tags/0.0.3-preview.1)))
-     (roots (
-       da46f0d60bfbb9dc9340e95f5625c10815c24af7
+     (roots
+      (da46f0d60bfbb9dc9340e95f5625c10815c24af7
        35760b109070be51b9deb61c8fdc79c0b2d9065d))
-     (leaves (
-       (a2cc521adbc8dcbd4855968698176e8af54f6550 (
-         refs/remotes/origin/progress-bar))
-       (8e0e6821261f8baaff7bf4d6820c41417bab91eb (
-         refs/remotes/origin/0.0.3-preview))
-       (7500919364fb176946e7598051ca7247addc3d15 (
-         refs/remotes/origin/progress-bar.2))
-       (7135b7f4790562e94d9122365478f0d39f5ffead (
-         refs/heads/gh-pages refs/remotes/origin/gh-pages))
-       (2e4fbeae154ec896262decf1ab3bee5687b93f21 (
-         refs/heads/main refs/heads/subrepo refs/remotes/origin/main))))
-     (subgraphs (
-       ((refs (
-          (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/main)
+     (leaves
+      ((a2cc521adbc8dcbd4855968698176e8af54f6550
+        (refs/remotes/origin/progress-bar))
+       (8e0e6821261f8baaff7bf4d6820c41417bab91eb
+        (refs/remotes/origin/0.0.3-preview))
+       (7500919364fb176946e7598051ca7247addc3d15
+        (refs/remotes/origin/progress-bar.2))
+       (7135b7f4790562e94d9122365478f0d39f5ffead
+        (refs/heads/gh-pages refs/remotes/origin/gh-pages))
+       (2e4fbeae154ec896262decf1ab3bee5687b93f21
+        (refs/heads/main refs/heads/subrepo refs/remotes/origin/main))))
+     (subgraphs
+      (((refs
+         ((2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/main)
           (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/subrepo)
           (8e0e6821261f8baaff7bf4d6820c41417bab91eb
            refs/remotes/origin/0.0.3-preview)
@@ -159,22 +151,22 @@ let%expect_test "graph" =
           (fc8e67fbc47302b7da682e9a7da626790bb59eaa refs/tags/0.0.3)
           (1887c81ebf9b84c548bc35038f7af82a18eb77bf refs/tags/0.0.3-preview.1)))
         (roots (da46f0d60bfbb9dc9340e95f5625c10815c24af7))
-        (leaves (
-          (2e4fbeae154ec896262decf1ab3bee5687b93f21 (
-            refs/heads/main refs/heads/subrepo refs/remotes/origin/main))
-          (7500919364fb176946e7598051ca7247addc3d15 (
-            refs/remotes/origin/progress-bar.2))
-          (8e0e6821261f8baaff7bf4d6820c41417bab91eb (
-            refs/remotes/origin/0.0.3-preview))
-          (a2cc521adbc8dcbd4855968698176e8af54f6550 (
-            refs/remotes/origin/progress-bar)))))
-       ((refs (
-          (7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages)
+        (leaves
+         ((2e4fbeae154ec896262decf1ab3bee5687b93f21
+           (refs/heads/main refs/heads/subrepo refs/remotes/origin/main))
+          (7500919364fb176946e7598051ca7247addc3d15
+           (refs/remotes/origin/progress-bar.2))
+          (8e0e6821261f8baaff7bf4d6820c41417bab91eb
+           (refs/remotes/origin/0.0.3-preview))
+          (a2cc521adbc8dcbd4855968698176e8af54f6550
+           (refs/remotes/origin/progress-bar)))))
+       ((refs
+         ((7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages)
           (7135b7f4790562e94d9122365478f0d39f5ffead refs/remotes/origin/gh-pages)))
         (roots (35760b109070be51b9deb61c8fdc79c0b2d9065d))
-        (leaves ((
-          7135b7f4790562e94d9122365478f0d39f5ffead (
-            refs/heads/gh-pages refs/remotes/origin/gh-pages))))))))
+        (leaves
+         ((7135b7f4790562e94d9122365478f0d39f5ffead
+           (refs/heads/gh-pages refs/remotes/origin/gh-pages))))))))
     |}];
   let main =
     Vcs.Graph.find_ref
@@ -217,31 +209,24 @@ let%expect_test "graph" =
   [%expect
     {|
     ((node 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (refs (
-       (Local_branch (branch_name main))
-       (Local_branch (branch_name subrepo))
-       (Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name main)))))))
+     (refs
+      ((Local_branch (branch_name main)) (Local_branch (branch_name subrepo))
+       (Remote_branch
+        (remote_branch_name ((remote_name origin) (branch_name main)))))))
     ((node 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (refs (
-       (Local_branch (branch_name main))
-       (Local_branch (branch_name subrepo))
-       (Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name main)))))))
+     (refs
+      ((Local_branch (branch_name main)) (Local_branch (branch_name subrepo))
+       (Remote_branch
+        (remote_branch_name ((remote_name origin) (branch_name main)))))))
     ((node a2cc521adbc8dcbd4855968698176e8af54f6550)
-     (refs ((
-       Remote_branch (
-         remote_branch_name (
-           (remote_name origin)
-           (branch_name progress-bar)))))))
+     (refs
+      ((Remote_branch
+        (remote_branch_name ((remote_name origin) (branch_name progress-bar)))))))
     ((node 1892d4980ee74945eb98f67be26b745f96c0f482)
      (refs ((Tag (tag_name 0.0.1)))))
     ((node 0d4750ff594236a4bd970e1c90b8bbad80fcadff)
-     (refs ((Tag (tag_name 0.0.2))))) |}];
+     (refs ((Tag (tag_name 0.0.2)))))
+    |}];
   (* Log. *)
   print_s [%sexp (List.length (Vcs.Graph.log graph) : int)];
   [%expect {| 180 |}];
@@ -256,20 +241,11 @@ let%expect_test "graph" =
         }]
   in
   is_ancestor tag_0_0_1 tag_0_0_2;
-  [%expect
-    {|
-    ((is_ancestor_or_equal true)
-     (is_strict_ancestor   true)) |}];
+  [%expect {| ((is_ancestor_or_equal true) (is_strict_ancestor true)) |}];
   is_ancestor tag_0_0_2 tag_0_0_1;
-  [%expect
-    {|
-    ((is_ancestor_or_equal false)
-     (is_strict_ancestor   false)) |}];
+  [%expect {| ((is_ancestor_or_equal false) (is_strict_ancestor false)) |}];
   is_ancestor main main;
-  [%expect
-    {|
-    ((is_ancestor_or_equal true)
-     (is_strict_ancestor   false)) |}];
+  [%expect {| ((is_ancestor_or_equal true) (is_strict_ancestor false)) |}];
   let merge_node = Vcs.Rev.v "93280971041e0e6a64894400061392b1c702baa7" in
   let root_node = Vcs.Rev.v "da46f0d60bfbb9dc9340e95f5625c10815c24af7" in
   let tip = Vcs.Rev.v "2e4fbeae154ec896262decf1ab3bee5687b93f21" in
@@ -283,16 +259,16 @@ let%expect_test "graph" =
   ref_kind tip;
   [%expect
     {|
-    (Commit
-      (rev    2e4fbeae154ec896262decf1ab3bee5687b93f21)
-      (parent 3820ba70563c65ee9f6d516b8e70eb5ea8173d45)) |}];
+    (Commit (rev 2e4fbeae154ec896262decf1ab3bee5687b93f21)
+     (parent 3820ba70563c65ee9f6d516b8e70eb5ea8173d45))
+    |}];
   ref_kind merge_node;
   [%expect
     {|
-    (Merge
-      (rev     93280971041e0e6a64894400061392b1c702baa7)
-      (parent1 735103d3d41b48b7425b5b5386f235c8940080af)
-      (parent2 1eafed9e1737cd2ebbfe60ca787e622c7e0fc080)) |}];
+    (Merge (rev 93280971041e0e6a64894400061392b1c702baa7)
+     (parent1 735103d3d41b48b7425b5b5386f235c8940080af)
+     (parent2 1eafed9e1737cd2ebbfe60ca787e622c7e0fc080))
+    |}];
   ref_kind root_node;
   [%expect {| (Root (rev da46f0d60bfbb9dc9340e95f5625c10815c24af7)) |}];
   (* parents. *)
@@ -338,12 +314,7 @@ let%expect_test "graph" =
 let%expect_test "empty summary" =
   let graph = Vcs.Graph.create () in
   print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
-  [%expect
-    {|
-    ((refs   ())
-     (roots  ())
-     (leaves ()))
-    |}];
+  [%expect {| ((refs ()) (roots ()) (leaves ())) |}];
   ()
 ;;
 
@@ -405,22 +376,17 @@ let%expect_test "add_nodes" =
     {|
     ((Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9))
      (Root (rev f453b802f640c6888df978c712057d17f453b802))
-     (Commit
-       (rev    5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-       (parent f453b802f640c6888df978c712057d17f453b802))
-     (Commit
-       (rev    9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-       (parent 5deb4aaec51a75ef58765038b7c20b3f5deb4aae))
-     (Commit
-       (rev    7216231cd107946841cc3eebe5da287b7216231c)
-       (parent 9a81fba7a18f740120f1141b1ed109bb9a81fba7))
-     (Commit
-       (rev    b155b82523d24ea82eb0ad45a5e89adcb155b825)
-       (parent 7216231cd107946841cc3eebe5da287b7216231c))
-     (Merge
-       (rev     ed2a9ed9f5d7bee45156ba272651656ced2a9ed9)
-       (parent1 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-       (parent2 b155b82523d24ea82eb0ad45a5e89adcb155b825)))
+     (Commit (rev 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+      (parent f453b802f640c6888df978c712057d17f453b802))
+     (Commit (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
+      (parent 5deb4aaec51a75ef58765038b7c20b3f5deb4aae))
+     (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c)
+      (parent 9a81fba7a18f740120f1141b1ed109bb9a81fba7))
+     (Commit (rev b155b82523d24ea82eb0ad45a5e89adcb155b825)
+      (parent 7216231cd107946841cc3eebe5da287b7216231c))
+     (Merge (rev ed2a9ed9f5d7bee45156ba272651656ced2a9ed9)
+      (parent1 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
+      (parent2 b155b82523d24ea82eb0ad45a5e89adcb155b825)))
     |}];
   let is_strict_ancestor r1 r2 =
     print_s
@@ -457,8 +423,7 @@ let%expect_test "set invalid rev" =
   print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
   [%expect
     {|
-    ((
-      (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)
+    (((rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)
       (ref_kind (Local_branch (branch_name main)))))
     |}];
   ()
@@ -645,40 +610,25 @@ let%expect_test "debug graph" =
   print_s [%sexp (graph : Vcs.Graph.t)];
   [%expect
     {|
-    ((nodes (
-       (#4 (
-         Commit
-         (rev    7216231cd107946841cc3eebe5da287b7216231c)
-         (parent #3)))
-       (#3 (
-         Merge
-         (rev     9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-         (parent1 #1)
+    ((nodes
+      ((#4 (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c) (parent #3)))
+       (#3
+        (Merge (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7) (parent1 #1)
          (parent2 #2)))
-       (#2 (
-         Commit
-         (rev    5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-         (parent #0)))
-       (#1 (
-         Commit
-         (rev    f453b802f640c6888df978c712057d17f453b802)
-         (parent #0)))
+       (#2 (Commit (rev 5deb4aaec51a75ef58765038b7c20b3f5deb4aae) (parent #0)))
+       (#1 (Commit (rev f453b802f640c6888df978c712057d17f453b802) (parent #0)))
        (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
-     (revs (
-       (#4 7216231cd107946841cc3eebe5da287b7216231c)
+     (revs
+      ((#4 7216231cd107946841cc3eebe5da287b7216231c)
        (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
        (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
        (#1 f453b802f640c6888df978c712057d17f453b802)
        (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
-     (refs (
-       (#4 (
-         (Local_branch (branch_name main))
-         (Tag          (tag_name    0.1.0))))
-       (#1 ((
-         Remote_branch (
-           remote_branch_name (
-             (remote_name origin)
-             (branch_name main)))))))))
+     (refs
+      ((#4 ((Local_branch (branch_name main)) (Tag (tag_name 0.1.0))))
+       (#1
+        ((Remote_branch
+          (remote_branch_name ((remote_name origin) (branch_name main)))))))))
     |}];
   (* node_count *)
   print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
@@ -691,27 +641,15 @@ let%expect_test "debug graph" =
   node_kind r0;
   [%expect {| (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
   node_kind r1;
-  [%expect
-    {|
-    (Commit
-      (rev    f453b802f640c6888df978c712057d17f453b802)
-      (parent #0))
-    |}];
+  [%expect {| (Commit (rev f453b802f640c6888df978c712057d17f453b802) (parent #0)) |}];
   node_kind m1;
   [%expect
     {|
-    (Merge
-      (rev     9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-      (parent1 #1)
-      (parent2 #2))
+    (Merge (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7) (parent1 #1)
+     (parent2 #2))
     |}];
   node_kind r4;
-  [%expect
-    {|
-    (Commit
-      (rev    7216231cd107946841cc3eebe5da287b7216231c)
-      (parent #3))
-    |}];
+  [%expect {| (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c) (parent #3)) |}];
   (* ancestors *)
   let print_ancestors rev =
     print_s [%sexp (ancestors graph (Mock.node t ~rev) : Set.M(Vcs.Graph.Node).t)]
@@ -782,10 +720,8 @@ let%expect_test "debug graph" =
   [%expect
     {|
     ((Local_branch (branch_name main))
-     (Remote_branch (
-       remote_branch_name (
-         (remote_name origin)
-         (branch_name main))))
+     (Remote_branch
+      (remote_branch_name ((remote_name origin) (branch_name main))))
      (Tag (tag_name 0.1.0)))
     |}];
   print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
@@ -794,49 +730,34 @@ let%expect_test "debug graph" =
     (((rev 7216231cd107946841cc3eebe5da287b7216231c)
       (ref_kind (Local_branch (branch_name main))))
      ((rev 7216231cd107946841cc3eebe5da287b7216231c)
-      (ref_kind (
-        Remote_branch (
-          remote_branch_name (
-            (remote_name origin)
-            (branch_name main))))))
+      (ref_kind
+       (Remote_branch
+        (remote_branch_name ((remote_name origin) (branch_name main))))))
      ((rev 7216231cd107946841cc3eebe5da287b7216231c)
       (ref_kind (Tag (tag_name 0.1.0)))))
     |}];
   print_s [%sexp (graph : Vcs.Graph.t)];
   [%expect
     {|
-    ((nodes (
-       (#4 (
-         Commit
-         (rev    7216231cd107946841cc3eebe5da287b7216231c)
-         (parent #3)))
-       (#3 (
-         Merge
-         (rev     9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-         (parent1 #1)
+    ((nodes
+      ((#4 (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c) (parent #3)))
+       (#3
+        (Merge (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7) (parent1 #1)
          (parent2 #2)))
-       (#2 (
-         Commit
-         (rev    5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-         (parent #0)))
-       (#1 (
-         Commit
-         (rev    f453b802f640c6888df978c712057d17f453b802)
-         (parent #0)))
+       (#2 (Commit (rev 5deb4aaec51a75ef58765038b7c20b3f5deb4aae) (parent #0)))
+       (#1 (Commit (rev f453b802f640c6888df978c712057d17f453b802) (parent #0)))
        (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
-     (revs (
-       (#4 7216231cd107946841cc3eebe5da287b7216231c)
+     (revs
+      ((#4 7216231cd107946841cc3eebe5da287b7216231c)
        (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
        (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
        (#1 f453b802f640c6888df978c712057d17f453b802)
        (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
-     (refs ((
-       #4 (
-         (Local_branch (branch_name main))
-         (Remote_branch (
-           remote_branch_name (
-             (remote_name origin)
-             (branch_name main))))
+     (refs
+      ((#4
+        ((Local_branch (branch_name main))
+         (Remote_branch
+          (remote_branch_name ((remote_name origin) (branch_name main))))
          (Tag (tag_name 0.1.0)))))))
     |}];
   (* We also test a case where [set_ref] leaves at least one ref at the previous
@@ -845,11 +766,7 @@ let%expect_test "debug graph" =
   Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:custom_A;
   Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:(Other { name = "custom-B" });
   show_refs r0;
-  [%expect
-    {|
-    ((Other (name custom-A))
-     (Other (name custom-B)))
-    |}];
+  [%expect {| ((Other (name custom-A)) (Other (name custom-B))) |}];
   Vcs.Graph.set_ref graph ~rev:r1 ~ref_kind:custom_A;
   show_refs r0;
   [%expect {| ((Other (name custom-B))) |}];

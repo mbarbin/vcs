@@ -201,3 +201,13 @@ module With_equal_and_dyn : sig
     val to_dyn : t -> Dyn.t
   end
 end
+
+(** {1 Transition API}
+
+    Functions in this section are exported to smooth transitions and refactor as
+    we rework the exact set of third-party dependencies for the volgo project.
+    They may be removed or renamed in the future. *)
+
+val print_endline : string -> unit
+val print_s : Sexp.t -> unit
+val print_string : string -> unit

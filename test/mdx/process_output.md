@@ -1,6 +1,6 @@
 # Process output
 
-This test monitors that the types to manipulate the ouptut of the `git` and `hg` processes are not unifiable, for the purpose of added type safety.
+This test monitors that the types to manipulate the output of the `git` and `hg` processes are not unifiable, for the purpose of added type safety.
 
 ```ocaml
 let process_git_output (_ : Vcs.Git.Output.t) = ()

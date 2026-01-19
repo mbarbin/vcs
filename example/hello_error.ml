@@ -40,14 +40,9 @@ let%expect_test "hello error" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.init (path /invalid/path))
-       ((prog git)
-        (args (init .))
-        (exit_status Unknown)
-        (cwd         /invalid/path)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.init (path /invalid/path))
+      ((prog git) (args (init .)) (exit_status Unknown) (cwd /invalid/path)
+       (stdout "") (stderr "")))
      (error <REDACTED>))
     |}];
   (* Let's do the same with the non-raising interfaces. *)
@@ -58,14 +53,9 @@ let%expect_test "hello error" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.init (path /invalid/path))
-       ((prog git)
-        (args (init .))
-        (exit_status Unknown)
-        (cwd         /invalid/path)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.init (path /invalid/path))
+      ((prog git) (args (init .)) (exit_status Unknown) (cwd /invalid/path)
+       (stdout "") (stderr "")))
      (error <REDACTED>))
     |}];
   let () =
@@ -75,14 +65,9 @@ let%expect_test "hello error" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.init (path /invalid/path))
-       ((prog git)
-        (args (init .))
-        (exit_status Unknown)
-        (cwd         /invalid/path)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.init (path /invalid/path))
+      ((prog git) (args (init .)) (exit_status Unknown) (cwd /invalid/path)
+       (stdout "") (stderr "")))
      (error <REDACTED>))
     |}];
   let () =
@@ -92,15 +77,10 @@ let%expect_test "hello error" =
   in
   [%expect
     {|
-    (Vcs (
-      (context
-        (Vcs.init (path /invalid/path))
-        ((prog git)
-         (args (init .))
-         (exit_status Unknown)
-         (cwd         /invalid/path)
-         (stdout      "")
-         (stderr      "")))
+    (Vcs
+     ((context (Vcs.init (path /invalid/path))
+       ((prog git) (args (init .)) (exit_status Unknown) (cwd /invalid/path)
+        (stdout "") (stderr "")))
       (error <REDACTED>)))
     |}];
   ()

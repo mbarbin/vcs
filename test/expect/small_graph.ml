@@ -70,16 +70,10 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.add
-         (repo_root <REDACTED>)
-         (path      unknown-file.txt))
-       ((prog git)
-        (args        (add    unknown-file.txt))
-        (exit_status (Exited 128))
-        (cwd    <REDACTED>)
-        (stdout "")
-        (stderr "fatal: pathspec 'unknown-file.txt' did not match any files")))
+    ((context (Vcs.add (repo_root <REDACTED>) (path unknown-file.txt))
+      ((prog git) (args (add unknown-file.txt)) (exit_status (Exited 128))
+       (cwd <REDACTED>) (stdout "")
+       (stderr "fatal: pathspec 'unknown-file.txt' did not match any files")))
      (error "Expected exit code 0."))
     |}];
   let () =
@@ -98,14 +92,9 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.commit (repo_root <REDACTED>))
-       ((prog git)
-        (args (commit -m "Nothing to commit"))
-        (exit_status (Exited 1))
-        (cwd    <REDACTED>)
-        (stdout <REDACTED>)
-        (stderr "")))
+    ((context (Vcs.commit (repo_root <REDACTED>))
+      ((prog git) (args (commit -m "Nothing to commit")) (exit_status (Exited 1))
+       (cwd <REDACTED>) (stdout <REDACTED>) (stderr "")))
      (error "Expected exit code 0."))
     |}];
   let commit_file ~path ~file_contents =
@@ -183,16 +172,9 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((context
-       (Vcs.ls_files
-         (repo_root <REDACTED>)
-         (below     dir))
-       ((prog git)
-        (args (ls-files --full-name))
-        (exit_status Unknown)
-        (cwd         <REDACTED>)
-        (stdout      "")
-        (stderr      "")))
+    ((context (Vcs.ls_files (repo_root <REDACTED>) (below dir))
+      ((prog git) (args (ls-files --full-name)) (exit_status Unknown)
+       (cwd <REDACTED>) (stdout "") (stderr "")))
      (error <REDACTED>))
     |}];
   let foo_file = Vcs.Path_in_repo.v "foo.txt" in
@@ -216,12 +198,9 @@ let%expect_test "small graph" =
   print_s [%sexp (result : Vcs.Num_status.t Or_error.t)];
   [%expect
     {|
-    (Ok ((
-      (key (One_file bar.txt))
-      (num_stat (
-        Num_lines_in_diff (
-          (insertions 1)
-          (deletions  0)))))))
+    (Ok
+     (((key (One_file bar.txt))
+       (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0)))))))
     |}];
   let result =
     Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
@@ -229,12 +208,9 @@ let%expect_test "small graph" =
   print_s [%sexp (result : Vcs.Num_status.t Or_error.t)];
   [%expect
     {|
-    (Ok ((
-      (key (One_file bar.txt))
-      (num_stat (
-        Num_lines_in_diff (
-          (insertions 1)
-          (deletions  1)))))))
+    (Ok
+     (((key (One_file bar.txt))
+       (num_stat (Num_lines_in_diff ((insertions 1) (deletions 1)))))))
     |}];
   let () =
     match Vcs.Or_error.log vcs ~repo_root with
@@ -247,10 +223,8 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((Commit (rev rev3) (parent rev2))
-     (Commit (rev rev2) (parent rev1))
-     (Commit (rev rev1) (parent rev0))
-     (Root (rev rev0)))
+    ((Commit (rev rev3) (parent rev2)) (Commit (rev rev2) (parent rev1))
+     (Commit (rev rev1) (parent rev0)) (Root (rev rev0)))
     |}];
   let () =
     match Vcs.Or_error.refs vcs ~repo_root with
@@ -265,16 +239,10 @@ let%expect_test "small graph" =
   in
   [%expect
     {|
-    ((nodes (
-       (#3 (Commit (rev rev3) (parent #2)))
-       (#2 (Commit (rev rev2) (parent #1)))
-       (#1 (Commit (rev rev1) (parent #0)))
-       (#0 (Root (rev rev0)))))
-     (revs (
-       (#3 rev3)
-       (#2 rev2)
-       (#1 rev1)
-       (#0 rev0)))
+    ((nodes
+      ((#3 (Commit (rev rev3) (parent #2))) (#2 (Commit (rev rev2) (parent #1)))
+       (#1 (Commit (rev rev1) (parent #0))) (#0 (Root (rev rev0)))))
+     (revs ((#3 rev3) (#2 rev2) (#1 rev1) (#0 rev0)))
      (refs ((#3 ((Local_branch (branch_name main)))))))
     |}];
   ()

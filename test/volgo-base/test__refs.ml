@@ -37,14 +37,15 @@ let%expect_test "parse_exn" =
       }];
   [%expect
     {|
-     ((tags (0.0.1 0.0.2 0.0.3 0.0.3-preview.1))
-      (local_branches (gh-pages main subrepo))
-      (remote_branches (
-        ((remote_name origin) (branch_name 0.0.3-preview))
-        ((remote_name origin) (branch_name gh-pages))
-        ((remote_name origin) (branch_name main))
-        ((remote_name origin) (branch_name progress-bar))
-        ((remote_name origin) (branch_name progress-bar.2))))) |}];
+    ((tags (0.0.1 0.0.2 0.0.3 0.0.3-preview.1))
+     (local_branches (gh-pages main subrepo))
+     (remote_branches
+      (((remote_name origin) (branch_name 0.0.3-preview))
+       ((remote_name origin) (branch_name gh-pages))
+       ((remote_name origin) (branch_name main))
+       ((remote_name origin) (branch_name progress-bar))
+       ((remote_name origin) (branch_name progress-bar.2)))))
+    |}];
   print_s [%sexp (Vcs.Refs.to_map refs : Vcs.Rev.t Map.M(Vcs.Ref_kind).t)];
   [%expect
     {|
@@ -53,30 +54,20 @@ let%expect_test "parse_exn" =
      ((Local_branch (branch_name main)) 2e4fbeae154ec896262decf1ab3bee5687b93f21)
      ((Local_branch (branch_name subrepo))
       2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     ((Remote_branch (
-        remote_branch_name (
-          (remote_name origin)
-          (branch_name 0.0.3-preview))))
+     ((Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name 0.0.3-preview))))
       8e0e6821261f8baaff7bf4d6820c41417bab91eb)
-     ((Remote_branch (
-        remote_branch_name (
-          (remote_name origin)
-          (branch_name gh-pages))))
+     ((Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name gh-pages))))
       7135b7f4790562e94d9122365478f0d39f5ffead)
-     ((Remote_branch (
-        remote_branch_name (
-          (remote_name origin)
-          (branch_name main))))
+     ((Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name main))))
       2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     ((Remote_branch (
-        remote_branch_name (
-          (remote_name origin)
-          (branch_name progress-bar))))
+     ((Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name progress-bar))))
       a2cc521adbc8dcbd4855968698176e8af54f6550)
-     ((Remote_branch (
-        remote_branch_name (
-          (remote_name origin)
-          (branch_name progress-bar.2))))
+     ((Remote_branch
+       (remote_branch_name ((remote_name origin) (branch_name progress-bar.2))))
       7500919364fb176946e7598051ca7247addc3d15)
      ((Tag (tag_name 0.0.1)) 1892d4980ee74945eb98f67be26b745f96c0f482)
      ((Tag (tag_name 0.0.2)) 0d4750ff594236a4bd970e1c90b8bbad80fcadff)

@@ -128,8 +128,8 @@ let%expect_test "find ref" =
     {|
     ((branch1 dd5aabd331a75b90cd61725223964e47dd5aabd3)
      (branch2 f452a6f91ee8f448bd58bbd0f3330675f452a6f9)
-     (tag1    dd5aabd331a75b90cd61725223964e47dd5aabd3)
-     (tag2    f452a6f91ee8f448bd58bbd0f3330675f452a6f9))
+     (tag1 dd5aabd331a75b90cd61725223964e47dd5aabd3)
+     (tag2 f452a6f91ee8f448bd58bbd0f3330675f452a6f9))
     |}];
   (* Next we do the same lookups, this time using [Vcs.Graph.find_ref], and
      verify that we find the same results. *)

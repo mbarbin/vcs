@@ -422,3 +422,9 @@ module With_equal_and_dyn = struct
     val to_dyn : t -> Dyn.t
   end
 end
+
+(* {1 Transition API} *)
+
+let print_endline = Stdlib.print_endline
+let print_s sexp = print_endline (Sexp.to_string_hum sexp)
+let print_string = Stdlib.print_string
