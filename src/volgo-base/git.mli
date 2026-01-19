@@ -20,4 +20,4 @@
 (*_******************************************************************************)
 
 include module type of Vcs.Git
-module Or_error : S with type 'a result := ('a, Vcs_or_error0.t) Base.Result.t
+module Or_error : S with type 'a result := ('a, Vcs_or_error0.t) Stdlib.Result.t
