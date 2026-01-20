@@ -35,6 +35,7 @@ module Runtime = Runtime
 module Show = Show
 
 module Private = struct
+  module Arrow_split = Arrow_split
   module Munged_path = Munged_path
 end
 

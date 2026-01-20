@@ -18,15 +18,3 @@
 (*_  and the LGPL-3.0 Linking Exception along with this library. If not, see    *)
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
-
-(** Returns the parts of a string split by the separator " => ". We specialize
-    for the only patterns that matter for the parsing logic. *)
-
-type t =
-  | Empty
-  | One of string
-  | Two of string * string
-  | More_than_two
-
-val to_dyn : t -> Dyn.t
-val split : string -> t

@@ -121,5 +121,6 @@ module Show = Show
 
     Exported for tests. *)
 module Private : sig
+  module Arrow_split = Arrow_split
   module Munged_path = Munged_path
 end
