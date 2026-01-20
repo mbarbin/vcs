@@ -22,7 +22,7 @@
 (** Manipulating the output of process run by vcs and backends.
 
     This module is used to break a dependency cycle. It serves under the hood
-    for the implemenation of the types that are exported as [Vcs.Git.Output] and
+    for the implementation of the types that are exported as [Vcs.Git.Output] and
     [Vcs.Hg.Output], although for added type safety, these 2 types are not
     exported as being equal. *)
 
