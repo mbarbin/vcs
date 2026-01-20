@@ -83,32 +83,22 @@ module Change = struct
 
   let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let equal =
-    (fun a__001_ b__002_ ->
-       if a__001_ == b__002_
-       then true
-       else (
-         match a__001_, b__002_ with
-         | Added _a__003_, Added _b__004_ -> Path_in_repo.equal _a__003_ _b__004_
-         | Added _, _ -> false
-         | _, Added _ -> false
-         | Removed _a__005_, Removed _b__006_ -> Path_in_repo.equal _a__005_ _b__006_
-         | Removed _, _ -> false
-         | _, Removed _ -> false
-         | Modified _a__007_, Modified _b__008_ -> Path_in_repo.equal _a__007_ _b__008_
-         | Modified _, _ -> false
-         | _, Modified _ -> false
-         | Copied _a__009_, Copied _b__010_ ->
-           Path_in_repo.equal _a__009_.src _b__010_.src
-           && Path_in_repo.equal _a__009_.dst _b__010_.dst
-           && equal_int _a__009_.similarity _b__010_.similarity
-         | Copied _, _ -> false
-         | _, Copied _ -> false
-         | Renamed _a__011_, Renamed _b__012_ ->
-           Path_in_repo.equal _a__011_.src _b__012_.src
-           && Path_in_repo.equal _a__011_.dst _b__012_.dst
-           && equal_int _a__011_.similarity _b__012_.similarity)
-     : t -> t -> bool)
+  let equal a b =
+    phys_equal a b
+    ||
+    match a, b with
+    | Added a, Added b -> Path_in_repo.equal a b
+    | Removed a, Removed b -> Path_in_repo.equal a b
+    | Modified a, Modified b -> Path_in_repo.equal a b
+    | Copied a, Copied { src; dst; similarity } ->
+      Path_in_repo.equal a.src src
+      && Path_in_repo.equal a.dst dst
+      && Int.equal a.similarity similarity
+    | Renamed a, Renamed { src; dst; similarity } ->
+      Path_in_repo.equal a.src src
+      && Path_in_repo.equal a.dst dst
+      && Int.equal a.similarity similarity
+    | (Added _ | Removed _ | Modified _ | Copied _ | Renamed _), _ -> false
   ;;
 end
 
@@ -166,14 +156,10 @@ module Changed = struct
 
   let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let equal =
-    (fun a__034_ b__035_ ->
-       if a__034_ == b__035_
-       then true
-       else (
-         match a__034_, b__035_ with
-         | Between _a__036_, Between _b__037_ ->
-           Rev.equal _a__036_.src _b__037_.src && Rev.equal _a__036_.dst _b__037_.dst)
-     : t -> t -> bool)
+  let equal a b =
+    phys_equal a b
+    ||
+    match a, b with
+    | Between a, Between { src; dst } -> Rev.equal a.src src && Rev.equal a.dst dst
   ;;
 end

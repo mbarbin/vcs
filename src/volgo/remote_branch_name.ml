@@ -35,26 +35,16 @@ let to_dyn { remote_name; branch_name } =
 
 let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-let compare =
-  (fun a__001_ b__002_ ->
-     if a__001_ == b__002_
-     then 0
-     else (
-       match Remote_name.compare a__001_.remote_name b__002_.remote_name with
-       | 0 -> Branch_name.compare a__001_.branch_name b__002_.branch_name
-       | n -> n)
-   : t -> t -> int)
+let compare t ({ remote_name; branch_name } as t2) =
+  if phys_equal t t2
+  then 0
+  else (
+    match Remote_name.compare t.remote_name remote_name with
+    | 0 -> Branch_name.compare t.branch_name branch_name
+    | n -> n)
 ;;
 
-let equal =
-  (fun a__003_ b__004_ ->
-     if a__003_ == b__004_
-     then true
-     else
-       Remote_name.equal a__003_.remote_name b__004_.remote_name
-       && Branch_name.equal a__003_.branch_name b__004_.branch_name
-   : t -> t -> bool)
-;;
+let equal a b = compare a b = 0
 
 [@@@coverage on]
 

@@ -40,51 +40,26 @@ let to_dyn = function
 
 let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-let compare =
-  (fun a__001_ b__002_ ->
-     if a__001_ == b__002_
-     then 0
-     else (
-       match a__001_, b__002_ with
-       | Local_branch _a__003_, Local_branch _b__004_ ->
-         Branch_name.compare _a__003_.branch_name _b__004_.branch_name
-       | Local_branch _, _ -> -1
-       | _, Local_branch _ -> 1
-       | Remote_branch _a__005_, Remote_branch _b__006_ ->
-         Remote_branch_name.compare
-           _a__005_.remote_branch_name
-           _b__006_.remote_branch_name
-       | Remote_branch _, _ -> -1
-       | _, Remote_branch _ -> 1
-       | Tag _a__007_, Tag _b__008_ ->
-         Tag_name.compare _a__007_.tag_name _b__008_.tag_name
-       | Tag _, _ -> -1
-       | _, Tag _ -> 1
-       | Other _a__009_, Other _b__010_ -> compare_string _a__009_.name _b__010_.name)
-   : t -> t -> int)
+let compare a b =
+  if phys_equal a b
+  then 0
+  else (
+    match a, b with
+    | Local_branch a, Local_branch { branch_name } ->
+      Branch_name.compare a.branch_name branch_name
+    | Local_branch _, _ -> -1
+    | _, Local_branch _ -> 1
+    | Remote_branch a, Remote_branch { remote_branch_name } ->
+      Remote_branch_name.compare a.remote_branch_name remote_branch_name
+    | Remote_branch _, _ -> -1
+    | _, Remote_branch _ -> 1
+    | Tag a, Tag { tag_name } -> Tag_name.compare a.tag_name tag_name
+    | Tag _, _ -> -1
+    | _, Tag _ -> 1
+    | Other a, Other { name } -> String.compare a.name name)
 ;;
 
-let equal =
-  (fun a__011_ b__012_ ->
-     if a__011_ == b__012_
-     then true
-     else (
-       match a__011_, b__012_ with
-       | Local_branch _a__013_, Local_branch _b__014_ ->
-         Branch_name.equal _a__013_.branch_name _b__014_.branch_name
-       | Local_branch _, _ -> false
-       | _, Local_branch _ -> false
-       | Remote_branch _a__015_, Remote_branch _b__016_ ->
-         Remote_branch_name.equal _a__015_.remote_branch_name _b__016_.remote_branch_name
-       | Remote_branch _, _ -> false
-       | _, Remote_branch _ -> false
-       | Tag _a__017_, Tag _b__018_ -> Tag_name.equal _a__017_.tag_name _b__018_.tag_name
-       | Tag _, _ -> false
-       | _, Tag _ -> false
-       | Other _a__019_, Other _b__020_ -> equal_string _a__019_.name _b__020_.name)
-   : t -> t -> bool)
-;;
-
+let equal a b = compare a b = 0
 let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
 let hash = (Hashtbl.hash : t -> int)
 

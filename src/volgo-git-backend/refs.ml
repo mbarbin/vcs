@@ -72,15 +72,11 @@ module Dereferenced = struct
 
     let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-    let equal =
-      (fun a__001_ b__002_ ->
-         if a__001_ == b__002_
-         then true
-         else
-           Vcs.Rev.equal a__001_.rev b__002_.rev
-           && Vcs.Ref_kind.equal a__001_.ref_kind b__002_.ref_kind
-           && equal_bool a__001_.dereferenced b__002_.dereferenced
-       : t -> t -> bool)
+    let equal t ({ rev; ref_kind; dereferenced } as t2) =
+      phys_equal t t2
+      || (Vcs.Rev.equal t.rev rev
+          && Vcs.Ref_kind.equal t.ref_kind ref_kind
+          && Bool.equal t.dereferenced dereferenced)
     ;;
   end
 

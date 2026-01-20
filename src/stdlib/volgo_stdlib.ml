@@ -66,6 +66,7 @@ end
 
 let print pp = Format.printf "%a@." Pp.to_fmt pp
 let print_dyn dyn = print (Dyn.pp dyn)
+let phys_equal a b = a == b
 
 module Ordering = struct
   include Ordering

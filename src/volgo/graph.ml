@@ -61,25 +61,18 @@ module Node_kind = struct
 
     let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-    let equal =
-      (fun a__001_ b__002_ ->
-         if a__001_ == b__002_
-         then true
-         else (
-           match a__001_, b__002_ with
-           | Root _a__003_, Root _b__004_ -> Rev.equal _a__003_.rev _b__004_.rev
-           | Root _, _ -> false
-           | _, Root _ -> false
-           | Commit _a__005_, Commit _b__006_ ->
-             Rev.equal _a__005_.rev _b__006_.rev
-             && Node.equal _a__005_.parent _b__006_.parent
-           | Commit _, _ -> false
-           | _, Commit _ -> false
-           | Merge _a__007_, Merge _b__008_ ->
-             Rev.equal _a__007_.rev _b__008_.rev
-             && Node.equal _a__007_.parent1 _b__008_.parent1
-             && Node.equal _a__007_.parent2 _b__008_.parent2)
-       : t -> t -> bool)
+    let equal a b =
+      phys_equal a b
+      ||
+      match a, b with
+      | Root a, Root { rev } -> Rev.equal a.rev rev
+      | Commit a, Commit { rev; parent } ->
+        Rev.equal a.rev rev && Node.equal a.parent parent
+      | Merge a, Merge { rev; parent1; parent2 } ->
+        Rev.equal a.rev rev
+        && Node.equal a.parent1 parent1
+        && Node.equal a.parent2 parent2
+      | (Root _ | Commit _ | Merge _), _ -> false
     ;;
   end
 

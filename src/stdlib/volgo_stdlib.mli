@@ -46,6 +46,7 @@ module Dynable : sig
 end
 
 val print_dyn : Dyn.t -> unit
+val phys_equal : 'a -> 'a -> bool
 
 module Ordering : sig
   include module type of struct
