@@ -99,3 +99,10 @@ let%expect_test "equal-and-compare" =
   [%expect {| Gt |}];
   ()
 ;;
+
+let%expect_test "sexp_of_t" =
+  let test t = print_s (t |> Vcs.Num_lines_in_diff.sexp_of_t) in
+  test { insertions = 42; deletions = 32 };
+  [%expect {| ((insertions 42) (deletions 32)) |}];
+  ()
+;;

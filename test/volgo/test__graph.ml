@@ -774,6 +774,8 @@ let%expect_test "debug graph" =
   [%expect {| 0 |}];
   node_index (Mock.node t ~rev:r4);
   [%expect {| 4 |}];
+  print_s (Vcs.Graph.get_node_exn graph ~index:0 |> Vcs.Graph.Node.sexp_of_t);
+  [%expect {| #0 |}];
   let get_node_exn index =
     print_dyn (Vcs.Graph.get_node_exn graph ~index |> Vcs.Graph.Node.to_dyn)
   in

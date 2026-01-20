@@ -121,6 +121,18 @@ let%expect_test "to_dyn" =
   ()
 ;;
 
+let%expect_test "sexp_of_t" =
+  let test t = print_s (t |> Vcs.Platform_repo.sexp_of_t) in
+  test
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = Vcs.User_handle.v "user"
+    ; repo_name = Vcs.Repo_name.v "repo"
+    };
+  [%expect {| ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name repo)) |}];
+  ()
+;;
+
 let%expect_test "to_platform_string" =
   let test t =
     let url = Vcs.Platform_repo.to_url t ~protocol:Ssh in
@@ -323,6 +335,23 @@ let%expect_test "v" =
     ; repo_name = "repo"
     ; protocol = Https
     }
+    |}];
+  ()
+;;
+
+let%expect_test "Url.sexp_of_t" =
+  let test t = print_s (t |> Vcs.Platform_repo.Url.sexp_of_t) in
+  test
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = Vcs.User_handle.v "user"
+    ; repo_name = Vcs.Repo_name.v "repo"
+    ; protocol = Https
+    };
+  [%expect
+    {|
+    ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name repo)
+     (protocol Https))
     |}];
   ()
 ;;

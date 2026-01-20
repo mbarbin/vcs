@@ -31,3 +31,10 @@ let%expect_test "to_string_hum" =
     |}];
   ()
 ;;
+
+let%expect_test "sexp_of_t" =
+  let test t = print_s (t |> Vcs.Platform.sexp_of_t) in
+  test GitLab;
+  [%expect {| GitLab |}];
+  ()
+;;

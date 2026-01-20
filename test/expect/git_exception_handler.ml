@@ -129,7 +129,9 @@ let create_first_commit vcs ~repo_root =
 
 let print_test = function
   | Ok dyn -> print_dyn (Dyn.Variant ("Ok", [ dyn ]))
-  | Error err -> print_dyn (Dyn.Variant ("Error", [ Dyn.string (Err.to_string_hum err) ]))
+  | Error err ->
+    print_dyn
+      (Dyn.Variant ("Error", [ Dyn.string (Err.to_string_hum err) ])) [@coverage off]
 ;;
 
 let%expect_test "eio" =
