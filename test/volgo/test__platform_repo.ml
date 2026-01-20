@@ -176,149 +176,153 @@ let%expect_test "ssh_syntax" =
 let%expect_test "of_string msgs" =
   (* The parsing function attempts to provide useful error messages. *)
   let test str =
-    print_s
-      [%sexp
-        (Vcs.Platform_repo.Url.of_string str
-         : (Vcs.Platform_repo.Url.t, [ `Msg of string ]) Result.t)]
+    match Vcs.Platform_repo.Url.of_string str with
+    | Ok a -> print_dyn (Vcs.Platform_repo.Url.to_dyn a)
+    | Error (`Msg m) -> print_dyn (Dyn.Variant ("Error", [ Dyn.string m ]))
   in
   test "";
-  [%expect {| (Error (Msg "\"\": invalid url")) |}];
+  [%expect {| Error "\"\": invalid url" |}];
   test "mbarbin/my_repo";
-  [%expect {| (Error (Msg "\"mbarbin/my_repo\": invalid url")) |}];
+  [%expect {| Error "\"mbarbin/my_repo\": invalid url" |}];
   (* https *)
   test "https://github.com/myrepo";
-  [%expect
-    {|
-    (Error
-     (Msg "\"https://github.com/myrepo\": invalid url. missing user handle"))
-    |}];
+  [%expect {| Error "\"https://github.com/myrepo\": invalid url. missing user handle" |}];
   test "https://github.com/user/myrepo";
   [%expect
     {|
-    (Ok
-     ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name myrepo)
-      (protocol Https)))
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "myrepo"
+    ; protocol = Https
+    }
     |}];
   test "https://github.com/invalid user/my_repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"https://github.com/invalid user/my_repo.git\": invalid url. \"invalid user\": invalid user_handle"))
+    Error
+      "\"https://github.com/invalid user/my_repo.git\": invalid url. \"invalid user\": invalid user_handle"
     |}];
   test "https://github.com/user/invalid repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"https://github.com/user/invalid repo.git\": invalid url. \"invalid repo\": invalid repo_name"))
+    Error
+      "\"https://github.com/user/invalid repo.git\": invalid url. \"invalid repo\": invalid repo_name"
     |}];
   test "https://github.com/user/repo.git";
   [%expect
     {|
-    (Ok
-     ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name repo)
-      (protocol Https)))
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "repo"
+    ; protocol = Https
+    }
     |}];
   test "https://hg.sr.ht/~user/repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"https://hg.sr.ht/~user/repo.git\": invalid url. Expected a hg repo but has a .git suffix."))
+    Error
+      "\"https://hg.sr.ht/~user/repo.git\": invalid url. Expected a hg repo but has a .git suffix."
     |}];
   (* scp-like ssh *)
   test "git@github.com:myrepo";
-  [%expect
-    {| (Error (Msg "\"git@github.com:myrepo\": invalid url. missing user handle")) |}];
+  [%expect {| Error "\"git@github.com:myrepo\": invalid url. missing user handle" |}];
   test "git@github.com:user/myrepo";
   [%expect
     {|
-    (Ok
-     ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name myrepo)
-      (protocol Ssh)))
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "myrepo"
+    ; protocol = Ssh
+    }
     |}];
   test "git@github.com:invalid user/my_repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"git@github.com:invalid user/my_repo.git\": invalid url. \"invalid user\": invalid user_handle"))
+    Error
+      "\"git@github.com:invalid user/my_repo.git\": invalid url. \"invalid user\": invalid user_handle"
     |}];
   test "git@github.com:user/invalid repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"git@github.com:user/invalid repo.git\": invalid url. \"invalid repo\": invalid repo_name"))
+    Error
+      "\"git@github.com:user/invalid repo.git\": invalid url. \"invalid repo\": invalid repo_name"
     |}];
   test "git@github.com/user/repo.git";
-  [%expect {| (Error (Msg "\"git@github.com/user/repo.git\": invalid url")) |}];
+  [%expect {| Error "\"git@github.com/user/repo.git\": invalid url" |}];
   test "git@github.com:user/repo.git";
   [%expect
     {|
-    (Ok
-     ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name repo)
-      (protocol Ssh)))
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "repo"
+    ; protocol = Ssh
+    }
     |}];
   (* url-like ssh *)
   test "ssh://git@codeberg.org/user/repo.git";
   [%expect
     {|
-    (Ok
-     ((platform Codeberg) (vcs_kind Git) (user_handle user) (repo_name repo)
-      (protocol Ssh)))
+    { platform = Codeberg
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "repo"
+    ; protocol = Ssh
+    }
     |}];
   test "ssh://git@github.com/user/repo.git";
   [%expect
     {|
-    (Ok
-     ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name repo)
-      (protocol Ssh)))
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "repo"
+    ; protocol = Ssh
+    }
     |}];
   test "ssh://git@codeberg.org/repo.git";
   [%expect
-    {|
-    (Error
-     (Msg
-      "\"ssh://git@codeberg.org/repo.git\": invalid url. missing user handle"))
-    |}];
+    {| Error "\"ssh://git@codeberg.org/repo.git\": invalid url. missing user handle" |}];
   (* sourcehut *)
   test "git@git.sr.ht:user/repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"git@git.sr.ht:user/repo.git\": invalid url. User namespace on sourcehut are expected to start with a '~' char."))
+    Error
+      "\"git@git.sr.ht:user/repo.git\": invalid url. User namespace on sourcehut are expected to start with a '~' char."
     |}];
   test "ssh://git@git.sr.ht/user/repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"ssh://git@git.sr.ht/user/repo.git\": invalid url. User namespace on sourcehut are expected to start with a '~' char."))
+    Error
+      "\"ssh://git@git.sr.ht/user/repo.git\": invalid url. User namespace on sourcehut are expected to start with a '~' char."
     |}];
   test "https://git.sr.ht/user/repo.git";
   [%expect
     {|
-    (Error
-     (Msg
-      "\"https://git.sr.ht/user/repo.git\": invalid url. User namespace on sourcehut are expected to start with a '~' char."))
+    Error
+      "\"https://git.sr.ht/user/repo.git\": invalid url. User namespace on sourcehut are expected to start with a '~' char."
     |}];
   ()
 ;;
 
 let%expect_test "v" =
   let test str =
-    print_s [%sexp (Vcs.Platform_repo.Url.v str : Vcs.Platform_repo.Url.t)]
+    print_dyn (Vcs.Platform_repo.Url.v str |> Vcs.Platform_repo.Url.to_dyn)
   in
   require_does_raise (fun () -> test "user/my_repo");
   [%expect {| Invalid_argument("\"user/my_repo\": invalid url") |}];
   test "https://github.com/user/repo.git";
   [%expect
     {|
-    ((platform GitHub) (vcs_kind Git) (user_handle user) (repo_name repo)
-     (protocol Https))
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "repo"
+    ; protocol = Https
+    }
     |}];
   ()
 ;;

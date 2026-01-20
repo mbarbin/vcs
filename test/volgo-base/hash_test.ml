@@ -22,7 +22,7 @@
 module type H = sig
   type t
 
-  val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val hash : t -> int
   val seeded_hash : int -> t -> int
 end
@@ -37,18 +37,29 @@ let run
     let stdlib_hash = Stdlib.Hashtbl.hash t in
     let vcs_hash = V.hash t in
     let vcs_base_hash = V_base.hash t in
-    print_s
-      [%sexp
-        { value = (t : V.t) }, { stdlib_hash : int; vcs_hash : int; vcs_base_hash : int }]
+    print_dyn
+      (Dyn.Tuple
+         [ Dyn.record [ "value", V.to_dyn t ]
+         ; Dyn.record
+             [ "stdlib_hash", stdlib_hash |> Dyn.int
+             ; "vcs_hash", vcs_hash |> Dyn.int
+             ; "vcs_base_hash", vcs_base_hash |> Dyn.int
+             ]
+         ])
   in
   let test_fold (t : a) ~seed =
     let stdlib_hash = Stdlib.Hashtbl.seeded_hash seed t in
     let vcs_hash = V.seeded_hash seed t in
     let vcs_base_hash = Hash.run ~seed V_base.hash_fold_t t in
-    print_s
-      [%sexp
-        { value = (t : V.t); seed : int }
-      , { stdlib_hash : int; vcs_hash : int; vcs_base_hash : int }]
+    print_dyn
+      (Dyn.Tuple
+         [ Dyn.record [ "value", V.to_dyn t; "seed", seed |> Dyn.int ]
+         ; Dyn.record
+             [ "stdlib_hash", stdlib_hash |> Dyn.int
+             ; "vcs_hash", vcs_hash |> Dyn.int
+             ; "vcs_base_hash", vcs_base_hash |> Dyn.int
+             ]
+         ])
   in
   List.iter values ~f:(fun t ->
     test_hash t;

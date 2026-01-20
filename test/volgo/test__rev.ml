@@ -21,22 +21,23 @@
 
 let%expect_test "of_string" =
   let test str =
-    print_s [%sexp (Vcs.Rev.of_string str : (Vcs.Rev.t, [ `Msg of string ]) Result.t)]
+    match Vcs.Rev.of_string str with
+    | Ok a -> print_endline (Vcs.Rev.to_string a)
+    | Error (`Msg m) -> print_dyn (Dyn.Variant ("Error", [ Dyn.string m ]))
   in
   test "";
-  [%expect {| (Error (Msg "\"\": invalid rev")) |}];
+  [%expect {| Error "\"\": invalid rev" |}];
   test "too-short";
-  [%expect {| (Error (Msg "\"too-short\": invalid rev")) |}];
+  [%expect {| Error "\"too-short\": invalid rev" |}];
   test "3a17020189a3e2f321812d06dcd18f173a170201";
-  [%expect {| (Ok 3a17020189a3e2f321812d06dcd18f173a170201) |}];
+  [%expect {| 3a17020189a3e2f321812d06dcd18f173a170201 |}];
   test "3a17020189a3e2f321812d06dcd18f173a170201";
-  [%expect {| (Ok 3a17020189a3e2f321812d06dcd18f173a170201) |}];
+  [%expect {| 3a17020189a3e2f321812d06dcd18f173a170201 |}];
   (* Currently we don't enforce much but the length of the string, and the kind
      of chars that it contains. *)
   test "this-string-is-not-a-rev-but-it-is-valid";
-  [%expect {| (Ok this-string-is-not-a-rev-but-it-is-valid) |}];
+  [%expect {| this-string-is-not-a-rev-but-it-is-valid |}];
   test (String.make 40 ' ');
-  [%expect
-    {| (Error (Msg "\"                                        \": invalid rev")) |}];
+  [%expect {| Error "\"                                        \": invalid rev" |}];
   ()
 ;;

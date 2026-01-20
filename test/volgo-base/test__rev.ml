@@ -26,18 +26,27 @@ let%expect_test "hash" =
   Hash_test.run (module Vcs.Rev) (module Volgo_base.Vcs.Rev) values;
   [%expect
     {|
-    (((value f453b802f640c6888df978c712057d17f453b802))
-     ((stdlib_hash 1067342185) (vcs_hash 1067342185) (vcs_base_hash 1067342185)))
-    (((value f453b802f640c6888df978c712057d17f453b802) (seed 0))
-     ((stdlib_hash 1067342185) (vcs_hash 1067342185) (vcs_base_hash 1067342185)))
-    (((value f453b802f640c6888df978c712057d17f453b802) (seed 42))
-     ((stdlib_hash 720223438) (vcs_hash 720223438) (vcs_base_hash 720223438)))
-    (((value 5cd237e9598b11065c344d1eb33bc8c15cd237e9))
-     ((stdlib_hash 687820538) (vcs_hash 687820538) (vcs_base_hash 687820538)))
-    (((value 5cd237e9598b11065c344d1eb33bc8c15cd237e9) (seed 0))
-     ((stdlib_hash 687820538) (vcs_hash 687820538) (vcs_base_hash 687820538)))
-    (((value 5cd237e9598b11065c344d1eb33bc8c15cd237e9) (seed 42))
-     ((stdlib_hash 1058957186) (vcs_hash 1058957186) (vcs_base_hash 1058957186)))
+    ({ value = "f453b802f640c6888df978c712057d17f453b802" },
+     { stdlib_hash = 1067342185
+     ; vcs_hash = 1067342185
+     ; vcs_base_hash = 1067342185
+     })
+    ({ value = "f453b802f640c6888df978c712057d17f453b802"; seed = 0 },
+     { stdlib_hash = 1067342185
+     ; vcs_hash = 1067342185
+     ; vcs_base_hash = 1067342185
+     })
+    ({ value = "f453b802f640c6888df978c712057d17f453b802"; seed = 42 },
+     { stdlib_hash = 720223438; vcs_hash = 720223438; vcs_base_hash = 720223438 })
+    ({ value = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" },
+     { stdlib_hash = 687820538; vcs_hash = 687820538; vcs_base_hash = 687820538 })
+    ({ value = "5cd237e9598b11065c344d1eb33bc8c15cd237e9"; seed = 0 },
+     { stdlib_hash = 687820538; vcs_hash = 687820538; vcs_base_hash = 687820538 })
+    ({ value = "5cd237e9598b11065c344d1eb33bc8c15cd237e9"; seed = 42 },
+     { stdlib_hash = 1058957186
+     ; vcs_hash = 1058957186
+     ; vcs_base_hash = 1058957186
+     })
     |}];
   ()
 ;;

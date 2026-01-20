@@ -24,56 +24,58 @@
 let%expect_test "exit0" =
   let test output =
     match Vcs.Git.exit0 output with
-    | () -> print_s [%sexp Ok ()]
+    | () -> print_dyn (Dyn.Variant ("Ok", []))
     | exception Err.E err ->
-      print_s (Sexp.List [ Sexp.Atom "Raised"; err |> Err.sexp_of_t ])
+      print_dyn (Dyn.Variant ("Raised", [ Dyn.string (err |> Err.to_string_hum) ]))
   in
   test { exit_code = 0; stdout = ""; stderr = "" };
-  [%expect {| (Ok ()) |}];
+  [%expect {| Ok |}];
   (* The error does not contain the stdout or stderr, as this is already handled
      by the code that interprets the result of the user function supplied to
      [Vcs.git]. *)
   test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
-  [%expect {| (Raised "Expected exit code 0.") |}];
+  [%expect {| Raised "\"Expected exit code 0.\"" |}];
   ()
 ;;
 
 let%expect_test "exit0_and_stdout" =
   let test output =
     match Vcs.Git.exit0_and_stdout output with
-    | stdout -> print_s [%sexp (stdout : string)]
+    | stdout -> print_dyn (stdout |> Dyn.string)
     | exception Err.E err ->
-      print_s (Sexp.List [ Sexp.Atom "Raised"; err |> Err.sexp_of_t ])
+      print_dyn (Dyn.Variant ("Raised", [ Dyn.string (err |> Err.to_string_hum) ]))
   in
   test { exit_code = 0; stdout = "stdout"; stderr = "" };
-  [%expect {| stdout |}];
+  [%expect {| "stdout" |}];
   (* Same remark as in [exit0] regarding the error trace. *)
   test { exit_code = 1; stdout = "stdout"; stderr = "stderr" };
-  [%expect {| (Raised "Expected exit code 0.") |}];
+  [%expect {| Raised "\"Expected exit code 0.\"" |}];
   ()
 ;;
 
 let%expect_test "exit_code" =
   let test output =
     match Vcs.Git.exit_code output ~accept:[ 0, "ok"; 42, "other" ] with
-    | result -> print_s [%sexp Ok (result : string)]
+    | result -> print_dyn (Dyn.Variant ("Ok", [ result |> Dyn.string ]))
     | exception Err.E err ->
-      print_s (Sexp.List [ Sexp.Atom "Raised"; err |> Err.sexp_of_t ])
+      print_dyn (Dyn.Variant ("Raised", [ Dyn.string (err |> Err.to_string_hum) ]))
   in
   test { exit_code = 0; stdout = ""; stderr = "" };
-  [%expect {| (Ok ok) |}];
+  [%expect {| Ok "ok" |}];
   test { exit_code = 42; stdout = ""; stderr = "" };
-  [%expect {| (Ok other) |}];
+  [%expect {| Ok "other" |}];
   (* Same remark as in [exit0] regarding the error trace. *)
   test { exit_code = 1; stdout = ""; stderr = "" };
-  [%expect {| (Raised ("Unexpected exit code." (accepted_codes (0 42)))) |}];
+  [%expect {| Raised "(\"Unexpected exit code.\" (accepted_codes (0 42)))" |}];
   ()
 ;;
 
 (* [Vcs.Git.Result] *)
 
 let%expect_test "exit0" =
-  let test output = print_s [%sexp (Vcs.Git.Result.exit0 output : unit Vcs.Result.t)] in
+  let test output =
+    print_s (Vcs.Git.Result.exit0 output |> Vcs.Result.sexp_of_t (fun () -> Sexp.List []))
+  in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ()) |}];
   (* The error does not contain the stdout or stderr, as this is already handled
@@ -86,7 +88,8 @@ let%expect_test "exit0" =
 
 let%expect_test "exit0_and_stdout" =
   let test output =
-    print_s [%sexp (Vcs.Git.Result.exit0_and_stdout output : string Vcs.Result.t)]
+    print_s
+      (Vcs.Git.Result.exit0_and_stdout output |> Vcs.Result.sexp_of_t String.sexp_of_t)
   in
   test { exit_code = 0; stdout = "stdout"; stderr = "" };
   [%expect {| (Ok stdout) |}];
@@ -99,9 +102,8 @@ let%expect_test "exit0_and_stdout" =
 let%expect_test "exit_code" =
   let test output =
     print_s
-      [%sexp
-        (Vcs.Git.Result.exit_code output ~accept:[ 0, "ok"; 42, "other" ]
-         : string Vcs.Result.t)]
+      (Vcs.Git.Result.exit_code output ~accept:[ 0, "ok"; 42, "other" ]
+       |> Vcs.Result.sexp_of_t String.sexp_of_t)
   in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ok) |}];

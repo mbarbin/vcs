@@ -69,11 +69,16 @@ let%expect_test "files with curly-braces" =
   let template_file = Vcs.Path_in_repo.v "template/{{ key }}.txt" in
   save_file ~path:template_file ~file_contents:"Hello World!\n";
   let rev1 = commit_file ~path:template_file in
-  print_s
-    [%sexp
-      (Vcs.show_file_at_rev vcs ~repo_root ~rev:rev1 ~path:template_file
-       : [ `Present of Vcs.File_contents.t | `Absent ])];
-  [%expect {| (Present "Hello World!\n") |}];
+  let () =
+    match Vcs.show_file_at_rev vcs ~repo_root ~rev:rev1 ~path:template_file with
+    | `Absent -> assert false
+    | `Present file_contents -> print_dyn (file_contents |> Vcs.File_contents.to_dyn)
+  in
+  [%expect
+    {|
+    "Hello World!\n\
+     "
+    |}];
   (* First: changes to the same file. *)
   save_file
     ~path:template_file

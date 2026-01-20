@@ -360,10 +360,9 @@ let%expect_test "graph" =
   [%expect {| [] |}];
   (* descendance. *)
   let test r1 r2 =
-    print_s
-      [%sexp
-        (Vcs.Graph.descendance graph (node_exn r1) (node_exn r2)
-         : Vcs.Graph.Descendance.t)]
+    print_dyn
+      (Vcs.Graph.descendance graph (node_exn r1) (node_exn r2)
+       |> Vcs.Graph.Descendance.to_dyn)
   in
   test tip tip;
   [%expect {| Same_node |}];
@@ -470,13 +469,12 @@ let%expect_test "add_nodes" =
     ]
     |}];
   let is_strict_ancestor r1 r2 =
-    print_s
-      [%sexp
-        (Vcs.Graph.is_strict_ancestor
-           graph
-           ~ancestor:(node_exn r1)
-           ~descendant:(node_exn r2)
-         : bool)]
+    print_dyn
+      (Vcs.Graph.is_strict_ancestor
+         graph
+         ~ancestor:(node_exn r1)
+         ~descendant:(node_exn r2)
+       |> Dyn.bool)
   in
   is_strict_ancestor revs.(1) revs.(6);
   [%expect {| true |}];

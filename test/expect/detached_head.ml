@@ -71,8 +71,10 @@ let%expect_test "detached-head" =
     ((context (Vcs.current_branch (repo_root <REDACTED>)))
      (error "Not currently on any branch."))
     |}];
-  let current_branch_opt = Vcs.Result.current_branch_opt vcs ~repo_root in
-  print_s [%sexp (current_branch_opt : (Vcs.Branch_name.t option, Err.t) Result.t)];
-  [%expect {| (Ok ()) |}];
+  let current_branch_opt =
+    Vcs.Result.current_branch_opt vcs ~repo_root |> Result.get_ok
+  in
+  print_dyn (current_branch_opt |> Dyn.option Vcs.Branch_name.to_dyn);
+  [%expect {| None |}];
   ()
 ;;

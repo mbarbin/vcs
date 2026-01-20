@@ -81,9 +81,15 @@ let%expect_test "add_context" =
   let err = Err.add_context err [ Pp.verbatim "Step_1" ] in
   print_s (err |> Err.sexp_of_t);
   [%expect {| ((context Step_1) (error Hello)) |}];
-  let err = Err.add_context err [ Err.sexp [%sexp Step_2, { x = 42 }] ] in
+  let err =
+    Err.add_context
+      err
+      [ Err.sexp
+          (Dyn.to_sexp (Dyn.Tuple [ Dyn.inline_record "Step_2" [ "x", Dyn.int 42 ] ]))
+      ]
+  in
   print_s (err |> Err.sexp_of_t);
-  [%expect {| ((context (Step_2 ((x 42))) Step_1) (error Hello)) |}];
+  [%expect {| ((context ((Step_2 (x 42))) Step_1) (error Hello)) |}];
   ()
 ;;
 

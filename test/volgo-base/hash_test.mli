@@ -22,7 +22,7 @@
 module type H = sig
   type t
 
-  val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val hash : t -> int
   val seeded_hash : int -> t -> int
 end

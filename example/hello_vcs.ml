@@ -52,10 +52,15 @@ let%expect_test "hello commit" =
   let rev =
     Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
-  print_s
-    [%sexp
-      (Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
-  [%expect {| (Ok (Present "Hello World!\n")) |}];
+  let () =
+    match Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file with
+    | Error _ | Ok `Absent -> assert false
+    | Ok (`Present file_contents) -> print_dyn (file_contents |> Vcs.File_contents.to_dyn)
+  in
+  [%expect
+    {|
+    "Hello World!\n\
+     "
+    |}];
   ()
 ;;

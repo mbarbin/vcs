@@ -29,18 +29,18 @@ let%expect_test "hash" =
   Hash_test.run (module Vcs.Commit_message) (module Volgo_base.Vcs.Commit_message) values;
   [%expect
     {|
-    (((value "Add this awesome new feature"))
-     ((stdlib_hash 340930455) (vcs_hash 340930455) (vcs_base_hash 340930455)))
-    (((value "Add this awesome new feature") (seed 0))
-     ((stdlib_hash 340930455) (vcs_hash 340930455) (vcs_base_hash 340930455)))
-    (((value "Add this awesome new feature") (seed 42))
-     ((stdlib_hash 655507996) (vcs_hash 655507996) (vcs_base_hash 655507996)))
-    (((value "Fix this rather annoying bug"))
-     ((stdlib_hash 410910191) (vcs_hash 410910191) (vcs_base_hash 410910191)))
-    (((value "Fix this rather annoying bug") (seed 0))
-     ((stdlib_hash 410910191) (vcs_hash 410910191) (vcs_base_hash 410910191)))
-    (((value "Fix this rather annoying bug") (seed 42))
-     ((stdlib_hash 813233200) (vcs_hash 813233200) (vcs_base_hash 813233200)))
+    ({ value = "Add this awesome new feature" },
+     { stdlib_hash = 340930455; vcs_hash = 340930455; vcs_base_hash = 340930455 })
+    ({ value = "Add this awesome new feature"; seed = 0 },
+     { stdlib_hash = 340930455; vcs_hash = 340930455; vcs_base_hash = 340930455 })
+    ({ value = "Add this awesome new feature"; seed = 42 },
+     { stdlib_hash = 655507996; vcs_hash = 655507996; vcs_base_hash = 655507996 })
+    ({ value = "Fix this rather annoying bug" },
+     { stdlib_hash = 410910191; vcs_hash = 410910191; vcs_base_hash = 410910191 })
+    ({ value = "Fix this rather annoying bug"; seed = 0 },
+     { stdlib_hash = 410910191; vcs_hash = 410910191; vcs_base_hash = 410910191 })
+    ({ value = "Fix this rather annoying bug"; seed = 42 },
+     { stdlib_hash = 813233200; vcs_hash = 813233200; vcs_base_hash = 813233200 })
     |}];
   ()
 ;;

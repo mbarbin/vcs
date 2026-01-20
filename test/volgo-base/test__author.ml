@@ -25,18 +25,18 @@ let%expect_test "hash" =
   Hash_test.run (module Vcs.Author) (module Volgo_base.Vcs.Author) values;
   [%expect
     {|
-    (((value "John Doe"))
-     ((stdlib_hash 719227130) (vcs_hash 719227130) (vcs_base_hash 719227130)))
-    (((value "John Doe") (seed 0))
-     ((stdlib_hash 719227130) (vcs_hash 719227130) (vcs_base_hash 719227130)))
-    (((value "John Doe") (seed 42))
-     ((stdlib_hash 81441934) (vcs_hash 81441934) (vcs_base_hash 81441934)))
-    (((value "Jane Doe"))
-     ((stdlib_hash 659235483) (vcs_hash 659235483) (vcs_base_hash 659235483)))
-    (((value "Jane Doe") (seed 0))
-     ((stdlib_hash 659235483) (vcs_hash 659235483) (vcs_base_hash 659235483)))
-    (((value "Jane Doe") (seed 42))
-     ((stdlib_hash 443135183) (vcs_hash 443135183) (vcs_base_hash 443135183)))
+    ({ value = "John Doe" },
+     { stdlib_hash = 719227130; vcs_hash = 719227130; vcs_base_hash = 719227130 })
+    ({ value = "John Doe"; seed = 0 },
+     { stdlib_hash = 719227130; vcs_hash = 719227130; vcs_base_hash = 719227130 })
+    ({ value = "John Doe"; seed = 42 },
+     { stdlib_hash = 81441934; vcs_hash = 81441934; vcs_base_hash = 81441934 })
+    ({ value = "Jane Doe" },
+     { stdlib_hash = 659235483; vcs_hash = 659235483; vcs_base_hash = 659235483 })
+    ({ value = "Jane Doe"; seed = 0 },
+     { stdlib_hash = 659235483; vcs_hash = 659235483; vcs_base_hash = 659235483 })
+    ({ value = "Jane Doe"; seed = 42 },
+     { stdlib_hash = 443135183; vcs_hash = 443135183; vcs_base_hash = 443135183 })
     |}];
   ()
 ;;

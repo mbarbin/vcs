@@ -21,28 +21,28 @@
 
 let%expect_test "of_string" =
   let test s =
-    print_s
-      [%sexp
-        (Vcs.Path_in_repo.of_string s : (Vcs.Path_in_repo.t, [ `Msg of string ]) Result.t)]
+    match Vcs.Path_in_repo.of_string s with
+    | Ok a -> print_endline (Vcs.Path_in_repo.to_string a)
+    | Error (`Msg m) -> print_dyn (Dyn.Variant ("Error", [ Dyn.string m ]))
   in
   test "";
-  [%expect {| (Error (Msg "\"\": invalid path")) |}];
+  [%expect {| Error "\"\": invalid path" |}];
   test ".";
-  [%expect {| (Ok ./) |}];
+  [%expect {| ./ |}];
   test "/";
-  [%expect {| (Error (Msg "\"/\" is not a relative path")) |}];
+  [%expect {| Error "\"/\" is not a relative path" |}];
   test "/a/foo";
-  [%expect {| (Error (Msg "\"/a/foo\" is not a relative path")) |}];
+  [%expect {| Error "\"/a/foo\" is not a relative path" |}];
   test "a/foo/bar";
-  [%expect {| (Ok a/foo/bar) |}];
+  [%expect {| a/foo/bar |}];
   (* We do keep the trailing slashes if present syntactically. Although we do
      not expect such paths to be computed by the [Vcs] library from files
      present in the repo. *)
   test "a/foo/bar/";
-  [%expect {| (Ok a/foo/bar/) |}];
+  [%expect {| a/foo/bar/ |}];
   test "file";
-  [%expect {| (Ok file) |}];
+  [%expect {| file |}];
   test "a/foo/bar/../sna";
-  [%expect {| (Ok a/foo/sna) |}];
+  [%expect {| a/foo/sna |}];
   ()
 ;;

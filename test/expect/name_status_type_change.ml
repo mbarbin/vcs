@@ -47,11 +47,16 @@ let%expect_test "name status with type change" =
   let hello2_file = Vcs.Path_in_repo.v "hello2.txt" in
   save_file ~path:hello2_file ~file_contents:"Hello World!\nAnother line.\nAnd another.\n";
   let rev2 = commit_file ~path:hello2_file in
-  print_s
-    [%sexp
-      (Vcs.show_file_at_rev vcs ~repo_root ~rev:rev2 ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ])];
-  [%expect {| (Present "Hello World!\n") |}];
+  let () =
+    match Vcs.show_file_at_rev vcs ~repo_root ~rev:rev2 ~path:hello_file with
+    | `Absent -> assert false
+    | `Present file_contents -> print_dyn (file_contents |> Vcs.File_contents.to_dyn)
+  in
+  [%expect
+    {|
+    "Hello World!\n\
+     "
+    |}];
   let print_num_status ~src ~dst =
     let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
     print_dyn (num_status |> Vcs.Num_status.to_dyn)

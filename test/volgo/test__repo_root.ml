@@ -21,21 +21,22 @@
 
 let%expect_test "of_string" =
   let test s =
-    print_s
-      [%sexp (Vcs.Repo_root.of_string s : (Vcs.Repo_root.t, [ `Msg of string ]) Result.t)]
+    match Vcs.Repo_root.of_string s with
+    | Ok a -> print_endline (Vcs.Repo_root.to_string a)
+    | Error (`Msg m) -> print_dyn (Dyn.Variant ("Error", [ Dyn.string m ]))
   in
   test "";
-  [%expect {| (Error (Msg "\"\": invalid path")) |}];
+  [%expect {| Error "\"\": invalid path" |}];
   test "/";
-  [%expect {| (Ok /) |}];
+  [%expect {| / |}];
   test ".";
-  [%expect {| (Error (Msg "\".\" is not an absolute path")) |}];
+  [%expect {| Error "\".\" is not an absolute path" |}];
   test "foo/bar";
-  [%expect {| (Error (Msg "\"foo/bar\" is not an absolute path")) |}];
+  [%expect {| Error "\"foo/bar\" is not an absolute path" |}];
   test "/foo/bar";
-  [%expect {| (Ok /foo/bar) |}];
+  [%expect {| /foo/bar |}];
   test "/tmp/my-repo";
-  [%expect {| (Ok /tmp/my-repo) |}];
+  [%expect {| /tmp/my-repo |}];
   ()
 ;;
 
@@ -62,10 +63,10 @@ let%expect_test "relativize_exn" =
   let test abs =
     match Vcs.Repo_root.relativize repo_root (Absolute_path.v abs) with
     | Some p -> print_endline (Vcs.Path_in_repo.to_string p)
-    | None -> print_s [%sexp Error "not a prefix"]
+    | None -> print_dyn (Dyn.Variant ("Error", [ Dyn.string "not a prefix" ]))
   in
   test "/not/in/the/repo";
-  [%expect {| (Error "not a prefix") |}];
+  [%expect {| Error "not a prefix" |}];
   test "/tmp/my-repo";
   [%expect {| ./ |}];
   test "/tmp/my-repo/";

@@ -203,7 +203,7 @@ let%expect_test "hello cli" =
   in
   (* You may be tempted to think the setup is ok, based on the happy path
      behavior. *)
-  print_s [%sexp (abbrev_ref "HEAD" : string Or_error.t)];
+  print_s (abbrev_ref "HEAD" |> Or_error.sexp_of_t String.sexp_of_t);
   [%expect {| (Ok main) |}];
   (* However, note that the call can still raise, despite its [Result] return type. *)
   let () =
@@ -221,7 +221,7 @@ let%expect_test "hello cli" =
     |}];
   (* Another difference is that you do not get the context when the [f] helper
      returns an error. *)
-  print_s [%sexp (abbrev_ref "/bogus" : string Or_error.t)];
+  print_s (abbrev_ref "/bogus" |> Or_error.sexp_of_t String.sexp_of_t);
   [%expect {| (Error "Expected exit code 0.") |}];
   (* If you are using a non-raising handler [f], you probably meant to use
      [Vcs.Or_error.git]. The type of [abbrev_ref] is the same. *)
@@ -234,13 +234,13 @@ let%expect_test "hello cli" =
     |> Or_error.map ~f:String.strip
   in
   (* The behavior is the same in the happy path. *)
-  print_s [%sexp (abbrev_ref "HEAD" : string Or_error.t)];
+  print_s (abbrev_ref "HEAD" |> Or_error.sexp_of_t String.sexp_of_t);
   [%expect {| (Ok main) |}];
   (* However, now the function will not raise. *)
   print_s
     (Vcs_test_helpers.redact_sexp
-       [%sexp
-         (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" : string Or_error.t)]
+       (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD"
+        |> Or_error.sexp_of_t String.sexp_of_t)
        ~fields:[ "error" ]);
   [%expect
     {|
@@ -283,14 +283,14 @@ let%expect_test "hello cli" =
   in
   (* You may be tempted to think the setup is ok, based on the happy path
      behavior. *)
-  print_s [%sexp (abbrev_ref "HEAD" : string Or_error.t)];
+  print_s (abbrev_ref "HEAD" |> Or_error.sexp_of_t String.sexp_of_t);
   [%expect {| (Ok main) |}];
   (* Some error condition will even correctly be turned into Errors, which may
      further prevent you from hitting a raising case. *)
   print_s
     (Vcs_test_helpers.redact_sexp
-       [%sexp
-         (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" : string Or_error.t)]
+       (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD"
+        |> Or_error.sexp_of_t String.sexp_of_t)
        ~fields:[ "error" ]);
   [%expect
     {|
@@ -316,8 +316,8 @@ let%expect_test "hello cli" =
         | _ -> failwith "Unexpected error code" [@coverage off])
   in
   (* You get a function that does not raise in the happy path. *)
-  print_s [%sexp (abbrev_ref "HEAD" : string)];
-  [%expect {| main |}];
+  print_dyn (abbrev_ref "HEAD" |> Dyn.string);
+  [%expect {| "main" |}];
   (* And always raises [Err.E], with context, whether the error comes from your handler or not. *)
   let abbrev_ref_does_raise ?repo_root ref_ ~redact_fields =
     match abbrev_ref ?repo_root ref_ with

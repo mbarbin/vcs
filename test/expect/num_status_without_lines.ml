@@ -39,11 +39,16 @@ let%expect_test "num stat without lines" =
   in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   let rev1 = commit_file ~path:hello_file ~file_contents:"Hello World!\n" in
-  print_s
-    [%sexp
-      (Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev:rev1 ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
-  [%expect {| (Ok (Present "Hello World!\n")) |}];
+  let () =
+    match Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev:rev1 ~path:hello_file with
+    | Error _ | Ok `Absent -> assert false
+    | Ok (`Present file_contents) -> print_dyn (file_contents |> Vcs.File_contents.to_dyn)
+  in
+  [%expect
+    {|
+    "Hello World!\n\
+     "
+    |}];
   let file1 = Vcs.Path_in_repo.v "file1.txt" in
   let rev2 = commit_file ~path:file1 ~file_contents:"file1" in
   let rev3 =

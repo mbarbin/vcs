@@ -26,11 +26,11 @@
 let%expect_test "of_string" =
   let test str =
     match Vcs.User_email.of_string str with
-    | Error (`Msg m) -> print_s [%sexp Error (m : string)]
     | Ok a -> print_endline (Vcs.User_email.to_string a)
+    | Error (`Msg m) -> print_dyn (Dyn.Variant ("Error", [ Dyn.string m ]))
   in
   test "no space";
-  [%expect {| (Error "\"no space\": invalid user_email") |}];
+  [%expect {| Error "\"no space\": invalid user_email" |}];
   test "jdoe";
   [%expect {| jdoe |}];
   test "john-doe";
@@ -41,9 +41,9 @@ let%expect_test "of_string" =
   [%expect {| john.doe@mail.com |}];
   (* Some characters are currently not accepted. *)
   test "\\";
-  [%expect {| (Error "\"\\\\\": invalid user_email") |}];
+  [%expect {| Error "\"\\\\\": invalid user_email" |}];
   (* And we do not accept the empty string. *)
   test "";
-  [%expect {| (Error "\"\": invalid user_email") |}];
+  [%expect {| Error "\"\": invalid user_email" |}];
   ()
 ;;

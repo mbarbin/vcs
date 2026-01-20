@@ -25,24 +25,24 @@ let%expect_test "hash" =
   Hash_test.run (module Vcs.Tag_name) (module Volgo_base.Vcs.Tag_name) values;
   [%expect
     {|
-    (((value my-tag))
-     ((stdlib_hash 865032536) (vcs_hash 865032536) (vcs_base_hash 865032536)))
-    (((value my-tag) (seed 0))
-     ((stdlib_hash 865032536) (vcs_hash 865032536) (vcs_base_hash 865032536)))
-    (((value my-tag) (seed 42))
-     ((stdlib_hash 809141036) (vcs_hash 809141036) (vcs_base_hash 809141036)))
-    (((value v0.0.1))
-     ((stdlib_hash 803999042) (vcs_hash 803999042) (vcs_base_hash 803999042)))
-    (((value v0.0.1) (seed 0))
-     ((stdlib_hash 803999042) (vcs_hash 803999042) (vcs_base_hash 803999042)))
-    (((value v0.0.1) (seed 42))
-     ((stdlib_hash 682119237) (vcs_hash 682119237) (vcs_base_hash 682119237)))
-    (((value 1.2))
-     ((stdlib_hash 968236532) (vcs_hash 968236532) (vcs_base_hash 968236532)))
-    (((value 1.2) (seed 0))
-     ((stdlib_hash 968236532) (vcs_hash 968236532) (vcs_base_hash 968236532)))
-    (((value 1.2) (seed 42))
-     ((stdlib_hash 285020915) (vcs_hash 285020915) (vcs_base_hash 285020915)))
+    ({ value = "my-tag" },
+     { stdlib_hash = 865032536; vcs_hash = 865032536; vcs_base_hash = 865032536 })
+    ({ value = "my-tag"; seed = 0 },
+     { stdlib_hash = 865032536; vcs_hash = 865032536; vcs_base_hash = 865032536 })
+    ({ value = "my-tag"; seed = 42 },
+     { stdlib_hash = 809141036; vcs_hash = 809141036; vcs_base_hash = 809141036 })
+    ({ value = "v0.0.1" },
+     { stdlib_hash = 803999042; vcs_hash = 803999042; vcs_base_hash = 803999042 })
+    ({ value = "v0.0.1"; seed = 0 },
+     { stdlib_hash = 803999042; vcs_hash = 803999042; vcs_base_hash = 803999042 })
+    ({ value = "v0.0.1"; seed = 42 },
+     { stdlib_hash = 682119237; vcs_hash = 682119237; vcs_base_hash = 682119237 })
+    ({ value = "1.2" },
+     { stdlib_hash = 968236532; vcs_hash = 968236532; vcs_base_hash = 968236532 })
+    ({ value = "1.2"; seed = 0 },
+     { stdlib_hash = 968236532; vcs_hash = 968236532; vcs_base_hash = 968236532 })
+    ({ value = "1.2"; seed = 42 },
+     { stdlib_hash = 285020915; vcs_hash = 285020915; vcs_base_hash = 285020915 })
     |}];
   ()
 ;;

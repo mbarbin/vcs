@@ -20,7 +20,7 @@
 (*******************************************************************************)
 
 let%expect_test "sexp_of_t" =
-  let test r = print_s [%sexp (r : int Vcs.Rresult.t)] in
+  let test r = print_s (r |> Vcs.Rresult.sexp_of_t Int.sexp_of_t) in
   test (Result.return 0);
   [%expect {| (Ok 0) |}];
   test (Error (`Vcs (Err.create [ Pp.text "Hello Rresult error" ])));

@@ -85,7 +85,7 @@ end
 
 let handler (handler_scenario : Handler_scenario.t) =
   match handler_scenario with
-  | Ok -> Ok (Dyn.to_sexp Dyn.Unit)
+  | Ok -> Ok Dyn.Unit
   | Error -> Error (Err.create [ Pp.text "Expected exit code 0." ])
   | Raise_failure -> failwith "Raise_failure"
   | Raise_invalid_argument -> invalid_arg "Raise_invalid_argument"
@@ -107,7 +107,7 @@ let test_current_branch
       List.find Handler_scenario.all ~f:(fun handler ->
         String.equal output (Handler_scenario.to_string handler))
     with
-    | None -> Ok (Dyn.to_sexp (Dyn.record [ "current_branch", output |> Dyn.string ]))
+    | None -> Ok (Dyn.record [ "current_branch", output |> Dyn.string ])
     | Some handler_scenario -> handler handler_scenario
   in
   Runtime.git vcs ~cwd ~args ~f
@@ -127,6 +127,11 @@ let create_first_commit vcs ~repo_root =
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main
 ;;
 
+let print_test = function
+  | Ok dyn -> print_dyn (Dyn.Variant ("Ok", [ dyn ]))
+  | Error err -> print_dyn (Dyn.Variant ("Error", [ Dyn.string (Err.to_string_hum err) ]))
+;;
+
 let%expect_test "eio" =
   Eio_main.run
   @@ fun env ->
@@ -137,8 +142,8 @@ let%expect_test "eio" =
   create_first_commit vcs ~repo_root;
   let runtime = Volgo_git_eio.Runtime.create ~env in
   let test () = test_current_branch (module Volgo_git_eio.Impl.Git) runtime ~repo_root in
-  print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
-  [%expect {| (Ok ((current_branch main))) |}];
+  print_test (test ());
+  [%expect {| Ok { current_branch = "main" } |}];
   let test_scenario handler_scenario =
     (* We rename the current branch according to the scenario to test. *)
     Vcs.rename_current_branch
@@ -151,11 +156,11 @@ let%expect_test "eio" =
     let test () = test_scenario handler_scenario in
     match handler_scenario with
     | Ok ->
-      print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
-      [%expect {| (Ok ()) |}]
+      print_test (test ());
+      [%expect {| Ok () |}]
     | Error ->
       (match test () with
-       | Ok (_ : Sexp.t) -> assert false
+       | Ok (_ : Dyn.t) -> assert false
        | Error err ->
          print_s (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd" ]);
          [%expect
@@ -191,8 +196,8 @@ let%expect_test "blocking" =
   create_first_commit vcs ~repo_root;
   let runtime = Volgo_git_unix.Runtime.create () in
   let test () = test_current_branch (module Volgo_git_unix.Impl.Git) runtime ~repo_root in
-  print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
-  [%expect {| (Ok ((current_branch main))) |}];
+  print_test (test ());
+  [%expect {| Ok { current_branch = "main" } |}];
   let test_scenario handler_scenario =
     (* We rename the current branch according to the scenario to test. *)
     Vcs.rename_current_branch
@@ -205,11 +210,11 @@ let%expect_test "blocking" =
     let test () = test_scenario handler_scenario in
     match handler_scenario with
     | Ok ->
-      print_s [%sexp (test () : (Sexp.t, Err.t) Result.t)];
-      [%expect {| (Ok ()) |}]
+      print_test (test ());
+      [%expect {| Ok () |}]
     | Error ->
       (match test () with
-       | Ok (_ : Sexp.t) -> assert false
+       | Ok (_ : Dyn.t) -> assert false
        | Error err ->
          print_s
            (Vcs_test_helpers.redact_sexp (Err.sexp_of_t err) ~fields:[ "cwd"; "prog" ]);

@@ -145,41 +145,60 @@ let%expect_test "node hash" =
     [ n1; n2; n3; n4; nm1 ];
   [%expect
     {|
-    (((value #0))
-     ((stdlib_hash 129913994) (vcs_hash 129913994)
-      (vcs_base_hash 4316648529147585864)))
-    (((value #0) (seed 0))
-     ((stdlib_hash 129913994) (vcs_hash 129913994) (vcs_base_hash 1058613066)))
-    (((value #0) (seed 42))
-     ((stdlib_hash 269061838) (vcs_hash 269061838) (vcs_base_hash 992140660)))
-    (((value #1))
-     ((stdlib_hash 883721435) (vcs_hash 883721435)
-      (vcs_base_hash -2609136240614377266)))
-    (((value #1) (seed 0))
-     ((stdlib_hash 883721435) (vcs_hash 883721435) (vcs_base_hash 129913994)))
-    (((value #1) (seed 42))
-     ((stdlib_hash 166027884) (vcs_hash 166027884) (vcs_base_hash 269061838)))
-    (((value #2))
-     ((stdlib_hash 648017920) (vcs_hash 648017920)
-      (vcs_base_hash 4005111014598772340)))
-    (((value #2) (seed 0))
-     ((stdlib_hash 648017920) (vcs_hash 648017920) (vcs_base_hash 462777137)))
-    (((value #2) (seed 42))
-     ((stdlib_hash 1013383106) (vcs_hash 1013383106) (vcs_base_hash 1005547790)))
-    (((value #4))
-     ((stdlib_hash 127382775) (vcs_hash 127382775)
-      (vcs_base_hash -1213116315786261967)))
-    (((value #4) (seed 0))
-     ((stdlib_hash 127382775) (vcs_hash 127382775) (vcs_base_hash 607293368)))
-    (((value #4) (seed 42))
-     ((stdlib_hash 688167720) (vcs_hash 688167720) (vcs_base_hash 1062720725)))
-    (((value #3))
-     ((stdlib_hash 152507349) (vcs_hash 152507349)
-      (vcs_base_hash 1396078460937419741)))
-    (((value #3) (seed 0))
-     ((stdlib_hash 152507349) (vcs_hash 152507349) (vcs_base_hash 883721435)))
-    (((value #3) (seed 42))
-     ((stdlib_hash 97476682) (vcs_hash 97476682) (vcs_base_hash 166027884)))
+    ({ value = "#0" },
+     { stdlib_hash = 129913994
+     ; vcs_hash = 129913994
+     ; vcs_base_hash = 4316648529147585864
+     })
+    ({ value = "#0"; seed = 0 },
+     { stdlib_hash = 129913994
+     ; vcs_hash = 129913994
+     ; vcs_base_hash = 1058613066
+     })
+    ({ value = "#0"; seed = 42 },
+     { stdlib_hash = 269061838; vcs_hash = 269061838; vcs_base_hash = 992140660 })
+    ({ value = "#1" },
+     { stdlib_hash = 883721435
+     ; vcs_hash = 883721435
+     ; vcs_base_hash = -2609136240614377266
+     })
+    ({ value = "#1"; seed = 0 },
+     { stdlib_hash = 883721435; vcs_hash = 883721435; vcs_base_hash = 129913994 })
+    ({ value = "#1"; seed = 42 },
+     { stdlib_hash = 166027884; vcs_hash = 166027884; vcs_base_hash = 269061838 })
+    ({ value = "#2" },
+     { stdlib_hash = 648017920
+     ; vcs_hash = 648017920
+     ; vcs_base_hash = 4005111014598772340
+     })
+    ({ value = "#2"; seed = 0 },
+     { stdlib_hash = 648017920; vcs_hash = 648017920; vcs_base_hash = 462777137 })
+    ({ value = "#2"; seed = 42 },
+     { stdlib_hash = 1013383106
+     ; vcs_hash = 1013383106
+     ; vcs_base_hash = 1005547790
+     })
+    ({ value = "#4" },
+     { stdlib_hash = 127382775
+     ; vcs_hash = 127382775
+     ; vcs_base_hash = -1213116315786261967
+     })
+    ({ value = "#4"; seed = 0 },
+     { stdlib_hash = 127382775; vcs_hash = 127382775; vcs_base_hash = 607293368 })
+    ({ value = "#4"; seed = 42 },
+     { stdlib_hash = 688167720
+     ; vcs_hash = 688167720
+     ; vcs_base_hash = 1062720725
+     })
+    ({ value = "#3" },
+     { stdlib_hash = 152507349
+     ; vcs_hash = 152507349
+     ; vcs_base_hash = 1396078460937419741
+     })
+    ({ value = "#3"; seed = 0 },
+     { stdlib_hash = 152507349; vcs_hash = 152507349; vcs_base_hash = 883721435 })
+    ({ value = "#3"; seed = 42 },
+     { stdlib_hash = 97476682; vcs_hash = 97476682; vcs_base_hash = 166027884 })
     |}];
   ()
 ;;
@@ -191,30 +210,39 @@ let%expect_test "descendance-hash" =
     Vcs.Graph.Descendance.all;
   [%expect
     {|
-    (((value Same_node))
-     ((stdlib_hash 129913994) (vcs_hash 129913994) (vcs_base_hash 1058613066)))
-    (((value Same_node) (seed 0))
-     ((stdlib_hash 129913994) (vcs_hash 129913994) (vcs_base_hash 1058613066)))
-    (((value Same_node) (seed 42))
-     ((stdlib_hash 269061838) (vcs_hash 269061838) (vcs_base_hash 992140660)))
-    (((value Strict_ancestor))
-     ((stdlib_hash 883721435) (vcs_hash 883721435) (vcs_base_hash 129913994)))
-    (((value Strict_ancestor) (seed 0))
-     ((stdlib_hash 883721435) (vcs_hash 883721435) (vcs_base_hash 129913994)))
-    (((value Strict_ancestor) (seed 42))
-     ((stdlib_hash 166027884) (vcs_hash 166027884) (vcs_base_hash 269061838)))
-    (((value Strict_descendant))
-     ((stdlib_hash 648017920) (vcs_hash 648017920) (vcs_base_hash 462777137)))
-    (((value Strict_descendant) (seed 0))
-     ((stdlib_hash 648017920) (vcs_hash 648017920) (vcs_base_hash 462777137)))
-    (((value Strict_descendant) (seed 42))
-     ((stdlib_hash 1013383106) (vcs_hash 1013383106) (vcs_base_hash 1005547790)))
-    (((value Other))
-     ((stdlib_hash 152507349) (vcs_hash 152507349) (vcs_base_hash 883721435)))
-    (((value Other) (seed 0))
-     ((stdlib_hash 152507349) (vcs_hash 152507349) (vcs_base_hash 883721435)))
-    (((value Other) (seed 42))
-     ((stdlib_hash 97476682) (vcs_hash 97476682) (vcs_base_hash 166027884)))
+    ({ value = Same_node },
+     { stdlib_hash = 129913994
+     ; vcs_hash = 129913994
+     ; vcs_base_hash = 1058613066
+     })
+    ({ value = Same_node; seed = 0 },
+     { stdlib_hash = 129913994
+     ; vcs_hash = 129913994
+     ; vcs_base_hash = 1058613066
+     })
+    ({ value = Same_node; seed = 42 },
+     { stdlib_hash = 269061838; vcs_hash = 269061838; vcs_base_hash = 992140660 })
+    ({ value = Strict_ancestor },
+     { stdlib_hash = 883721435; vcs_hash = 883721435; vcs_base_hash = 129913994 })
+    ({ value = Strict_ancestor; seed = 0 },
+     { stdlib_hash = 883721435; vcs_hash = 883721435; vcs_base_hash = 129913994 })
+    ({ value = Strict_ancestor; seed = 42 },
+     { stdlib_hash = 166027884; vcs_hash = 166027884; vcs_base_hash = 269061838 })
+    ({ value = Strict_descendant },
+     { stdlib_hash = 648017920; vcs_hash = 648017920; vcs_base_hash = 462777137 })
+    ({ value = Strict_descendant; seed = 0 },
+     { stdlib_hash = 648017920; vcs_hash = 648017920; vcs_base_hash = 462777137 })
+    ({ value = Strict_descendant; seed = 42 },
+     { stdlib_hash = 1013383106
+     ; vcs_hash = 1013383106
+     ; vcs_base_hash = 1005547790
+     })
+    ({ value = Other },
+     { stdlib_hash = 152507349; vcs_hash = 152507349; vcs_base_hash = 883721435 })
+    ({ value = Other; seed = 0 },
+     { stdlib_hash = 152507349; vcs_hash = 152507349; vcs_base_hash = 883721435 })
+    ({ value = Other; seed = 42 },
+     { stdlib_hash = 97476682; vcs_hash = 97476682; vcs_base_hash = 166027884 })
     |}];
   ()
 ;;
