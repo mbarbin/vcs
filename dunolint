@@ -56,8 +56,6 @@
     (preprocess
      (pps
       (or
-       (pp ppx_compare)
-       (pp ppx_enumerate)
        (pp ppx_sexp_conv)))))
    (enforce
     (dune
