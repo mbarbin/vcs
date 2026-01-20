@@ -26,47 +26,19 @@ type t =
   | Remote_branch of { remote_branch_name : Remote_branch_name.t }
   | Tag of { tag_name : Tag_name.t }
   | Other of { name : string }
-[@@deriving_inline sexp_of]
 
-let sexp_of_t =
-  (function
-   | Local_branch { branch_name = branch_name__002_ } ->
-     let bnds__001_ = ([] : _ Stdlib.List.t) in
-     let bnds__001_ =
-       let arg__003_ = Branch_name.sexp_of_t branch_name__002_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "branch_name"; arg__003_ ] :: bnds__001_
-        : _ Stdlib.List.t)
-     in
-     Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Local_branch" :: bnds__001_)
-   | Remote_branch { remote_branch_name = remote_branch_name__005_ } ->
-     let bnds__004_ = ([] : _ Stdlib.List.t) in
-     let bnds__004_ =
-       let arg__006_ = Remote_branch_name.sexp_of_t remote_branch_name__005_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "remote_branch_name"; arg__006_ ]
-        :: bnds__004_
-        : _ Stdlib.List.t)
-     in
-     Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Remote_branch" :: bnds__004_)
-   | Tag { tag_name = tag_name__008_ } ->
-     let bnds__007_ = ([] : _ Stdlib.List.t) in
-     let bnds__007_ =
-       let arg__009_ = Tag_name.sexp_of_t tag_name__008_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "tag_name"; arg__009_ ] :: bnds__007_
-        : _ Stdlib.List.t)
-     in
-     Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Tag" :: bnds__007_)
-   | Other { name = name__011_ } ->
-     let bnds__010_ = ([] : _ Stdlib.List.t) in
-     let bnds__010_ =
-       let arg__012_ = sexp_of_string name__011_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "name"; arg__012_ ] :: bnds__010_
-        : _ Stdlib.List.t)
-     in
-     Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Other" :: bnds__010_)
-   : t -> Sexplib0.Sexp.t)
+let to_dyn = function
+  | Local_branch { branch_name } ->
+    Dyn.inline_record "Local_branch" [ "branch_name", Branch_name.to_dyn branch_name ]
+  | Remote_branch { remote_branch_name } ->
+    Dyn.inline_record
+      "Remote_branch"
+      [ "remote_branch_name", Remote_branch_name.to_dyn remote_branch_name ]
+  | Tag { tag_name } -> Dyn.inline_record "Tag" [ "tag_name", Tag_name.to_dyn tag_name ]
+  | Other { name } -> Dyn.inline_record "Other" [ "name", Dyn.string name ]
 ;;
 
-[@@@deriving.end]
+let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
 let compare =
   (fun a__001_ b__002_ ->

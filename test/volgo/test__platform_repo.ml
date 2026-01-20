@@ -102,6 +102,25 @@ let%expect_test "parse" =
   ()
 ;;
 
+let%expect_test "to_dyn" =
+  print_dyn
+    (Vcs.Platform_repo.to_dyn
+       { platform = GitHub
+       ; vcs_kind = Git
+       ; user_handle = Vcs.User_handle.v "user"
+       ; repo_name = Vcs.Repo_name.v "repo"
+       });
+  [%expect
+    {|
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "repo"
+    }
+    |}];
+  ()
+;;
+
 let%expect_test "to_platform_string" =
   let test t =
     let url = Vcs.Platform_repo.to_url t ~protocol:Ssh in
@@ -131,22 +150,25 @@ let%expect_test "to_platform_string" =
 ;;
 
 let%expect_test "ssh_syntax" =
+  print_endline (Sexp.to_string_hum (Vcs.Platform_repo.Ssh_syntax.sexp_of_t Url_style));
+  [%expect {| Url_style |}];
   List.iter Vcs.Platform.all ~f:(fun platform ->
     let used_by_default_on_platform =
       Vcs.Platform_repo.Ssh_syntax.used_by_default_on_platform ~platform
     in
-    print_s
-      [%sexp
-        { platform : Vcs.Platform.t
-        ; used_by_default_on_platform : Vcs.Platform_repo.Ssh_syntax.t
-        }]);
+    print_dyn
+      (Dyn.record
+         [ "platform", platform |> Vcs.Platform.to_dyn
+         ; ( "used_by_default_on_platform"
+           , used_by_default_on_platform |> Vcs.Platform_repo.Ssh_syntax.to_dyn )
+         ]));
   [%expect
     {|
-    ((platform Bitbucket) (used_by_default_on_platform Url_style))
-    ((platform Codeberg) (used_by_default_on_platform Url_style))
-    ((platform GitHub) (used_by_default_on_platform Scp_like))
-    ((platform GitLab) (used_by_default_on_platform Scp_like))
-    ((platform Sourcehut) (used_by_default_on_platform Scp_like))
+    { platform = Bitbucket; used_by_default_on_platform = Url_style }
+    { platform = Codeberg; used_by_default_on_platform = Url_style }
+    { platform = GitHub; used_by_default_on_platform = Scp_like }
+    { platform = GitLab; used_by_default_on_platform = Scp_like }
+    { platform = Sourcehut; used_by_default_on_platform = Scp_like }
     |}];
   ()
 ;;

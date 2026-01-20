@@ -8,10 +8,12 @@
   -warn-error
   +a
   -open
+  Fpath_sexp0
+  -open
   Sexplib0
   -open
   Sexplib0.Sexp_conv)
- (libraries dyn ordering pp sexplib0)
+ (libraries dyn fpath-sexp0 ordering pp sexplib0)
  (modules
   (:standard \ stdlib_compat4xx stdlib_compat5xx))
  (instrumentation

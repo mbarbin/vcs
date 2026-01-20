@@ -54,7 +54,7 @@
 
 open! Stdlib_compat
 module Code_error = Code_error
-module Dyn = Dyn
+module Dyn = Dyn0
 
 module Dynable = struct
   module type S = sig
@@ -90,6 +90,12 @@ let sexp_field' (type a) (sexp_of_a : a -> Sexp.t) field a =
 let sexp_field (type a) (module M : To_sexpable with type t = a) field a =
   sexp_field' M.sexp_of_t field a
 ;;
+
+module Absolute_path = struct
+  include Absolute_path
+
+  let to_dyn t = Dyn.string (Absolute_path.to_string t)
+end
 
 module Array = struct
   include ArrayLabels
@@ -236,6 +242,7 @@ module Int = struct
     Buffer.contents buffer
   ;;
 
+  let to_dyn t = Dyn.Int t
   let sexp_of_t t = Sexp.Atom (to_string_hum t)
 end
 
@@ -273,6 +280,12 @@ module Queue = struct
 
   let enqueue t a = push a t
   let to_list t = t |> to_seq |> List.of_seq
+end
+
+module Relative_path = struct
+  include Relative_path
+
+  let to_dyn t = Dyn.string (Relative_path.to_string t)
 end
 
 module Result = struct
@@ -325,8 +338,8 @@ end
 module String = struct
   include StringLabels
 
-  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_string
   let to_dyn = Dyn.string
+  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_string
   let to_string t = t
 
   let chop_prefix t ~prefix =

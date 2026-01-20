@@ -671,12 +671,12 @@ let%expect_test "debug graph" =
   node_index (Mock.node t ~rev:r4);
   [%expect {| 4 |}];
   let get_node_exn index =
-    print_s [%sexp (Vcs.Graph.get_node_exn graph ~index : Vcs.Graph.Node.t)]
+    print_dyn (Vcs.Graph.get_node_exn graph ~index |> Vcs.Graph.Node.to_dyn)
   in
   get_node_exn 0;
-  [%expect {| #0 |}];
+  [%expect {| "#0" |}];
   get_node_exn 4;
-  [%expect {| #4 |}];
+  [%expect {| "#4" |}];
   require_does_raise (fun () -> get_node_exn 5);
   [%expect {| ("Node index out of bounds." ((index 5) (node_count 5))) |}];
   require_does_raise (fun () -> get_node_exn (-1));

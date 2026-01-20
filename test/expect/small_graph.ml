@@ -200,7 +200,7 @@ let%expect_test "small graph" =
     {|
     (Ok
      (((key (One_file bar.txt))
-       (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0)))))))
+       (num_stat (Num_lines_in_diff (insertions 1) (deletions 0))))))
     |}];
   let result =
     Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
@@ -210,7 +210,7 @@ let%expect_test "small graph" =
     {|
     (Ok
      (((key (One_file bar.txt))
-       (num_stat (Num_lines_in_diff ((insertions 1) (deletions 1)))))))
+       (num_stat (Num_lines_in_diff (insertions 1) (deletions 1))))))
     |}];
   let () =
     match Vcs.Or_error.log vcs ~repo_root with

@@ -26,6 +26,7 @@ module Node = struct
   let equal = Int.equal
   let hash = Int.hash
   let seeded_hash = Int.seeded_hash
+  let to_dyn i = Dyn.String ("#" ^ Int.to_string_hum i)
   let sexp_of_t i = Sexp.Atom ("#" ^ Int.to_string_hum i)
 end
 
@@ -437,21 +438,18 @@ module Descendance = struct
     | Strict_ancestor
     | Strict_descendant
     | Other
-  [@@deriving_inline enumerate, sexp_of]
 
   let all = ([ Same_node; Strict_ancestor; Strict_descendant; Other ] : t list)
 
-  let sexp_of_t =
-    (function
-     | Same_node -> Sexplib0.Sexp.Atom "Same_node"
-     | Strict_ancestor -> Sexplib0.Sexp.Atom "Strict_ancestor"
-     | Strict_descendant -> Sexplib0.Sexp.Atom "Strict_descendant"
-     | Other -> Sexplib0.Sexp.Atom "Other"
-     : t -> Sexplib0.Sexp.t)
+  let variant_constructor_name = function
+    | Same_node -> "Same_node"
+    | Strict_ancestor -> "Strict_ancestor"
+    | Strict_descendant -> "Strict_descendant"
+    | Other -> "Other"
   ;;
 
-  [@@@deriving.end]
-
+  let to_dyn t = Dyn.Variant (variant_constructor_name t, [])
+  let sexp_of_t t = Sexplib0.Sexp.Atom (variant_constructor_name t)
   let compare = (compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
   let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)

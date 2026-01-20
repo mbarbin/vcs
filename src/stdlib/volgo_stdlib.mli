@@ -35,7 +35,7 @@
 
 open! Stdlib_compat
 module Code_error = Code_error
-module Dyn = Dyn
+module Dyn = Dyn0
 
 module Dynable : sig
   module type S = sig
@@ -50,6 +50,14 @@ val print_dyn : Dyn.t -> unit
 module Ordering : sig
   include module type of struct
     include Ordering
+  end
+
+  val to_dyn : t -> Dyn.t
+end
+
+module Absolute_path : sig
+  include module type of struct
+    include Absolute_path
   end
 
   val to_dyn : t -> Dyn.t
@@ -103,6 +111,7 @@ module Int : sig
   include module type of Int
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val incr : int ref -> unit
   val max_value : int
   val of_string_opt : string -> int option
@@ -138,6 +147,14 @@ module Queue : sig
 
   val enqueue : 'a t -> 'a -> unit
   val to_list : 'a t -> 'a list
+end
+
+module Relative_path : sig
+  include module type of struct
+    include Relative_path
+  end
+
+  val to_dyn : t -> Dyn.t
 end
 
 module Result : sig

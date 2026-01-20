@@ -27,6 +27,7 @@ module type S = sig
   val hash : t -> int
   val seeded_hash : int -> t -> int
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
 end
 
 module String_impl : S with type t = string

@@ -25,22 +25,19 @@ type t =
   | GitHub
   | GitLab
   | Sourcehut
-[@@deriving_inline enumerate, sexp_of]
 
 let all = ([ Bitbucket; Codeberg; GitHub; GitLab; Sourcehut ] : t list)
 
-let sexp_of_t =
-  (function
-   | Bitbucket -> Sexplib0.Sexp.Atom "Bitbucket"
-   | Codeberg -> Sexplib0.Sexp.Atom "Codeberg"
-   | GitHub -> Sexplib0.Sexp.Atom "GitHub"
-   | GitLab -> Sexplib0.Sexp.Atom "GitLab"
-   | Sourcehut -> Sexplib0.Sexp.Atom "Sourcehut"
-   : t -> Sexplib0.Sexp.t)
+let variant_constructor_name = function
+  | Bitbucket -> "Bitbucket"
+  | Codeberg -> "Codeberg"
+  | GitHub -> "GitHub"
+  | GitLab -> "GitLab"
+  | Sourcehut -> "Sourcehut"
 ;;
 
-[@@@deriving.end]
-
+let to_dyn t = Dyn.Variant (variant_constructor_name t, [])
+let sexp_of_t t = Sexplib0.Sexp.Atom (variant_constructor_name t)
 let compare = (compare : t -> t -> int)
 let equal = (( = ) : t -> t -> bool)
 let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)

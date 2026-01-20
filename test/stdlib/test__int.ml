@@ -63,3 +63,10 @@ let%expect_test "Int.to_string_hum" =
     |}];
   ()
 ;;
+
+let%expect_test "to_dyn" =
+  let test i = print_dyn (Int.to_dyn i) in
+  test 123_456;
+  [%expect {| 123456 |}];
+  ()
+;;

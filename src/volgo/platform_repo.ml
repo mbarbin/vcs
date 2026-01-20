@@ -25,19 +25,16 @@ module Vcs_kind = struct
   type t =
     | Git
     | Hg
-  [@@deriving_inline enumerate, sexp_of]
 
   let all = ([ Git; Hg ] : t list)
 
-  let sexp_of_t =
-    (function
-     | Git -> Sexplib0.Sexp.Atom "Git"
-     | Hg -> Sexplib0.Sexp.Atom "Hg"
-     : t -> Sexplib0.Sexp.t)
+  let variant_constructor_name = function
+    | Git -> "Git"
+    | Hg -> "Hg"
   ;;
 
-  [@@@deriving.end]
-
+  let to_dyn t = Dyn.Variant (variant_constructor_name t, [])
+  let sexp_of_t t = Sexplib0.Sexp.Atom (variant_constructor_name t)
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
 
@@ -53,41 +50,17 @@ type t =
   ; user_handle : User_handle.t
   ; repo_name : Repo_name.t
   }
-[@@deriving_inline sexp_of]
 
-let sexp_of_t =
-  (fun { platform = platform__002_
-       ; vcs_kind = vcs_kind__004_
-       ; user_handle = user_handle__006_
-       ; repo_name = repo_name__008_
-       } ->
-     let bnds__001_ = ([] : _ Stdlib.List.t) in
-     let bnds__001_ =
-       let arg__009_ = Repo_name.sexp_of_t repo_name__008_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "repo_name"; arg__009_ ] :: bnds__001_
-        : _ Stdlib.List.t)
-     in
-     let bnds__001_ =
-       let arg__007_ = User_handle.sexp_of_t user_handle__006_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "user_handle"; arg__007_ ] :: bnds__001_
-        : _ Stdlib.List.t)
-     in
-     let bnds__001_ =
-       let arg__005_ = Vcs_kind.sexp_of_t vcs_kind__004_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "vcs_kind"; arg__005_ ] :: bnds__001_
-        : _ Stdlib.List.t)
-     in
-     let bnds__001_ =
-       let arg__003_ = Platform.sexp_of_t platform__002_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "platform"; arg__003_ ] :: bnds__001_
-        : _ Stdlib.List.t)
-     in
-     Sexplib0.Sexp.List bnds__001_
-   : t -> Sexplib0.Sexp.t)
+let to_dyn { platform; vcs_kind; user_handle; repo_name } =
+  Dyn.record
+    [ "platform", Platform.to_dyn platform
+    ; "vcs_kind", Vcs_kind.to_dyn vcs_kind
+    ; "user_handle", User_handle.to_dyn user_handle
+    ; "repo_name", Repo_name.to_dyn repo_name
+    ]
 ;;
 
-[@@@deriving.end]
-
+let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 let compare = (Stdlib.compare : t -> t -> int)
 let equal = (( = ) : t -> t -> bool)
 let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
@@ -99,19 +72,16 @@ module Protocol = struct
   type t =
     | Ssh
     | Https
-  [@@deriving_inline enumerate, sexp_of]
 
   let all = ([ Ssh; Https ] : t list)
 
-  let sexp_of_t =
-    (function
-     | Ssh -> Sexplib0.Sexp.Atom "Ssh"
-     | Https -> Sexplib0.Sexp.Atom "Https"
-     : t -> Sexplib0.Sexp.t)
+  let variant_constructor_name = function
+    | Ssh -> "Ssh"
+    | Https -> "Https"
   ;;
 
-  [@@@deriving.end]
-
+  let to_dyn t = Dyn.Variant (variant_constructor_name t, [])
+  let sexp_of_t t = Sexplib0.Sexp.Atom (variant_constructor_name t)
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
 
@@ -125,19 +95,16 @@ module Ssh_syntax = struct
   type t =
     | Scp_like
     | Url_style
-  [@@deriving_inline enumerate, sexp_of]
 
   let all = ([ Scp_like; Url_style ] : t list)
 
-  let sexp_of_t =
-    (function
-     | Scp_like -> Sexplib0.Sexp.Atom "Scp_like"
-     | Url_style -> Sexplib0.Sexp.Atom "Url_style"
-     : t -> Sexplib0.Sexp.t)
+  let variant_constructor_name = function
+    | Scp_like -> "Scp_like"
+    | Url_style -> "Url_style"
   ;;
 
-  [@@@deriving.end]
-
+  let to_dyn t = Dyn.Variant (variant_constructor_name t, [])
+  let sexp_of_t t = Sexplib0.Sexp.Atom (variant_constructor_name t)
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
   let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
@@ -158,47 +125,18 @@ module Url = struct
     ; repo_name : Repo_name.t
     ; protocol : Protocol.t
     }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (fun { platform = platform__011_
-         ; vcs_kind = vcs_kind__013_
-         ; user_handle = user_handle__015_
-         ; repo_name = repo_name__017_
-         ; protocol = protocol__019_
-         } ->
-       let bnds__010_ = ([] : _ Stdlib.List.t) in
-       let bnds__010_ =
-         let arg__020_ = Protocol.sexp_of_t protocol__019_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "protocol"; arg__020_ ] :: bnds__010_
-          : _ Stdlib.List.t)
-       in
-       let bnds__010_ =
-         let arg__018_ = Repo_name.sexp_of_t repo_name__017_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "repo_name"; arg__018_ ] :: bnds__010_
-          : _ Stdlib.List.t)
-       in
-       let bnds__010_ =
-         let arg__016_ = User_handle.sexp_of_t user_handle__015_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "user_handle"; arg__016_ ] :: bnds__010_
-          : _ Stdlib.List.t)
-       in
-       let bnds__010_ =
-         let arg__014_ = Vcs_kind.sexp_of_t vcs_kind__013_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "vcs_kind"; arg__014_ ] :: bnds__010_
-          : _ Stdlib.List.t)
-       in
-       let bnds__010_ =
-         let arg__012_ = Platform.sexp_of_t platform__011_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "platform"; arg__012_ ] :: bnds__010_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List bnds__010_
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn { platform; vcs_kind; user_handle; repo_name; protocol } =
+    Dyn.record
+      [ "platform", Platform.to_dyn platform
+      ; "vcs_kind", Vcs_kind.to_dyn vcs_kind
+      ; "user_handle", User_handle.to_dyn user_handle
+      ; "repo_name", Repo_name.to_dyn repo_name
+      ; "protocol", Protocol.to_dyn protocol
+      ]
   ;;
 
-  [@@@deriving.end]
-
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
   let compare = (Stdlib.compare : t -> t -> int)
   let equal = (( = ) : t -> t -> bool)
   let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
