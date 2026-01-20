@@ -137,16 +137,11 @@ let%expect_test "small graph" =
   let show_file_at_rev ~rev ~path =
     Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path
   in
-  let sexp_of_show_file_at_rev = function
-    | `Present contents ->
-      Sexp.List [ Atom "Present"; Vcs.File_contents.sexp_of_t contents ]
-    | `Absent -> Sexp.Atom "Absent"
-  in
   let result = show_file_at_rev ~rev ~path:hello_file in
-  print_s (result |> Or_error.sexp_of_t sexp_of_show_file_at_rev);
+  print_s (result |> Or_error.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok (Present "Hello World!")) |}];
   let result = show_file_at_rev ~rev ~path:(Vcs.Path_in_repo.v "absent-file.txt") in
-  print_s (result |> Or_error.sexp_of_t sexp_of_show_file_at_rev);
+  print_s (result |> Or_error.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok Absent) |}];
   let result =
     (* We've characterized here that Git does not distinguish between a file
@@ -155,7 +150,7 @@ let%expect_test "small graph" =
       ~rev:(Vcs.Mock_revs.next mock_revs)
       ~path:(Vcs.Path_in_repo.v "absent-file.txt")
   in
-  print_s (result |> Or_error.sexp_of_t sexp_of_show_file_at_rev);
+  print_s (result |> Or_error.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok Absent) |}];
   let result =
     Vcs.Or_error.load_file vcs ~path:(Vcs.Repo_root.append repo_root hello_file)
