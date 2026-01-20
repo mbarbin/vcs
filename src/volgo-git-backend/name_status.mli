@@ -46,6 +46,7 @@ module Diff_status : sig
     | `Not_supported
     ]
 
+  val to_dyn : t -> Dyn.t
   val sexp_of_t : t -> Sexp.t
   val parse_exn : string -> t
 end

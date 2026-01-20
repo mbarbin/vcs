@@ -29,17 +29,18 @@ let%expect_test "base int hash" =
   let test i =
     let h = Base.Int.hash i in
     let h2 = Base.Hash.run Base.Int.hash_fold_t i in
-    print_s [%sexp (i : int), (h : int), (h2 : int), (h = h2 : bool)]
+    print_dyn
+      (Dyn.Tuple [ i |> Dyn.int; h |> Dyn.int; h2 |> Dyn.int; h = h2 |> Dyn.bool ])
   in
   List.iter ~f:test [ 0; 1; 2; 4; 5; -123456789 ];
   [%expect
     {|
-    (0 4316648529147585864 1058613066 false)
-    (1 -2609136240614377266 129913994 false)
-    (2 4005111014598772340 462777137 false)
-    (4 -1213116315786261967 607293368 false)
-    (5 -3822126110415902464 648017920 false)
-    (-123456789 -547221948126359607 131804527 false)
+    (0, 4316648529147585864, 1058613066, false)
+    (1, -2609136240614377266, 129913994, false)
+    (2, 4005111014598772340, 462777137, false)
+    (4, -1213116315786261967, 607293368, false)
+    (5, -3822126110415902464, 648017920, false)
+    (-123456789, -547221948126359607, 131804527, false)
     |}];
   ()
 ;;
@@ -49,17 +50,18 @@ let%expect_test "stdlib int hash" =
   let test i =
     let h = Stdlib.Int.hash i in
     let h2 = Stdlib.Int.seeded_hash 0 i in
-    print_s [%sexp (i : int), (h : int), (h2 : int), (h = h2 : bool)]
+    print_dyn
+      (Dyn.Tuple [ i |> Dyn.int; h |> Dyn.int; h2 |> Dyn.int; h = h2 |> Dyn.bool ])
   in
   List.iter ~f:test [ 0; 1; 2; 4; 5; -123456789 ];
   [%expect
     {|
-    (0 129913994 129913994 true)
-    (1 883721435 883721435 true)
-    (2 648017920 648017920 true)
-    (4 127382775 127382775 true)
-    (5 378313623 378313623 true)
-    (-123456789 470621265 470621265 true)
+    (0, 129913994, 129913994, true)
+    (1, 883721435, 883721435, true)
+    (2, 648017920, 648017920, true)
+    (4, 127382775, 127382775, true)
+    (5, 378313623, 378313623, true)
+    (-123456789, 470621265, 470621265, true)
     |}];
   ()
 ;;

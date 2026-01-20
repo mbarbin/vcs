@@ -63,9 +63,8 @@ let%expect_test "hello path" =
     Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
   print_s
-    [%sexp
-      (Vcs.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ])];
+    (Vcs.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
+     |> Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Present "Hello World!\n") |}];
   let test_with_env ~vcs ~env ~redact_fields =
     match

@@ -28,6 +28,7 @@ module T = struct
         }
 
   let equal = Vcs.Num_status.Key.equal
+  let to_dyn = Vcs.Num_status.Key.to_dyn
   let sexp_of_t = Vcs.Num_status.Key.sexp_of_t
 end
 

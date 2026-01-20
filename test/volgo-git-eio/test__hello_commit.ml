@@ -43,18 +43,16 @@ let%expect_test "hello commit" =
   print_dyn (mock_rev |> Vcs.Rev.to_dyn);
   [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   print_s
-    [%sexp
-      (Vcs.Result.show_file_at_rev
-         vcs
-         ~repo_root
-         ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.get)
-         ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Vcs.Result.t)];
+    (Vcs.Result.show_file_at_rev
+       vcs
+       ~repo_root
+       ~rev:(Vcs.Mock_revs.of_mock mock_revs ~mock_rev |> Option.get)
+       ~path:hello_file
+     |> Vcs.Result.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok (Present "Hello World!")) |}];
   print_s
-    [%sexp
-      (Vcs.Result.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
-       : [ `Present of Vcs.File_contents.t | `Absent ] Vcs.Result.t)];
+    (Vcs.Result.show_file_at_rev vcs ~repo_root ~rev ~path:hello_file
+     |> Vcs.Result.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok (Present "Hello World!")) |}];
   ()
 ;;

@@ -22,9 +22,8 @@
 let%expect_test "show" =
   let test output =
     print_s
-      [%sexp
-        (Volgo_git_backend.Show.interpret_output output
-         : [ `Absent | `Present of Vcs.File_contents.t ] Vcs.Result.t)]
+      (Volgo_git_backend.Show.interpret_output output
+       |> Vcs.Result.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t)
   in
   test { exit_code = 0; stdout = "contents"; stderr = "" };
   [%expect {| (Ok (Present contents)) |}];

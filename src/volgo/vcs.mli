@@ -147,12 +147,22 @@ val ls_files
   -> below:Path_in_repo.t
   -> Path_in_repo.t list
 
+module File_shown_at_rev : sig
+  type t =
+    [ `Present of File_contents.t
+    | `Absent
+    ]
+
+  val to_dyn : t -> Dyn.t
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+end
+
 val show_file_at_rev
   :  < Trait.show ; .. > t
   -> repo_root:Repo_root.t
   -> rev:Rev.t
   -> path:Path_in_repo.t
-  -> [ `Present of File_contents.t | `Absent ]
+  -> File_shown_at_rev.t
 
 (** {2 Files IO}
 

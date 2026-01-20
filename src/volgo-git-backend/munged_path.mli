@@ -48,6 +48,7 @@ type t = Vcs.Num_status.Key.t =
       ; dst : Vcs.Path_in_repo.t
       }
 
+val to_dyn : t -> Dyn.t
 val sexp_of_t : t -> Sexp.t
 val equal : t -> t -> bool
 val parse_exn : string -> t

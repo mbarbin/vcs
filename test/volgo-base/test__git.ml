@@ -22,7 +22,9 @@
 module Vcs = Volgo_base.Vcs
 
 let%expect_test "exit0" =
-  let test output = print_s [%sexp (Vcs.Git.Or_error.exit0 output : unit Or_error.t)] in
+  let test output =
+    print_s (Vcs.Git.Or_error.exit0 output |> Or_error.sexp_of_t (fun () -> Sexp.List []))
+  in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ()) |}];
   (* The error does not contain the stdout or stderr, as this is already handled
@@ -35,7 +37,8 @@ let%expect_test "exit0" =
 
 let%expect_test "exit0_and_stdout" =
   let test output =
-    print_s [%sexp (Vcs.Git.Or_error.exit0_and_stdout output : string Or_error.t)]
+    print_s
+      (Vcs.Git.Or_error.exit0_and_stdout output |> Or_error.sexp_of_t String.sexp_of_t)
   in
   test { exit_code = 0; stdout = "stdout"; stderr = "" };
   [%expect {| (Ok stdout) |}];
@@ -48,9 +51,8 @@ let%expect_test "exit0_and_stdout" =
 let%expect_test "exit_code" =
   let test output =
     print_s
-      [%sexp
-        (Vcs.Git.Or_error.exit_code output ~accept:[ 0, "ok"; 42, "other" ]
-         : string Or_error.t)]
+      (Vcs.Git.Or_error.exit_code output ~accept:[ 0, "ok"; 42, "other" ]
+       |> Or_error.sexp_of_t String.sexp_of_t)
   in
   test { exit_code = 0; stdout = ""; stderr = "" };
   [%expect {| (Ok ok) |}];

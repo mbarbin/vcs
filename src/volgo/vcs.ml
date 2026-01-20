@@ -65,3 +65,18 @@ module Private = struct
     | exception exn -> Error (Err.of_exn exn)
   ;;
 end
+
+module File_shown_at_rev = struct
+  type t =
+    [ `Present of File_contents.t
+    | `Absent
+    ]
+
+  let to_dyn : t -> Dyn.t = function
+    | `Absent -> Dyn.Variant ("Absent", [])
+    | `Present file_contents ->
+      Dyn.Variant ("Present", [ File_contents.to_dyn file_contents ])
+  ;;
+
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
+end

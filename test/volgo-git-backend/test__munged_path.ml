@@ -22,7 +22,7 @@
 module Munged_path = Volgo_git_backend.Private.Munged_path
 
 let%expect_test "parse" =
-  let test path = print_s [%sexp (Munged_path.parse_exn path : Munged_path.t)] in
+  let test path = print_dyn (Munged_path.parse_exn path |> Munged_path.to_dyn) in
   require_does_raise (fun () -> test "");
   [%expect
     {|
@@ -43,11 +43,11 @@ let%expect_test "parse" =
       (error "Too many ['=>']."))
     |}];
   test "}";
-  [%expect {| (One_file }) |}];
+  [%expect {| One_file "}" |}];
   test "{";
-  [%expect {| (One_file {) |}];
+  [%expect {| One_file "{" |}];
   test "template/with-with-{{ variable }}.txt";
-  [%expect {| (One_file "template/with-with-{{ variable }}.txt") |}];
+  [%expect {| One_file "template/with-with-{{ variable }}.txt" |}];
   require_does_raise (fun () -> test "a/{dir => b");
   [%expect
     {|
@@ -61,10 +61,10 @@ let%expect_test "parse" =
       (error "Matching '{' not found."))
     |}];
   test "a/simple/path";
-  [%expect {| (One_file a/simple/path) |}];
+  [%expect {| One_file "a/simple/path" |}];
   test "a/simple/path => another/path";
-  [%expect {| (Two_files (src a/simple/path) (dst another/path)) |}];
+  [%expect {| Two_files { src = "a/simple/path"; dst = "another/path" } |}];
   test "a/{simple => not/so/simple}/path";
-  [%expect {| (Two_files (src a/simple/path) (dst a/not/so/simple/path)) |}];
+  [%expect {| Two_files { src = "a/simple/path"; dst = "a/not/so/simple/path" } |}];
   ()
 ;;

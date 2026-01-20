@@ -34,16 +34,45 @@ let%expect_test "pp_error" =
   ()
 ;;
 
+module Msg = struct
+  [@@@coverage off]
+
+  type t = [ `Msg of string ]
+
+  let to_dyn (`Msg s : t) = Dyn.Variant ("Msg", [ Dyn.string s ])
+end
+
 let%expect_test "error_to_msg" =
-  let test r =
-    print_s [%sexp (Vcs.Rresult.error_to_msg r : (unit, [ `Msg of string ]) Result.t)]
-  in
+  let test r = print_dyn (Vcs.Rresult.error_to_msg r |> Dyn.result Dyn.unit Msg.to_dyn) in
   test (Ok ());
-  [%expect {| (Ok ()) |}];
+  [%expect {| Ok () |}];
   test (Error (`Vcs (Err.create [ Pp.text "Hello" ])));
-  [%expect {| (Error (Msg Hello)) |}];
+  [%expect {| Error (Msg "Hello") |}];
   ()
 ;;
+
+module My_int_error = struct
+  [@@@coverage off]
+
+  type t = [ `My_int_error of int ]
+
+  let to_dyn (`My_int_error s : t) = Dyn.Variant ("My_int_error", [ Dyn.int s ])
+end
+
+module My_open_error = struct
+  [@@@coverage off]
+
+  type t =
+    [ `My_int_error of int
+    | `Vcs of Err.t
+    ]
+
+  let to_dyn t =
+    match (t : t) with
+    | `My_int_error i -> Dyn.Variant ("My_int_error", [ Dyn.int i ])
+    | `Vcs err -> Dyn.Variant ("Vcs", [ Dyn.string (Err.to_string_hum err) ])
+  ;;
+end
 
 let%expect_test "open_error" =
   (* Here we simulate a program where the type for errors changes as we go. *)
@@ -52,15 +81,15 @@ let%expect_test "open_error" =
     let* () = Result.return () in
     Result.return ()
   in
-  print_s [%sexp (result : (unit, unit) Result.t)];
-  [%expect {| (Ok ()) |}];
+  print_dyn (result |> Dyn.result Dyn.unit Dyn.unit);
+  [%expect {| Ok () |}];
   let result =
     let* () = result in
     let* () = (Result.return () : (unit, [ `My_int_error of int ]) Result.t) in
     Result.return ()
   in
-  print_s [%sexp (result : (unit, [ `My_int_error of int ]) Result.t)];
-  [%expect {| (Ok ()) |}];
+  print_dyn (result |> Dyn.result Dyn.unit My_int_error.to_dyn);
+  [%expect {| Ok () |}];
   let result =
     let* () =
       match result with
@@ -73,7 +102,7 @@ let%expect_test "open_error" =
     let* () = Vcs.Rresult.open_error error in
     (Result.return () [@coverage off])
   in
-  print_s [%sexp (result : (unit, [ `My_int_error of int | `Vcs of Err.t ]) Result.t)];
-  [%expect {| (Error (Vcs Vcs_error)) |}];
+  print_dyn (result |> Dyn.result Dyn.unit My_open_error.to_dyn);
+  [%expect {| Error (Vcs "Vcs_error") |}];
   ()
 ;;

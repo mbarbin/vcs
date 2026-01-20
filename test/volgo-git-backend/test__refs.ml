@@ -34,29 +34,32 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let refs = Volgo_git_backend.Refs.parse_lines_exn ~lines in
-  print_s
-    [%sexp
-      { tags = (Vcs.Refs.tags refs : Vcs.Tag_name.t list)
-      ; local_branches = (Vcs.Refs.local_branches refs : Vcs.Branch_name.t list)
-      ; remote_branches = (Vcs.Refs.remote_branches refs : Vcs.Remote_branch_name.t list)
-      }];
+  print_dyn
+    (Dyn.record
+       [ "tags", Vcs.Refs.tags refs |> Dyn.list Vcs.Tag_name.to_dyn
+       ; "local_branches", Vcs.Refs.local_branches refs |> Dyn.list Vcs.Branch_name.to_dyn
+       ; ( "remote_branches"
+         , Vcs.Refs.remote_branches refs |> Dyn.list Vcs.Remote_branch_name.to_dyn )
+       ]);
   [%expect
     {|
-    ((tags (0.0.1 0.0.2 0.0.3 0.0.3-preview.1))
-     (local_branches (gh-pages main subrepo))
-     (remote_branches
-      (((remote_name origin) (branch_name 0.0.3-preview))
-       ((remote_name origin) (branch_name gh-pages))
-       ((remote_name origin) (branch_name main))
-       ((remote_name origin) (branch_name progress-bar))
-       ((remote_name origin) (branch_name progress-bar.2)))))
+    { tags = [ "0.0.1"; "0.0.2"; "0.0.3"; "0.0.3-preview.1" ]
+    ; local_branches = [ "gh-pages"; "main"; "subrepo" ]
+    ; remote_branches =
+        [ { remote_name = "origin"; branch_name = "0.0.3-preview" }
+        ; { remote_name = "origin"; branch_name = "gh-pages" }
+        ; { remote_name = "origin"; branch_name = "main" }
+        ; { remote_name = "origin"; branch_name = "progress-bar" }
+        ; { remote_name = "origin"; branch_name = "progress-bar.2" }
+        ]
+    }
     |}];
   ()
 ;;
 
 let%expect_test "parse_ref_kind_exn" =
   let test_ref_kind str =
-    print_s [%sexp (Volgo_git_backend.Refs.parse_ref_kind_exn str : Vcs.Ref_kind.t)]
+    print_dyn (Volgo_git_backend.Refs.parse_ref_kind_exn str |> Vcs.Ref_kind.to_dyn)
   in
   require_does_raise (fun () -> test_ref_kind "blah");
   [%expect
@@ -72,11 +75,11 @@ let%expect_test "parse_ref_kind_exn" =
       (error "Expected ref to start with ['refs/']."))
     |}];
   test_ref_kind "refs/blah";
-  [%expect {| (Other (name blah)) |}];
+  [%expect {| Other { name = "blah" } |}];
   test_ref_kind "refs/blah/blah";
-  [%expect {| (Other (name blah/blah)) |}];
+  [%expect {| Other { name = "blah/blah" } |}];
   test_ref_kind "refs/heads/blah";
-  [%expect {| (Local_branch (branch_name blah)) |}];
+  [%expect {| Local_branch { branch_name = "blah" } |}];
   require_does_raise (fun () -> test_ref_kind "refs/remotes/blah");
   [%expect
     {|
@@ -87,20 +90,19 @@ let%expect_test "parse_ref_kind_exn" =
   test_ref_kind "refs/remotes/origin/main";
   [%expect
     {|
-    (Remote_branch
-     (remote_branch_name ((remote_name origin) (branch_name main))))
+    Remote_branch
+      { remote_branch_name = { remote_name = "origin"; branch_name = "main" } }
     |}];
   test_ref_kind "refs/tags/0.0.1";
-  [%expect {| (Tag (tag_name 0.0.1)) |}];
+  [%expect {| Tag { tag_name = "0.0.1" } |}];
   ()
 ;;
 
 let%expect_test "dereferenced" =
   let test line =
-    print_s
-      [%sexp
-        (Volgo_git_backend.Refs.Dereferenced.parse_exn ~line
-         : Volgo_git_backend.Refs.Dereferenced.t)]
+    print_dyn
+      (Volgo_git_backend.Refs.Dereferenced.parse_exn ~line
+       |> Volgo_git_backend.Refs.Dereferenced.to_dyn)
   in
   require_does_raise (fun () -> test "");
   [%expect
@@ -111,14 +113,18 @@ let%expect_test "dereferenced" =
   test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main";
   [%expect
     {|
-    ((rev 1185512b92d612b25613f2e5b473e5231185512b)
-     (ref_kind (Local_branch (branch_name main))) (dereferenced false))
+    { rev = "1185512b92d612b25613f2e5b473e5231185512b"
+    ; ref_kind = Local_branch { branch_name = "main" }
+    ; dereferenced = false
+    }
     |}];
   test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main^{}";
   [%expect
     {|
-    ((rev 1185512b92d612b25613f2e5b473e5231185512b)
-     (ref_kind (Local_branch (branch_name main))) (dereferenced true))
+    { rev = "1185512b92d612b25613f2e5b473e5231185512b"
+    ; ref_kind = Local_branch { branch_name = "main" }
+    ; dereferenced = true
+    }
     |}];
   ()
 ;;

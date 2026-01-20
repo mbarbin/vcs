@@ -179,25 +179,26 @@ let%expect_test "Diff_status" =
       Volgo_git_backend.Name_status.Diff_status.parse_exn
         (Printf.sprintf "%c something" char)
     in
-    print_s
-      [%sexp
-        (char |> Sexplib0.Sexp_conv.sexp_of_char : Sexp.t)
-      , (diff_status : Volgo_git_backend.Name_status.Diff_status.t)]);
+    print_dyn
+      (Dyn.Tuple
+         [ Dyn.string (String.make 1 char)
+         ; diff_status |> Volgo_git_backend.Name_status.Diff_status.to_dyn
+         ]));
   [%expect
     {|
-    (A A)
-    (D D)
-    (M M)
-    (U U)
-    (Q Q)
-    (I I)
-    (? Question_mark)
-    (! Bang)
-    (X X)
-    (R R)
-    (T T)
-    (C C)
-    (Z Not_supported)
+    ("A", A)
+    ("D", D)
+    ("M", M)
+    ("U", U)
+    ("Q", Q)
+    ("I", I)
+    ("?", Question_mark)
+    ("!", Bang)
+    ("X", X)
+    ("R", R)
+    ("T", T)
+    ("C", C)
+    ("Z", Not_supported)
     |}];
   require_does_raise (fun () -> Volgo_git_backend.Name_status.Diff_status.parse_exn "");
   [%expect {| "Unexpected empty diff status." |}];
@@ -232,7 +233,11 @@ let%expect_test "parse_lines_exn" =
     let result =
       Or_error.try_with (fun () -> Volgo_git_backend.Name_status.parse_line_exn ~line)
     in
-    print_s [%sexp (line : string), (result : Vcs.Name_status.Change.t Or_error.t)]);
+    print_s
+      (Sexp.List
+         [ String.sexp_of_t line
+         ; result |> Or_error.sexp_of_t Vcs.Name_status.Change.sexp_of_t
+         ]));
   [%expect
     {|
     (""

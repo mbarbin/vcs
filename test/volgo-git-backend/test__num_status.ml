@@ -326,7 +326,11 @@ let%expect_test "parse_lines_exn" =
     let result =
       Or_error.try_with (fun () -> Volgo_git_backend.Num_status.parse_line_exn ~line)
     in
-    print_s [%sexp (line : string), (result : Vcs.Num_status.Change.t Or_error.t)]);
+    print_s
+      (Sexp.List
+         [ String.sexp_of_t line
+         ; result |> Or_error.sexp_of_t Vcs.Num_status.Change.sexp_of_t
+         ]));
   [%expect
     {|
     (""

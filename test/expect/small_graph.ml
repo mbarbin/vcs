@@ -122,26 +122,31 @@ let%expect_test "small graph" =
     in
     Vcs.Or_error.current_branch vcs ~repo_root
   in
-  print_s [%sexp (result : Vcs.Branch_name.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.Branch_name.sexp_of_t);
   [%expect {| (Ok branch) |}];
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   let result =
     let* rev = Vcs.Or_error.current_revision vcs ~repo_root in
     Ok (Vcs.Mock_revs.to_mock mock_revs ~rev)
   in
-  print_s [%sexp (result : Vcs.Rev.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.Rev.sexp_of_t);
   [%expect {| (Ok 1185512b92d612b25613f2e5b473e5231185512b) |}];
   let result = Vcs.Or_error.current_branch vcs ~repo_root in
-  print_s [%sexp (result : Vcs.Branch_name.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.Branch_name.sexp_of_t);
   [%expect {| (Ok main) |}];
   let show_file_at_rev ~rev ~path =
     Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path
   in
+  let sexp_of_show_file_at_rev = function
+    | `Present contents ->
+      Sexp.List [ Atom "Present"; Vcs.File_contents.sexp_of_t contents ]
+    | `Absent -> Sexp.Atom "Absent"
+  in
   let result = show_file_at_rev ~rev ~path:hello_file in
-  print_s [%sexp (result : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t sexp_of_show_file_at_rev);
   [%expect {| (Ok (Present "Hello World!")) |}];
   let result = show_file_at_rev ~rev ~path:(Vcs.Path_in_repo.v "absent-file.txt") in
-  print_s [%sexp (result : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t sexp_of_show_file_at_rev);
   [%expect {| (Ok Absent) |}];
   let result =
     (* We've characterized here that Git does not distinguish between a file
@@ -150,15 +155,15 @@ let%expect_test "small graph" =
       ~rev:(Vcs.Mock_revs.next mock_revs)
       ~path:(Vcs.Path_in_repo.v "absent-file.txt")
   in
-  print_s [%sexp (result : [ `Present of Vcs.File_contents.t | `Absent ] Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t sexp_of_show_file_at_rev);
   [%expect {| (Ok Absent) |}];
   let result =
     Vcs.Or_error.load_file vcs ~path:(Vcs.Repo_root.append repo_root hello_file)
   in
-  print_s [%sexp (result : Vcs.File_contents.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.File_contents.sexp_of_t);
   [%expect {| (Ok "Hello World!") |}];
   let result = Vcs.Or_error.ls_files vcs ~repo_root ~below:Vcs.Path_in_repo.root in
-  print_s [%sexp (result : Vcs.Path_in_repo.t list Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t (List.sexp_of_t Vcs.Path_in_repo.sexp_of_t));
   [%expect {| (Ok (hello.txt)) |}];
   let () =
     (* Below must be an existing directory or [ls_files] returns an error. *)
@@ -185,17 +190,17 @@ let%expect_test "small graph" =
   let result =
     Vcs.Or_error.name_status vcs ~repo_root ~changed:(Between { src = rev2; dst = rev3 })
   in
-  print_s [%sexp (result : Vcs.Name_status.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.Name_status.sexp_of_t);
   [%expect {| (Ok ((Added bar.txt))) |}];
   let result =
     Vcs.Or_error.name_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
   in
-  print_s [%sexp (result : Vcs.Name_status.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.Name_status.sexp_of_t);
   [%expect {| (Ok ((Modified bar.txt))) |}];
   let result =
     Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src = rev2; dst = rev3 })
   in
-  print_s [%sexp (result : Vcs.Num_status.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.Num_status.sexp_of_t);
   [%expect
     {|
     (Ok
@@ -205,7 +210,7 @@ let%expect_test "small graph" =
   let result =
     Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
   in
-  print_s [%sexp (result : Vcs.Num_status.t Or_error.t)];
+  print_s (result |> Or_error.sexp_of_t Vcs.Num_status.sexp_of_t);
   [%expect
     {|
     (Ok

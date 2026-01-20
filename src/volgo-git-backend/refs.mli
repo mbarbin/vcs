@@ -60,6 +60,7 @@ module Dereferenced : sig
     ; dereferenced : bool
     }
 
+  val to_dyn : t -> Dyn.t
   val sexp_of_t : t -> Sexp.t
   val equal : t -> t -> bool
   val parse_exn : line:string -> t
