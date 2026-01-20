@@ -10,12 +10,12 @@
   -open
   Base
   -open
-  Fpath_base
+  Fpath_sexp0
   -open
   Pplumbing_err
   -open
   Volgo)
- (libraries base fpath fpath-base pp pplumbing-err volgo)
+ (libraries base fpath fpath-sexp0 pp pplumbing-err volgo)
  (instrumentation
   (backend bisect_ppx))
  (lint

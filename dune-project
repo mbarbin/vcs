@@ -64,7 +64,7 @@
    (>= v0.17))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.4.0))
   (pp
    (>= 2.0.0))
@@ -324,7 +324,7 @@
    (>= 1.0))
   (fpath
    (>= 0.7.3))
-  (fpath-base
+  (fpath-sexp0
    (>= 0.4.0))
   (fpath-sexp0
    (>= 0.4.0))

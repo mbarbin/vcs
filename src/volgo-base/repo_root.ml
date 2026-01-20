@@ -23,5 +23,5 @@ module T = Vcs.Repo_root
 include T
 include Comparable.Make (T)
 
-let hash t = Absolute_path.hash (T.to_absolute_path t)
-let hash_fold_t state t = Absolute_path.hash_fold_t state (T.to_absolute_path t)
+let hash t = String.hash (T.to_string t)
+let hash_fold_t state t = String.hash_fold_t state (T.to_string t)
