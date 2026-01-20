@@ -42,8 +42,8 @@ let%expect_test "hello commit" =
     Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_dyn (mock_rev |> Vcs.Rev.to_dyn);
+  [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   print_s
     [%sexp
       (Vcs.Result.show_file_at_rev
@@ -63,7 +63,7 @@ let%expect_test "hello commit" =
 
 let%expect_test "read_dir" =
   let vcs = Volgo_git_unix.create () in
-  let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fsegment.t list)] in
+  let read_dir dir = print_dyn (Vcs.read_dir vcs ~dir |> Dyn.list Fsegment.to_dyn) in
   let cwd = Unix.getcwd () in
   let dir = Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
   let save_file file file_contents =
@@ -73,19 +73,19 @@ let%expect_test "read_dir" =
       ~file_contents:(Vcs.File_contents.create file_contents)
   in
   read_dir dir;
-  [%expect {| () |}];
+  [%expect {| [] |}];
   save_file "hello.txt" "Hello World!\n";
   [%expect {||}];
   read_dir dir;
-  [%expect {| (hello.txt) |}];
+  [%expect {| [ "hello.txt" ] |}];
   save_file "foo" "Hello Foo!\n";
   [%expect {||}];
   read_dir dir;
-  [%expect {| (foo hello.txt) |}];
+  [%expect {| [ "foo"; "hello.txt" ] |}];
   let () =
     match Vcs.read_dir vcs ~dir:(Absolute_path.v "/invalid") with
     | (_ : Fsegment.t list) -> assert false
-    | exception Err.E err -> print_s [%sexp (err : Err.t)]
+    | exception Err.E err -> print_s (err |> Err.sexp_of_t)
   in
   [%expect
     {|

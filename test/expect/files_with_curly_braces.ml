@@ -81,19 +81,21 @@ let%expect_test "files with curly-braces" =
   let rev2 = commit_file ~path:template_file in
   let print_num_status ~src ~dst =
     let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
-    print_s [%sexp (num_status : Vcs.Num_status.t)]
+    print_dyn (num_status |> Vcs.Num_status.to_dyn)
   in
   let print_name_status ~src ~dst =
     let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
-    print_s [%sexp (name_status : Vcs.Name_status.t)]
+    print_dyn (name_status |> Vcs.Name_status.to_dyn)
   in
   print_name_status ~src:rev1 ~dst:rev2;
-  [%expect {| ((Modified "template/{{ key }}.txt")) |}];
+  [%expect {| [ Modified "template/{{ key }}.txt" ] |}];
   print_num_status ~src:rev1 ~dst:rev2;
   [%expect
     {|
-    (((key (One_file "template/{{ key }}.txt"))
-      (num_stat (Num_lines_in_diff (insertions 2) (deletions 1)))))
+    [ { key = One_file "template/{{ key }}.txt"
+      ; num_stat = Num_lines_in_diff { insertions = 2; deletions = 1 }
+      }
+    ]
     |}];
   let renamed_file1 = Vcs.Path_in_repo.v "template/no-braces.txt" in
   (* Next let's do some renames and make sure the munged paths are properly handled. *)
@@ -110,17 +112,24 @@ let%expect_test "files with curly-braces" =
   print_name_status ~src:rev2 ~dst:rev3;
   [%expect
     {|
-    ((Renamed (src "template/{{ key }}.txt") (dst template/no-braces.txt)
-      (similarity 100)))
+    [ Renamed
+        { src = "template/{{ key }}.txt"
+        ; dst = "template/no-braces.txt"
+        ; similarity = 100
+        }
+    ]
     |}];
   print_raw_numstat vcs ~repo_root ~src:rev2 ~dst:rev3;
   [%expect {| 0 0 template/{{{ key }}.txt => no-braces.txt} |}];
   print_num_status ~src:rev2 ~dst:rev3;
   [%expect
     {|
-    (((key
-       (Two_files (src "template/{{ key }}.txt") (dst template/no-braces.txt)))
-      (num_stat (Num_lines_in_diff (insertions 0) (deletions 0)))))
+    [ { key =
+          Two_files
+            { src = "template/{{ key }}.txt"; dst = "template/no-braces.txt" }
+      ; num_stat = Num_lines_in_diff { insertions = 0; deletions = 0 }
+      }
+    ]
     |}];
   let renamed_file2 = Vcs.Path_in_repo.v "template/hello-{{ mix }}-FOO.{{ ext }}" in
   let renamed_file3 = Vcs.Path_in_repo.v "template/hello-{{ mix }}-BAR.{{ ext }}" in
@@ -137,18 +146,26 @@ let%expect_test "files with curly-braces" =
   print_name_status ~src:rev3 ~dst:rev4;
   [%expect
     {|
-    ((Renamed (src template/no-braces.txt)
-      (dst "template/hello-{{ mix }}-FOO.{{ ext }}") (similarity 100)))
+    [ Renamed
+        { src = "template/no-braces.txt"
+        ; dst = "template/hello-{{ mix }}-FOO.{{ ext }}"
+        ; similarity = 100
+        }
+    ]
     |}];
   print_raw_numstat vcs ~repo_root ~src:rev3 ~dst:rev4;
   [%expect {| 0 0 template/{no-braces.txt => hello-{{ mix }}-FOO.{{ ext }}} |}];
   print_num_status ~src:rev3 ~dst:rev4;
   [%expect
     {|
-    (((key
-       (Two_files (src template/no-braces.txt)
-        (dst "template/hello-{{ mix }}-FOO.{{ ext }}")))
-      (num_stat (Num_lines_in_diff (insertions 0) (deletions 0)))))
+    [ { key =
+          Two_files
+            { src = "template/no-braces.txt"
+            ; dst = "template/hello-{{ mix }}-FOO.{{ ext }}"
+            }
+      ; num_stat = Num_lines_in_diff { insertions = 0; deletions = 0 }
+      }
+    ]
     |}];
   (* More complex case with rename part in the middle. *)
   Vcs.git
@@ -164,8 +181,12 @@ let%expect_test "files with curly-braces" =
   print_name_status ~src:rev4 ~dst:rev5;
   [%expect
     {|
-    ((Renamed (src "template/hello-{{ mix }}-FOO.{{ ext }}")
-      (dst "template/hello-{{ mix }}-BAR.{{ ext }}") (similarity 100)))
+    [ Renamed
+        { src = "template/hello-{{ mix }}-FOO.{{ ext }}"
+        ; dst = "template/hello-{{ mix }}-BAR.{{ ext }}"
+        ; similarity = 100
+        }
+    ]
     |}];
   print_raw_numstat vcs ~repo_root ~src:rev4 ~dst:rev5;
   [%expect
@@ -173,10 +194,14 @@ let%expect_test "files with curly-braces" =
   print_num_status ~src:rev4 ~dst:rev5;
   [%expect
     {|
-    (((key
-       (Two_files (src "template/hello-{{ mix }}-FOO.{{ ext }}")
-        (dst "template/hello-{{ mix }}-BAR.{{ ext }}")))
-      (num_stat (Num_lines_in_diff (insertions 0) (deletions 0)))))
+    [ { key =
+          Two_files
+            { src = "template/hello-{{ mix }}-FOO.{{ ext }}"
+            ; dst = "template/hello-{{ mix }}-BAR.{{ ext }}"
+            }
+      ; num_stat = Num_lines_in_diff { insertions = 0; deletions = 0 }
+      }
+    ]
     |}];
   ()
 ;;

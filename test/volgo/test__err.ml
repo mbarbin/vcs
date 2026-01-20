@@ -20,24 +20,31 @@
 (*******************************************************************************)
 
 let%expect_test "sexp_of_t" =
-  print_s [%sexp (Err.create [ Err.sexp [%sexp Hello] ] : Err.t)];
+  print_s (Err.create [ Err.sexp (Dyn.to_sexp (Dyn.variant "Hello" [])) ] |> Err.sexp_of_t);
   [%expect {| Hello |}];
   print_s
-    [%sexp
-      (Err.add_context (Err.create [ Err.sexp [%sexp Hello] ]) [ Err.sexp [%sexp Step] ]
-       : Err.t)];
+    (Err.add_context
+       (Err.create [ Err.sexp (Dyn.to_sexp (Dyn.variant "Hello" [])) ])
+       [ Err.sexp (Dyn.to_sexp (Dyn.variant "Step" [])) ]
+     |> Err.sexp_of_t);
   [%expect {| ((context Step) (error Hello)) |}];
-  print_s [%sexp (Err.create [ Pp.verbatim "Hello" ] : Err.t)];
+  print_s (Err.create [ Pp.verbatim "Hello" ] |> Err.sexp_of_t);
   [%expect {| Hello |}];
-  print_s [%sexp (Err.create [ Pp.text "Hello"; Err.sexp [%sexp Step] ] : Err.t)];
+  print_s
+    (Err.create [ Pp.text "Hello"; Err.sexp (Dyn.to_sexp (Dyn.variant "Step" [])) ]
+     |> Err.sexp_of_t);
   [%expect {| (Hello Step) |}];
-  print_s [%sexp (Err.create Pp.O.[ Pp.text "Hello " ++ Err.sexp [%sexp Step] ] : Err.t)];
+  print_s
+    (Err.create
+       Pp.O.[ Pp.text "Hello " ++ Err.sexp (Dyn.to_sexp (Dyn.variant "Step" [])) ]
+     |> Err.sexp_of_t);
   [%expect {| "Hello Step" |}];
   ()
 ;;
 
 let%expect_test "to_string_hum" =
-  print_endline (Err.to_string_hum (Err.create [ Err.sexp [%sexp Hello] ]));
+  print_endline
+    (Err.to_string_hum (Err.create [ Err.sexp (Dyn.to_sexp (Dyn.variant "Hello" [])) ]));
   [%expect {| Hello |}];
   print_endline (Err.to_string_hum (Err.create [ Pp.verbatim "Hello" ]));
   [%expect {| Hello |}];
@@ -48,7 +55,7 @@ let%expect_test "error_string" =
   let err = Err.create [ Pp.text "error message" ] in
   print_endline (Err.to_string_hum err);
   [%expect {| "error message" |}];
-  print_s [%sexp (err : Err.t)];
+  print_s (err |> Err.sexp_of_t);
   [%expect {| "error message" |}];
   ()
 ;;
@@ -57,32 +64,32 @@ let%expect_test "of_exn" =
   let err = Err.of_exn (Failure "exn message") in
   print_endline (Err.to_string_hum err);
   [%expect {| (Failure "exn message") |}];
-  print_s [%sexp (err : Err.t)];
+  print_s (err |> Err.sexp_of_t);
   [%expect {| (Failure "exn message") |}];
   let err = Err.of_exn (Invalid_argument "exn message") in
   print_endline (Err.to_string_hum err);
   [%expect {| (Invalid_argument "exn message") |}];
-  print_s [%sexp (err : Err.t)];
+  print_s (err |> Err.sexp_of_t);
   [%expect {| (Invalid_argument "exn message") |}];
   ()
 ;;
 
 let%expect_test "add_context" =
   let err = Err.create [ Pp.verbatim "Hello" ] in
-  print_s [%sexp (err : Err.t)];
+  print_s (err |> Err.sexp_of_t);
   [%expect {| Hello |}];
   let err = Err.add_context err [ Pp.verbatim "Step_1" ] in
-  print_s [%sexp (err : Err.t)];
+  print_s (err |> Err.sexp_of_t);
   [%expect {| ((context Step_1) (error Hello)) |}];
   let err = Err.add_context err [ Err.sexp [%sexp Step_2, { x = 42 }] ] in
-  print_s [%sexp (err : Err.t)];
+  print_s (err |> Err.sexp_of_t);
   [%expect {| ((context (Step_2 ((x 42))) Step_1) (error Hello)) |}];
   ()
 ;;
 
 let%expect_test "init" =
   print_s
-    [%sexp (Err.add_context (Err.create [ Pp.text "Hello" ]) [ Pp.text "Step" ] : Err.t)];
+    (Err.add_context (Err.create [ Pp.text "Hello" ]) [ Pp.text "Step" ] |> Err.sexp_of_t);
   [%expect {| ((context Step) (error Hello)) |}];
   ()
 ;;

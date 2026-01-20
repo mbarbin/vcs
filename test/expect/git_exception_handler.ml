@@ -85,7 +85,7 @@ end
 
 let handler (handler_scenario : Handler_scenario.t) =
   match handler_scenario with
-  | Ok -> Ok [%sexp ()]
+  | Ok -> Ok (Dyn.to_sexp Dyn.Unit)
   | Error -> Error (Err.create [ Pp.text "Expected exit code 0." ])
   | Raise_failure -> failwith "Raise_failure"
   | Raise_invalid_argument -> invalid_arg "Raise_invalid_argument"
@@ -107,7 +107,7 @@ let test_current_branch
       List.find Handler_scenario.all ~f:(fun handler ->
         String.equal output (Handler_scenario.to_string handler))
     with
-    | None -> Ok [%sexp { current_branch = (output : string) }]
+    | None -> Ok (Dyn.to_sexp (Dyn.record [ "current_branch", output |> Dyn.string ]))
     | Some handler_scenario -> handler handler_scenario
   in
   Runtime.git vcs ~cwd ~args ~f

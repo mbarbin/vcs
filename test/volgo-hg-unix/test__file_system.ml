@@ -25,7 +25,7 @@
 
 let%expect_test "read_dir" =
   let vcs = Volgo_hg_unix.create () in
-  let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fsegment.t list)] in
+  let read_dir dir = print_dyn (Vcs.read_dir vcs ~dir |> Dyn.list Fsegment.to_dyn) in
   let cwd = Unix.getcwd () in
   let dir = Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
   let save_file file file_contents =
@@ -35,10 +35,10 @@ let%expect_test "read_dir" =
       ~file_contents:(Vcs.File_contents.create file_contents)
   in
   read_dir dir;
-  [%expect {| () |}];
+  [%expect {| [] |}];
   save_file "hello.txt" "Hello World!\n";
   [%expect {||}];
   read_dir dir;
-  [%expect {| (hello.txt) |}];
+  [%expect {| [ "hello.txt" ] |}];
   ()
 ;;

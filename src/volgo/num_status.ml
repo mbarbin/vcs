@@ -103,6 +103,7 @@ end
 module T = struct
   type t = Change.t list
 
+  let to_dyn t = Dyn.list Change.to_dyn t
   let sexp_of_t t : Sexplib0.Sexp.t = sexp_of_list Change.sexp_of_t t
 end
 

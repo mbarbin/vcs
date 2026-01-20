@@ -59,12 +59,14 @@ module Change : sig
         }
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val equal : t -> t -> bool
 end
 
 type t = Change.t list
 
 val sexp_of_t : t -> Sexplib0.Sexp.t
+val to_dyn : t -> Dyn.t
 
 (** Returns the set of files that are involved by the changes, either at [src]
     or [dst]. *)
@@ -85,5 +87,6 @@ module Changed : sig
         }
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val equal : t -> t -> bool
 end

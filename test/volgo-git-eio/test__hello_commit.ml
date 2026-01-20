@@ -40,8 +40,8 @@ let%expect_test "hello commit" =
     Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_dyn (mock_rev |> Vcs.Rev.to_dyn);
+  [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   print_s
     [%sexp
       (Vcs.Result.show_file_at_rev

@@ -30,7 +30,7 @@ let%expect_test "reraise_with_context" =
         (Err.reraise_with_context err bt [ Pp.verbatim "Step" ] [@coverage off])
     with
     | _ -> assert false
-    | exception Err.E err -> print_s [%sexp (err : Err.t)]
+    | exception Err.E err -> print_s (err |> Err.sexp_of_t)
   in
   [%expect {| ((context Step) (error Err)) |}];
   ()

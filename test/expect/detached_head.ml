@@ -46,19 +46,19 @@ let%expect_test "detached-head" =
       ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_dyn (mock_rev |> Vcs.Rev.to_dyn);
+  [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   (* The head is the revision of the latest commit. *)
   let head = Vcs.current_revision vcs ~repo_root in
   require_equal (module Vcs.Rev) (Vcs.Mock_revs.to_mock mock_revs ~rev:head) mock_rev;
   (* Making sure the default branch name is deterministic. *)
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   let current_branch = Vcs.current_branch vcs ~repo_root in
-  print_s [%sexp (current_branch : Vcs.Branch_name.t)];
-  [%expect {| main |}];
+  print_dyn (current_branch |> Vcs.Branch_name.to_dyn);
+  [%expect {| "main" |}];
   let current_branch_opt = Vcs.current_branch_opt vcs ~repo_root in
-  print_s [%sexp (current_branch_opt : Vcs.Branch_name.t option)];
-  [%expect {| (main) |}];
+  print_dyn (current_branch_opt |> Dyn.option Vcs.Branch_name.to_dyn);
+  [%expect {| Some "main" |}];
   Vcs.git vcs ~repo_root ~args:[ "switch"; "--detach"; "main" ] ~f:Vcs.Git.exit0;
   let () =
     match Vcs.Result.current_branch vcs ~repo_root with

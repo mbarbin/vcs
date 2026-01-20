@@ -23,7 +23,7 @@ module Vcs = Volgo_base.Vcs
 
 let%expect_test "sexp_of_t" =
   let test r = print_s [%sexp (r : int Vcs.Or_error.t)] in
-  test (Or_error.error_s [%sexp Hello]);
+  test (Or_error.error_s (Dyn.to_sexp (Dyn.variant "Hello" [])));
   [%expect {| (Error Hello) |}];
   test (Or_error.return 0);
   [%expect {| (Ok 0) |}];

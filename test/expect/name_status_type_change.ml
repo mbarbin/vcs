@@ -54,14 +54,14 @@ let%expect_test "name status with type change" =
   [%expect {| (Present "Hello World!\n") |}];
   let print_num_status ~src ~dst =
     let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
-    print_s [%sexp (num_status : Vcs.Num_status.t)]
+    print_dyn (num_status |> Vcs.Num_status.to_dyn)
   in
   let print_name_status ~src ~dst =
     let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
-    print_s [%sexp (name_status : Vcs.Name_status.t)]
+    print_dyn (name_status |> Vcs.Name_status.to_dyn)
   in
   print_name_status ~src:rev1 ~dst:rev2;
-  [%expect {| ((Added hello2.txt)) |}];
+  [%expect {| [ Added "hello2.txt" ] |}];
   (* Now let's change the file2 to be a symlink to the file 1 instead. *)
   Unix.unlink (Vcs.Repo_root.append repo_root hello2_file |> Absolute_path.to_string);
   Unix.symlink
@@ -70,12 +70,14 @@ let%expect_test "name status with type change" =
     ~dst:(Vcs.Repo_root.append repo_root hello2_file |> Absolute_path.to_string);
   let rev3 = commit_file ~path:hello2_file in
   print_name_status ~src:rev2 ~dst:rev3;
-  [%expect {| ((Modified hello2.txt)) |}];
+  [%expect {| [ Modified "hello2.txt" ] |}];
   print_num_status ~src:rev2 ~dst:rev3;
   [%expect
     {|
-    (((key (One_file hello2.txt))
-      (num_stat (Num_lines_in_diff (insertions 1) (deletions 3)))))
+    [ { key = One_file "hello2.txt"
+      ; num_stat = Num_lines_in_diff { insertions = 1; deletions = 3 }
+      }
+    ]
     |}];
   (* Let's make it a regular file again, and further change its contents. *)
   Unix.unlink (Vcs.Repo_root.append repo_root hello2_file |> Absolute_path.to_string);
@@ -83,13 +85,15 @@ let%expect_test "name status with type change" =
   let rev4 = commit_file ~path:hello2_file in
   (* Git reports this as a single 'T' change. *)
   print_name_status ~src:rev3 ~dst:rev4;
-  [%expect {| ((Modified hello2.txt)) |}];
+  [%expect {| [ Modified "hello2.txt" ] |}];
   (* Git reports this as a single 'T' change. *)
   print_num_status ~src:rev3 ~dst:rev4;
   [%expect
     {|
-    (((key (One_file hello2.txt))
-      (num_stat (Num_lines_in_diff (insertions 2) (deletions 1)))))
+    [ { key = One_file "hello2.txt"
+      ; num_stat = Num_lines_in_diff { insertions = 2; deletions = 1 }
+      }
+    ]
     |}];
   ()
 ;;

@@ -99,31 +99,34 @@ module T = struct
   module Nodes = struct
     type t = Node_kind.t array
 
-    let sexp_of_t t =
+    let to_dyn t =
       t
       |> Array.mapi ~f:(fun node node_kind ->
-        Sexp.List [ node |> Node.sexp_of_t; node_kind |> Node_kind.sexp_of_t ])
+        Dyn.Tuple [ Node.to_dyn node; Node_kind.to_dyn node_kind ])
       |> Array.rev
-      |> Array.sexp_of_t Fun.id
+      |> Array.to_list
+      |> Dyn.list Fun.id
     ;;
   end
 
   module Revs = struct
     type t = int Rev_table.t
 
-    let sexp_of_t (t : t) =
+    let to_dyn (t : t) =
       let revs = Rev_table.to_seq t |> Array.of_seq in
       Array.sort revs ~compare:(fun (_, n1) (_, n2) -> Int.compare n2 n1);
       revs
-      |> Array.sexp_of_t (fun (rev, index) ->
-        Sexp.List [ index |> Node.sexp_of_t; rev |> Rev.sexp_of_t ])
+      |> Array.map ~f:(fun (rev, index) ->
+        Dyn.Tuple [ Node.to_dyn index; Rev.to_dyn rev ])
+      |> Array.to_list
+      |> Dyn.list Fun.id
     ;;
   end
 
   module Reverse_refs = struct
     type t = Ref_kind.t list Int_table.t
 
-    let sexp_of_t (t : t) =
+    let to_dyn (t : t) =
       let revs =
         Int_table.to_seq t
         |> Array.of_seq
@@ -131,9 +134,10 @@ module T = struct
       in
       Array.sort revs ~compare:(fun (n1, _) (n2, _) -> Int.compare n2 n1);
       revs
-      |> Array.sexp_of_t (fun (node, ref_kinds) ->
-        Sexp.List
-          [ node |> Node.sexp_of_t; ref_kinds |> List.sexp_of_t Ref_kind.sexp_of_t ])
+      |> Array.map ~f:(fun (node, ref_kinds) ->
+        Dyn.Tuple [ Node.to_dyn node; Dyn.list Ref_kind.to_dyn ref_kinds ])
+      |> Array.to_list
+      |> Dyn.list Fun.id
     ;;
   end
 
@@ -144,13 +148,15 @@ module T = struct
     ; reverse_refs : Ref_kind.t list Int_table.t
     }
 
-  let sexp_of_t { nodes; revs; refs = _; reverse_refs } =
-    Sexp.List
-      [ sexp_field (module Nodes) "nodes" nodes
-      ; sexp_field (module Revs) "revs" revs
-      ; sexp_field (module Reverse_refs) "refs" reverse_refs
+  let to_dyn { nodes; revs; refs = _; reverse_refs } =
+    Dyn.record
+      [ "nodes", Nodes.to_dyn nodes
+      ; "revs", Revs.to_dyn revs
+      ; "refs", Reverse_refs.to_dyn reverse_refs
       ]
   ;;
+
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 end
 
 include T

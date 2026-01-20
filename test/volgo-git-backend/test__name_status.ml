@@ -35,106 +35,139 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let name_status = Volgo_git_backend.Name_status.parse_lines_exn ~lines in
-  print_s [%sexp (name_status : Vcs.Name_status.t)];
+  print_dyn (name_status |> Vcs.Name_status.to_dyn);
   [%expect
     {|
-    ((Modified .github/workflows/ci.yml)
-     (Removed .github/workflows/deploy-odoc.yml) (Modified .vscode/settings.json)
-     (Removed CHANGELOG.md) (Added CHANGES.md) (Removed CODE_OF_CONDUCT.md)
-     (Modified Makefile) (Modified README.md) (Modified bin/dune)
-     (Modified bin/main.ml) (Modified dune-project)
-     (Modified lib/super_master_mind/src/code.ml)
-     (Modified lib/super_master_mind/src/code.mli)
-     (Modified lib/super_master_mind/src/codes.ml)
-     (Modified lib/super_master_mind/src/codes.mli)
-     (Modified lib/super_master_mind/src/color.ml)
-     (Modified lib/super_master_mind/src/color.mli)
-     (Modified lib/super_master_mind/src/color_permutation.ml)
-     (Modified lib/super_master_mind/src/color_permutation.mli)
-     (Modified lib/super_master_mind/src/cue.ml)
-     (Modified lib/super_master_mind/src/cue.mli)
-     (Modified lib/super_master_mind/src/dune)
-     (Modified lib/super_master_mind/src/example.ml)
-     (Modified lib/super_master_mind/src/example.mli)
-     (Modified lib/super_master_mind/src/game_dimensions.ml)
-     (Modified lib/super_master_mind/src/game_dimensions.mli)
-     (Modified lib/super_master_mind/src/guess.ml)
-     (Modified lib/super_master_mind/src/guess.mli)
-     (Added lib/super_master_mind/src/import/dune)
-     (Renamed (src lib/super_master_mind/src/import.ml)
-      (dst lib/super_master_mind/src/import/super_master_mind_import.ml)
-      (similarity 86))
-     (Renamed (src lib/super_master_mind/src/import.mli)
-      (dst lib/super_master_mind/src/import/super_master_mind_import.mli)
-      (similarity 95))
-     (Modified lib/super_master_mind/src/kheap.ml)
-     (Modified lib/super_master_mind/src/kheap.mli)
-     (Modified lib/super_master_mind/src/maker.ml)
-     (Modified lib/super_master_mind/src/maker.mli)
-     (Modified lib/super_master_mind/src/opening_book.ml)
-     (Modified lib/super_master_mind/src/opening_book.mli)
-     (Modified lib/super_master_mind/src/solver.ml)
-     (Modified lib/super_master_mind/src/solver.mli)
-     (Modified lib/super_master_mind/src/super_master_mind.ml)
-     (Modified lib/super_master_mind/src/super_master_mind.mli)
-     (Modified lib/super_master_mind/src/task_pool.ml)
-     (Modified lib/super_master_mind/src/task_pool.mli)
-     (Modified lib/super_master_mind/test/dune)
-     (Modified lib/super_master_mind/test/test__code.ml)
-     (Modified lib/super_master_mind/test/test__codes.ml)
-     (Modified lib/super_master_mind/test/test__color.ml)
-     (Modified lib/super_master_mind/test/test__color_permutation.ml)
-     (Modified lib/super_master_mind/test/test__cue.ml)
-     (Modified lib/super_master_mind/test/test__example.ml)
-     (Modified lib/super_master_mind/test/test__game_dimensions.ml)
-     (Modified lib/super_master_mind/test/test__guess.ml)
-     (Modified lib/super_master_mind/test/test__kheap.ml)
-     (Modified lib/super_master_mind/test/test__mins.ml)
-     (Modified lib/super_master_mind/test/test__opening_book.ml)
-     (Modified super-master-mind.opam) (Modified test/maker.t))
+    [ Modified ".github/workflows/ci.yml"
+    ; Removed ".github/workflows/deploy-odoc.yml"
+    ; Modified ".vscode/settings.json"
+    ; Removed "CHANGELOG.md"
+    ; Added "CHANGES.md"
+    ; Removed "CODE_OF_CONDUCT.md"
+    ; Modified "Makefile"
+    ; Modified "README.md"
+    ; Modified "bin/dune"
+    ; Modified "bin/main.ml"
+    ; Modified "dune-project"
+    ; Modified "lib/super_master_mind/src/code.ml"
+    ; Modified "lib/super_master_mind/src/code.mli"
+    ; Modified "lib/super_master_mind/src/codes.ml"
+    ; Modified "lib/super_master_mind/src/codes.mli"
+    ; Modified "lib/super_master_mind/src/color.ml"
+    ; Modified "lib/super_master_mind/src/color.mli"
+    ; Modified "lib/super_master_mind/src/color_permutation.ml"
+    ; Modified "lib/super_master_mind/src/color_permutation.mli"
+    ; Modified "lib/super_master_mind/src/cue.ml"
+    ; Modified "lib/super_master_mind/src/cue.mli"
+    ; Modified "lib/super_master_mind/src/dune"
+    ; Modified "lib/super_master_mind/src/example.ml"
+    ; Modified "lib/super_master_mind/src/example.mli"
+    ; Modified "lib/super_master_mind/src/game_dimensions.ml"
+    ; Modified "lib/super_master_mind/src/game_dimensions.mli"
+    ; Modified "lib/super_master_mind/src/guess.ml"
+    ; Modified "lib/super_master_mind/src/guess.mli"
+    ; Added "lib/super_master_mind/src/import/dune"
+    ; Renamed
+        { src = "lib/super_master_mind/src/import.ml"
+        ; dst = "lib/super_master_mind/src/import/super_master_mind_import.ml"
+        ; similarity = 86
+        }
+    ; Renamed
+        { src = "lib/super_master_mind/src/import.mli"
+        ; dst = "lib/super_master_mind/src/import/super_master_mind_import.mli"
+        ; similarity = 95
+        }
+    ; Modified "lib/super_master_mind/src/kheap.ml"
+    ; Modified "lib/super_master_mind/src/kheap.mli"
+    ; Modified "lib/super_master_mind/src/maker.ml"
+    ; Modified "lib/super_master_mind/src/maker.mli"
+    ; Modified "lib/super_master_mind/src/opening_book.ml"
+    ; Modified "lib/super_master_mind/src/opening_book.mli"
+    ; Modified "lib/super_master_mind/src/solver.ml"
+    ; Modified "lib/super_master_mind/src/solver.mli"
+    ; Modified "lib/super_master_mind/src/super_master_mind.ml"
+    ; Modified "lib/super_master_mind/src/super_master_mind.mli"
+    ; Modified "lib/super_master_mind/src/task_pool.ml"
+    ; Modified "lib/super_master_mind/src/task_pool.mli"
+    ; Modified "lib/super_master_mind/test/dune"
+    ; Modified "lib/super_master_mind/test/test__code.ml"
+    ; Modified "lib/super_master_mind/test/test__codes.ml"
+    ; Modified "lib/super_master_mind/test/test__color.ml"
+    ; Modified "lib/super_master_mind/test/test__color_permutation.ml"
+    ; Modified "lib/super_master_mind/test/test__cue.ml"
+    ; Modified "lib/super_master_mind/test/test__example.ml"
+    ; Modified "lib/super_master_mind/test/test__game_dimensions.ml"
+    ; Modified "lib/super_master_mind/test/test__guess.ml"
+    ; Modified "lib/super_master_mind/test/test__kheap.ml"
+    ; Modified "lib/super_master_mind/test/test__mins.ml"
+    ; Modified "lib/super_master_mind/test/test__opening_book.ml"
+    ; Modified "super-master-mind.opam"
+    ; Modified "test/maker.t"
+    ]
     |}];
-  print_s [%sexp (Vcs.Name_status.files name_status : Vcs.Path_in_repo.t list)];
+  print_dyn (Vcs.Name_status.files name_status |> Dyn.list Vcs.Path_in_repo.to_dyn);
   [%expect
     {|
-    (.github/workflows/ci.yml .github/workflows/deploy-odoc.yml
-     .vscode/settings.json CHANGELOG.md CHANGES.md CODE_OF_CONDUCT.md Makefile
-     README.md bin/dune bin/main.ml dune-project
-     lib/super_master_mind/src/code.ml lib/super_master_mind/src/code.mli
-     lib/super_master_mind/src/codes.ml lib/super_master_mind/src/codes.mli
-     lib/super_master_mind/src/color.ml lib/super_master_mind/src/color.mli
-     lib/super_master_mind/src/color_permutation.ml
-     lib/super_master_mind/src/color_permutation.mli
-     lib/super_master_mind/src/cue.ml lib/super_master_mind/src/cue.mli
-     lib/super_master_mind/src/dune lib/super_master_mind/src/example.ml
-     lib/super_master_mind/src/example.mli
-     lib/super_master_mind/src/game_dimensions.ml
-     lib/super_master_mind/src/game_dimensions.mli
-     lib/super_master_mind/src/guess.ml lib/super_master_mind/src/guess.mli
-     lib/super_master_mind/src/import.ml lib/super_master_mind/src/import.mli
-     lib/super_master_mind/src/import/dune
-     lib/super_master_mind/src/import/super_master_mind_import.ml
-     lib/super_master_mind/src/import/super_master_mind_import.mli
-     lib/super_master_mind/src/kheap.ml lib/super_master_mind/src/kheap.mli
-     lib/super_master_mind/src/maker.ml lib/super_master_mind/src/maker.mli
-     lib/super_master_mind/src/opening_book.ml
-     lib/super_master_mind/src/opening_book.mli
-     lib/super_master_mind/src/solver.ml lib/super_master_mind/src/solver.mli
-     lib/super_master_mind/src/super_master_mind.ml
-     lib/super_master_mind/src/super_master_mind.mli
-     lib/super_master_mind/src/task_pool.ml
-     lib/super_master_mind/src/task_pool.mli lib/super_master_mind/test/dune
-     lib/super_master_mind/test/test__code.ml
-     lib/super_master_mind/test/test__codes.ml
-     lib/super_master_mind/test/test__color.ml
-     lib/super_master_mind/test/test__color_permutation.ml
-     lib/super_master_mind/test/test__cue.ml
-     lib/super_master_mind/test/test__example.ml
-     lib/super_master_mind/test/test__game_dimensions.ml
-     lib/super_master_mind/test/test__guess.ml
-     lib/super_master_mind/test/test__kheap.ml
-     lib/super_master_mind/test/test__mins.ml
-     lib/super_master_mind/test/test__opening_book.ml super-master-mind.opam
-     test/maker.t)
+    [ ".github/workflows/ci.yml"
+    ; ".github/workflows/deploy-odoc.yml"
+    ; ".vscode/settings.json"
+    ; "CHANGELOG.md"
+    ; "CHANGES.md"
+    ; "CODE_OF_CONDUCT.md"
+    ; "Makefile"
+    ; "README.md"
+    ; "bin/dune"
+    ; "bin/main.ml"
+    ; "dune-project"
+    ; "lib/super_master_mind/src/code.ml"
+    ; "lib/super_master_mind/src/code.mli"
+    ; "lib/super_master_mind/src/codes.ml"
+    ; "lib/super_master_mind/src/codes.mli"
+    ; "lib/super_master_mind/src/color.ml"
+    ; "lib/super_master_mind/src/color.mli"
+    ; "lib/super_master_mind/src/color_permutation.ml"
+    ; "lib/super_master_mind/src/color_permutation.mli"
+    ; "lib/super_master_mind/src/cue.ml"
+    ; "lib/super_master_mind/src/cue.mli"
+    ; "lib/super_master_mind/src/dune"
+    ; "lib/super_master_mind/src/example.ml"
+    ; "lib/super_master_mind/src/example.mli"
+    ; "lib/super_master_mind/src/game_dimensions.ml"
+    ; "lib/super_master_mind/src/game_dimensions.mli"
+    ; "lib/super_master_mind/src/guess.ml"
+    ; "lib/super_master_mind/src/guess.mli"
+    ; "lib/super_master_mind/src/import.ml"
+    ; "lib/super_master_mind/src/import.mli"
+    ; "lib/super_master_mind/src/import/dune"
+    ; "lib/super_master_mind/src/import/super_master_mind_import.ml"
+    ; "lib/super_master_mind/src/import/super_master_mind_import.mli"
+    ; "lib/super_master_mind/src/kheap.ml"
+    ; "lib/super_master_mind/src/kheap.mli"
+    ; "lib/super_master_mind/src/maker.ml"
+    ; "lib/super_master_mind/src/maker.mli"
+    ; "lib/super_master_mind/src/opening_book.ml"
+    ; "lib/super_master_mind/src/opening_book.mli"
+    ; "lib/super_master_mind/src/solver.ml"
+    ; "lib/super_master_mind/src/solver.mli"
+    ; "lib/super_master_mind/src/super_master_mind.ml"
+    ; "lib/super_master_mind/src/super_master_mind.mli"
+    ; "lib/super_master_mind/src/task_pool.ml"
+    ; "lib/super_master_mind/src/task_pool.mli"
+    ; "lib/super_master_mind/test/dune"
+    ; "lib/super_master_mind/test/test__code.ml"
+    ; "lib/super_master_mind/test/test__codes.ml"
+    ; "lib/super_master_mind/test/test__color.ml"
+    ; "lib/super_master_mind/test/test__color_permutation.ml"
+    ; "lib/super_master_mind/test/test__cue.ml"
+    ; "lib/super_master_mind/test/test__example.ml"
+    ; "lib/super_master_mind/test/test__game_dimensions.ml"
+    ; "lib/super_master_mind/test/test__guess.ml"
+    ; "lib/super_master_mind/test/test__kheap.ml"
+    ; "lib/super_master_mind/test/test__mins.ml"
+    ; "lib/super_master_mind/test/test__opening_book.ml"
+    ; "super-master-mind.opam"
+    ; "test/maker.t"
+    ]
     |}];
   ()
 ;;
@@ -285,37 +318,57 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let name_status = Volgo_git_backend.Name_status.parse_lines_exn ~lines in
-  print_s [%sexp (name_status : Vcs.Name_status.t)];
+  print_dyn (name_status |> Vcs.Name_status.to_dyn);
   [%expect
     {|
-    ((Modified .github/workflows/ci.yml)
-     (Modified example/.github/workflows/ci.yml) (Modified example/.ocamlformat)
-     (Modified example/LICENSE) (Modified example/bin/dune)
-     (Modified example/dune-project) (Added example/example-dev.opam)
-     (Modified example/example-tests.opam) (Modified example/example.opam)
-     (Added example/example.opam.template)
-     (Modified example/lib/example/test/dune) (Modified template/.ocamlformat)
-     (Modified template/LICENSE) (Modified template/bin/dune)
-     (Modified template/dune-project) (Modified template/github/workflows/ci.yml)
-     (Modified "template/lib/{{ project_snake }}/test/dune")
-     (Added "template/{{ project_slug }}-dev.opam")
-     (Modified "template/{{ project_slug }}-tests.opam")
-     (Modified "template/{{ project_slug }}.opam")
-     (Added "template/{{ project_slug }}.opam.template"))
+    [ Modified ".github/workflows/ci.yml"
+    ; Modified "example/.github/workflows/ci.yml"
+    ; Modified "example/.ocamlformat"
+    ; Modified "example/LICENSE"
+    ; Modified "example/bin/dune"
+    ; Modified "example/dune-project"
+    ; Added "example/example-dev.opam"
+    ; Modified "example/example-tests.opam"
+    ; Modified "example/example.opam"
+    ; Added "example/example.opam.template"
+    ; Modified "example/lib/example/test/dune"
+    ; Modified "template/.ocamlformat"
+    ; Modified "template/LICENSE"
+    ; Modified "template/bin/dune"
+    ; Modified "template/dune-project"
+    ; Modified "template/github/workflows/ci.yml"
+    ; Modified "template/lib/{{ project_snake }}/test/dune"
+    ; Added "template/{{ project_slug }}-dev.opam"
+    ; Modified "template/{{ project_slug }}-tests.opam"
+    ; Modified "template/{{ project_slug }}.opam"
+    ; Added "template/{{ project_slug }}.opam.template"
+    ]
     |}];
-  print_s [%sexp (Vcs.Name_status.files name_status : Vcs.Path_in_repo.t list)];
+  print_dyn (Vcs.Name_status.files name_status |> Dyn.list Vcs.Path_in_repo.to_dyn);
   [%expect
     {|
-    (.github/workflows/ci.yml example/.github/workflows/ci.yml
-     example/.ocamlformat example/LICENSE example/bin/dune example/dune-project
-     example/example-dev.opam example/example-tests.opam example/example.opam
-     example/example.opam.template example/lib/example/test/dune
-     template/.ocamlformat template/LICENSE template/bin/dune
-     template/dune-project template/github/workflows/ci.yml
-     "template/lib/{{ project_snake }}/test/dune"
-     "template/{{ project_slug }}-dev.opam"
-     "template/{{ project_slug }}-tests.opam" "template/{{ project_slug }}.opam"
-     "template/{{ project_slug }}.opam.template")
+    [ ".github/workflows/ci.yml"
+    ; "example/.github/workflows/ci.yml"
+    ; "example/.ocamlformat"
+    ; "example/LICENSE"
+    ; "example/bin/dune"
+    ; "example/dune-project"
+    ; "example/example-dev.opam"
+    ; "example/example-tests.opam"
+    ; "example/example.opam"
+    ; "example/example.opam.template"
+    ; "example/lib/example/test/dune"
+    ; "template/.ocamlformat"
+    ; "template/LICENSE"
+    ; "template/bin/dune"
+    ; "template/dune-project"
+    ; "template/github/workflows/ci.yml"
+    ; "template/lib/{{ project_snake }}/test/dune"
+    ; "template/{{ project_slug }}-dev.opam"
+    ; "template/{{ project_slug }}-tests.opam"
+    ; "template/{{ project_slug }}.opam"
+    ; "template/{{ project_slug }}.opam.template"
+    ]
     |}];
   ()
 ;;

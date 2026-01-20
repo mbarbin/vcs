@@ -41,6 +41,7 @@ module Change : sig
       | Binary_file
 
     val sexp_of_t : t -> Sexp.t
+    val to_dyn : t -> Dyn.t
     val equal : t -> t -> bool
   end
 
@@ -50,12 +51,14 @@ module Change : sig
     }
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val equal : t -> t -> bool
 end
 
 type t = Change.t list
 
 val sexp_of_t : t -> Sexp.t
+val to_dyn : t -> Dyn.t
 
 module Changed : sig
   (** Specifies which {!type:Num_status.t} we want to compute. *)
@@ -66,5 +69,6 @@ module Changed : sig
         }
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val equal : t -> t -> bool
 end

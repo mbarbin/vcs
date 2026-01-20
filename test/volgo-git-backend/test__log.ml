@@ -37,45 +37,51 @@ let%expect_test "parse_exn" =
     List.map lines ~f:(fun line -> Volgo_git_backend.Log.parse_log_line_exn ~line)
   in
   let roots = Vcs.Log.roots log in
-  print_s [%sexp (roots : Vcs.Rev.t list)];
+  print_dyn (roots |> Dyn.list Vcs.Rev.to_dyn);
   [%expect
     {|
-    (35760b109070be51b9deb61c8fdc79c0b2d9065d
-     da46f0d60bfbb9dc9340e95f5625c10815c24af7) |}];
+    [ "35760b109070be51b9deb61c8fdc79c0b2d9065d"
+    ; "da46f0d60bfbb9dc9340e95f5625c10815c24af7"
+    ]
+    |}];
   let merge_count =
     List.count log ~f:(function
       | Merge _ -> true
       | Root _ | Commit _ -> false)
   in
-  print_s [%sexp { merge_count : int }];
-  [%expect {| ((merge_count 2)) |}];
+  print_dyn (Dyn.record [ "merge_count", merge_count |> Dyn.int ]);
+  [%expect {| { merge_count = 2 } |}];
   ()
 ;;
 
 let%expect_test "invalid lines" =
   let test line =
-    print_s [%sexp (Volgo_git_backend.Log.parse_log_line_exn ~line : Vcs.Log.Line.t)]
+    print_dyn (Volgo_git_backend.Log.parse_log_line_exn ~line |> Vcs.Log.Line.to_dyn)
   in
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d";
-  [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  [%expect {| Root { rev = "35760b109070be51b9deb61c8fdc79c0b2d9065d" } |}];
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d ";
-  [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  [%expect {| Root { rev = "35760b109070be51b9deb61c8fdc79c0b2d9065d" } |}];
   test "35760b109070be51b9deb61c8fdc79c0b2d9065d  ";
-  [%expect {| (Root (rev 35760b109070be51b9deb61c8fdc79c0b2d9065d)) |}];
+  [%expect {| Root { rev = "35760b109070be51b9deb61c8fdc79c0b2d9065d" } |}];
   test "b6951031b698697eb05f414d1f34000bb171a694 3dd9b4627aaa36f76c3097f9f31172f481b9229f";
   [%expect
     {|
-    (Commit (rev b6951031b698697eb05f414d1f34000bb171a694)
-     (parent 3dd9b4627aaa36f76c3097f9f31172f481b9229f))
+    Commit
+      { rev = "b6951031b698697eb05f414d1f34000bb171a694"
+      ; parent = "3dd9b4627aaa36f76c3097f9f31172f481b9229f"
+      }
     |}];
   test
     "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f \
      d3a24cbfad0a681280ecfe021d40b69fb0b9c589";
   [%expect
     {|
-    (Merge (rev 3bf5092cc55bff4c3ba546c771e17ab8d29cce65)
-     (parent1 aff8c9c8601e68a41a3bb695ea4a276e2446061f)
-     (parent2 d3a24cbfad0a681280ecfe021d40b69fb0b9c589))
+    Merge
+      { rev = "3bf5092cc55bff4c3ba546c771e17ab8d29cce65"
+      ; parent1 = "aff8c9c8601e68a41a3bb695ea4a276e2446061f"
+      ; parent2 = "d3a24cbfad0a681280ecfe021d40b69fb0b9c589"
+      }
     |}];
   require_does_raise (fun () -> test "");
   [%expect

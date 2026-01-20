@@ -54,30 +54,37 @@ let%expect_test "num stat without lines" =
   let rev4 = commit_file ~path:(Vcs.Path_in_repo.v "binary-file") ~file_contents:"\x00" in
   let print_status ~src ~dst =
     let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
-    print_s [%sexp (num_status : Vcs.Num_status.t)]
+    print_dyn (num_status |> Vcs.Num_status.to_dyn)
   in
   print_status ~src:rev1 ~dst:rev2;
   [%expect
     {|
-    (((key (One_file file1.txt))
-      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0)))))
+    [ { key = One_file "file1.txt"
+      ; num_stat = Num_lines_in_diff { insertions = 1; deletions = 0 }
+      }
+    ]
     |}];
   print_status ~src:rev2 ~dst:rev3;
   [%expect
     {|
-    (((key (One_file hello.txt))
-      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0)))))
+    [ { key = One_file "hello.txt"
+      ; num_stat = Num_lines_in_diff { insertions = 1; deletions = 0 }
+      }
+    ]
     |}];
   print_status ~src:rev3 ~dst:rev4;
-  [%expect {| (((key (One_file binary-file)) (num_stat Binary_file))) |}];
+  [%expect {| [ { key = One_file "binary-file"; num_stat = Binary_file } ] |}];
   print_status ~src:rev1 ~dst:rev4;
   [%expect
     {|
-    (((key (One_file binary-file)) (num_stat Binary_file))
-     ((key (One_file file1.txt))
-      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0))))
-     ((key (One_file hello.txt))
-      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0)))))
+    [ { key = One_file "binary-file"; num_stat = Binary_file }
+    ; { key = One_file "file1.txt"
+      ; num_stat = Num_lines_in_diff { insertions = 1; deletions = 0 }
+      }
+    ; { key = One_file "hello.txt"
+      ; num_stat = Num_lines_in_diff { insertions = 1; deletions = 0 }
+      }
+    ]
     |}];
   ()
 ;;

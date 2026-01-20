@@ -50,16 +50,16 @@ let%expect_test "find ref" =
       ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_dyn (mock_rev |> Vcs.Rev.to_dyn);
+  [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   (* The head is the revision of the latest commit. *)
   let head = Vcs.current_revision vcs ~repo_root in
   require_equal (module Vcs.Rev) (Vcs.Mock_revs.to_mock mock_revs ~rev:head) mock_rev;
   (* Making sure the default branch name is deterministic. *)
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   let current_branch = Vcs.current_branch vcs ~repo_root in
-  print_s [%sexp (current_branch : Vcs.Branch_name.t)];
-  [%expect {| main |}];
+  print_dyn (current_branch |> Vcs.Branch_name.to_dyn);
+  [%expect {| "main" |}];
   (* We'll now create 2 diverging branches. *)
   let create_branch branch_name =
     Vcs.git vcs ~repo_root ~args:[ "branch"; branch_name ] ~f:Vcs.Git.exit0
@@ -76,15 +76,16 @@ let%expect_test "find ref" =
   in
   let branch1_head = commit_change "branch1" in
   let branch2_head = commit_change "branch2" in
-  print_s
-    [%sexp
-      { branch1 = (Vcs.Mock_revs.to_mock mock_revs ~rev:branch1_head : Vcs.Rev.t)
-      ; branch2 = (Vcs.Mock_revs.to_mock mock_revs ~rev:branch2_head : Vcs.Rev.t)
-      }];
+  print_dyn
+    (Dyn.record
+       [ "branch1", Vcs.Mock_revs.to_mock mock_revs ~rev:branch1_head |> Vcs.Rev.to_dyn
+       ; "branch2", Vcs.Mock_revs.to_mock mock_revs ~rev:branch2_head |> Vcs.Rev.to_dyn
+       ]);
   [%expect
     {|
-    ((branch1 dd5aabd331a75b90cd61725223964e47dd5aabd3)
-     (branch2 f452a6f91ee8f448bd58bbd0f3330675f452a6f9))
+    { branch1 = "dd5aabd331a75b90cd61725223964e47dd5aabd3"
+    ; branch2 = "f452a6f91ee8f448bd58bbd0f3330675f452a6f9"
+    }
     |}];
   (* Let's create 2 tags. On purpose, we create a confusing tag whose name
      duplicates the name of a branch with a distinct head. This allows
@@ -100,37 +101,38 @@ let%expect_test "find ref" =
   create_tag "branch1" branch2_head;
   (* We show first how to do reference lookup using [Vcs.refs]. *)
   let refs = Vcs.refs vcs ~repo_root |> Vcs.Refs.to_map in
-  let lookup ~(find_exn : Vcs.Ref_kind.t -> 'a) =
-    [%sexp
-      { branch1 =
-          (find_exn (Local_branch { branch_name = Vcs.Branch_name.v "branch1" })
-           : Vcs.Rev.t)
-      ; branch2 =
-          (find_exn (Local_branch { branch_name = Vcs.Branch_name.v "branch2" })
-           : Vcs.Rev.t)
-      ; tag1 = (find_exn (Tag { tag_name = Vcs.Tag_name.v "tag1" }) : Vcs.Rev.t)
-      ; tag2 = (find_exn (Tag { tag_name = Vcs.Tag_name.v "branch1" }) : Vcs.Rev.t)
-      }]
+  let lookup ~(find_exn : Vcs.Ref_kind.t -> Vcs.Rev.t) =
+    Dyn.record
+      [ ( "branch1"
+        , find_exn (Local_branch { branch_name = Vcs.Branch_name.v "branch1" })
+          |> Vcs.Rev.to_dyn )
+      ; ( "branch2"
+        , find_exn (Local_branch { branch_name = Vcs.Branch_name.v "branch2" })
+          |> Vcs.Rev.to_dyn )
+      ; "tag1", find_exn (Tag { tag_name = Vcs.Tag_name.v "tag1" }) |> Vcs.Rev.to_dyn
+      ; "tag2", find_exn (Tag { tag_name = Vcs.Tag_name.v "branch1" }) |> Vcs.Rev.to_dyn
+      ]
   in
-  let sexp1 =
+  let dyn1 =
     let find_exn arg =
       let rev = Map.find_exn refs arg in
       Vcs.Mock_revs.to_mock mock_revs ~rev
     in
     lookup ~find_exn
   in
-  print_s sexp1;
+  print_dyn dyn1;
   [%expect
     {|
-    ((branch1 dd5aabd331a75b90cd61725223964e47dd5aabd3)
-     (branch2 f452a6f91ee8f448bd58bbd0f3330675f452a6f9)
-     (tag1 dd5aabd331a75b90cd61725223964e47dd5aabd3)
-     (tag2 f452a6f91ee8f448bd58bbd0f3330675f452a6f9))
+    { branch1 = "dd5aabd331a75b90cd61725223964e47dd5aabd3"
+    ; branch2 = "f452a6f91ee8f448bd58bbd0f3330675f452a6f9"
+    ; tag1 = "dd5aabd331a75b90cd61725223964e47dd5aabd3"
+    ; tag2 = "f452a6f91ee8f448bd58bbd0f3330675f452a6f9"
+    }
     |}];
   (* Next we do the same lookups, this time using [Vcs.Graph.find_ref], and
      verify that we find the same results. *)
   let graph = Vcs.graph vcs ~repo_root in
-  let sexp2 =
+  let dyn2 =
     let find_exn ref_kind =
       match Vcs.Graph.find_ref graph ~ref_kind with
       | Some node -> Vcs.Mock_revs.to_mock mock_revs ~rev:(Vcs.Graph.rev graph ~node)
@@ -138,7 +140,7 @@ let%expect_test "find ref" =
     in
     lookup ~find_exn
   in
-  require_equal (module Sexp) sexp1 sexp2;
+  require_equal (module Sexp) (Dyn.to_sexp dyn1) (Dyn.to_sexp dyn2);
   [%expect {||}];
   (* Finally, we characterize some issue with [rev_parse].
 

@@ -21,7 +21,7 @@
 
 let%expect_test "read_dir" =
   let vcs = Volgo_git_unix.create () in
-  let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fsegment.t list)] in
+  let read_dir dir = print_dyn (Vcs.read_dir vcs ~dir |> Dyn.list Fsegment.to_dyn) in
   let cwd = Unix.getcwd () in
   let dir = Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
   let save_file file file_contents =
@@ -31,15 +31,15 @@ let%expect_test "read_dir" =
       ~file_contents:(Vcs.File_contents.create file_contents)
   in
   read_dir dir;
-  [%expect {| () |}];
+  [%expect {| [] |}];
   save_file "hello.txt" "Hello World!\n";
   [%expect {||}];
   read_dir dir;
-  [%expect {| (hello.txt) |}];
+  [%expect {| [ "hello.txt" ] |}];
   save_file "foo" "Hello Foo!\n";
   [%expect {||}];
   read_dir dir;
-  [%expect {| (foo hello.txt) |}];
+  [%expect {| [ "foo"; "hello.txt" ] |}];
   (* Below we redact the actual temporary directory because they make the tests
      non stable. We redact the error when it contains a non-stable path. *)
   let () =
@@ -60,8 +60,8 @@ let%expect_test "read_dir" =
     let path = Absolute_path.extend dir (Fsegment.v "foo") in
     let file_exists = Stdlib.Sys.file_exists (Absolute_path.to_string path) in
     assert file_exists;
-    print_s [%sexp { file_exists : bool }];
-    [%expect {| ((file_exists true)) |}];
+    print_dyn (Dyn.record [ "file_exists", file_exists |> Dyn.bool ]);
+    [%expect {| { file_exists = true } |}];
     match Vcs.read_dir vcs ~dir:path with
     | (_ : Fsegment.t list) -> assert false
     | exception Err.E err ->

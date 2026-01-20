@@ -40,13 +40,13 @@ let%expect_test "of_string" =
 ;;
 
 let%expect_test "v" =
-  let test s = print_s [%sexp (Vcs.Repo_root.v s : Vcs.Repo_root.t)] in
+  let test s = print_dyn (Vcs.Repo_root.v s |> Vcs.Repo_root.to_dyn) in
   require_does_raise (fun () -> test "");
   [%expect {| Invalid_argument("\"\": invalid path") |}];
   require_does_raise (fun () -> test "foo/bar");
   [%expect {| Invalid_argument("\"foo/bar\" is not an absolute path") |}];
   test "/foo/bar";
-  [%expect {| /foo/bar |}];
+  [%expect {| "/foo/bar" |}];
   ()
 ;;
 

@@ -89,6 +89,14 @@ module Char : sig
   val is_whitespace : char -> bool
 end
 
+module Fsegment : sig
+  include module type of struct
+    include Fsegment
+  end
+
+  val to_dyn : t -> Dyn.t
+end
+
 module Hashtbl : sig
   include module type of MoreLabels.Hashtbl with module Make := MoreLabels.Hashtbl.Make
 

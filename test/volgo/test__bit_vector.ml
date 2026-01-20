@@ -22,33 +22,33 @@
 module Bitv = struct
   include Bitv
 
-  let sexp_of_t t = Sexp.Atom (Bitv.L.to_string t)
+  let to_dyn t = Dyn.string (Bitv.L.to_string t)
 end
 
 let%expect_test "bw_and_in_place" =
   let v0 = Bitv.create 10 true in
-  print_s [%sexp (v0 : Bitv.t)];
-  [%expect {| 1111111111 |}];
+  print_dyn (v0 |> Bitv.to_dyn);
+  [%expect {| "1111111111" |}];
   let v1 = Bitv.create 10 false in
-  print_s [%sexp (v1 : Bitv.t)];
-  [%expect {| 0000000000 |}];
+  print_dyn (v1 |> Bitv.to_dyn);
+  [%expect {| "0000000000" |}];
   for i = 0 to Bitv.length v1 - 1 do
     if i % 2 = 0 then Bitv.set v1 i true
   done;
   Bitv.bw_and_in_place ~dst:v0 v0 v1;
-  print_s [%sexp (v0 : Bitv.t)];
-  [%expect {| 1010101010 |}];
-  print_s [%sexp (v1 : Bitv.t)];
-  [%expect {| 1010101010 |}];
+  print_dyn (v0 |> Bitv.to_dyn);
+  [%expect {| "1010101010" |}];
+  print_dyn (v1 |> Bitv.to_dyn);
+  [%expect {| "1010101010" |}];
   Bitv.fill v1 0 (Bitv.length v1) false;
   for i = 0 to Bitv.length v1 - 1 do
     if i % 3 = 0 then Bitv.set v1 i true
   done;
   Bitv.bw_and_in_place ~dst:v0 v0 v1;
-  print_s [%sexp (v0 : Bitv.t)];
-  [%expect {| 1000001000 |}];
-  print_s [%sexp (v1 : Bitv.t)];
-  [%expect {| 1001001001 |}];
+  print_dyn (v0 |> Bitv.to_dyn);
+  [%expect {| "1000001000" |}];
+  print_dyn (v1 |> Bitv.to_dyn);
+  [%expect {| "1001001001" |}];
   let v_small = Bitv.create 5 true in
   require_does_raise (fun () -> Bitv.bw_and_in_place ~dst:v0 v0 v_small);
   [%expect {| Invalid_argument("Bitv.bw_and_in_place") |}];

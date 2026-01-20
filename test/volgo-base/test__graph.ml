@@ -99,28 +99,45 @@ let%expect_test "node hash" =
       ; { rev = r4; ref_kind = Tag { tag_name = Vcs.Tag_name.v "0.1.0" } }
       ; { rev = r4; ref_kind = Local_branch { branch_name = Vcs.Branch_name.main } }
       ];
-  print_s [%sexp (graph : Vcs.Graph.t)];
+  print_dyn (graph |> Vcs.Graph.to_dyn);
   [%expect
     {|
-    ((nodes
-      ((#4 (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c) (parent #3)))
-       (#3
-        (Merge (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7) (parent1 #1)
-         (parent2 #2)))
-       (#2 (Commit (rev 5deb4aaec51a75ef58765038b7c20b3f5deb4aae) (parent #0)))
-       (#1 (Commit (rev f453b802f640c6888df978c712057d17f453b802) (parent #0)))
-       (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
-     (revs
-      ((#4 7216231cd107946841cc3eebe5da287b7216231c)
-       (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-       (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-       (#1 f453b802f640c6888df978c712057d17f453b802)
-       (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
-     (refs
-      ((#4 ((Local_branch (branch_name main)) (Tag (tag_name 0.1.0))))
-       (#1
-        ((Remote_branch
-          (remote_branch_name ((remote_name origin) (branch_name main)))))))))
+    { nodes =
+        [ ("#4",
+           Commit
+             { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" })
+        ; ("#3",
+           Merge
+             { rev = "9a81fba7a18f740120f1141b1ed109bb9a81fba7"
+             ; parent1 = "#1"
+             ; parent2 = "#2"
+             })
+        ; ("#2",
+           Commit
+             { rev = "5deb4aaec51a75ef58765038b7c20b3f5deb4aae"; parent = "#0" })
+        ; ("#1",
+           Commit
+             { rev = "f453b802f640c6888df978c712057d17f453b802"; parent = "#0" })
+        ; ("#0", Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" })
+        ]
+    ; revs =
+        [ ("#4", "7216231cd107946841cc3eebe5da287b7216231c")
+        ; ("#3", "9a81fba7a18f740120f1141b1ed109bb9a81fba7")
+        ; ("#2", "5deb4aaec51a75ef58765038b7c20b3f5deb4aae")
+        ; ("#1", "f453b802f640c6888df978c712057d17f453b802")
+        ; ("#0", "5cd237e9598b11065c344d1eb33bc8c15cd237e9")
+        ]
+    ; refs =
+        [ ("#4",
+           [ Local_branch { branch_name = "main" }; Tag { tag_name = "0.1.0" } ])
+        ; ("#1",
+           [ Remote_branch
+               { remote_branch_name =
+                   { remote_name = "origin"; branch_name = "main" }
+               }
+           ])
+        ]
+    }
     |}];
   Hash_test.run
     (module Vcs.Graph.Node)

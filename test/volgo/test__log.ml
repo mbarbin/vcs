@@ -32,10 +32,12 @@ let%expect_test "parse_exn" =
     List.map lines ~f:(fun line -> Volgo_git_backend.Log.parse_log_line_exn ~line)
   in
   let roots = Vcs.Log.roots log in
-  print_s [%sexp (roots : Vcs.Rev.t list)];
+  print_dyn (roots |> Dyn.list Vcs.Rev.to_dyn);
   [%expect
     {|
-    (35760b109070be51b9deb61c8fdc79c0b2d9065d
-     da46f0d60bfbb9dc9340e95f5625c10815c24af7) |}];
+    [ "35760b109070be51b9deb61c8fdc79c0b2d9065d"
+    ; "da46f0d60bfbb9dc9340e95f5625c10815c24af7"
+    ]
+    |}];
   ()
 ;;

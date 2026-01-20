@@ -27,7 +27,7 @@ let%expect_test "read_dir" =
   let vcs = Volgo_git_eio.create ~env in
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let dir = Vcs.Repo_root.to_absolute_path repo_root in
-  let read_dir dir = print_s [%sexp (Vcs.read_dir vcs ~dir : Fsegment.t list)] in
+  let read_dir dir = print_dyn (Vcs.read_dir vcs ~dir |> Dyn.list Fsegment.to_dyn) in
   let save_file file file_contents =
     Vcs.save_file
       vcs
@@ -35,15 +35,15 @@ let%expect_test "read_dir" =
       ~file_contents:(Vcs.File_contents.create file_contents)
   in
   read_dir dir;
-  [%expect {| (.git) |}];
+  [%expect {| [ ".git" ] |}];
   save_file "hello.txt" "Hello World!\n";
   [%expect {||}];
   read_dir dir;
-  [%expect {| (.git hello.txt) |}];
+  [%expect {| [ ".git"; "hello.txt" ] |}];
   save_file "foo" "Hello Foo!\n";
   [%expect {||}];
   read_dir dir;
-  [%expect {| (.git foo hello.txt) |}];
+  [%expect {| [ ".git"; "foo"; "hello.txt" ] |}];
   (* Below we redact the actual temporary directory because they make the tests
      non stable. We redact the error because it either contains the path too, or
      shows very specific Eio messages which may make the test brittle. *)
@@ -62,8 +62,8 @@ let%expect_test "read_dir" =
     let path = Absolute_path.extend dir (Fsegment.v "foo") in
     let file_exists = Stdlib.Sys.file_exists (Absolute_path.to_string path) in
     assert file_exists;
-    print_s [%sexp { file_exists : bool }];
-    [%expect {| ((file_exists true)) |}];
+    print_dyn (Dyn.record [ "file_exists", file_exists |> Dyn.bool ]);
+    [%expect {| { file_exists = true } |}];
     match Vcs.read_dir vcs ~dir:path with
     | (_ : Fsegment.t list) -> assert false
     | exception Err.E err ->

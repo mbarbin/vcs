@@ -45,8 +45,8 @@ let%expect_test "hello cli" =
     Vcs.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "hello commit")
   in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_dyn (mock_rev |> Vcs.Rev.to_dyn);
+  [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   let output =
     Vcs.hg
       vcs
@@ -79,15 +79,15 @@ let%expect_test "hello cli" =
   require_equal (module Vcs.Rev) rev hg_rev;
   [%expect {||}];
   let mock_rev2 = Vcs.Mock_revs.to_mock mock_revs ~rev:hg_rev in
-  print_s [%sexp (mock_rev2 : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_dyn (mock_rev2 |> Vcs.Rev.to_dyn);
+  [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   let () =
     match Vcs.hg vcs ~repo_root ~args:[ "bogus" ] ~f:Vcs.Hg.exit0 with
     | _ -> assert false
     | exception Err.E err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Err.t)]
+           (err |> Err.sexp_of_t)
            ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -111,7 +111,7 @@ let%expect_test "hello cli" =
     | exception Err.E err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Err.t)]
+           (err |> Err.sexp_of_t)
            ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -129,7 +129,7 @@ let%expect_test "hello cli" =
     | Error err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Err.t)]
+           (err |> Err.sexp_of_t)
            ~fields:[ "cwd"; "prog"; "repo_root"; "stderr" ])
   in
   [%expect

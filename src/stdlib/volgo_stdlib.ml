@@ -162,6 +162,12 @@ module Char = struct
   ;;
 end
 
+module Fsegment = struct
+  include Fsegment
+
+  let to_dyn t = Dyn.string (Fsegment.to_string t)
+end
+
 module Hashtbl = struct
   include (
     MoreLabels.Hashtbl :

@@ -32,6 +32,7 @@
 type t
 
 val sexp_of_t : t -> Sexp.t
+val to_dyn : t -> Dyn.t
 
 (** Create an empty graph that has no nodes. *)
 val create : unit -> t
@@ -98,6 +99,7 @@ module Node_kind : sig
         }
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val equal : t -> t -> bool
 
   (** A helper to access the revision of the node itself. This simply returns
@@ -257,6 +259,7 @@ module Subgraph : sig
     }
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val is_empty : t -> bool
 end
 
@@ -275,6 +278,7 @@ module Summary : sig
   type t
 
   val sexp_of_t : t -> Sexplib0.Sexp.t
+  val to_dyn : t -> Dyn.t
 end
 
 (** Print a summary for use in expect test and quick exploratory tests *)

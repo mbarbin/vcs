@@ -107,7 +107,7 @@ let%expect_test "hello cli" =
     | exception Err.E err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Err.t)]
+           (err |> Err.sexp_of_t)
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -134,7 +134,7 @@ let%expect_test "hello cli" =
     | Error error ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (error : Error.t)]
+           (error |> Error.sexp_of_t)
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -155,7 +155,7 @@ let%expect_test "hello cli" =
     | Error err ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Err.t)]
+           (err |> Err.sexp_of_t)
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -180,7 +180,7 @@ let%expect_test "hello cli" =
     | Error (`Vcs err) ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           [%sexp (err : Err.t)]
+           (err |> Err.sexp_of_t)
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -210,7 +210,7 @@ let%expect_test "hello cli" =
     match abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" with
     | Ok (_ : string) | Error (_ : Error.t) -> assert false [@coverage off]
     | exception Err.E err ->
-      print_s (Vcs_test_helpers.redact_sexp [%sexp (err : Err.t)] ~fields:[ "error" ])
+      print_s (Vcs_test_helpers.redact_sexp (err |> Err.sexp_of_t) ~fields:[ "error" ])
   in
   [%expect
     {|

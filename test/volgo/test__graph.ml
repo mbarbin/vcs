@@ -35,11 +35,11 @@ let%expect_test "graph" =
     Volgo_git_backend.Refs.parse_lines_exn ~lines
   in
   let graph = Vcs.Graph.create () in
-  print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
-  [%expect {| ((node_count 0)) |}];
+  print_dyn (Dyn.record [ "node_count", Vcs.Graph.node_count graph |> Dyn.int ]);
+  [%expect {| { node_count = 0 } |}];
   Vcs.Graph.add_nodes graph ~log;
-  print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
-  [%expect {| ((node_count 180)) |}];
+  print_dyn (Dyn.record [ "node_count", Vcs.Graph.node_count graph |> Dyn.int ]);
+  [%expect {| { node_count = 180 } |}];
   List.iter refs ~f:(fun { rev; ref_kind } -> Vcs.Graph.set_ref graph ~rev ~ref_kind);
   let refs = Vcs.Graph.refs graph in
   List.iter refs ~f:(fun { rev; ref_kind } ->
@@ -51,122 +51,170 @@ let%expect_test "graph" =
     let parents =
       Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
     in
-    print_s
-      [%sexp { ref_kind : Vcs.Ref_kind.t; rev : Vcs.Rev.t; parents : Vcs.Rev.t list }]);
+    print_dyn
+      (Dyn.record
+         [ "ref_kind", ref_kind |> Vcs.Ref_kind.to_dyn
+         ; "rev", rev |> Vcs.Rev.to_dyn
+         ; "parents", parents |> Dyn.list Vcs.Rev.to_dyn
+         ]));
   [%expect
     {|
-    ((ref_kind (Local_branch (branch_name gh-pages)))
-     (rev 7135b7f4790562e94d9122365478f0d39f5ffead)
-     (parents (ad9e24e4ee719d71b07ce29597818461b38c9e4a)))
-    ((ref_kind (Local_branch (branch_name main)))
-     (rev 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (parents (3820ba70563c65ee9f6d516b8e70eb5ea8173d45)))
-    ((ref_kind (Local_branch (branch_name subrepo)))
-     (rev 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (parents (3820ba70563c65ee9f6d516b8e70eb5ea8173d45)))
-    ((ref_kind
-      (Remote_branch
-       (remote_branch_name ((remote_name origin) (branch_name 0.0.3-preview)))))
-     (rev 8e0e6821261f8baaff7bf4d6820c41417bab91eb)
-     (parents (1887c81ebf9b84c548bc35038f7af82a18eb77bf)))
-    ((ref_kind
-      (Remote_branch
-       (remote_branch_name ((remote_name origin) (branch_name gh-pages)))))
-     (rev 7135b7f4790562e94d9122365478f0d39f5ffead)
-     (parents (ad9e24e4ee719d71b07ce29597818461b38c9e4a)))
-    ((ref_kind
-      (Remote_branch
-       (remote_branch_name ((remote_name origin) (branch_name main)))))
-     (rev 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (parents (3820ba70563c65ee9f6d516b8e70eb5ea8173d45)))
-    ((ref_kind
-      (Remote_branch
-       (remote_branch_name ((remote_name origin) (branch_name progress-bar)))))
-     (rev a2cc521adbc8dcbd4855968698176e8af54f6550)
-     (parents (4fbe82806f16bac64c099fa28300efe4a3c7c478)))
-    ((ref_kind
-      (Remote_branch
-       (remote_branch_name ((remote_name origin) (branch_name progress-bar.2)))))
-     (rev 7500919364fb176946e7598051ca7247addc3d15)
-     (parents (ad01432770d3f696cf9312a6a45a559e3d2ac814)))
-    ((ref_kind (Tag (tag_name 0.0.1)))
-     (rev 1892d4980ee74945eb98f67be26b745f96c0f482)
-     (parents (728e5a4ebfaa8564358b17fd754dacea9a6b0153)))
-    ((ref_kind (Tag (tag_name 0.0.2)))
-     (rev 0d4750ff594236a4bd970e1c90b8bbad80fcadff)
-     (parents (11c7861ae090e2dc5e2400d4d8a90c74b0a37163)))
-    ((ref_kind (Tag (tag_name 0.0.3)))
-     (rev fc8e67fbc47302b7da682e9a7da626790bb59eaa)
-     (parents (6e463fbe6765015b8427f004f856ee4d77cc9ccd)))
-    ((ref_kind (Tag (tag_name 0.0.3-preview.1)))
-     (rev 1887c81ebf9b84c548bc35038f7af82a18eb77bf)
-     (parents (b258b0cde128083c4f05bcf276bcc1322f1d36a2)))
+    { ref_kind = Local_branch { branch_name = "gh-pages" }
+    ; rev = "7135b7f4790562e94d9122365478f0d39f5ffead"
+    ; parents = [ "ad9e24e4ee719d71b07ce29597818461b38c9e4a" ]
+    }
+    { ref_kind = Local_branch { branch_name = "main" }
+    ; rev = "2e4fbeae154ec896262decf1ab3bee5687b93f21"
+    ; parents = [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ]
+    }
+    { ref_kind = Local_branch { branch_name = "subrepo" }
+    ; rev = "2e4fbeae154ec896262decf1ab3bee5687b93f21"
+    ; parents = [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ]
+    }
+    { ref_kind =
+        Remote_branch
+          { remote_branch_name =
+              { remote_name = "origin"; branch_name = "0.0.3-preview" }
+          }
+    ; rev = "8e0e6821261f8baaff7bf4d6820c41417bab91eb"
+    ; parents = [ "1887c81ebf9b84c548bc35038f7af82a18eb77bf" ]
+    }
+    { ref_kind =
+        Remote_branch
+          { remote_branch_name =
+              { remote_name = "origin"; branch_name = "gh-pages" }
+          }
+    ; rev = "7135b7f4790562e94d9122365478f0d39f5ffead"
+    ; parents = [ "ad9e24e4ee719d71b07ce29597818461b38c9e4a" ]
+    }
+    { ref_kind =
+        Remote_branch
+          { remote_branch_name = { remote_name = "origin"; branch_name = "main" }
+          }
+    ; rev = "2e4fbeae154ec896262decf1ab3bee5687b93f21"
+    ; parents = [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ]
+    }
+    { ref_kind =
+        Remote_branch
+          { remote_branch_name =
+              { remote_name = "origin"; branch_name = "progress-bar" }
+          }
+    ; rev = "a2cc521adbc8dcbd4855968698176e8af54f6550"
+    ; parents = [ "4fbe82806f16bac64c099fa28300efe4a3c7c478" ]
+    }
+    { ref_kind =
+        Remote_branch
+          { remote_branch_name =
+              { remote_name = "origin"; branch_name = "progress-bar.2" }
+          }
+    ; rev = "7500919364fb176946e7598051ca7247addc3d15"
+    ; parents = [ "ad01432770d3f696cf9312a6a45a559e3d2ac814" ]
+    }
+    { ref_kind = Tag { tag_name = "0.0.1" }
+    ; rev = "1892d4980ee74945eb98f67be26b745f96c0f482"
+    ; parents = [ "728e5a4ebfaa8564358b17fd754dacea9a6b0153" ]
+    }
+    { ref_kind = Tag { tag_name = "0.0.2" }
+    ; rev = "0d4750ff594236a4bd970e1c90b8bbad80fcadff"
+    ; parents = [ "11c7861ae090e2dc5e2400d4d8a90c74b0a37163" ]
+    }
+    { ref_kind = Tag { tag_name = "0.0.3" }
+    ; rev = "fc8e67fbc47302b7da682e9a7da626790bb59eaa"
+    ; parents = [ "6e463fbe6765015b8427f004f856ee4d77cc9ccd" ]
+    }
+    { ref_kind = Tag { tag_name = "0.0.3-preview.1" }
+    ; rev = "1887c81ebf9b84c548bc35038f7af82a18eb77bf"
+    ; parents = [ "b258b0cde128083c4f05bcf276bcc1322f1d36a2" ]
+    }
     |}];
-  print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
+  print_dyn (Vcs.Graph.summary graph |> Vcs.Graph.Summary.to_dyn);
   [%expect
     {|
-    ((refs
-      ((7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages)
-       (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/main)
-       (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/subrepo)
-       (8e0e6821261f8baaff7bf4d6820c41417bab91eb
-        refs/remotes/origin/0.0.3-preview)
-       (7135b7f4790562e94d9122365478f0d39f5ffead refs/remotes/origin/gh-pages)
-       (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/remotes/origin/main)
-       (a2cc521adbc8dcbd4855968698176e8af54f6550
-        refs/remotes/origin/progress-bar)
-       (7500919364fb176946e7598051ca7247addc3d15
-        refs/remotes/origin/progress-bar.2)
-       (1892d4980ee74945eb98f67be26b745f96c0f482 refs/tags/0.0.1)
-       (0d4750ff594236a4bd970e1c90b8bbad80fcadff refs/tags/0.0.2)
-       (fc8e67fbc47302b7da682e9a7da626790bb59eaa refs/tags/0.0.3)
-       (1887c81ebf9b84c548bc35038f7af82a18eb77bf refs/tags/0.0.3-preview.1)))
-     (roots
-      (da46f0d60bfbb9dc9340e95f5625c10815c24af7
-       35760b109070be51b9deb61c8fdc79c0b2d9065d))
-     (leaves
-      ((a2cc521adbc8dcbd4855968698176e8af54f6550
-        (refs/remotes/origin/progress-bar))
-       (8e0e6821261f8baaff7bf4d6820c41417bab91eb
-        (refs/remotes/origin/0.0.3-preview))
-       (7500919364fb176946e7598051ca7247addc3d15
-        (refs/remotes/origin/progress-bar.2))
-       (7135b7f4790562e94d9122365478f0d39f5ffead
-        (refs/heads/gh-pages refs/remotes/origin/gh-pages))
-       (2e4fbeae154ec896262decf1ab3bee5687b93f21
-        (refs/heads/main refs/heads/subrepo refs/remotes/origin/main))))
-     (subgraphs
-      (((refs
-         ((2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/main)
-          (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/heads/subrepo)
-          (8e0e6821261f8baaff7bf4d6820c41417bab91eb
-           refs/remotes/origin/0.0.3-preview)
-          (2e4fbeae154ec896262decf1ab3bee5687b93f21 refs/remotes/origin/main)
-          (a2cc521adbc8dcbd4855968698176e8af54f6550
-           refs/remotes/origin/progress-bar)
-          (7500919364fb176946e7598051ca7247addc3d15
-           refs/remotes/origin/progress-bar.2)
-          (1892d4980ee74945eb98f67be26b745f96c0f482 refs/tags/0.0.1)
-          (0d4750ff594236a4bd970e1c90b8bbad80fcadff refs/tags/0.0.2)
-          (fc8e67fbc47302b7da682e9a7da626790bb59eaa refs/tags/0.0.3)
-          (1887c81ebf9b84c548bc35038f7af82a18eb77bf refs/tags/0.0.3-preview.1)))
-        (roots (da46f0d60bfbb9dc9340e95f5625c10815c24af7))
-        (leaves
-         ((2e4fbeae154ec896262decf1ab3bee5687b93f21
-           (refs/heads/main refs/heads/subrepo refs/remotes/origin/main))
-          (7500919364fb176946e7598051ca7247addc3d15
-           (refs/remotes/origin/progress-bar.2))
-          (8e0e6821261f8baaff7bf4d6820c41417bab91eb
-           (refs/remotes/origin/0.0.3-preview))
-          (a2cc521adbc8dcbd4855968698176e8af54f6550
-           (refs/remotes/origin/progress-bar)))))
-       ((refs
-         ((7135b7f4790562e94d9122365478f0d39f5ffead refs/heads/gh-pages)
-          (7135b7f4790562e94d9122365478f0d39f5ffead refs/remotes/origin/gh-pages)))
-        (roots (35760b109070be51b9deb61c8fdc79c0b2d9065d))
-        (leaves
-         ((7135b7f4790562e94d9122365478f0d39f5ffead
-           (refs/heads/gh-pages refs/remotes/origin/gh-pages))))))))
+    { refs =
+        [ ("7135b7f4790562e94d9122365478f0d39f5ffead", "refs/heads/gh-pages")
+        ; ("2e4fbeae154ec896262decf1ab3bee5687b93f21", "refs/heads/main")
+        ; ("2e4fbeae154ec896262decf1ab3bee5687b93f21", "refs/heads/subrepo")
+        ; ("8e0e6821261f8baaff7bf4d6820c41417bab91eb",
+           "refs/remotes/origin/0.0.3-preview")
+        ; ("7135b7f4790562e94d9122365478f0d39f5ffead",
+           "refs/remotes/origin/gh-pages")
+        ; ("2e4fbeae154ec896262decf1ab3bee5687b93f21", "refs/remotes/origin/main")
+        ; ("a2cc521adbc8dcbd4855968698176e8af54f6550",
+           "refs/remotes/origin/progress-bar")
+        ; ("7500919364fb176946e7598051ca7247addc3d15",
+           "refs/remotes/origin/progress-bar.2")
+        ; ("1892d4980ee74945eb98f67be26b745f96c0f482", "refs/tags/0.0.1")
+        ; ("0d4750ff594236a4bd970e1c90b8bbad80fcadff", "refs/tags/0.0.2")
+        ; ("fc8e67fbc47302b7da682e9a7da626790bb59eaa", "refs/tags/0.0.3")
+        ; ("1887c81ebf9b84c548bc35038f7af82a18eb77bf",
+           "refs/tags/0.0.3-preview.1")
+        ]
+    ; roots =
+        [ "da46f0d60bfbb9dc9340e95f5625c10815c24af7"
+        ; "35760b109070be51b9deb61c8fdc79c0b2d9065d"
+        ]
+    ; leaves =
+        [ ("a2cc521adbc8dcbd4855968698176e8af54f6550",
+           [ "refs/remotes/origin/progress-bar" ])
+        ; ("8e0e6821261f8baaff7bf4d6820c41417bab91eb",
+           [ "refs/remotes/origin/0.0.3-preview" ])
+        ; ("7500919364fb176946e7598051ca7247addc3d15",
+           [ "refs/remotes/origin/progress-bar.2" ])
+        ; ("7135b7f4790562e94d9122365478f0d39f5ffead",
+           [ "refs/heads/gh-pages"; "refs/remotes/origin/gh-pages" ])
+        ; ("2e4fbeae154ec896262decf1ab3bee5687b93f21",
+           [ "refs/heads/main"
+           ; "refs/heads/subrepo"
+           ; "refs/remotes/origin/main"
+           ])
+        ]
+    ; subgraphs =
+        [ { refs =
+              [ ("2e4fbeae154ec896262decf1ab3bee5687b93f21", "refs/heads/main")
+              ; ("2e4fbeae154ec896262decf1ab3bee5687b93f21", "refs/heads/subrepo")
+              ; ("8e0e6821261f8baaff7bf4d6820c41417bab91eb",
+                 "refs/remotes/origin/0.0.3-preview")
+              ; ("2e4fbeae154ec896262decf1ab3bee5687b93f21",
+                 "refs/remotes/origin/main")
+              ; ("a2cc521adbc8dcbd4855968698176e8af54f6550",
+                 "refs/remotes/origin/progress-bar")
+              ; ("7500919364fb176946e7598051ca7247addc3d15",
+                 "refs/remotes/origin/progress-bar.2")
+              ; ("1892d4980ee74945eb98f67be26b745f96c0f482", "refs/tags/0.0.1")
+              ; ("0d4750ff594236a4bd970e1c90b8bbad80fcadff", "refs/tags/0.0.2")
+              ; ("fc8e67fbc47302b7da682e9a7da626790bb59eaa", "refs/tags/0.0.3")
+              ; ("1887c81ebf9b84c548bc35038f7af82a18eb77bf",
+                 "refs/tags/0.0.3-preview.1")
+              ]
+          ; roots = [ "da46f0d60bfbb9dc9340e95f5625c10815c24af7" ]
+          ; leaves =
+              [ ("2e4fbeae154ec896262decf1ab3bee5687b93f21",
+                 [ "refs/heads/main"
+                 ; "refs/heads/subrepo"
+                 ; "refs/remotes/origin/main"
+                 ])
+              ; ("7500919364fb176946e7598051ca7247addc3d15",
+                 [ "refs/remotes/origin/progress-bar.2" ])
+              ; ("8e0e6821261f8baaff7bf4d6820c41417bab91eb",
+                 [ "refs/remotes/origin/0.0.3-preview" ])
+              ; ("a2cc521adbc8dcbd4855968698176e8af54f6550",
+                 [ "refs/remotes/origin/progress-bar" ])
+              ]
+          }
+        ; { refs =
+              [ ("7135b7f4790562e94d9122365478f0d39f5ffead",
+                 "refs/heads/gh-pages")
+              ; ("7135b7f4790562e94d9122365478f0d39f5ffead",
+                 "refs/remotes/origin/gh-pages")
+              ]
+          ; roots = [ "35760b109070be51b9deb61c8fdc79c0b2d9065d" ]
+          ; leaves =
+              [ ("7135b7f4790562e94d9122365478f0d39f5ffead",
+                 [ "refs/heads/gh-pages"; "refs/remotes/origin/gh-pages" ])
+              ]
+          }
+        ]
+    }
     |}];
   let main =
     Vcs.Graph.find_ref
@@ -201,51 +249,67 @@ let%expect_test "graph" =
     |> Option.get
   in
   List.iter [ main; subrepo; progress_bar; tag_0_0_1; tag_0_0_2 ] ~f:(fun node ->
-    print_s
-      [%sexp
-        { node = (Vcs.Graph.rev graph ~node : Vcs.Rev.t)
-        ; refs = (Vcs.Graph.node_refs graph ~node : Vcs.Ref_kind.t list)
-        }]);
+    print_dyn
+      (Dyn.record
+         [ "node", Vcs.Graph.rev graph ~node |> Vcs.Rev.to_dyn
+         ; "refs", Vcs.Graph.node_refs graph ~node |> Dyn.list Vcs.Ref_kind.to_dyn
+         ]));
   [%expect
     {|
-    ((node 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (refs
-      ((Local_branch (branch_name main)) (Local_branch (branch_name subrepo))
-       (Remote_branch
-        (remote_branch_name ((remote_name origin) (branch_name main)))))))
-    ((node 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (refs
-      ((Local_branch (branch_name main)) (Local_branch (branch_name subrepo))
-       (Remote_branch
-        (remote_branch_name ((remote_name origin) (branch_name main)))))))
-    ((node a2cc521adbc8dcbd4855968698176e8af54f6550)
-     (refs
-      ((Remote_branch
-        (remote_branch_name ((remote_name origin) (branch_name progress-bar)))))))
-    ((node 1892d4980ee74945eb98f67be26b745f96c0f482)
-     (refs ((Tag (tag_name 0.0.1)))))
-    ((node 0d4750ff594236a4bd970e1c90b8bbad80fcadff)
-     (refs ((Tag (tag_name 0.0.2)))))
+    { node = "2e4fbeae154ec896262decf1ab3bee5687b93f21"
+    ; refs =
+        [ Local_branch { branch_name = "main" }
+        ; Local_branch { branch_name = "subrepo" }
+        ; Remote_branch
+            { remote_branch_name =
+                { remote_name = "origin"; branch_name = "main" }
+            }
+        ]
+    }
+    { node = "2e4fbeae154ec896262decf1ab3bee5687b93f21"
+    ; refs =
+        [ Local_branch { branch_name = "main" }
+        ; Local_branch { branch_name = "subrepo" }
+        ; Remote_branch
+            { remote_branch_name =
+                { remote_name = "origin"; branch_name = "main" }
+            }
+        ]
+    }
+    { node = "a2cc521adbc8dcbd4855968698176e8af54f6550"
+    ; refs =
+        [ Remote_branch
+            { remote_branch_name =
+                { remote_name = "origin"; branch_name = "progress-bar" }
+            }
+        ]
+    }
+    { node = "1892d4980ee74945eb98f67be26b745f96c0f482"
+    ; refs = [ Tag { tag_name = "0.0.1" } ]
+    }
+    { node = "0d4750ff594236a4bd970e1c90b8bbad80fcadff"
+    ; refs = [ Tag { tag_name = "0.0.2" } ]
+    }
     |}];
   (* Log. *)
-  print_s [%sexp (List.length (Vcs.Graph.log graph) : int)];
+  print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
   [%expect {| 180 |}];
   (* Ancestor. *)
   let is_ancestor ancestor descendant =
-    print_s
-      [%sexp
-        { is_ancestor_or_equal =
-            (Vcs.Graph.is_ancestor_or_equal graph ~ancestor ~descendant : bool)
-        ; is_strict_ancestor =
-            (Vcs.Graph.is_strict_ancestor graph ~ancestor ~descendant : bool)
-        }]
+    print_dyn
+      (Dyn.record
+         [ ( "is_ancestor_or_equal"
+           , Vcs.Graph.is_ancestor_or_equal graph ~ancestor ~descendant |> Dyn.bool )
+         ; ( "is_strict_ancestor"
+           , Vcs.Graph.is_strict_ancestor graph ~ancestor ~descendant |> Dyn.bool )
+         ])
   in
   is_ancestor tag_0_0_1 tag_0_0_2;
-  [%expect {| ((is_ancestor_or_equal true) (is_strict_ancestor true)) |}];
+  [%expect {| { is_ancestor_or_equal = true; is_strict_ancestor = true } |}];
   is_ancestor tag_0_0_2 tag_0_0_1;
-  [%expect {| ((is_ancestor_or_equal false) (is_strict_ancestor false)) |}];
+  [%expect {| { is_ancestor_or_equal = false; is_strict_ancestor = false } |}];
   is_ancestor main main;
-  [%expect {| ((is_ancestor_or_equal true) (is_strict_ancestor false)) |}];
+  [%expect {| { is_ancestor_or_equal = true; is_strict_ancestor = false } |}];
   let merge_node = Vcs.Rev.v "93280971041e0e6a64894400061392b1c702baa7" in
   let root_node = Vcs.Rev.v "da46f0d60bfbb9dc9340e95f5625c10815c24af7" in
   let tip = Vcs.Rev.v "2e4fbeae154ec896262decf1ab3bee5687b93f21" in
@@ -254,40 +318,46 @@ let%expect_test "graph" =
   let ref_kind rev =
     let node = node_exn rev in
     let line = Vcs.Graph.log_line graph ~node in
-    print_s [%sexp (line : Vcs.Log.Line.t)]
+    print_dyn (line |> Vcs.Log.Line.to_dyn)
   in
   ref_kind tip;
   [%expect
     {|
-    (Commit (rev 2e4fbeae154ec896262decf1ab3bee5687b93f21)
-     (parent 3820ba70563c65ee9f6d516b8e70eb5ea8173d45))
+    Commit
+      { rev = "2e4fbeae154ec896262decf1ab3bee5687b93f21"
+      ; parent = "3820ba70563c65ee9f6d516b8e70eb5ea8173d45"
+      }
     |}];
   ref_kind merge_node;
   [%expect
     {|
-    (Merge (rev 93280971041e0e6a64894400061392b1c702baa7)
-     (parent1 735103d3d41b48b7425b5b5386f235c8940080af)
-     (parent2 1eafed9e1737cd2ebbfe60ca787e622c7e0fc080))
+    Merge
+      { rev = "93280971041e0e6a64894400061392b1c702baa7"
+      ; parent1 = "735103d3d41b48b7425b5b5386f235c8940080af"
+      ; parent2 = "1eafed9e1737cd2ebbfe60ca787e622c7e0fc080"
+      }
     |}];
   ref_kind root_node;
-  [%expect {| (Root (rev da46f0d60bfbb9dc9340e95f5625c10815c24af7)) |}];
+  [%expect {| Root { rev = "da46f0d60bfbb9dc9340e95f5625c10815c24af7" } |}];
   (* parents. *)
   let parents rev =
     let node = node_exn rev in
     let parents =
       Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
     in
-    print_s [%sexp (parents : Vcs.Rev.t list)]
+    print_dyn (parents |> Dyn.list Vcs.Rev.to_dyn)
   in
   parents tip;
-  [%expect {| (3820ba70563c65ee9f6d516b8e70eb5ea8173d45) |}];
+  [%expect {| [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ] |}];
   parents merge_node;
   [%expect
     {|
-    (735103d3d41b48b7425b5b5386f235c8940080af
-     1eafed9e1737cd2ebbfe60ca787e622c7e0fc080) |}];
+    [ "735103d3d41b48b7425b5b5386f235c8940080af"
+    ; "1eafed9e1737cd2ebbfe60ca787e622c7e0fc080"
+    ]
+    |}];
   parents root_node;
-  [%expect {| () |}];
+  [%expect {| [] |}];
   (* descendance. *)
   let test r1 r2 =
     print_s
@@ -313,22 +383,22 @@ let%expect_test "graph" =
 
 let%expect_test "empty summary" =
   let graph = Vcs.Graph.create () in
-  print_s [%sexp (Vcs.Graph.summary graph : Vcs.Graph.Summary.t)];
-  [%expect {| ((refs ()) (roots ()) (leaves ())) |}];
+  print_dyn (Vcs.Graph.summary graph |> Vcs.Graph.Summary.to_dyn);
+  [%expect {| { refs = []; roots = []; leaves = [] } |}];
   ()
 ;;
 
 let%expect_test "subgraphs of empty graph" =
   let graph = Vcs.Graph.create () in
   let subgraphs = Vcs.Graph.subgraphs graph in
-  print_s [%sexp (subgraphs : Vcs.Graph.Subgraph.t list)];
-  [%expect {| () |}];
+  print_dyn (Dyn.list Vcs.Graph.Subgraph.to_dyn subgraphs);
+  [%expect {| [] |}];
   ()
 ;;
 
 let%expect_test "Subgraph.is_empty" =
   let subgraph = { Vcs.Graph.Subgraph.log = []; refs = [] } in
-  print_s [%sexp (Vcs.Graph.Subgraph.is_empty subgraph : bool)];
+  print_dyn (Vcs.Graph.Subgraph.is_empty subgraph |> Dyn.bool);
   [%expect {| true |}];
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let subgraph =
@@ -336,7 +406,7 @@ let%expect_test "Subgraph.is_empty" =
     ; refs = []
     }
   in
-  print_s [%sexp (Vcs.Graph.Subgraph.is_empty subgraph : bool)];
+  print_dyn (Vcs.Graph.Subgraph.is_empty subgraph |> Dyn.bool);
   [%expect {| false |}];
   ()
 ;;
@@ -356,7 +426,7 @@ let%expect_test "add_nodes" =
   in
   let graph = Vcs.Graph.create () in
   Vcs.Graph.add_nodes graph ~log:(List.rev log);
-  print_s [%sexp (List.length (Vcs.Graph.log graph) : int)];
+  print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
   [%expect {| 6 |}];
   (* Adding log is idempotent. Only new nodes are effectively added. *)
   let log =
@@ -366,27 +436,38 @@ let%expect_test "add_nodes" =
       ]
   in
   Vcs.Graph.add_nodes graph ~log:(List.rev log);
-  print_s [%sexp (List.length (Vcs.Graph.log graph) : int)];
+  print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
   [%expect {| 7 |}];
   (* This graph has a merge node (r.6) which present some corner cases for the
      logic in [is_strict_ancestor] that are hard to cover otherwise. *)
   let node_exn rev = Vcs.Graph.find_rev graph ~rev |> Option.get in
-  print_s [%sexp (Vcs.Graph.log graph : Vcs.Log.t)];
+  print_dyn (Vcs.Graph.log graph |> Vcs.Log.to_dyn);
   [%expect
     {|
-    ((Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9))
-     (Root (rev f453b802f640c6888df978c712057d17f453b802))
-     (Commit (rev 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-      (parent f453b802f640c6888df978c712057d17f453b802))
-     (Commit (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-      (parent 5deb4aaec51a75ef58765038b7c20b3f5deb4aae))
-     (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c)
-      (parent 9a81fba7a18f740120f1141b1ed109bb9a81fba7))
-     (Commit (rev b155b82523d24ea82eb0ad45a5e89adcb155b825)
-      (parent 7216231cd107946841cc3eebe5da287b7216231c))
-     (Merge (rev ed2a9ed9f5d7bee45156ba272651656ced2a9ed9)
-      (parent1 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-      (parent2 b155b82523d24ea82eb0ad45a5e89adcb155b825)))
+    [ Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" }
+    ; Root { rev = "f453b802f640c6888df978c712057d17f453b802" }
+    ; Commit
+        { rev = "5deb4aaec51a75ef58765038b7c20b3f5deb4aae"
+        ; parent = "f453b802f640c6888df978c712057d17f453b802"
+        }
+    ; Commit
+        { rev = "9a81fba7a18f740120f1141b1ed109bb9a81fba7"
+        ; parent = "5deb4aaec51a75ef58765038b7c20b3f5deb4aae"
+        }
+    ; Commit
+        { rev = "7216231cd107946841cc3eebe5da287b7216231c"
+        ; parent = "9a81fba7a18f740120f1141b1ed109bb9a81fba7"
+        }
+    ; Commit
+        { rev = "b155b82523d24ea82eb0ad45a5e89adcb155b825"
+        ; parent = "7216231cd107946841cc3eebe5da287b7216231c"
+        }
+    ; Merge
+        { rev = "ed2a9ed9f5d7bee45156ba272651656ced2a9ed9"
+        ; parent1 = "5deb4aaec51a75ef58765038b7c20b3f5deb4aae"
+        ; parent2 = "b155b82523d24ea82eb0ad45a5e89adcb155b825"
+        }
+    ]
     |}];
   let is_strict_ancestor r1 r2 =
     print_s
@@ -420,11 +501,13 @@ let%expect_test "set invalid rev" =
   [%expect {| ("Rev not found." 5cd237e9598b11065c344d1eb33bc8c15cd237e9) |}];
   Vcs.Graph.add_nodes graph ~log:[ Root { rev = r1 } ];
   set_ref_r1 ();
-  print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
+  print_dyn (Vcs.Graph.refs graph |> Vcs.Refs.to_dyn);
   [%expect
     {|
-    (((rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)
-      (ref_kind (Local_branch (branch_name main)))))
+    [ { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9"
+      ; ref_kind = Local_branch { branch_name = "main" }
+      }
+    ]
     |}];
   ()
 ;;
@@ -485,7 +568,7 @@ end = struct
              harder to understand. *)
           (Vcs.Graph.rev t.graph ~node |> Vcs.Rev.to_string) [@coverage off])
     in
-    print_s [%sexp { gcas : string list }]
+    print_dyn (Dyn.record [ "gcas", gcas |> Dyn.list Dyn.string ])
   ;;
 end
 
@@ -494,33 +577,33 @@ let%expect_test "greatest_common_ancestors" =
   let t = Mock.create graph in
   let gcas revs = Mock.print_gcas t ~revs in
   gcas [];
-  [%expect {| ((gcas ())) |}];
+  [%expect {| { gcas = [] } |}];
   let root1 = Mock.root t in
   Mock.tag t ~rev:root1 "root1";
   gcas [ root1 ];
-  [%expect {| ((gcas (refs/tags/root1))) |}];
+  [%expect {| { gcas = [ "refs/tags/root1" ] } |}];
   let r1 = Mock.commit t ~parent:root1 in
   Mock.tag t ~rev:r1 "r1";
   gcas [ r1 ];
-  [%expect {| ((gcas (refs/tags/r1))) |}];
+  [%expect {| { gcas = [ "refs/tags/r1" ] } |}];
   gcas [ root1; r1 ];
-  [%expect {| ((gcas (refs/tags/root1))) |}];
+  [%expect {| { gcas = [ "refs/tags/root1" ] } |}];
   let m1 = Mock.merge t ~parent1:root1 ~parent2:r1 in
   Mock.tag t ~rev:m1 "m1";
   gcas [ m1 ];
-  [%expect {| ((gcas (refs/tags/m1))) |}];
+  [%expect {| { gcas = [ "refs/tags/m1" ] } |}];
   gcas [ root1; m1 ];
-  [%expect {| ((gcas (refs/tags/root1))) |}];
+  [%expect {| { gcas = [ "refs/tags/root1" ] } |}];
   gcas [ r1; m1 ];
-  [%expect {| ((gcas (refs/tags/r1))) |}];
+  [%expect {| { gcas = [ "refs/tags/r1" ] } |}];
   gcas [ root1; r1; m1 ];
-  [%expect {| ((gcas (refs/tags/root1))) |}];
+  [%expect {| { gcas = [ "refs/tags/root1" ] } |}];
   let root2 = Mock.root t in
   Mock.tag t ~rev:root2 "root2";
   gcas [ root1; root2 ];
-  [%expect {| ((gcas ())) |}];
+  [%expect {| { gcas = [] } |}];
   gcas [ r1; root2 ];
-  [%expect {| ((gcas ())) |}];
+  [%expect {| { gcas = [] } |}];
   let r2 =
     List.fold (List.init ~len:10 ~f:ignore) ~init:r1 ~f:(fun parent () ->
       Mock.commit t ~parent)
@@ -530,7 +613,7 @@ let%expect_test "greatest_common_ancestors" =
       Mock.commit t ~parent)
   in
   gcas [ r2; r3 ];
-  [%expect {| ((gcas (refs/tags/r1))) |}];
+  [%expect {| { gcas = [ "refs/tags/r1" ] } |}];
   (* A criss-cross merge. *)
   let alice = Mock.commit t ~parent:r1 in
   Mock.tag t ~rev:alice "alice";
@@ -541,7 +624,7 @@ let%expect_test "greatest_common_ancestors" =
   let alice_continue = Mock.commit t ~parent:alice_merge in
   let bob_continue = Mock.commit t ~parent:bob_merge in
   gcas [ alice_continue; bob_continue ];
-  [%expect {| ((gcas (refs/tags/alice refs/tags/bob))) |}];
+  [%expect {| { gcas = [ "refs/tags/alice"; "refs/tags/bob" ] } |}];
   ()
 ;;
 
@@ -558,13 +641,13 @@ let%expect_test "gca - regression" =
   let left = Mock.merge t ~parent1:c1 ~parent2:m in
   let right = Mock.merge t ~parent1:m ~parent2:c2 in
   gcas [ left; right ];
-  [%expect {| ((gcas (refs/tags/middle))) |}];
+  [%expect {| { gcas = [ "refs/tags/middle" ] } |}];
   gcas [ c1; right ];
-  [%expect {| ((gcas (refs/tags/root))) |}];
+  [%expect {| { gcas = [ "refs/tags/root" ] } |}];
   gcas [ left; c2 ];
-  [%expect {| ((gcas (refs/tags/root))) |}];
+  [%expect {| { gcas = [ "refs/tags/root" ] } |}];
   gcas [ c1; c2 ];
-  [%expect {| ((gcas (refs/tags/root))) |}];
+  [%expect {| { gcas = [ "refs/tags/root" ] } |}];
   ()
 ;;
 
@@ -607,65 +690,88 @@ let%expect_test "debug graph" =
       ; { rev = r4; ref_kind = Tag { tag_name = Vcs.Tag_name.v "0.1.0" } }
       ; { rev = r4; ref_kind = Local_branch { branch_name = Vcs.Branch_name.main } }
       ];
-  print_s [%sexp (graph : Vcs.Graph.t)];
+  print_dyn (graph |> Vcs.Graph.to_dyn);
   [%expect
     {|
-    ((nodes
-      ((#4 (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c) (parent #3)))
-       (#3
-        (Merge (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7) (parent1 #1)
-         (parent2 #2)))
-       (#2 (Commit (rev 5deb4aaec51a75ef58765038b7c20b3f5deb4aae) (parent #0)))
-       (#1 (Commit (rev f453b802f640c6888df978c712057d17f453b802) (parent #0)))
-       (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
-     (revs
-      ((#4 7216231cd107946841cc3eebe5da287b7216231c)
-       (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-       (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-       (#1 f453b802f640c6888df978c712057d17f453b802)
-       (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
-     (refs
-      ((#4 ((Local_branch (branch_name main)) (Tag (tag_name 0.1.0))))
-       (#1
-        ((Remote_branch
-          (remote_branch_name ((remote_name origin) (branch_name main)))))))))
+    { nodes =
+        [ ("#4",
+           Commit
+             { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" })
+        ; ("#3",
+           Merge
+             { rev = "9a81fba7a18f740120f1141b1ed109bb9a81fba7"
+             ; parent1 = "#1"
+             ; parent2 = "#2"
+             })
+        ; ("#2",
+           Commit
+             { rev = "5deb4aaec51a75ef58765038b7c20b3f5deb4aae"; parent = "#0" })
+        ; ("#1",
+           Commit
+             { rev = "f453b802f640c6888df978c712057d17f453b802"; parent = "#0" })
+        ; ("#0", Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" })
+        ]
+    ; revs =
+        [ ("#4", "7216231cd107946841cc3eebe5da287b7216231c")
+        ; ("#3", "9a81fba7a18f740120f1141b1ed109bb9a81fba7")
+        ; ("#2", "5deb4aaec51a75ef58765038b7c20b3f5deb4aae")
+        ; ("#1", "f453b802f640c6888df978c712057d17f453b802")
+        ; ("#0", "5cd237e9598b11065c344d1eb33bc8c15cd237e9")
+        ]
+    ; refs =
+        [ ("#4",
+           [ Local_branch { branch_name = "main" }; Tag { tag_name = "0.1.0" } ])
+        ; ("#1",
+           [ Remote_branch
+               { remote_branch_name =
+                   { remote_name = "origin"; branch_name = "main" }
+               }
+           ])
+        ]
+    }
     |}];
   (* node_count *)
-  print_s [%sexp { node_count = (Vcs.Graph.node_count graph : int) }];
-  [%expect {| ((node_count 5)) |}];
+  print_dyn (Dyn.record [ "node_count", Vcs.Graph.node_count graph |> Dyn.int ]);
+  [%expect {| { node_count = 5 } |}];
   (* node_kind *)
   let node_kind rev =
     let node = Mock.node t ~rev in
-    print_s [%sexp (Vcs.Graph.node_kind graph ~node : Vcs.Graph.Node_kind.t)]
+    print_dyn (Vcs.Graph.node_kind graph ~node |> Vcs.Graph.Node_kind.to_dyn)
   in
   node_kind r0;
-  [%expect {| (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)) |}];
+  [%expect {| Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" } |}];
   node_kind r1;
-  [%expect {| (Commit (rev f453b802f640c6888df978c712057d17f453b802) (parent #0)) |}];
+  [%expect
+    {| Commit { rev = "f453b802f640c6888df978c712057d17f453b802"; parent = "#0" } |}];
   node_kind m1;
   [%expect
     {|
-    (Merge (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7) (parent1 #1)
-     (parent2 #2))
+    Merge
+      { rev = "9a81fba7a18f740120f1141b1ed109bb9a81fba7"
+      ; parent1 = "#1"
+      ; parent2 = "#2"
+      }
     |}];
   node_kind r4;
-  [%expect {| (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c) (parent #3)) |}];
+  [%expect
+    {| Commit { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" } |}];
   (* ancestors *)
   let print_ancestors rev =
-    print_s [%sexp (ancestors graph (Mock.node t ~rev) : Set.M(Vcs.Graph.Node).t)]
+    print_dyn
+      (ancestors graph (Mock.node t ~rev) |> Set.to_list |> Dyn.list Vcs.Graph.Node.to_dyn)
   in
   print_ancestors r0;
-  [%expect {| (#0) |}];
+  [%expect {| [ "#0" ] |}];
   print_ancestors r1;
-  [%expect {| (#0 #1) |}];
+  [%expect {| [ "#0"; "#1" ] |}];
   print_ancestors r2;
-  [%expect {| (#0 #2) |}];
+  [%expect {| [ "#0"; "#2" ] |}];
   print_ancestors m1;
-  [%expect {| (#0 #1 #2 #3) |}];
+  [%expect {| [ "#0"; "#1"; "#2"; "#3" ] |}];
   print_ancestors r4;
-  [%expect {| (#0 #1 #2 #3 #4) |}];
+  [%expect {| [ "#0"; "#1"; "#2"; "#3"; "#4" ] |}];
   (* Low level int indexing. *)
-  let node_index node = print_s [%sexp (Vcs.Graph.node_index node : int)] in
+  let node_index node = print_dyn (Vcs.Graph.node_index node |> Dyn.int) in
   node_index (Mock.node t ~rev:r0);
   [%expect {| 0 |}];
   node_index (Mock.node t ~rev:r4);
@@ -688,67 +794,90 @@ let%expect_test "debug graph" =
       { remote_branch_name = Vcs.Remote_branch_name.v "origin/main" }
   in
   let show_upstream () =
-    print_s
-      [%sexp (Vcs.Graph.find_ref graph ~ref_kind:upstream : Vcs.Graph.Node.t option)]
+    print_dyn
+      (Vcs.Graph.find_ref graph ~ref_kind:upstream |> Dyn.option Vcs.Graph.Node.to_dyn)
   in
   show_upstream ();
-  [%expect {| (#1) |}];
+  [%expect {| Some "#1" |}];
   (* We are now simulating that we pushed [main] and thus upstream [origin/main]
      has advanced to [r4]. *)
   Vcs.Graph.set_ref graph ~rev:r4 ~ref_kind:upstream;
   show_upstream ();
-  [%expect {| (#4) |}];
+  [%expect {| Some "#4" |}];
   let show_refs rev =
-    print_s
-      [%sexp (Vcs.Graph.node_refs graph ~node:(Mock.node t ~rev) : Vcs.Ref_kind.t list)]
+    print_dyn
+      (Vcs.Graph.node_refs graph ~node:(Mock.node t ~rev) |> Dyn.list Vcs.Ref_kind.to_dyn)
   in
   (* There are no longer any refs pointing to [r1]. *)
   show_refs r1;
-  [%expect {| () |}];
+  [%expect {| [] |}];
   (* Both [main] and [origin/main] now point to [r4]. *)
   show_refs r4;
   [%expect
     {|
-    ((Local_branch (branch_name main))
-     (Remote_branch
-      (remote_branch_name ((remote_name origin) (branch_name main))))
-     (Tag (tag_name 0.1.0)))
+    [ Local_branch { branch_name = "main" }
+    ; Remote_branch
+        { remote_branch_name = { remote_name = "origin"; branch_name = "main" } }
+    ; Tag { tag_name = "0.1.0" }
+    ]
     |}];
-  print_s [%sexp (Vcs.Graph.refs graph : Vcs.Refs.t)];
+  print_dyn (Vcs.Graph.refs graph |> Vcs.Refs.to_dyn);
   [%expect
     {|
-    (((rev 7216231cd107946841cc3eebe5da287b7216231c)
-      (ref_kind (Local_branch (branch_name main))))
-     ((rev 7216231cd107946841cc3eebe5da287b7216231c)
-      (ref_kind
-       (Remote_branch
-        (remote_branch_name ((remote_name origin) (branch_name main))))))
-     ((rev 7216231cd107946841cc3eebe5da287b7216231c)
-      (ref_kind (Tag (tag_name 0.1.0)))))
+    [ { rev = "7216231cd107946841cc3eebe5da287b7216231c"
+      ; ref_kind = Local_branch { branch_name = "main" }
+      }
+    ; { rev = "7216231cd107946841cc3eebe5da287b7216231c"
+      ; ref_kind =
+          Remote_branch
+            { remote_branch_name =
+                { remote_name = "origin"; branch_name = "main" }
+            }
+      }
+    ; { rev = "7216231cd107946841cc3eebe5da287b7216231c"
+      ; ref_kind = Tag { tag_name = "0.1.0" }
+      }
+    ]
     |}];
-  print_s [%sexp (graph : Vcs.Graph.t)];
+  print_dyn (graph |> Vcs.Graph.to_dyn);
   [%expect
     {|
-    ((nodes
-      ((#4 (Commit (rev 7216231cd107946841cc3eebe5da287b7216231c) (parent #3)))
-       (#3
-        (Merge (rev 9a81fba7a18f740120f1141b1ed109bb9a81fba7) (parent1 #1)
-         (parent2 #2)))
-       (#2 (Commit (rev 5deb4aaec51a75ef58765038b7c20b3f5deb4aae) (parent #0)))
-       (#1 (Commit (rev f453b802f640c6888df978c712057d17f453b802) (parent #0)))
-       (#0 (Root (rev 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))))
-     (revs
-      ((#4 7216231cd107946841cc3eebe5da287b7216231c)
-       (#3 9a81fba7a18f740120f1141b1ed109bb9a81fba7)
-       (#2 5deb4aaec51a75ef58765038b7c20b3f5deb4aae)
-       (#1 f453b802f640c6888df978c712057d17f453b802)
-       (#0 5cd237e9598b11065c344d1eb33bc8c15cd237e9)))
-     (refs
-      ((#4
-        ((Local_branch (branch_name main))
-         (Remote_branch
-          (remote_branch_name ((remote_name origin) (branch_name main))))
-         (Tag (tag_name 0.1.0)))))))
+    { nodes =
+        [ ("#4",
+           Commit
+             { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" })
+        ; ("#3",
+           Merge
+             { rev = "9a81fba7a18f740120f1141b1ed109bb9a81fba7"
+             ; parent1 = "#1"
+             ; parent2 = "#2"
+             })
+        ; ("#2",
+           Commit
+             { rev = "5deb4aaec51a75ef58765038b7c20b3f5deb4aae"; parent = "#0" })
+        ; ("#1",
+           Commit
+             { rev = "f453b802f640c6888df978c712057d17f453b802"; parent = "#0" })
+        ; ("#0", Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" })
+        ]
+    ; revs =
+        [ ("#4", "7216231cd107946841cc3eebe5da287b7216231c")
+        ; ("#3", "9a81fba7a18f740120f1141b1ed109bb9a81fba7")
+        ; ("#2", "5deb4aaec51a75ef58765038b7c20b3f5deb4aae")
+        ; ("#1", "f453b802f640c6888df978c712057d17f453b802")
+        ; ("#0", "5cd237e9598b11065c344d1eb33bc8c15cd237e9")
+        ]
+    ; refs =
+        [ ("#4",
+           [ Local_branch { branch_name = "main" }
+           ; Remote_branch
+               { remote_branch_name =
+                   { remote_name = "origin"; branch_name = "main" }
+               }
+           ; Tag { tag_name = "0.1.0" }
+           ])
+        ]
+    }
     |}];
   (* We also test a case where [set_ref] leaves at least one ref at the previous
      location. *)
@@ -756,11 +885,11 @@ let%expect_test "debug graph" =
   Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:custom_A;
   Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:(Other { name = "custom-B" });
   show_refs r0;
-  [%expect {| ((Other (name custom-A)) (Other (name custom-B))) |}];
+  [%expect {| [ Other { name = "custom-A" }; Other { name = "custom-B" } ] |}];
   Vcs.Graph.set_ref graph ~rev:r1 ~ref_kind:custom_A;
   show_refs r0;
-  [%expect {| ((Other (name custom-B))) |}];
+  [%expect {| [ Other { name = "custom-B" } ] |}];
   show_refs r1;
-  [%expect {| ((Other (name custom-A))) |}];
+  [%expect {| [ Other { name = "custom-A" } ] |}];
   ()
 ;;

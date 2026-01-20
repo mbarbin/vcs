@@ -114,8 +114,8 @@ let%expect_test "small graph" =
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   let rev = commit_file ~path:hello_file ~file_contents:"Hello World!" in
   let mock_rev = Vcs.Mock_revs.to_mock mock_revs ~rev in
-  print_s [%sexp (mock_rev : Vcs.Rev.t)];
-  [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
+  print_dyn (mock_rev |> Vcs.Rev.to_dyn);
+  [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   let result =
     let* () =
       Vcs.Or_error.rename_current_branch vcs ~repo_root ~to_:(Vcs.Branch_name.v "branch")
@@ -218,8 +218,8 @@ let%expect_test "small graph" =
     | Ok log ->
       (* We traverse the log in reverse order first to assign revisions bottom
          up (this makes it more readable). *)
-      ignore (map_sexp [%sexp (List.rev log : Vcs.Log.t)] : Sexp.t);
-      print_s (map_sexp [%sexp (log : Vcs.Log.t)])
+      ignore (map_sexp (List.rev log |> Vcs.Log.sexp_of_t) : Sexp.t);
+      print_s (map_sexp (log |> Vcs.Log.sexp_of_t))
   in
   [%expect
     {|
@@ -229,13 +229,13 @@ let%expect_test "small graph" =
   let () =
     match Vcs.Or_error.refs vcs ~repo_root with
     | Error _ -> assert false
-    | Ok refs -> print_s (map_sexp [%sexp (refs : Vcs.Refs.t)])
+    | Ok refs -> print_s (map_sexp (refs |> Vcs.Refs.sexp_of_t))
   in
   [%expect {| (((rev rev3) (ref_kind (Local_branch (branch_name main))))) |}];
   let () =
     match Vcs.Or_error.graph vcs ~repo_root with
     | Error _ -> assert false
-    | Ok graph -> print_s (map_sexp [%sexp (graph : Vcs.Graph.t)])
+    | Ok graph -> print_s (map_sexp (graph |> Vcs.Graph.sexp_of_t))
   in
   [%expect
     {|
