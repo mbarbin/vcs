@@ -298,8 +298,6 @@
     (< 5.4~)))
   (base
    (>= v0.17))
-  (base_quickcheck
-   (>= v0.17))
   (bitv
    (>= 2.1))
   (cmdlang

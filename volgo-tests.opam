@@ -11,7 +11,6 @@ depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "5.2" & < "5.4~"}
   "base" {>= "v0.17"}
-  "base_quickcheck" {>= "v0.17"}
   "bitv" {>= "2.1"}
   "cmdlang" {>= "0.0.9"}
   "cmdlang-cmdliner-err-runner" {>= "0.0.16"}
