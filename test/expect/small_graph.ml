@@ -97,16 +97,16 @@ let%expect_test "small graph" =
        (cwd <REDACTED>) (stdout <REDACTED>) (stderr "")))
      (error "Expected exit code 0."))
     |}];
+  let ( let* ) x f = Or_error.bind x ~f in
   let commit_file ~path ~file_contents =
     let result =
-      let open Or_error.Let_syntax in
-      let%bind () =
+      let* () =
         Vcs.Or_error.save_file
           vcs
           ~path:(Vcs.Repo_root.append repo_root path)
           ~file_contents:(Vcs.File_contents.create file_contents)
       in
-      let%bind () = Vcs.Or_error.add vcs ~repo_root ~path in
+      let* () = Vcs.Or_error.add vcs ~repo_root ~path in
       Vcs.Or_error.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "_")
     in
     Or_error.ok_exn result
@@ -117,7 +117,7 @@ let%expect_test "small graph" =
   print_s [%sexp (mock_rev : Vcs.Rev.t)];
   [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
   let result =
-    let%bind.Or_error () =
+    let* () =
       Vcs.Or_error.rename_current_branch vcs ~repo_root ~to_:(Vcs.Branch_name.v "branch")
     in
     Vcs.Or_error.current_branch vcs ~repo_root
@@ -126,8 +126,8 @@ let%expect_test "small graph" =
   [%expect {| (Ok branch) |}];
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   let result =
-    let%map.Or_error rev = Vcs.Or_error.current_revision vcs ~repo_root in
-    Vcs.Mock_revs.to_mock mock_revs ~rev
+    let* rev = Vcs.Or_error.current_revision vcs ~repo_root in
+    Ok (Vcs.Mock_revs.to_mock mock_revs ~rev)
   in
   print_s [%sexp (result : Vcs.Rev.t Or_error.t)];
   [%expect {| (Ok 1185512b92d612b25613f2e5b473e5231185512b) |}];

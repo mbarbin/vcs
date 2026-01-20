@@ -69,16 +69,13 @@
          (equals force))
         (applies_to driver)))))))))
 
-;; With the exceptions of two libraries we made a deliberate effort not to
-;; depend on ppx except in dev mode for the user facing libraries in this
-;; project. Let's enforce this going forward.
+;; With the exception of one library we made a deliberate effort not to depend
+;; on ppx except in tests. Let's enforce this going forward.
 
 (rule
  (cond
   ((path
-    (or
-     (glob src/volgo-base/*)
-     (glob src/vcs-test-helpers/*)))
+    (glob src/volgo-base/*))
    return)
   ((path
     (glob src/**))

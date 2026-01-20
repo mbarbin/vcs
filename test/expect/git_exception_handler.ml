@@ -62,12 +62,24 @@ module Handler_scenario = struct
     | Raise_invalid_argument
     | Raise_custom_exception
     | Raise_vcs_exception
-  [@@deriving enumerate, sexp_of]
 
-  let to_string (t : t) =
-    match [%sexp_of: t] t with
-    | List _ -> assert false
-    | Atom atom -> String.lowercase_ascii atom
+  let all =
+    [ Ok
+    ; Error
+    ; Raise_failure
+    ; Raise_invalid_argument
+    ; Raise_custom_exception
+    ; Raise_vcs_exception
+    ]
+  ;;
+
+  let to_string = function
+    | Ok -> "ok"
+    | Error -> "error"
+    | Raise_failure -> "raise_failure"
+    | Raise_invalid_argument -> "raise_invalid_argument"
+    | Raise_custom_exception -> "raise_custom_exception"
+    | Raise_vcs_exception -> "raise_vcs_exception"
   ;;
 end
 
