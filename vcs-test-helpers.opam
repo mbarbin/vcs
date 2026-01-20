@@ -10,7 +10,6 @@ bug-reports: "https://github.com/mbarbin/vcs/issues"
 depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "5.2"}
-  "base" {>= "v0.17"}
   "eio" {>= "1.0"}
   "fpath" {>= "0.7.3"}
   "fpath-sexp0" {>= "0.4.0"}

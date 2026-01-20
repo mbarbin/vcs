@@ -279,8 +279,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (base
-   (>= v0.17))
   (eio
    (>= 1.0))
   (fpath

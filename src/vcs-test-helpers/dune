@@ -8,12 +8,12 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Fpath_sexp0
   -open
-  Volgo)
- (libraries base eio fpath fpath-sexp0 unix volgo)
+  Volgo
+  -open
+  Volgo_stdlib)
+ (libraries eio fpath fpath-sexp0 unix volgo volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint
