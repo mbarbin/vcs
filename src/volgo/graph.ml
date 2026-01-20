@@ -448,7 +448,7 @@ let leaves t =
   |> Array.to_list
 ;;
 
-let log t = Array.mapi t.nodes ~f:(fun node _ -> log_line t ~node) |> Array.to_list
+let log t = Array.to_list_mapi t.nodes ~f:(fun node _ -> log_line t ~node)
 
 module Subgraph = struct
   module T = struct

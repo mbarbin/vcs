@@ -100,7 +100,7 @@ let read_dir (_ : t) ~dir =
   Vcs.Private.try_with (fun () ->
     let entries = Sys.readdir (Absolute_path.to_string dir) in
     Array.sort entries ~compare:String.compare;
-    entries |> Array.map ~f:Fsegment.v |> Array.to_list)
+    entries |> Array.to_list_mapi ~f:(fun _ f -> Fsegment.v f))
 ;;
 
 module Exit_status = struct
