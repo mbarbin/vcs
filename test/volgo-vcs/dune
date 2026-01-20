@@ -12,10 +12,7 @@
   Base
   -open
   Volgo_stdlib)
- (libraries
-  base
-  volgo_stdlib
-  volgo_vcs_cli)
+ (libraries base volgo_stdlib volgo_vcs_cli)
  (instrumentation
   (backend bisect_ppx))
  (lint
