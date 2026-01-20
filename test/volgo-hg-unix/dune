@@ -15,8 +15,6 @@
   -open
   Pplumbing_err
   -open
-  Stdio
-  -open
   Volgo
   -open
   Volgo_stdlib)
@@ -26,7 +24,6 @@
   fpath-sexp0
   pp
   pplumbing-err
-  stdio
   unix
   vcs_test_helpers
   volgo

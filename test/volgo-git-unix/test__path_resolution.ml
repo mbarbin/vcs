@@ -92,8 +92,12 @@ let%expect_test "hello path" =
   let bin = Absolute_path.extend cwd (Fsegment.v "bin") in
   Unix.mkdir (bin |> Absolute_path.to_string) ~perm:0o755;
   let git = Absolute_path.extend bin (Fsegment.v "git") in
-  Out_channel.with_file (git |> Absolute_path.to_string) ~perm:0o755 ~f:(fun oc ->
-    Out_channel.output_string oc "#!/bin/bash -e\necho \"Hello Git!\"\nexit 42\n");
+  Out_channel.with_open_gen
+    [ Open_wronly; Open_creat; Open_trunc; Open_binary ]
+    0o755
+    (git |> Absolute_path.to_string)
+    (fun oc ->
+       Out_channel.output_string oc "#!/bin/bash -e\necho \"Hello Git!\"\nexit 42\n");
   command [ Absolute_path.to_string git; "hello" ];
   [%expect
     {|
