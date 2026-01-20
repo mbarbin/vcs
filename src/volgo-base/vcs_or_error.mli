@@ -21,8 +21,13 @@
 
 (** An [Vcs] API based on [Base.Or_error]. *)
 
-type err = Error.t [@@deriving sexp_of]
-type 'a t = 'a Or_error.t [@@deriving sexp_of]
+type err = Error.t
+
+val sexp_of_err : err -> Sexp.t
+
+type 'a t = 'a Or_error.t
+
+val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
 
 (** {1 Non raising API}
 

@@ -19,7 +19,12 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type err = Vcs_or_error0.t [@@deriving sexp_of]
-type 'a t = ('a, err) Result.t [@@deriving sexp_of]
+type err = Vcs_or_error0.t
+
+let sexp_of_err = Vcs_or_error0.sexp_of_t
+
+type 'a t = ('a, err) Result.t
+
+let sexp_of_t sexp_of_a t = Result.sexp_of_t sexp_of_a sexp_of_err t
 
 include Vcs.Non_raising.Make (Vcs_or_error0)

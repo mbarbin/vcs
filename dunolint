@@ -56,7 +56,7 @@
     (preprocess
      (pps
       (or
-       (pp ppx_sexp_conv)))))
+       (pp ppx_hash)))))
    (enforce
     (dune
      (preprocess

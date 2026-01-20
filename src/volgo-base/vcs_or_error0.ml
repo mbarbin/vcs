@@ -19,7 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-type t = Error.t [@@deriving sexp_of]
+type t = Error.t
 
+let sexp_of_t = Error.sexp_of_t
 let of_err = Vcs_err.to_error
 let to_err = Vcs_err.of_error
