@@ -37,6 +37,7 @@ module Line : sig
         ; parent2 : Rev.t
         }
 
+  val to_dyn : t -> Dyn.t
   val sexp_of_t : t -> Sexp.t
   val equal : t -> t -> bool
   val rev : t -> Rev.t
@@ -44,6 +45,7 @@ end
 
 type t = Line.t list
 
+val to_dyn : t -> Dyn.t
 val sexp_of_t : t -> Sexp.t
 val equal : t -> t -> bool
 

@@ -302,28 +302,9 @@ module Result = struct
     | Ok of 'a
     | Error of 'b
 
-  (* Not checked with deriving_inline due some formatting instability. *)
-  let sexp_of_t
-    :  'a 'b.
-       ('a -> Sexplib0.Sexp.t)
-    -> ('b -> Sexplib0.Sexp.t)
-    -> ('a, 'b) t
-    -> Sexplib0.Sexp.t
-    =
-    fun (type a__007_) ->
-    fun (type b__008_) ->
-    (fun _of_a__001_ ->
-       fun _of_b__002_ -> function
-         | Ok arg0__003_ ->
-           let res0__004_ = _of_a__001_ arg0__003_ in
-           Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Ok"; res0__004_ ]
-         | Error arg0__005_ ->
-           let res0__006_ = _of_b__002_ arg0__005_ in
-           Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Error"; res0__006_ ]
-     : (a__007_ -> Sexplib0.Sexp.t)
-       -> (b__008_ -> Sexplib0.Sexp.t)
-       -> (a__007_, b__008_) t
-       -> Sexplib0.Sexp.t)
+  let sexp_of_t sexp_of_a sexp_of_b = function
+    | Ok a -> Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Ok"; sexp_of_a a ]
+    | Error b -> Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Error"; sexp_of_b b ]
   ;;
 
   include (Result : module type of Result with type ('a, 'b) t := ('a, 'b) t)

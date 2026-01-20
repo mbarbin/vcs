@@ -26,26 +26,12 @@ module T = struct
     { name : string
     ; mutable counter : int
     }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (fun { name = name__002_; counter = counter__004_ } ->
-       let bnds__001_ = ([] : _ Stdlib.List.t) in
-       let bnds__001_ =
-         let arg__005_ = sexp_of_int counter__004_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "counter"; arg__005_ ] :: bnds__001_
-          : _ Stdlib.List.t)
-       in
-       let bnds__001_ =
-         let arg__003_ = sexp_of_string name__002_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "name"; arg__003_ ] :: bnds__001_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List bnds__001_
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn { name; counter } =
+    Dyn.record [ "name", Dyn.string name; "counter", Dyn.int counter ]
   ;;
 
-  [@@@deriving.end]
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 end
 
 include T

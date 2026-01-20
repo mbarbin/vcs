@@ -35,12 +35,14 @@ module Line : sig
     ; ref_kind : Ref_kind.t
     }
 
+  val to_dyn : t -> Dyn.t
   val sexp_of_t : t -> Sexp.t
   val equal : t -> t -> bool
 end
 
 type t = Line.t list
 
+val to_dyn : t -> Dyn.t
 val sexp_of_t : t -> Sexp.t
 val equal : t -> t -> bool
 

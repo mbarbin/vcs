@@ -61,35 +61,16 @@ module Dereferenced = struct
       ; ref_kind : Vcs.Ref_kind.t
       ; dereferenced : bool
       }
-    [@@deriving_inline sexp_of]
 
-    let sexp_of_t =
-      (fun { rev = rev__002_
-           ; ref_kind = ref_kind__004_
-           ; dereferenced = dereferenced__006_
-           } ->
-         let bnds__001_ = ([] : _ Stdlib.List.t) in
-         let bnds__001_ =
-           let arg__007_ = sexp_of_bool dereferenced__006_ in
-           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dereferenced"; arg__007_ ]
-            :: bnds__001_
-            : _ Stdlib.List.t)
-         in
-         let bnds__001_ =
-           let arg__005_ = Vcs.Ref_kind.sexp_of_t ref_kind__004_ in
-           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "ref_kind"; arg__005_ ] :: bnds__001_
-            : _ Stdlib.List.t)
-         in
-         let bnds__001_ =
-           let arg__003_ = Vcs.Rev.sexp_of_t rev__002_ in
-           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__003_ ] :: bnds__001_
-            : _ Stdlib.List.t)
-         in
-         Sexplib0.Sexp.List bnds__001_
-       : t -> Sexplib0.Sexp.t)
+    let to_dyn { rev; ref_kind; dereferenced } =
+      Dyn.record
+        [ "rev", Vcs.Rev.to_dyn rev
+        ; "ref_kind", Vcs.Ref_kind.to_dyn ref_kind
+        ; "dereferenced", Dyn.bool dereferenced
+        ]
     ;;
 
-    [@@@deriving.end]
+    let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
     let equal =
       (fun a__001_ b__002_ ->
