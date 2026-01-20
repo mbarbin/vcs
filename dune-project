@@ -336,6 +336,8 @@
    (>= 0.0.16))
   (ppx_expect
    (>= v0.17))
+  (ppx_hash
+   (>= v0.17))
   (ppx_sexp_value
    (>= v0.17))
   (ppxlib
