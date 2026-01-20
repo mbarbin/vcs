@@ -11,12 +11,9 @@
   -open
   Base
   -open
-  Expect_test_helpers_base
-  -open
   Volgo_stdlib)
  (libraries
   base
-  expect_test_helpers_core.expect_test_helpers_base
   volgo_stdlib
   volgo_vcs_cli)
  (instrumentation

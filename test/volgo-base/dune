@@ -20,8 +20,6 @@
   -open
   Pplumbing_err
   -open
-  Expect_test_helpers_base
-  -open
   Volgo
   -open
   Volgo_stdlib)
@@ -29,7 +27,6 @@
   base
   eio
   eio_main
-  expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-sexp0
   pp

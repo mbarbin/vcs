@@ -348,8 +348,6 @@
    (>= 1.0))
   (eio_main
    (>= 1.0))
-  (expect_test_helpers_core
-   (>= v0.17))
   (fpath
    (>= 0.7.3))
   (fpath-base
@@ -384,8 +382,6 @@
    (>= 0.33))
   (re
    (>= 1.8.0))
-  (sexp_pretty
-   (>= v0.17))
   (spawn
    (>= v0.17))
   (stdio
