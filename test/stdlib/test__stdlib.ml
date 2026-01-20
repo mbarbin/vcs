@@ -19,8 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "equal_list" =
-  let test a b = equal_list Int.equal a b in
+let%expect_test "List.equal" =
+  let test a b = List.equal a b ~eq:Int.equal in
   let r = [ 1; 2; 3 ] in
   require (test r r);
   require (test [ 1; 2; 3 ] [ 1; 2; 3 ]);

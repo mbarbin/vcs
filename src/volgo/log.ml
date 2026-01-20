@@ -72,7 +72,7 @@ module T = struct
 
   let to_dyn t = Dyn.list Line.to_dyn t
   let sexp_of_t t = sexp_of_list Line.sexp_of_t t
-  let equal a b = equal_list Line.equal a b
+  let equal a b = List.equal a b ~eq:Line.equal
 end
 
 include T

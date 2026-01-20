@@ -409,15 +409,6 @@ module String = struct
   let uncapitalize = uncapitalize_ascii
 end
 
-let compare_bool = Bool.compare
-let compare_int = Int.compare
-let compare_string = String.compare
-let equal_bool = Bool.equal
-let equal_int = Int.equal
-let equal_string = String.equal
-let equal_list eq a b = List.equal ~eq a b
-let hash_string = String.hash
-
 module With_equal_and_dyn = struct
   module type S = sig
     type t

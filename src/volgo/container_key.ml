@@ -33,9 +33,9 @@ end
 module String_impl = struct
   type t = string
 
-  let compare = compare_string
-  let equal = equal_string
-  let hash = hash_string
+  let compare = String.compare
+  let equal = String.equal
+  let hash = String.hash
   let seeded_hash = String.seeded_hash
   let sexp_of_t = sexp_of_string
   let to_dyn = Dyn.string

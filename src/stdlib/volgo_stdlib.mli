@@ -191,15 +191,6 @@ module String : sig
   val uncapitalize : string -> string
 end
 
-val compare_bool : bool -> bool -> int
-val compare_int : int -> int -> int
-val compare_string : string -> string -> int
-val equal_bool : bool -> bool -> bool
-val equal_int : int -> int -> bool
-val equal_string : string -> string -> bool
-val equal_list : ('a -> 'a -> bool) -> 'a list -> 'a list -> bool
-val hash_string : string -> int
-
 (** {1 Sexp helper} *)
 
 module type To_sexpable = sig
