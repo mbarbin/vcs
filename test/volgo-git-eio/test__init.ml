@@ -32,7 +32,6 @@ let%expect_test "init" =
     Vcs_test_helpers.init vcs ~path:(Absolute_path.v path)
   in
   require_equal
-    [%here]
     (module Absolute_path)
     (Absolute_path.v path)
     (Vcs.Repo_root.to_absolute_path repo_root);

@@ -50,7 +50,7 @@ let%expect_test "bw_and_in_place" =
   print_s [%sexp (v1 : Bitv.t)];
   [%expect {| 1001001001 |}];
   let v_small = Bitv.create 5 true in
-  require_does_raise [%here] (fun () -> Bitv.bw_and_in_place ~dst:v0 v0 v_small);
-  [%expect {| (Invalid_argument Bitv.bw_and_in_place) |}];
+  require_does_raise (fun () -> Bitv.bw_and_in_place ~dst:v0 v0 v_small);
+  [%expect {| Invalid_argument("Bitv.bw_and_in_place") |}];
   ()
 ;;

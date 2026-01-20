@@ -47,7 +47,7 @@ let%expect_test "error_to_msg" =
 
 let%expect_test "open_error" =
   (* Here we simulate a program where the type for errors changes as we go. *)
-  let open Result.Monad_syntax in
+  let open Result.Syntax in
   let result =
     let* () = Result.return () in
     Result.return ()

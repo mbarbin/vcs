@@ -61,45 +61,22 @@ module Dereferenced = struct
       ; ref_kind : Vcs.Ref_kind.t
       ; dereferenced : bool
       }
-    [@@deriving_inline sexp_of]
 
-    let sexp_of_t =
-      (fun { rev = rev__002_
-           ; ref_kind = ref_kind__004_
-           ; dereferenced = dereferenced__006_
-           } ->
-         let bnds__001_ = ([] : _ Stdlib.List.t) in
-         let bnds__001_ =
-           let arg__007_ = sexp_of_bool dereferenced__006_ in
-           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dereferenced"; arg__007_ ]
-            :: bnds__001_
-            : _ Stdlib.List.t)
-         in
-         let bnds__001_ =
-           let arg__005_ = Vcs.Ref_kind.sexp_of_t ref_kind__004_ in
-           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "ref_kind"; arg__005_ ] :: bnds__001_
-            : _ Stdlib.List.t)
-         in
-         let bnds__001_ =
-           let arg__003_ = Vcs.Rev.sexp_of_t rev__002_ in
-           (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "rev"; arg__003_ ] :: bnds__001_
-            : _ Stdlib.List.t)
-         in
-         Sexplib0.Sexp.List bnds__001_
-       : t -> Sexplib0.Sexp.t)
+    let to_dyn { rev; ref_kind; dereferenced } =
+      Dyn.record
+        [ "rev", Vcs.Rev.to_dyn rev
+        ; "ref_kind", Vcs.Ref_kind.to_dyn ref_kind
+        ; "dereferenced", Dyn.bool dereferenced
+        ]
     ;;
 
-    [@@@deriving.end]
+    let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-    let equal =
-      (fun a__001_ b__002_ ->
-         if a__001_ == b__002_
-         then true
-         else
-           Vcs.Rev.equal a__001_.rev b__002_.rev
-           && Vcs.Ref_kind.equal a__001_.ref_kind b__002_.ref_kind
-           && equal_bool a__001_.dereferenced b__002_.dereferenced
-       : t -> t -> bool)
+    let equal t ({ rev; ref_kind; dereferenced } as t2) =
+      phys_equal t t2
+      || (Vcs.Rev.equal t.rev rev
+          && Vcs.Ref_kind.equal t.ref_kind ref_kind
+          && Bool.equal t.dereferenced dereferenced)
     ;;
   end
 
@@ -163,7 +140,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "show-ref"; "--dereference" ]
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* output = Vcs.Git.Result.exit0_and_stdout output in
         Vcs.Private.try_with (fun () ->
           parse_lines_exn ~lines:(String.split_lines output)))

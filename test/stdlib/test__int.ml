@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let%expect_test "Int.to_string_hum" =
   let test i = print_endline (Int.to_string_hum i) in
   List.iter
@@ -61,5 +59,12 @@ let%expect_test "Int.to_string_hum" =
     -1_234_567
     -12_345_678
     |}];
+  ()
+;;
+
+let%expect_test "to_dyn" =
+  let test i = print_dyn (Int.to_dyn i) in
+  test 123_456;
+  [%expect {| 123456 |}];
   ()
 ;;

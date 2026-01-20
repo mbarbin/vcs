@@ -19,41 +19,42 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let%expect_test "next" =
-  let next t =
-    let rev = Vcs.Mock_rev_gen.next t in
-    print_s [%sexp (rev : Vcs.Rev.t)];
-    rev
+include Dyn
+
+let inline_record cons fields = Dyn.variant cons [ Dyn.record fields ]
+
+let to_sexp =
+  let module Sexp = Sexplib0.Sexp in
+  let module S = Sexplib0.Sexp_conv in
+  let rec aux (dyn : Dyn.t) : Sexp.t =
+    match[@coverage off] dyn with
+    | Opaque -> Atom "<opaque>"
+    | Unit -> List []
+    | Int i -> S.sexp_of_int i
+    | Int32 i -> S.sexp_of_int32 i
+    | Record fields ->
+      List (List.map (fun (field, t) -> Sexp.List [ Atom field; aux t ]) fields)
+    | Variant (v, args) ->
+      (* Special pretty print of variants holding records. *)
+      (match args with
+       | [] -> Atom v
+       | [ Record fields ] ->
+         List
+           (Atom v :: List.map (fun (field, t) -> Sexp.List [ Atom field; aux t ]) fields)
+       | _ -> List (Atom v :: List.map aux args))
+    | Bool b -> S.sexp_of_bool b
+    | String a -> S.sexp_of_string a
+    | Bytes a -> S.sexp_of_bytes a
+    | Int64 i -> S.sexp_of_int64 i
+    | Nativeint i -> S.sexp_of_nativeint i
+    | Char c -> S.sexp_of_char c
+    | Float f -> S.sexp_of_float f
+    | Option o -> S.sexp_of_option aux o
+    | List l -> S.sexp_of_list aux l
+    | Array a -> S.sexp_of_array aux a
+    | Tuple t -> List (List.map aux t)
+    | Map m -> List (List.map (fun (k, v) -> Sexp.List [ aux k; aux v ]) m)
+    | Set s -> List (List.map aux s)
   in
-  let t1 = Vcs.Mock_rev_gen.create ~name:"test-01" in
-  let r1_1 = next t1 in
-  [%expect {| 3a17020189a3e2f321812d06dcd18f173a170201 |}];
-  let r1_2 = next t1 in
-  [%expect {| 5311cc2b07a9429689e0cdfaf03638d65311cc2b |}];
-  let r1_3 = next t1 in
-  [%expect {| 37b01b20ef41eafea0aedad8a6dcde1837b01b20 |}];
-  let t2 = Vcs.Mock_rev_gen.create ~name:"test-02" in
-  let r2_1 = next t2 in
-  [%expect {| e0feef2049128bdce931034505a364afe0feef20 |}];
-  let r2_2 = next t2 in
-  [%expect {| 9c74009b6f530cb336b744096a2c603d9c74009b |}];
-  let r2_3 = next t2 in
-  [%expect {| 9d0ab8899468763d0190656533a4222b9d0ab889 |}];
-  let all =
-    List.dedup_and_sort [ r1_1; r1_2; r1_3; r2_1; r2_2; r2_3 ] ~compare:Vcs.Rev.compare
-  in
-  require_equal (module Int) (List.length all) 6;
-  (* The same rev can be recreated from the same state. *)
-  let t3 = Vcs.Mock_rev_gen.create ~name:"test-01" in
-  let r3_1 = next t3 in
-  [%expect {| 3a17020189a3e2f321812d06dcd18f173a170201 |}];
-  let r3_2 = next t3 in
-  [%expect {| 5311cc2b07a9429689e0cdfaf03638d65311cc2b |}];
-  let r3_3 = next t3 in
-  [%expect {| 37b01b20ef41eafea0aedad8a6dcde1837b01b20 |}];
-  require
-    (List.for_all
-       [ r1_1, r3_1; r1_2, r3_2; r1_3, r3_3 ]
-       ~f:(fun (a, b) -> Vcs.Rev.equal a b));
-  ()
+  aux
 ;;

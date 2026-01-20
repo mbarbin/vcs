@@ -60,13 +60,13 @@ let%expect_test "num stat without lines" =
   [%expect
     {|
     (((key (One_file file1.txt))
-      (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0))))))
+      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0)))))
     |}];
   print_status ~src:rev2 ~dst:rev3;
   [%expect
     {|
     (((key (One_file hello.txt))
-      (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0))))))
+      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0)))))
     |}];
   print_status ~src:rev3 ~dst:rev4;
   [%expect {| (((key (One_file binary-file)) (num_stat Binary_file))) |}];
@@ -75,9 +75,9 @@ let%expect_test "num stat without lines" =
     {|
     (((key (One_file binary-file)) (num_stat Binary_file))
      ((key (One_file file1.txt))
-      (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0)))))
+      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0))))
      ((key (One_file hello.txt))
-      (num_stat (Num_lines_in_diff ((insertions 1) (deletions 0))))))
+      (num_stat (Num_lines_in_diff (insertions 1) (deletions 0)))))
     |}];
   ()
 ;;

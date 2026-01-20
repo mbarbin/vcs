@@ -38,27 +38,24 @@ module Diff_status = struct
       | `X
       | `Not_supported
       ]
-    [@@deriving_inline sexp_of]
 
-    let sexp_of_t =
-      (function
-       | `A -> Sexplib0.Sexp.Atom "A"
-       | `D -> Sexplib0.Sexp.Atom "D"
-       | `M -> Sexplib0.Sexp.Atom "M"
-       | `R -> Sexplib0.Sexp.Atom "R"
-       | `T -> Sexplib0.Sexp.Atom "T"
-       | `C -> Sexplib0.Sexp.Atom "C"
-       | `U -> Sexplib0.Sexp.Atom "U"
-       | `Q -> Sexplib0.Sexp.Atom "Q"
-       | `I -> Sexplib0.Sexp.Atom "I"
-       | `Question_mark -> Sexplib0.Sexp.Atom "Question_mark"
-       | `Bang -> Sexplib0.Sexp.Atom "Bang"
-       | `X -> Sexplib0.Sexp.Atom "X"
-       | `Not_supported -> Sexplib0.Sexp.Atom "Not_supported"
-       : t -> Sexplib0.Sexp.t)
+    let to_dyn = function
+      | `A -> Dyn.Variant ("A", [])
+      | `D -> Dyn.Variant ("D", [])
+      | `M -> Dyn.Variant ("M", [])
+      | `R -> Dyn.Variant ("R", [])
+      | `T -> Dyn.Variant ("T", [])
+      | `C -> Dyn.Variant ("C", [])
+      | `U -> Dyn.Variant ("U", [])
+      | `Q -> Dyn.Variant ("Q", [])
+      | `I -> Dyn.Variant ("I", [])
+      | `Question_mark -> Dyn.Variant ("Question_mark", [])
+      | `Bang -> Dyn.Variant ("Bang", [])
+      | `X -> Dyn.Variant ("X", [])
+      | `Not_supported -> Dyn.Variant ("Not_supported", [])
     ;;
 
-    [@@@deriving.end]
+    let sexp_of_t t = Dyn.to_sexp (to_dyn t)
   end
 
   include T
@@ -161,7 +158,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "diff"; "--name-status"; changed_param ]
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         Vcs.Private.try_with (fun () ->
           parse_lines_exn ~lines:(String.split_lines stdout)))

@@ -45,9 +45,9 @@ let%expect_test "graph" =
   List.iter refs ~f:(fun { rev; ref_kind } ->
     let node = Vcs.Graph.find_ref graph ~ref_kind |> Option.get in
     let rev' = Vcs.Graph.rev graph ~node in
-    require_equal [%here] (module Vcs.Rev) rev rev';
+    require_equal (module Vcs.Rev) rev rev';
     let node' = Vcs.Graph.find_rev graph ~rev |> Option.get in
-    require_equal [%here] (module Vcs.Graph.Node) node node';
+    require_equal (module Vcs.Graph.Node) node node';
     let parents =
       Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
     in
@@ -416,7 +416,7 @@ let%expect_test "set invalid rev" =
       ~rev:r1
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "main" })
   in
-  require_does_raise [%here] (fun () -> set_ref_r1 ());
+  require_does_raise (fun () -> set_ref_r1 ());
   [%expect {| ("Rev not found." 5cd237e9598b11065c344d1eb33bc8c15cd237e9) |}];
   Vcs.Graph.add_nodes graph ~log:[ Root { rev = r1 } ];
   set_ref_r1 ();
@@ -671,26 +671,16 @@ let%expect_test "debug graph" =
   node_index (Mock.node t ~rev:r4);
   [%expect {| 4 |}];
   let get_node_exn index =
-    print_s [%sexp (Vcs.Graph.get_node_exn graph ~index : Vcs.Graph.Node.t)]
+    print_dyn (Vcs.Graph.get_node_exn graph ~index |> Vcs.Graph.Node.to_dyn)
   in
   get_node_exn 0;
-  [%expect {| #0 |}];
+  [%expect {| "#0" |}];
   get_node_exn 4;
-  [%expect {| #4 |}];
-  require_does_raise [%here] (fun () -> get_node_exn 5);
-  [%expect
-    {|
-    ("Node index out of bounds." (
-      (index      5)
-      (node_count 5)))
-    |}];
-  require_does_raise [%here] (fun () -> get_node_exn (-1));
-  [%expect
-    {|
-    ("Node index out of bounds." (
-      (index      -1)
-      (node_count 5)))
-    |}];
+  [%expect {| "#4" |}];
+  require_does_raise (fun () -> get_node_exn 5);
+  [%expect {| ("Node index out of bounds." ((index 5) (node_count 5))) |}];
+  require_does_raise (fun () -> get_node_exn (-1));
+  [%expect {| ("Node index out of bounds." ((index -1) (node_count 5))) |}];
   (* Here we monitor for a regression of a bug where [set_ref] would not
      properly update pre-existing bindings. *)
   let upstream =

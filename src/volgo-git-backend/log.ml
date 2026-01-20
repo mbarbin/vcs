@@ -58,7 +58,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "log"; "--all"; "--pretty=format:%H %P" ]
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* output = Vcs.Git.Result.exit0_and_stdout output in
         Vcs.Private.try_with (fun () ->
           List.map (String.split_lines output) ~f:(fun line -> parse_log_line_exn ~line)))

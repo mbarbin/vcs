@@ -8,23 +8,14 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Fpath_sexp0
   -open
-  Volgo)
- (libraries base eio fpath fpath-sexp0 unix volgo)
+  Volgo
+  -open
+  Volgo_stdlib)
+ (libraries eio fpath fpath-sexp0 unix volgo volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
- (preprocess
-  (pps
-   -unused-code-warnings=force
-   ppx_compare
-   ppx_enumerate
-   ppx_hash
-   ppx_here
-   ppx_let
-   ppx_sexp_conv
-   ppx_sexp_value)))
+ (preprocess no_preprocessing))

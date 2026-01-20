@@ -16,6 +16,10 @@ This notice file contains more details, as well as document the organization of 
 
 - **NOTICE.md** (this file) documents the project licensing.
 
+## Third party licenses
+
+Under `third-party-license/` we include license of software used as vendored code.
+
 ## A note about Eio-process
 
 To spawn processes in `Eio` and collect their output we've copied some code from the [Eio_process](https://github.com/mbarbin/eio-process) project. The `Eio_process` project is released under `MIT`.

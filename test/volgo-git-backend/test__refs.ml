@@ -58,18 +58,18 @@ let%expect_test "parse_ref_kind_exn" =
   let test_ref_kind str =
     print_s [%sexp (Volgo_git_backend.Refs.parse_ref_kind_exn str : Vcs.Ref_kind.t)]
   in
-  require_does_raise [%here] (fun () -> test_ref_kind "blah");
+  require_does_raise (fun () -> test_ref_kind "blah");
   [%expect
     {|
     ((context (Volgo_git_backend.Refs.parse_ref_kind_exn (ref_kind blah)))
-     (error "Expected ref to start with ['refs/']."))
+      (error "Expected ref to start with ['refs/']."))
     |}];
-  require_does_raise [%here] (fun () -> test_ref_kind "non-refs/tags/0.0.1");
+  require_does_raise (fun () -> test_ref_kind "non-refs/tags/0.0.1");
   [%expect
     {|
-    ((context (
-       Volgo_git_backend.Refs.parse_ref_kind_exn (ref_kind non-refs/tags/0.0.1)))
-     (error "Expected ref to start with ['refs/']."))
+    ((context
+       (Volgo_git_backend.Refs.parse_ref_kind_exn (ref_kind non-refs/tags/0.0.1)))
+      (error "Expected ref to start with ['refs/']."))
     |}];
   test_ref_kind "refs/blah";
   [%expect {| (Other (name blah)) |}];
@@ -77,12 +77,12 @@ let%expect_test "parse_ref_kind_exn" =
   [%expect {| (Other (name blah/blah)) |}];
   test_ref_kind "refs/heads/blah";
   [%expect {| (Local_branch (branch_name blah)) |}];
-  require_does_raise [%here] (fun () -> test_ref_kind "refs/remotes/blah");
+  require_does_raise (fun () -> test_ref_kind "refs/remotes/blah");
   [%expect
     {|
-    ((context (
-       Volgo_git_backend.Refs.parse_ref_kind_exn (ref_kind refs/remotes/blah)))
-     (error (Invalid_argument "\"blah\": invalid remote_branch_name")))
+    ((context
+       (Volgo_git_backend.Refs.parse_ref_kind_exn (ref_kind refs/remotes/blah)))
+      (error (Invalid_argument "\"blah\": invalid remote_branch_name")))
     |}];
   test_ref_kind "refs/remotes/origin/main";
   [%expect
@@ -102,11 +102,11 @@ let%expect_test "dereferenced" =
         (Volgo_git_backend.Refs.Dereferenced.parse_exn ~line
          : Volgo_git_backend.Refs.Dereferenced.t)]
   in
-  require_does_raise [%here] (fun () -> test "");
+  require_does_raise (fun () -> test "");
   [%expect
     {|
     ((context (Volgo_git_backend.Refs.Dereferenced.parse_exn (line "")))
-     (error "Invalid ref line."))
+      (error "Invalid ref line."))
     |}];
   test "1185512b92d612b25613f2e5b473e5231185512b refs/heads/main";
   [%expect

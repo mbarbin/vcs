@@ -28,7 +28,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(Vcs.Repo_root.append repo_root below)
       ~args:[ "ls-files"; "--full-name" ]
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         Vcs.Private.try_with (fun () ->
           String.split_lines stdout |> List.map ~f:Vcs.Path_in_repo.v))

@@ -35,7 +35,7 @@
 
 open! Stdlib_compat
 module Code_error = Code_error
-module Dyn = Dyn
+module Dyn = Dyn0
 
 module Dynable : sig
   module type S = sig
@@ -46,10 +46,19 @@ module Dynable : sig
 end
 
 val print_dyn : Dyn.t -> unit
+val phys_equal : 'a -> 'a -> bool
 
 module Ordering : sig
   include module type of struct
     include Ordering
+  end
+
+  val to_dyn : t -> Dyn.t
+end
+
+module Absolute_path : sig
+  include module type of struct
+    include Absolute_path
   end
 
   val to_dyn : t -> Dyn.t
@@ -103,6 +112,7 @@ module Int : sig
   include module type of Int
 
   val sexp_of_t : t -> Sexp.t
+  val to_dyn : t -> Dyn.t
   val incr : int ref -> unit
   val max_value : int
   val of_string_opt : string -> int option
@@ -140,10 +150,20 @@ module Queue : sig
   val to_list : 'a t -> 'a list
 end
 
+module Relative_path : sig
+  include module type of struct
+    include Relative_path
+  end
+
+  val to_dyn : t -> Dyn.t
+end
+
 module Result : sig
   include module type of Result
 
-  module Monad_syntax : sig
+  module Syntax : sig
+    (*_ This is in the stdlib but only since [5.4]. We export it here to support
+      older versions. *)
     val ( let* ) : ('a, 'e) t -> ('a -> ('b, 'e) t) -> ('b, 'e) t
   end
 
@@ -171,15 +191,6 @@ module String : sig
   val uncapitalize : string -> string
 end
 
-val compare_bool : bool -> bool -> int
-val compare_int : int -> int -> int
-val compare_string : string -> string -> int
-val equal_bool : bool -> bool -> bool
-val equal_int : int -> int -> bool
-val equal_string : string -> string -> bool
-val equal_list : ('a -> 'a -> bool) -> 'a list -> 'a list -> bool
-val hash_string : string -> int
-
 (** {1 Sexp helper} *)
 
 module type To_sexpable = sig
@@ -191,6 +202,14 @@ end
 val sexp_field : (module To_sexpable with type t = 'a) -> string -> 'a -> Sexp.t
 val sexp_field' : ('a -> Sexp.t) -> string -> 'a -> Sexp.t
 
+module Sexp : sig
+  include module type of struct
+    include Sexp
+  end
+
+  val to_dyn : t -> Dyn.t
+end
+
 (** {1 Test helpers} *)
 
 module With_equal_and_dyn : sig
@@ -201,6 +220,11 @@ module With_equal_and_dyn : sig
     val to_dyn : t -> Dyn.t
   end
 end
+
+val require : bool -> unit
+val require_does_raise : (unit -> 'a) -> unit
+val require_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 'a -> unit
+val require_not_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 'a -> unit
 
 (** {1 Transition API}
 

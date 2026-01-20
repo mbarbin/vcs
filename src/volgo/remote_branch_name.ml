@@ -25,47 +25,26 @@ type t =
   { remote_name : Remote_name.t
   ; branch_name : Branch_name.t
   }
-[@@deriving_inline sexp_of]
 
-let sexp_of_t =
-  (fun { remote_name = remote_name__002_; branch_name = branch_name__004_ } ->
-     let bnds__001_ = ([] : _ Stdlib.List.t) in
-     let bnds__001_ =
-       let arg__005_ = Branch_name.sexp_of_t branch_name__004_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "branch_name"; arg__005_ ] :: bnds__001_
-        : _ Stdlib.List.t)
-     in
-     let bnds__001_ =
-       let arg__003_ = Remote_name.sexp_of_t remote_name__002_ in
-       (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "remote_name"; arg__003_ ] :: bnds__001_
-        : _ Stdlib.List.t)
-     in
-     Sexplib0.Sexp.List bnds__001_
-   : t -> Sexplib0.Sexp.t)
+let to_dyn { remote_name; branch_name } =
+  Dyn.record
+    [ "remote_name", Remote_name.to_dyn remote_name
+    ; "branch_name", Branch_name.to_dyn branch_name
+    ]
 ;;
 
-[@@@deriving.end]
+let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-let compare =
-  (fun a__001_ b__002_ ->
-     if a__001_ == b__002_
-     then 0
-     else (
-       match Remote_name.compare a__001_.remote_name b__002_.remote_name with
-       | 0 -> Branch_name.compare a__001_.branch_name b__002_.branch_name
-       | n -> n)
-   : t -> t -> int)
+let compare t ({ remote_name; branch_name } as t2) =
+  if phys_equal t t2
+  then 0
+  else (
+    match Remote_name.compare t.remote_name remote_name with
+    | 0 -> Branch_name.compare t.branch_name branch_name
+    | n -> n)
 ;;
 
-let equal =
-  (fun a__003_ b__004_ ->
-     if a__003_ == b__004_
-     then true
-     else
-       Remote_name.equal a__003_.remote_name b__004_.remote_name
-       && Branch_name.equal a__003_.branch_name b__004_.branch_name
-   : t -> t -> bool)
-;;
+let equal a b = compare a b = 0
 
 [@@@coverage on]
 
@@ -83,7 +62,7 @@ let of_string str =
   match String.lsplit2 str ~on:'/' with
   | None -> Error (`Msg (Printf.sprintf "%S: invalid remote_branch_name" str))
   | Some (remote, branch) ->
-    let open Result.Monad_syntax in
+    let open Result.Syntax in
     let* remote_name = Remote_name.of_string remote in
     let* branch_name = Branch_name.of_string branch in
     Result.return { remote_name; branch_name }

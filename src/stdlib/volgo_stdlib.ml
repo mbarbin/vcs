@@ -54,7 +54,7 @@
 
 open! Stdlib_compat
 module Code_error = Code_error
-module Dyn = Dyn
+module Dyn = Dyn0
 
 module Dynable = struct
   module type S = sig
@@ -66,6 +66,7 @@ end
 
 let print pp = Format.printf "%a@." Pp.to_fmt pp
 let print_dyn dyn = print (Dyn.pp dyn)
+let phys_equal a b = a == b
 
 module Ordering = struct
   include Ordering
@@ -74,6 +75,15 @@ module Ordering = struct
     | Lt -> Dyn.Variant ("Lt", [])
     | Eq -> Dyn.Variant ("Eq", [])
     | Gt -> Dyn.Variant ("Gt", [])
+  ;;
+end
+
+module Sexp = struct
+  include Sexp
+
+  let rec to_dyn = function
+    | Sexp.Atom s -> Dyn.variant "Atom" [ Dyn.string s ]
+    | Sexp.List l -> Dyn.variant "List" [ Dyn.list to_dyn l ]
   ;;
 end
 
@@ -90,6 +100,12 @@ let sexp_field' (type a) (sexp_of_a : a -> Sexp.t) field a =
 let sexp_field (type a) (module M : To_sexpable with type t = a) field a =
   sexp_field' M.sexp_of_t field a
 ;;
+
+module Absolute_path = struct
+  include Absolute_path
+
+  let to_dyn t = Dyn.string (Absolute_path.to_string t)
+end
 
 module Array = struct
   include ArrayLabels
@@ -236,6 +252,7 @@ module Int = struct
     Buffer.contents buffer
   ;;
 
+  let to_dyn t = Dyn.Int t
   let sexp_of_t t = Sexp.Atom (to_string_hum t)
 end
 
@@ -275,38 +292,25 @@ module Queue = struct
   let to_list t = t |> to_seq |> List.of_seq
 end
 
+module Relative_path = struct
+  include Relative_path
+
+  let to_dyn t = Dyn.string (Relative_path.to_string t)
+end
+
 module Result = struct
   type ('a, 'b) t = ('a, 'b) Result.t =
     | Ok of 'a
     | Error of 'b
 
-  (* Not checked with deriving_inline due some formatting instability. *)
-  let sexp_of_t
-    :  'a 'b.
-       ('a -> Sexplib0.Sexp.t)
-    -> ('b -> Sexplib0.Sexp.t)
-    -> ('a, 'b) t
-    -> Sexplib0.Sexp.t
-    =
-    fun (type a__007_) ->
-    fun (type b__008_) ->
-    (fun _of_a__001_ ->
-       fun _of_b__002_ -> function
-         | Ok arg0__003_ ->
-           let res0__004_ = _of_a__001_ arg0__003_ in
-           Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Ok"; res0__004_ ]
-         | Error arg0__005_ ->
-           let res0__006_ = _of_b__002_ arg0__005_ in
-           Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Error"; res0__006_ ]
-     : (a__007_ -> Sexplib0.Sexp.t)
-       -> (b__008_ -> Sexplib0.Sexp.t)
-       -> (a__007_, b__008_) t
-       -> Sexplib0.Sexp.t)
+  let sexp_of_t sexp_of_a sexp_of_b = function
+    | Ok a -> Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Ok"; sexp_of_a a ]
+    | Error b -> Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Error"; sexp_of_b b ]
   ;;
 
   include (Result : module type of Result with type ('a, 'b) t := ('a, 'b) t)
 
-  module Monad_syntax = struct
+  module Syntax = struct
     let ( let* ) = Result.bind
   end
 
@@ -325,8 +329,8 @@ end
 module String = struct
   include StringLabels
 
-  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_string
   let to_dyn = Dyn.string
+  let sexp_of_t = Sexplib0.Sexp_conv.sexp_of_string
   let to_string t = t
 
   let chop_prefix t ~prefix =
@@ -405,15 +409,6 @@ module String = struct
   let uncapitalize = uncapitalize_ascii
 end
 
-let compare_bool = Bool.compare
-let compare_int = Int.compare
-let compare_string = String.compare
-let equal_bool = Bool.equal
-let equal_int = Int.equal
-let equal_string = String.equal
-let equal_list eq a b = List.equal ~eq a b
-let hash_string = String.hash
-
 module With_equal_and_dyn = struct
   module type S = sig
     type t
@@ -422,6 +417,34 @@ module With_equal_and_dyn = struct
     val to_dyn : t -> Dyn.t
   end
 end
+
+let require cond = if not cond then failwith "Required condition does not hold."
+
+let require_does_raise f =
+  match f () with
+  | _ -> Code_error.raise "Did not raise." []
+  | exception e -> print_endline (Stdlib.Printexc.to_string e)
+;;
+
+let require_equal
+      (type a)
+      (module M : With_equal_and_dyn.S with type t = a)
+      (v1 : a)
+      (v2 : a)
+  =
+  if not (M.equal v1 v2)
+  then Code_error.raise "Values are not equal." [ "v1", M.to_dyn v1; "v2", M.to_dyn v2 ]
+;;
+
+let require_not_equal
+      (type a)
+      (module M : With_equal_and_dyn.S with type t = a)
+      (v1 : a)
+      (v2 : a)
+  =
+  if M.equal v1 v2
+  then Code_error.raise "Values are equal." [ "v1", M.to_dyn v1; "v2", M.to_dyn v2 ]
+;;
 
 (* {1 Transition API} *)
 

@@ -75,7 +75,7 @@ let%expect_test "name status with type change" =
   [%expect
     {|
     (((key (One_file hello2.txt))
-      (num_stat (Num_lines_in_diff ((insertions 1) (deletions 3))))))
+      (num_stat (Num_lines_in_diff (insertions 1) (deletions 3)))))
     |}];
   (* Let's make it a regular file again, and further change its contents. *)
   Unix.unlink (Vcs.Repo_root.append repo_root hello2_file |> Absolute_path.to_string);
@@ -89,7 +89,7 @@ let%expect_test "name status with type change" =
   [%expect
     {|
     (((key (One_file hello2.txt))
-      (num_stat (Num_lines_in_diff ((insertions 2) (deletions 1))))))
+      (num_stat (Num_lines_in_diff (insertions 2) (deletions 1)))))
     |}];
   ()
 ;;

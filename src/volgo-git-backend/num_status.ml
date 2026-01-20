@@ -27,21 +27,14 @@ module Status_code = struct
       | Dash
       | Num of int
       | Other of string
-    [@@deriving_inline sexp_of]
 
-    let sexp_of_t =
-      (function
-       | Dash -> Sexplib0.Sexp.Atom "Dash"
-       | Num arg0__001_ ->
-         let res0__002_ = sexp_of_int arg0__001_ in
-         Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Num"; res0__002_ ]
-       | Other arg0__003_ ->
-         let res0__004_ = sexp_of_string arg0__003_ in
-         Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Other"; res0__004_ ]
-       : t -> Sexplib0.Sexp.t)
+    let to_dyn = function
+      | Dash -> Dyn.Variant ("Dash", [])
+      | Num n -> Dyn.Variant ("Num", [ Dyn.int n ])
+      | Other s -> Dyn.Variant ("Other", [ Dyn.string s ])
     ;;
 
-    [@@@deriving.end]
+    let sexp_of_t t = Dyn.to_sexp (to_dyn t)
   end
 
   include T
@@ -112,7 +105,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "diff"; "--numstat"; changed_param ]
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         Vcs.Private.try_with (fun () ->
           parse_lines_exn ~lines:(String.split_lines stdout)))

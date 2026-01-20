@@ -19,6 +19,9 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-val require : bool -> unit
-val require_does_raise : (unit -> 'a) -> unit
-val require_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 'a -> unit
+include module type of struct
+  include Dyn
+end
+
+val inline_record : string -> (string * Dyn.t) list -> Dyn.t
+val to_sexp : Dyn.t -> Sexplib0.Sexp.t

@@ -20,8 +20,6 @@
   -open
   Pplumbing_err
   -open
-  Expect_test_helpers_base
-  -open
   Volgo
   -open
   Volgo_stdlib)
@@ -30,7 +28,6 @@
   bitv
   eio
   eio_main
-  expect_test_helpers_core.expect_test_helpers_base
   fpath
   fpath-sexp0
   pp
@@ -44,16 +41,7 @@
  (lint
   (pps ppx_js_style -allow-let-operators -check-doc-comments))
  (preprocess
-  (pps
-   -unused-code-warnings=force
-   ppx_compare
-   ppx_enumerate
-   ppx_expect
-   ppx_hash
-   ppx_here
-   ppx_let
-   ppx_sexp_conv
-   ppx_sexp_value)))
+  (pps ppx_expect ppx_sexp_value)))
 
 (rule
  (copy

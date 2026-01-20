@@ -23,42 +23,42 @@ module Munged_path = Volgo_git_backend.Private.Munged_path
 
 let%expect_test "parse" =
   let test path = print_s [%sexp (Munged_path.parse_exn path : Munged_path.t)] in
-  require_does_raise [%here] (fun () -> test "");
+  require_does_raise (fun () -> test "");
   [%expect
     {|
     ((context (Volgo_git_backend.Munged_path.parse_exn (path "")))
-     (error "Unexpected empty path."))
+      (error "Unexpected empty path."))
     |}];
-  require_does_raise [%here] (fun () -> test "/tmp => /tmp");
+  require_does_raise (fun () -> test "/tmp => /tmp");
   [%expect
     {|
     ((context (Volgo_git_backend.Munged_path.parse_exn (path "/tmp => /tmp")))
-     (error (Invalid_argument "\"/tmp\" is not a relative path")))
+      (error (Invalid_argument "\"/tmp\" is not a relative path")))
     |}];
-  require_does_raise [%here] (fun () -> test "tmp => tmp2 => tmp3");
+  require_does_raise (fun () -> test "tmp => tmp2 => tmp3");
   [%expect
     {|
-    ((context (
-       Volgo_git_backend.Munged_path.parse_exn (path "tmp => tmp2 => tmp3")))
-     (error "Too many ['=>']."))
+    ((context
+       (Volgo_git_backend.Munged_path.parse_exn (path "tmp => tmp2 => tmp3")))
+      (error "Too many ['=>']."))
     |}];
-  require_does_not_raise [%here] (fun () -> test "}");
+  test "}";
   [%expect {| (One_file }) |}];
-  require_does_not_raise [%here] (fun () -> test "{");
+  test "{";
   [%expect {| (One_file {) |}];
-  require_does_not_raise [%here] (fun () -> test "template/with-with-{{ variable }}.txt");
+  test "template/with-with-{{ variable }}.txt";
   [%expect {| (One_file "template/with-with-{{ variable }}.txt") |}];
-  require_does_raise [%here] (fun () -> test "a/{dir => b");
+  require_does_raise (fun () -> test "a/{dir => b");
   [%expect
     {|
     ((context (Volgo_git_backend.Munged_path.parse_exn (path "a/{dir => b")))
-     (error "Matching '}' not found."))
+      (error "Matching '}' not found."))
     |}];
-  require_does_raise [%here] (fun () -> test "a/dir => b}");
+  require_does_raise (fun () -> test "a/dir => b}");
   [%expect
     {|
     ((context (Volgo_git_backend.Munged_path.parse_exn (path "a/dir => b}")))
-     (error "Matching '{' not found."))
+      (error "Matching '{' not found."))
     |}];
   test "a/simple/path";
   [%expect {| (One_file a/simple/path) |}];

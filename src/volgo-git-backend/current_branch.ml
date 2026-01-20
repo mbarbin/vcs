@@ -28,7 +28,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "rev-parse"; "--abbrev-ref"; "HEAD" ]
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* stdout = Vcs.Git.Result.exit0_and_stdout output in
         let stdout = stdout |> String.strip in
         if String.equal stdout "HEAD"

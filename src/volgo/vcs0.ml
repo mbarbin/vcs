@@ -145,7 +145,7 @@ let commit
       ~repo_root
       ~commit_message
   =
-  (let open Result.Monad_syntax in
+  (let open Result.Syntax in
    let* () = t#commit ~repo_root ~commit_message in
    t#current_revision ~repo_root)
   |> of_result
@@ -222,7 +222,7 @@ let refs (t : < Trait.refs ; .. > t) ~repo_root =
 
 let graph (t : < Trait.log ; Trait.refs ; .. > t) ~repo_root =
   let graph = Graph.create () in
-  (let open Result.Monad_syntax in
+  (let open Result.Syntax in
    let* log = t#get_log_lines ~repo_root in
    let* refs = t#get_refs_lines ~repo_root in
    Graph.add_nodes graph ~log;

@@ -60,97 +60,52 @@ module Change = struct
         ; dst : Path_in_repo.t
         ; similarity : int
         }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (function
-     | Added arg0__001_ ->
-       let res0__002_ = Path_in_repo.sexp_of_t arg0__001_ in
-       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Added"; res0__002_ ]
-     | Removed arg0__003_ ->
-       let res0__004_ = Path_in_repo.sexp_of_t arg0__003_ in
-       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Removed"; res0__004_ ]
-     | Modified arg0__005_ ->
-       let res0__006_ = Path_in_repo.sexp_of_t arg0__005_ in
-       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Modified"; res0__006_ ]
-     | Copied { src = src__008_; dst = dst__010_; similarity = similarity__012_ } ->
-       let bnds__007_ = ([] : _ Stdlib.List.t) in
-       let bnds__007_ =
-         let arg__013_ = sexp_of_int similarity__012_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "similarity"; arg__013_ ] :: bnds__007_
-          : _ Stdlib.List.t)
-       in
-       let bnds__007_ =
-         let arg__011_ = Path_in_repo.sexp_of_t dst__010_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__011_ ] :: bnds__007_
-          : _ Stdlib.List.t)
-       in
-       let bnds__007_ =
-         let arg__009_ = Path_in_repo.sexp_of_t src__008_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__009_ ] :: bnds__007_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Copied" :: bnds__007_)
-     | Renamed { src = src__015_; dst = dst__017_; similarity = similarity__019_ } ->
-       let bnds__014_ = ([] : _ Stdlib.List.t) in
-       let bnds__014_ =
-         let arg__020_ = sexp_of_int similarity__019_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "similarity"; arg__020_ ] :: bnds__014_
-          : _ Stdlib.List.t)
-       in
-       let bnds__014_ =
-         let arg__018_ = Path_in_repo.sexp_of_t dst__017_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__018_ ] :: bnds__014_
-          : _ Stdlib.List.t)
-       in
-       let bnds__014_ =
-         let arg__016_ = Path_in_repo.sexp_of_t src__015_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__016_ ] :: bnds__014_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Renamed" :: bnds__014_)
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn = function
+    | Added path -> Dyn.Variant ("Added", [ Path_in_repo.to_dyn path ])
+    | Removed path -> Dyn.Variant ("Removed", [ Path_in_repo.to_dyn path ])
+    | Modified path -> Dyn.Variant ("Modified", [ Path_in_repo.to_dyn path ])
+    | Copied { src; dst; similarity } ->
+      Dyn.inline_record
+        "Copied"
+        [ "src", Path_in_repo.to_dyn src
+        ; "dst", Path_in_repo.to_dyn dst
+        ; "similarity", Dyn.int similarity
+        ]
+    | Renamed { src; dst; similarity } ->
+      Dyn.inline_record
+        "Renamed"
+        [ "src", Path_in_repo.to_dyn src
+        ; "dst", Path_in_repo.to_dyn dst
+        ; "similarity", Dyn.int similarity
+        ]
   ;;
 
-  [@@@deriving.end]
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let equal =
-    (fun a__001_ b__002_ ->
-       if a__001_ == b__002_
-       then true
-       else (
-         match a__001_, b__002_ with
-         | Added _a__003_, Added _b__004_ -> Path_in_repo.equal _a__003_ _b__004_
-         | Added _, _ -> false
-         | _, Added _ -> false
-         | Removed _a__005_, Removed _b__006_ -> Path_in_repo.equal _a__005_ _b__006_
-         | Removed _, _ -> false
-         | _, Removed _ -> false
-         | Modified _a__007_, Modified _b__008_ -> Path_in_repo.equal _a__007_ _b__008_
-         | Modified _, _ -> false
-         | _, Modified _ -> false
-         | Copied _a__009_, Copied _b__010_ ->
-           Path_in_repo.equal _a__009_.src _b__010_.src
-           && Path_in_repo.equal _a__009_.dst _b__010_.dst
-           && equal_int _a__009_.similarity _b__010_.similarity
-         | Copied _, _ -> false
-         | _, Copied _ -> false
-         | Renamed _a__011_, Renamed _b__012_ ->
-           Path_in_repo.equal _a__011_.src _b__012_.src
-           && Path_in_repo.equal _a__011_.dst _b__012_.dst
-           && equal_int _a__011_.similarity _b__012_.similarity)
-     : t -> t -> bool)
+  let equal a b =
+    phys_equal a b
+    ||
+    match a, b with
+    | Added a, Added b -> Path_in_repo.equal a b
+    | Removed a, Removed b -> Path_in_repo.equal a b
+    | Modified a, Modified b -> Path_in_repo.equal a b
+    | Copied a, Copied { src; dst; similarity } ->
+      Path_in_repo.equal a.src src
+      && Path_in_repo.equal a.dst dst
+      && Int.equal a.similarity similarity
+    | Renamed a, Renamed { src; dst; similarity } ->
+      Path_in_repo.equal a.src src
+      && Path_in_repo.equal a.dst dst
+      && Int.equal a.similarity similarity
+    | (Added _ | Removed _ | Modified _ | Copied _ | Renamed _), _ -> false
   ;;
 end
 
 module T = struct
-  type t = Change.t list [@@deriving_inline sexp_of]
+  type t = Change.t list
 
-  let sexp_of_t =
-    (fun x__021_ -> sexp_of_list Change.sexp_of_t x__021_ : t -> Sexplib0.Sexp.t)
-  ;;
-
-  [@@@deriving.end]
+  let sexp_of_t t = sexp_of_list Change.sexp_of_t t
 end
 
 include T
@@ -194,35 +149,17 @@ module Changed = struct
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (fun (Between { src = src__023_; dst = dst__025_ }) ->
-       let bnds__022_ = ([] : _ Stdlib.List.t) in
-       let bnds__022_ =
-         let arg__026_ = Rev.sexp_of_t dst__025_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__026_ ] :: bnds__022_
-          : _ Stdlib.List.t)
-       in
-       let bnds__022_ =
-         let arg__024_ = Rev.sexp_of_t src__023_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__024_ ] :: bnds__022_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Between" :: bnds__022_)
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn (Between { src; dst }) =
+    Dyn.inline_record "Between" [ "src", Rev.to_dyn src; "dst", Rev.to_dyn dst ]
   ;;
 
-  [@@@deriving.end]
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let equal =
-    (fun a__034_ b__035_ ->
-       if a__034_ == b__035_
-       then true
-       else (
-         match a__034_, b__035_ with
-         | Between _a__036_, Between _b__037_ ->
-           Rev.equal _a__036_.src _b__037_.src && Rev.equal _a__036_.dst _b__037_.dst)
-     : t -> t -> bool)
+  let equal a b =
+    phys_equal a b
+    ||
+    match a, b with
+    | Between a, Between { src; dst } -> Rev.equal a.src src && Rev.equal a.dst dst
   ;;
 end

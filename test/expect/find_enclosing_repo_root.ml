@@ -45,7 +45,7 @@ let%expect_test "find_enclosing_repo_root" =
     with
     | None -> assert false
     | Some repo_root2 ->
-      require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+      require_equal (module Vcs.Repo_root) repo_root repo_root2;
       [%expect {||}]
   in
   (* Find the root from a subdirectory. *)
@@ -58,7 +58,7 @@ let%expect_test "find_enclosing_repo_root" =
     match Vcs.find_enclosing_git_repo_root vcs ~from:subdir with
     | None -> assert false
     | Some repo_root2 ->
-      require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+      require_equal (module Vcs.Repo_root) repo_root repo_root2;
       [%expect {||}]
   in
   (* Stop before root (e.g. in a Mercurial repo). *)
@@ -78,7 +78,7 @@ let%expect_test "find_enclosing_repo_root" =
      with
      | None | Some (`Hg, _) -> assert false
      | Some (`Git, repo_root2) ->
-       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       require_equal (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     (* 2. Non-raising [find_enclosing_repo_root]. *)
     (match
@@ -89,19 +89,19 @@ let%expect_test "find_enclosing_repo_root" =
      with
      | Error _ | Ok None | Ok (Some (`Hg, _)) -> assert false
      | Ok (Some (`Git, repo_root2)) ->
-       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       require_equal (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     (* 3. Raising [find_enclosing_git_repo_root]. *)
     (match Vcs.find_enclosing_git_repo_root vcs ~from:subdir with
      | None -> assert false
      | Some repo_root2 ->
-       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       require_equal (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     (* 4. Non-raising [find_enclosing_git_repo_root]. *)
     (match Vcs.Result.find_enclosing_git_repo_root vcs ~from:subdir with
      | Error _ | Ok None -> assert false
      | Ok (Some repo_root2) ->
-       require_equal [%here] (module Vcs.Repo_root) repo_root repo_root2;
+       require_equal (module Vcs.Repo_root) repo_root repo_root2;
        [%expect {||}]);
     Eio.Path.save
       ~create:(`Or_truncate 0o666)
@@ -113,7 +113,6 @@ let%expect_test "find_enclosing_repo_root" =
     | None -> assert false
     | Some (`Hg, repo_root2) ->
       require_equal
-        [%here]
         (module Vcs.Repo_root)
         (Vcs.Repo_root.of_absolute_path stop_at)
         repo_root2;

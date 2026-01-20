@@ -93,7 +93,7 @@ let%expect_test "files with curly-braces" =
   [%expect
     {|
     (((key (One_file "template/{{ key }}.txt"))
-      (num_stat (Num_lines_in_diff ((insertions 2) (deletions 1))))))
+      (num_stat (Num_lines_in_diff (insertions 2) (deletions 1)))))
     |}];
   let renamed_file1 = Vcs.Path_in_repo.v "template/no-braces.txt" in
   (* Next let's do some renames and make sure the munged paths are properly handled. *)
@@ -120,7 +120,7 @@ let%expect_test "files with curly-braces" =
     {|
     (((key
        (Two_files (src "template/{{ key }}.txt") (dst template/no-braces.txt)))
-      (num_stat (Num_lines_in_diff ((insertions 0) (deletions 0))))))
+      (num_stat (Num_lines_in_diff (insertions 0) (deletions 0)))))
     |}];
   let renamed_file2 = Vcs.Path_in_repo.v "template/hello-{{ mix }}-FOO.{{ ext }}" in
   let renamed_file3 = Vcs.Path_in_repo.v "template/hello-{{ mix }}-BAR.{{ ext }}" in
@@ -148,7 +148,7 @@ let%expect_test "files with curly-braces" =
     (((key
        (Two_files (src template/no-braces.txt)
         (dst "template/hello-{{ mix }}-FOO.{{ ext }}")))
-      (num_stat (Num_lines_in_diff ((insertions 0) (deletions 0))))))
+      (num_stat (Num_lines_in_diff (insertions 0) (deletions 0)))))
     |}];
   (* More complex case with rename part in the middle. *)
   Vcs.git
@@ -176,7 +176,7 @@ let%expect_test "files with curly-braces" =
     (((key
        (Two_files (src "template/hello-{{ mix }}-FOO.{{ ext }}")
         (dst "template/hello-{{ mix }}-BAR.{{ ext }}")))
-      (num_stat (Num_lines_in_diff ((insertions 0) (deletions 0))))))
+      (num_stat (Num_lines_in_diff (insertions 0) (deletions 0)))))
     |}];
   ()
 ;;

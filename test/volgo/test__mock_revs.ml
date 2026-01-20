@@ -41,12 +41,11 @@ let%expect_test "mock revs" =
   [%expect {| (dd5aabd331a75b90cd61725223964e47dd5aabd3) |}];
   (* Attempting to add it again will fail. *)
   let mock_rev1 = Vcs.Mock_revs.next t in
-  require_does_raise [%here] (fun () ->
-    Vcs.Mock_revs.add_exn t ~rev:rev0 ~mock_rev:mock_rev1);
+  require_does_raise (fun () -> Vcs.Mock_revs.add_exn t ~rev:rev0 ~mock_rev:mock_rev1);
   [%expect
     {|
-    ("Hashtbl.add_exn: key already present" (
-      key dd5aabd331a75b90cd61725223964e47dd5aabd3))
+    ("Hashtbl.add_exn: key already present"
+      (key dd5aabd331a75b90cd61725223964e47dd5aabd3))
     |}];
   (* Finally, as a convenience we can generate mock revision on the fly with
      [to_mock]. *)
@@ -63,9 +62,9 @@ let%expect_test "mock revs" =
   print_s [%sexp (mock_rev3 : Vcs.Rev.t)];
   [%expect {| 43ba44a5d1aa1704c5c4768aac828c4343ba44a5 |}];
   (* And naturally, lookup again the same revs returns the same mock revs. *)
-  require_equal [%here] (module Vcs.Rev) mock_rev1 (Vcs.Mock_revs.to_mock t ~rev:rev1);
-  require_equal [%here] (module Vcs.Rev) mock_rev2 (Vcs.Mock_revs.to_mock t ~rev:rev2);
-  require_equal [%here] (module Vcs.Rev) mock_rev3 (Vcs.Mock_revs.to_mock t ~rev:rev3);
+  require_equal (module Vcs.Rev) mock_rev1 (Vcs.Mock_revs.to_mock t ~rev:rev1);
+  require_equal (module Vcs.Rev) mock_rev2 (Vcs.Mock_revs.to_mock t ~rev:rev2);
+  require_equal (module Vcs.Rev) mock_rev3 (Vcs.Mock_revs.to_mock t ~rev:rev3);
   [%expect {||}];
   ()
 ;;

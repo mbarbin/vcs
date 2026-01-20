@@ -67,7 +67,7 @@ let%expect_test "hello cli" =
         ~repo_root
         ~args:(List.concat [ [ "log" ]; [ "-r"; "." ]; [ "--template"; "{node}" ] ])
         ~f:(fun output ->
-          let open Result.Monad_syntax in
+          let open Result.Syntax in
           let* stdout = Vcs.Hg.Result.exit0_and_stdout output in
           match Vcs.Rev.of_string (String.strip stdout) with
           | Ok _ as ok -> ok
@@ -76,7 +76,7 @@ let%expect_test "hello cli" =
     | Ok ok -> ok
     | Error _ -> assert false
   in
-  require_equal [%here] (module Vcs.Rev) rev hg_rev;
+  require_equal (module Vcs.Rev) rev hg_rev;
   [%expect {||}];
   let mock_rev2 = Vcs.Mock_revs.to_mock mock_revs ~rev:hg_rev in
   print_s [%sexp (mock_rev2 : Vcs.Rev.t)];

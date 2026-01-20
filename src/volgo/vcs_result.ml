@@ -25,9 +25,7 @@ let sexp_of_err = Err.sexp_of_t
 
 type 'a t = ('a, err) Result.t
 
-let sexp_of_t : 'a. ('a -> Sexplib0.Sexp.t) -> 'a t -> Sexplib0.Sexp.t =
-  fun _of_a__001_ -> fun x__002_ -> Result.sexp_of_t _of_a__001_ sexp_of_err x__002_
-;;
+let sexp_of_t sexp_of_a t = Result.sexp_of_t sexp_of_a sexp_of_err t
 
 module Non_raising_M = struct
   type t = err

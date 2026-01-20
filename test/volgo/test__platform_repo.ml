@@ -49,11 +49,11 @@ let%expect_test "to_string o of_string" =
       | Bitbucket, Https, Hg ->
         (* This is a known limitation - we're not able to distinguish Git and Hg
            here, and default to assume Git. *)
-        require_equal [%here] (module Vcs.Platform_repo.Vcs_kind) t'.vcs_kind Git;
+        require_equal (module Vcs.Platform_repo.Vcs_kind) t'.vcs_kind Git;
         { t' with vcs_kind = Hg }
       | _ -> t'
     in
-    require_equal [%here] (module Vcs.Platform_repo.Url) t t');
+    require_equal (module Vcs.Platform_repo.Url) t t');
   [%expect
     {|
     git@bitbucket.org:user/repo.git
@@ -91,14 +91,33 @@ let%expect_test "parse" =
     let t = Vcs.Platform_repo.Url.v candidate in
     let str = Vcs.Platform_repo.Url.to_url_string t in
     let t' = Vcs.Platform_repo.Url.v str in
-    require_equal [%here] (module Vcs.Platform_repo.Url) t t';
+    require_equal (module Vcs.Platform_repo.Url) t t';
     let str2 = Vcs.Platform_repo.Url.to_url_string t' in
-    require_equal [%here] (module String) str str2;
+    require_equal (module String) str str2;
     print_endline str;
     ()
   in
   test "https://github.com/user/repo";
   [%expect {| https://github.com/user/repo.git |}];
+  ()
+;;
+
+let%expect_test "to_dyn" =
+  print_dyn
+    (Vcs.Platform_repo.to_dyn
+       { platform = GitHub
+       ; vcs_kind = Git
+       ; user_handle = Vcs.User_handle.v "user"
+       ; repo_name = Vcs.Repo_name.v "repo"
+       });
+  [%expect
+    {|
+    { platform = GitHub
+    ; vcs_kind = Git
+    ; user_handle = "user"
+    ; repo_name = "repo"
+    }
+    |}];
   ()
 ;;
 
@@ -108,9 +127,9 @@ let%expect_test "to_platform_string" =
     let str = Vcs.Platform_repo.Url.to_platform_string url in
     print_endline str;
     let url' = Vcs.Platform_repo.Url.v str in
-    require_equal [%here] (module Vcs.Platform_repo.Url) url url';
+    require_equal (module Vcs.Platform_repo.Url) url url';
     let t' = Vcs.Platform_repo.of_url url' in
-    require_equal [%here] (module Vcs.Platform_repo) t t';
+    require_equal (module Vcs.Platform_repo) t t';
     ()
   in
   test
@@ -131,22 +150,25 @@ let%expect_test "to_platform_string" =
 ;;
 
 let%expect_test "ssh_syntax" =
+  print_endline (Sexp.to_string_hum (Vcs.Platform_repo.Ssh_syntax.sexp_of_t Url_style));
+  [%expect {| Url_style |}];
   List.iter Vcs.Platform.all ~f:(fun platform ->
     let used_by_default_on_platform =
       Vcs.Platform_repo.Ssh_syntax.used_by_default_on_platform ~platform
     in
-    print_s
-      [%sexp
-        { platform : Vcs.Platform.t
-        ; used_by_default_on_platform : Vcs.Platform_repo.Ssh_syntax.t
-        }]);
+    print_dyn
+      (Dyn.record
+         [ "platform", platform |> Vcs.Platform.to_dyn
+         ; ( "used_by_default_on_platform"
+           , used_by_default_on_platform |> Vcs.Platform_repo.Ssh_syntax.to_dyn )
+         ]));
   [%expect
     {|
-    ((platform Bitbucket) (used_by_default_on_platform Url_style))
-    ((platform Codeberg) (used_by_default_on_platform Url_style))
-    ((platform GitHub) (used_by_default_on_platform Scp_like))
-    ((platform GitLab) (used_by_default_on_platform Scp_like))
-    ((platform Sourcehut) (used_by_default_on_platform Scp_like))
+    { platform = Bitbucket; used_by_default_on_platform = Url_style }
+    { platform = Codeberg; used_by_default_on_platform = Url_style }
+    { platform = GitHub; used_by_default_on_platform = Scp_like }
+    { platform = GitLab; used_by_default_on_platform = Scp_like }
+    { platform = Sourcehut; used_by_default_on_platform = Scp_like }
     |}];
   ()
 ;;
@@ -290,8 +312,8 @@ let%expect_test "v" =
   let test str =
     print_s [%sexp (Vcs.Platform_repo.Url.v str : Vcs.Platform_repo.Url.t)]
   in
-  require_does_raise [%here] (fun () -> test "user/my_repo");
-  [%expect {| (Invalid_argument "\"user/my_repo\": invalid url") |}];
+  require_does_raise (fun () -> test "user/my_repo");
+  [%expect {| Invalid_argument("\"user/my_repo\": invalid url") |}];
   test "https://github.com/user/repo.git";
   [%expect
     {|

@@ -54,11 +54,7 @@ let%expect_test "find ref" =
   [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
   (* The head is the revision of the latest commit. *)
   let head = Vcs.current_revision vcs ~repo_root in
-  require_equal
-    [%here]
-    (module Vcs.Rev)
-    (Vcs.Mock_revs.to_mock mock_revs ~rev:head)
-    mock_rev;
+  require_equal (module Vcs.Rev) (Vcs.Mock_revs.to_mock mock_revs ~rev:head) mock_rev;
   (* Making sure the default branch name is deterministic. *)
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   let current_branch = Vcs.current_branch vcs ~repo_root in
@@ -142,7 +138,7 @@ let%expect_test "find ref" =
     in
     lookup ~find_exn
   in
-  require_equal [%here] (module Sexp) sexp1 sexp2;
+  require_equal (module Sexp) sexp1 sexp2;
   [%expect {||}];
   (* Finally, we characterize some issue with [rev_parse].
 
@@ -173,7 +169,6 @@ let%expect_test "find ref" =
   in
   let tag_rev = Map.find_exn refs (Tag { tag_name = Vcs.Tag_name.v "branch1" }) in
   require
-    [%here]
     (List.exists [ branch1_rev; tag_rev ] ~f:(fun rev -> Vcs.Rev.equal ambiguous_rev rev));
   ()
 ;;

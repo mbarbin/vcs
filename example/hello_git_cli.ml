@@ -67,13 +67,14 @@ let%expect_test "hello cli" =
      its output, and how to do this with the non-raising API of Vcs. *)
   let head_rev =
     Vcs.Or_error.git vcs ~repo_root ~args:[ "rev-parse"; "HEAD" ] ~f:(fun output ->
-      let%bind.Or_error stdout = Vcs.Git.Or_error.exit0_and_stdout output in
+      let ( let* ) x f = Or_error.bind x ~f in
+      let* stdout = Vcs.Git.Or_error.exit0_and_stdout output in
       match Vcs.Rev.of_string (String.strip stdout) with
       | Ok _ as ok -> ok
       | Error (`Msg _) -> assert false)
     |> Or_error.ok_exn
   in
-  require_equal [%here] (module Vcs.Rev) rev head_rev;
+  require_equal (module Vcs.Rev) rev head_rev;
   [%expect {||}];
   (* Let's do one with [Vcs.Result.git]. *)
   let abbrev_head =
@@ -301,8 +302,8 @@ let%expect_test "hello cli" =
     |}];
   (* However when your handler [f] raises, the function will raise too, and you
      won't get the context in this case. *)
-  require_does_raise [%here] (fun () : string Or_error.t -> abbrev_ref "/bogus");
-  [%expect {| (Failure "Unexpected error code") |}];
+  require_does_raise (fun () : string Or_error.t -> abbrev_ref "/bogus");
+  [%expect {| Failure("Unexpected error code") |}];
   (* If you use a raising handler [f], you probably meant to use [Vcs.git]. *)
   let abbrev_ref ?(repo_root = repo_root) ref_ =
     Vcs.git

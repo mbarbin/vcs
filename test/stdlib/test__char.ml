@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let%expect_test "Char.is_whitespace" =
   let require c ~expect = require_equal (module Bool) (Char.is_whitespace c) expect in
   List.iter ~f:(fun c -> require c ~expect:true) [ ' '; '\t'; '\n'; '\011'; '\012'; '\r' ];

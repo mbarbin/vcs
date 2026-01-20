@@ -24,48 +24,23 @@ module T = struct
     { insertions : int
     ; deletions : int
     }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (fun { insertions = insertions__002_; deletions = deletions__004_ } ->
-       let bnds__001_ = ([] : _ Stdlib.List.t) in
-       let bnds__001_ =
-         let arg__005_ = sexp_of_int deletions__004_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "deletions"; arg__005_ ] :: bnds__001_
-          : _ Stdlib.List.t)
-       in
-       let bnds__001_ =
-         let arg__003_ = sexp_of_int insertions__002_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "insertions"; arg__003_ ] :: bnds__001_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List bnds__001_
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn { insertions; deletions } =
+    Dyn.Record [ "insertions", Dyn.Int insertions; "deletions", Dyn.Int deletions ]
   ;;
 
-  [@@@deriving.end]
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let compare =
-    (fun a__001_ b__002_ ->
-       if a__001_ == b__002_
-       then 0
-       else (
-         match compare_int a__001_.insertions b__002_.insertions with
-         | 0 -> compare_int a__001_.deletions b__002_.deletions
-         | n -> n)
-     : t -> t -> int)
+  let compare t ({ insertions; deletions } as t2) =
+    if phys_equal t t2
+    then 0
+    else (
+      match Int.compare t.insertions insertions with
+      | 0 -> Int.compare t.deletions deletions
+      | n -> n)
   ;;
 
-  let equal =
-    (fun a__003_ b__004_ ->
-       if a__003_ == b__004_
-       then true
-       else
-         equal_int a__003_.insertions b__004_.insertions
-         && equal_int a__003_.deletions b__004_.deletions
-     : t -> t -> bool)
-  ;;
-
+  let equal a b = compare a b = 0
   let zero = { insertions = 0; deletions = 0 }
 
   let ( + ) t1 t2 =

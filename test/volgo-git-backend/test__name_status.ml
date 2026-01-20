@@ -166,8 +166,7 @@ let%expect_test "Diff_status" =
     (C C)
     (Z Not_supported)
     |}];
-  require_does_raise [%here] (fun () ->
-    Volgo_git_backend.Name_status.Diff_status.parse_exn "");
+  require_does_raise (fun () -> Volgo_git_backend.Name_status.Diff_status.parse_exn "");
   [%expect {| "Unexpected empty diff status." |}];
   ()
 ;;

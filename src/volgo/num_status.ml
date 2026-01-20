@@ -28,62 +28,32 @@ module Key = struct
         { src : Path_in_repo.t
         ; dst : Path_in_repo.t
         }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (function
-     | One_file arg0__001_ ->
-       let res0__002_ = Path_in_repo.sexp_of_t arg0__001_ in
-       Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "One_file"; res0__002_ ]
-     | Two_files { src = src__004_; dst = dst__006_ } ->
-       let bnds__003_ = ([] : _ Stdlib.List.t) in
-       let bnds__003_ =
-         let arg__007_ = Path_in_repo.sexp_of_t dst__006_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__007_ ] :: bnds__003_
-          : _ Stdlib.List.t)
-       in
-       let bnds__003_ =
-         let arg__005_ = Path_in_repo.sexp_of_t src__004_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__005_ ] :: bnds__003_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Two_files" :: bnds__003_)
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn = function
+    | One_file path -> Dyn.Variant ("One_file", [ Path_in_repo.to_dyn path ])
+    | Two_files { src; dst } ->
+      Dyn.inline_record
+        "Two_files"
+        [ "src", Path_in_repo.to_dyn src; "dst", Path_in_repo.to_dyn dst ]
   ;;
 
-  [@@@deriving.end]
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let compare =
-    (fun a__001_ b__002_ ->
-       if a__001_ == b__002_
-       then 0
-       else (
-         match a__001_, b__002_ with
-         | One_file _a__003_, One_file _b__004_ -> Path_in_repo.compare _a__003_ _b__004_
-         | One_file _, _ -> -1
-         | _, One_file _ -> 1
-         | Two_files _a__005_, Two_files _b__006_ ->
-           (match Path_in_repo.compare _a__005_.src _b__006_.src with
-            | 0 -> Path_in_repo.compare _a__005_.dst _b__006_.dst
-            | n -> n))
-     : t -> t -> int)
+  let compare a b =
+    if phys_equal a b
+    then 0
+    else (
+      match a, b with
+      | One_file a, One_file b -> Path_in_repo.compare a b
+      | One_file _, _ -> -1
+      | _, One_file _ -> 1
+      | Two_files a, Two_files { src; dst } ->
+        (match Path_in_repo.compare a.src src with
+         | 0 -> Path_in_repo.compare a.dst dst
+         | n -> n))
   ;;
 
-  let equal =
-    (fun a__007_ b__008_ ->
-       if a__007_ == b__008_
-       then true
-       else (
-         match a__007_, b__008_ with
-         | One_file _a__009_, One_file _b__010_ -> Path_in_repo.equal _a__009_ _b__010_
-         | One_file _, _ -> false
-         | _, One_file _ -> false
-         | Two_files _a__011_, Two_files _b__012_ ->
-           Path_in_repo.equal _a__011_.src _b__012_.src
-           && Path_in_repo.equal _a__011_.dst _b__012_.dst)
-     : t -> t -> bool)
-  ;;
-
+  let equal a b = compare a b = 0
   let seeded_hash = (Hashtbl.seeded_hash : int -> t -> int)
   let hash = (Hashtbl.hash : t -> int)
 end
@@ -95,31 +65,22 @@ module Change = struct
     type t =
       | Num_lines_in_diff of Num_lines_in_diff.t
       | Binary_file
-    [@@deriving_inline sexp_of]
 
-    let sexp_of_t =
-      (function
-       | Num_lines_in_diff arg0__008_ ->
-         let res0__009_ = Num_lines_in_diff.sexp_of_t arg0__008_ in
-         Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "Num_lines_in_diff"; res0__009_ ]
-       | Binary_file -> Sexplib0.Sexp.Atom "Binary_file"
-       : t -> Sexplib0.Sexp.t)
+    let to_dyn = function
+      | Num_lines_in_diff n ->
+        Dyn.Variant ("Num_lines_in_diff", [ Num_lines_in_diff.to_dyn n ])
+      | Binary_file -> Dyn.Variant ("Binary_file", [])
     ;;
 
-    [@@@deriving.end]
+    let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-    let equal =
-      (fun a__008_ b__009_ ->
-         if a__008_ == b__009_
-         then true
-         else (
-           match a__008_, b__009_ with
-           | Num_lines_in_diff _a__010_, Num_lines_in_diff _b__011_ ->
-             Num_lines_in_diff.equal _a__010_ _b__011_
-           | Num_lines_in_diff _, _ -> false
-           | _, Num_lines_in_diff _ -> false
-           | Binary_file, Binary_file -> true)
-       : t -> t -> bool)
+    let equal a b =
+      phys_equal a b
+      ||
+      match a, b with
+      | Num_lines_in_diff a, Num_lines_in_diff b -> Num_lines_in_diff.equal a b
+      | Binary_file, Binary_file -> true
+      | (Num_lines_in_diff _ | Binary_file), _ -> false
     ;;
   end
 
@@ -127,46 +88,22 @@ module Change = struct
     { key : Key.t
     ; num_stat : Num_stat.t
     }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (fun { key = key__011_; num_stat = num_stat__013_ } ->
-       let bnds__010_ = ([] : _ Stdlib.List.t) in
-       let bnds__010_ =
-         let arg__014_ = Num_stat.sexp_of_t num_stat__013_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "num_stat"; arg__014_ ] :: bnds__010_
-          : _ Stdlib.List.t)
-       in
-       let bnds__010_ =
-         let arg__012_ = Key.sexp_of_t key__011_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "key"; arg__012_ ] :: bnds__010_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List bnds__010_
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn { key; num_stat } =
+    Dyn.Record [ "key", key |> Key.to_dyn; "num_stat", num_stat |> Num_stat.to_dyn ]
   ;;
 
-  [@@@deriving.end]
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let equal =
-    (fun a__014_ b__015_ ->
-       if a__014_ == b__015_
-       then true
-       else
-         Key.equal a__014_.key b__015_.key
-         && Num_stat.equal a__014_.num_stat b__015_.num_stat
-     : t -> t -> bool)
+  let equal t ({ key; num_stat } as t2) =
+    phys_equal t t2 || (Key.equal t.key key && Num_stat.equal t.num_stat num_stat)
   ;;
 end
 
 module T = struct
-  type t = Change.t list [@@deriving_inline sexp_of]
+  type t = Change.t list
 
-  let sexp_of_t =
-    (fun x__015_ -> sexp_of_list Change.sexp_of_t x__015_ : t -> Sexplib0.Sexp.t)
-  ;;
-
-  [@@@deriving.end]
+  let sexp_of_t t : Sexplib0.Sexp.t = sexp_of_list Change.sexp_of_t t
 end
 
 include T
@@ -179,35 +116,18 @@ module Changed = struct
         { src : Rev.t
         ; dst : Rev.t
         }
-  [@@deriving_inline sexp_of]
 
-  let sexp_of_t =
-    (fun (Between { src = src__017_; dst = dst__019_ }) ->
-       let bnds__016_ = ([] : _ Stdlib.List.t) in
-       let bnds__016_ =
-         let arg__020_ = Rev.sexp_of_t dst__019_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "dst"; arg__020_ ] :: bnds__016_
-          : _ Stdlib.List.t)
-       in
-       let bnds__016_ =
-         let arg__018_ = Rev.sexp_of_t src__017_ in
-         (Sexplib0.Sexp.List [ Sexplib0.Sexp.Atom "src"; arg__018_ ] :: bnds__016_
-          : _ Stdlib.List.t)
-       in
-       Sexplib0.Sexp.List (Sexplib0.Sexp.Atom "Between" :: bnds__016_)
-     : t -> Sexplib0.Sexp.t)
+  let to_dyn = function
+    | Between { src; dst } ->
+      Dyn.inline_record "Between" [ "src", src |> Rev.to_dyn; "dst", dst |> Rev.to_dyn ]
   ;;
 
-  [@@@deriving.end]
+  let sexp_of_t t = Dyn.to_sexp (to_dyn t)
 
-  let equal =
-    (fun a__022_ b__023_ ->
-       if a__022_ == b__023_
-       then true
-       else (
-         match a__022_, b__023_ with
-         | Between _a__024_, Between _b__025_ ->
-           Rev.equal _a__024_.src _b__025_.src && Rev.equal _a__024_.dst _b__025_.dst)
-     : t -> t -> bool)
+  let equal a b =
+    phys_equal a b
+    ||
+    match a, b with
+    | Between a, Between { src; dst } -> Rev.equal a.src src && Rev.equal a.dst dst
   ;;
 end
