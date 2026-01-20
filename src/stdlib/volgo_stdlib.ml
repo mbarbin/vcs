@@ -77,6 +77,15 @@ module Ordering = struct
   ;;
 end
 
+module Sexp = struct
+  include Sexp
+
+  let rec to_dyn = function
+    | Sexp.Atom s -> Dyn.variant "Atom" [ Dyn.string s ]
+    | Sexp.List l -> Dyn.variant "List" [ Dyn.list to_dyn l ]
+  ;;
+end
+
 module type To_sexpable = sig
   type t
 
@@ -442,6 +451,26 @@ let require_does_raise f =
   match f () with
   | _ -> Code_error.raise "Did not raise." []
   | exception e -> print_endline (Stdlib.Printexc.to_string e)
+;;
+
+let require_equal
+      (type a)
+      (module M : With_equal_and_dyn.S with type t = a)
+      (v1 : a)
+      (v2 : a)
+  =
+  if not (M.equal v1 v2)
+  then Code_error.raise "Values are not equal." [ "v1", M.to_dyn v1; "v2", M.to_dyn v2 ]
+;;
+
+let require_not_equal
+      (type a)
+      (module M : With_equal_and_dyn.S with type t = a)
+      (v1 : a)
+      (v2 : a)
+  =
+  if M.equal v1 v2
+  then Code_error.raise "Values are equal." [ "v1", M.to_dyn v1; "v2", M.to_dyn v2 ]
 ;;
 
 (* {1 Transition API} *)

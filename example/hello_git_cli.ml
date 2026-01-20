@@ -73,7 +73,7 @@ let%expect_test "hello cli" =
       | Error (`Msg _) -> assert false)
     |> Or_error.ok_exn
   in
-  require_equal [%here] (module Vcs.Rev) rev head_rev;
+  require_equal (module Vcs.Rev) rev head_rev;
   [%expect {||}];
   (* Let's do one with [Vcs.Result.git]. *)
   let abbrev_head =

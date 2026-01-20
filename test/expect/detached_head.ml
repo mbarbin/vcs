@@ -50,11 +50,7 @@ let%expect_test "detached-head" =
   [%expect {| 1185512b92d612b25613f2e5b473e5231185512b |}];
   (* The head is the revision of the latest commit. *)
   let head = Vcs.current_revision vcs ~repo_root in
-  require_equal
-    [%here]
-    (module Vcs.Rev)
-    (Vcs.Mock_revs.to_mock mock_revs ~rev:head)
-    mock_rev;
+  require_equal (module Vcs.Rev) (Vcs.Mock_revs.to_mock mock_revs ~rev:head) mock_rev;
   (* Making sure the default branch name is deterministic. *)
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   let current_branch = Vcs.current_branch vcs ~repo_root in

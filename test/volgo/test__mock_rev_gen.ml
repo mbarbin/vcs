@@ -42,7 +42,7 @@ let%expect_test "next" =
   let all =
     List.dedup_and_sort [ r1_1; r1_2; r1_3; r2_1; r2_2; r2_3 ] ~compare:Vcs.Rev.compare
   in
-  require_equal [%here] (module Int) (List.length all) 6;
+  require_equal (module Int) (List.length all) 6;
   (* The same rev can be recreated from the same state. *)
   let t3 = Vcs.Mock_rev_gen.create ~name:"test-01" in
   let r3_1 = next t3 in

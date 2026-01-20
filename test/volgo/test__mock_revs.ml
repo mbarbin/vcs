@@ -62,9 +62,9 @@ let%expect_test "mock revs" =
   print_s [%sexp (mock_rev3 : Vcs.Rev.t)];
   [%expect {| 43ba44a5d1aa1704c5c4768aac828c4343ba44a5 |}];
   (* And naturally, lookup again the same revs returns the same mock revs. *)
-  require_equal [%here] (module Vcs.Rev) mock_rev1 (Vcs.Mock_revs.to_mock t ~rev:rev1);
-  require_equal [%here] (module Vcs.Rev) mock_rev2 (Vcs.Mock_revs.to_mock t ~rev:rev2);
-  require_equal [%here] (module Vcs.Rev) mock_rev3 (Vcs.Mock_revs.to_mock t ~rev:rev3);
+  require_equal (module Vcs.Rev) mock_rev1 (Vcs.Mock_revs.to_mock t ~rev:rev1);
+  require_equal (module Vcs.Rev) mock_rev2 (Vcs.Mock_revs.to_mock t ~rev:rev2);
+  require_equal (module Vcs.Rev) mock_rev3 (Vcs.Mock_revs.to_mock t ~rev:rev3);
   [%expect {||}];
   ()
 ;;

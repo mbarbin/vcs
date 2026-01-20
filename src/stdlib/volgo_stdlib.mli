@@ -210,6 +210,14 @@ end
 val sexp_field : (module To_sexpable with type t = 'a) -> string -> 'a -> Sexp.t
 val sexp_field' : ('a -> Sexp.t) -> string -> 'a -> Sexp.t
 
+module Sexp : sig
+  include module type of struct
+    include Sexp
+  end
+
+  val to_dyn : t -> Dyn.t
+end
+
 (** {1 Test helpers} *)
 
 module With_equal_and_dyn : sig
@@ -223,6 +231,8 @@ end
 
 val require : bool -> unit
 val require_does_raise : (unit -> 'a) -> unit
+val require_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 'a -> unit
+val require_not_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 'a -> unit
 
 (** {1 Transition API}
 

@@ -45,9 +45,9 @@ let%expect_test "graph" =
   List.iter refs ~f:(fun { rev; ref_kind } ->
     let node = Vcs.Graph.find_ref graph ~ref_kind |> Option.get in
     let rev' = Vcs.Graph.rev graph ~node in
-    require_equal [%here] (module Vcs.Rev) rev rev';
+    require_equal (module Vcs.Rev) rev rev';
     let node' = Vcs.Graph.find_rev graph ~rev |> Option.get in
-    require_equal [%here] (module Vcs.Graph.Node) node node';
+    require_equal (module Vcs.Graph.Node) node node';
     let parents =
       Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
     in

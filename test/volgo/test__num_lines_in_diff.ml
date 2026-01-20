@@ -24,14 +24,9 @@ let%expect_test "zero" =
   [%expect {| ((insertions 0) (deletions 0)) |}];
   require (Vcs.Num_lines_in_diff.is_zero Vcs.Num_lines_in_diff.zero);
   [%expect {||}];
-  require_equal
-    [%here]
-    (module Int)
-    (Vcs.Num_lines_in_diff.total Vcs.Num_lines_in_diff.zero)
-    0;
+  require_equal (module Int) (Vcs.Num_lines_in_diff.total Vcs.Num_lines_in_diff.zero) 0;
   [%expect {||}];
   require_equal
-    [%here]
     (module Vcs.Num_lines_in_diff)
     Vcs.Num_lines_in_diff.zero
     Vcs.Num_lines_in_diff.(zero + zero);
@@ -47,7 +42,6 @@ let%expect_test "add" =
   print_s [%sexp (Vcs.Num_lines_in_diff.(t1 + t2) : Vcs.Num_lines_in_diff.t)];
   [%expect {| ((insertions 4) (deletions 6)) |}];
   require_equal
-    [%here]
     (module Vcs.Num_lines_in_diff)
     { Vcs.Num_lines_in_diff.insertions = 4; deletions = 6 }
     Vcs.Num_lines_in_diff.(t1 + t2);
@@ -82,13 +76,13 @@ let%expect_test "equal-and-compare" =
   let t2 = { Vcs.Num_lines_in_diff.insertions = 1; deletions = 2 } in
   let t3 = { Vcs.Num_lines_in_diff.insertions = 1; deletions = 3 } in
   let t4 = { Vcs.Num_lines_in_diff.insertions = 2; deletions = 2 } in
-  require_equal [%here] (module Vcs.Num_lines_in_diff) t1 t1;
+  require_equal (module Vcs.Num_lines_in_diff) t1 t1;
   [%expect {||}];
-  require_equal [%here] (module Vcs.Num_lines_in_diff) t1 t2;
+  require_equal (module Vcs.Num_lines_in_diff) t1 t2;
   [%expect {||}];
-  require_not_equal [%here] (module Vcs.Num_lines_in_diff) t1 t3;
+  require_not_equal (module Vcs.Num_lines_in_diff) t1 t3;
   [%expect {||}];
-  require_not_equal [%here] (module Vcs.Num_lines_in_diff) t1 t4;
+  require_not_equal (module Vcs.Num_lines_in_diff) t1 t4;
   [%expect {||}];
   let cmp a b =
     print_dyn (Vcs.Num_lines_in_diff.compare a b |> Ordering.of_int |> Ordering.to_dyn)

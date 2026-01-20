@@ -39,7 +39,10 @@ let command cmd =
 module Executable_in_path = struct
   [@@@coverage off]
 
-  type t = string option [@@deriving equal, sexp_of]
+  type t = string option
+
+  let equal t1 t2 = Option.equal String.equal t1 t2
+  let to_dyn t = Dyn.option Dyn.string t
 end
 
 let%expect_test "hello path" =
@@ -101,16 +104,12 @@ let%expect_test "hello path" =
   (* Let's test separately the function that implements the search. *)
   let find_executable ~path = Volgo_git_unix.Runtime.Private.find_executable ~path in
   let result = find_executable ~path:"" in
-  require_equal [%here] (module Executable_in_path) result None;
+  require_equal (module Executable_in_path) result None;
   [%expect {||}];
   let result =
     find_executable ~path:(Absolute_path.to_string bin ^ ":" ^ Absolute_path.to_string cwd)
   in
-  require_equal
-    [%here]
-    (module Executable_in_path)
-    result
-    (Some (Absolute_path.to_string git));
+  require_equal (module Executable_in_path) result (Some (Absolute_path.to_string git));
   [%expect {||}];
   let env = Unix.environment () in
   (* If we keep the same PATH as before, the same git binary is run compared to

@@ -49,11 +49,11 @@ let%expect_test "to_string o of_string" =
       | Bitbucket, Https, Hg ->
         (* This is a known limitation - we're not able to distinguish Git and Hg
            here, and default to assume Git. *)
-        require_equal [%here] (module Vcs.Platform_repo.Vcs_kind) t'.vcs_kind Git;
+        require_equal (module Vcs.Platform_repo.Vcs_kind) t'.vcs_kind Git;
         { t' with vcs_kind = Hg }
       | _ -> t'
     in
-    require_equal [%here] (module Vcs.Platform_repo.Url) t t');
+    require_equal (module Vcs.Platform_repo.Url) t t');
   [%expect
     {|
     git@bitbucket.org:user/repo.git
@@ -91,9 +91,9 @@ let%expect_test "parse" =
     let t = Vcs.Platform_repo.Url.v candidate in
     let str = Vcs.Platform_repo.Url.to_url_string t in
     let t' = Vcs.Platform_repo.Url.v str in
-    require_equal [%here] (module Vcs.Platform_repo.Url) t t';
+    require_equal (module Vcs.Platform_repo.Url) t t';
     let str2 = Vcs.Platform_repo.Url.to_url_string t' in
-    require_equal [%here] (module String) str str2;
+    require_equal (module String) str str2;
     print_endline str;
     ()
   in
@@ -127,9 +127,9 @@ let%expect_test "to_platform_string" =
     let str = Vcs.Platform_repo.Url.to_platform_string url in
     print_endline str;
     let url' = Vcs.Platform_repo.Url.v str in
-    require_equal [%here] (module Vcs.Platform_repo.Url) url url';
+    require_equal (module Vcs.Platform_repo.Url) url url';
     let t' = Vcs.Platform_repo.of_url url' in
-    require_equal [%here] (module Vcs.Platform_repo) t t';
+    require_equal (module Vcs.Platform_repo) t t';
     ()
   in
   test
