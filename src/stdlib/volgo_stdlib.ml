@@ -431,15 +431,6 @@ let require_does_raise f =
   | exception e -> print_endline (Stdlib.Printexc.to_string e)
 ;;
 
-let require_does_not_raise f =
-  match f () with
-  | () -> ()
-  | exception e ->
-    Code_error.raise
-      "Did unexpectedly raise."
-      [ "exn", Dyn.string (Printexc.to_string e) ]
-;;
-
 (* {1 Transition API} *)
 
 let print_endline = Stdlib.print_endline

@@ -42,11 +42,11 @@ let%expect_test "parse" =
        (Volgo_git_backend.Munged_path.parse_exn (path "tmp => tmp2 => tmp3")))
       (error "Too many ['=>']."))
     |}];
-  require_does_not_raise (fun () -> test "}");
+  test "}";
   [%expect {| (One_file }) |}];
-  require_does_not_raise (fun () -> test "{");
+  test "{";
   [%expect {| (One_file {) |}];
-  require_does_not_raise (fun () -> test "template/with-with-{{ variable }}.txt");
+  test "template/with-with-{{ variable }}.txt";
   [%expect {| (One_file "template/with-with-{{ variable }}.txt") |}];
   require_does_raise (fun () -> test "a/{dir => b");
   [%expect

@@ -205,7 +205,6 @@ module With_equal_and_dyn : sig
 end
 
 val require : bool -> unit
-val require_does_not_raise : (unit -> unit) -> unit
 val require_does_raise : (unit -> 'a) -> unit
 
 (** {1 Transition API}

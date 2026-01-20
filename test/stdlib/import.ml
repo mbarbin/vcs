@@ -19,14 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let require cond = if not cond then failwith "Required condition does not hold."
-
-let require_does_raise f =
-  match f () with
-  | _ -> Code_error.raise "Did not raise." []
-  | exception e -> print_endline (Stdlib.Printexc.to_string e)
-;;
-
 let require_equal
       (type a)
       (module M : With_equal_and_dyn.S with type t = a)
