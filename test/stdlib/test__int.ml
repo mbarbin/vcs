@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let%expect_test "Int.to_string_hum" =
   let test i = print_endline (Int.to_string_hum i) in
   List.iter

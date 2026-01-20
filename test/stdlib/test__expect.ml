@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let%expect_test "require" =
   require true;
   [%expect {||}];
@@ -47,5 +45,13 @@ let%expect_test "require_equal not equal" =
    | () -> assert false
    | exception exn -> print_string (Printexc.to_string exn));
   [%expect {| ("Values are not equal.", { v1 = "zero"; v2 = "42" }) |}];
+  ()
+;;
+
+let%expect_test "require_not_equal equal" =
+  (match require_not_equal (module String) "zero" "zero" with
+   | () -> assert false
+   | exception exn -> print_string (Printexc.to_string exn));
+  [%expect {| ("Values are equal.", { v1 = "zero"; v2 = "zero" }) |}];
   ()
 ;;

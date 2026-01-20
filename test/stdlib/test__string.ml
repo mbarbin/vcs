@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let%expect_test "split_lines" =
   let test s =
     let lines = String.split_lines s in

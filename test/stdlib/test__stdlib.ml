@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let%expect_test "equal_list" =
   let test a b = equal_list Int.equal a b in
   let r = [ 1; 2; 3 ] in

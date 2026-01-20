@@ -19,8 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-open! Import
-
 let%expect_test "List.count" =
   let test li ~f = print_dyn (List.count li ~f |> Dyn.int) in
   test [ 0; 1; 2 ] ~f:(fun i -> i mod 2 = 0);

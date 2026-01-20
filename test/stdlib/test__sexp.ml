@@ -19,15 +19,11 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let require_equal
-      (type a)
-      (module M : With_equal_and_dyn.S with type t = a)
-      (v1 : a)
-      (v2 : a)
-  =
-  if not (M.equal v1 v2)
-  then
-    Code_error.raise
-      "Values are not equal."
-      [ "v1", v1 |> M.to_dyn; "v2", v2 |> M.to_dyn ]
+let%expect_test "Sexp.to_dyn" =
+  let test t = print_dyn (Sexp.to_dyn t) in
+  test (Atom "Hello Who?");
+  [%expect {| Atom "Hello Who?" |}];
+  test (List [ Atom "Hello"; Atom "World!" ]);
+  [%expect {| List [ Atom "Hello"; Atom "World!" ] |}];
+  ()
 ;;
