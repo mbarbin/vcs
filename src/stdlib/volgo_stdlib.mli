@@ -143,7 +143,9 @@ end
 module Result : sig
   include module type of Result
 
-  module Monad_syntax : sig
+  module Syntax : sig
+    (*_ This is in the stdlib but only since [5.4]. We export it here to support
+      older versions. *)
     val ( let* ) : ('a, 'e) t -> ('a -> ('b, 'e) t) -> ('b, 'e) t
   end
 

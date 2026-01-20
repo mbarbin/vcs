@@ -28,7 +28,7 @@ module Make (Runtime : Runtime.S) = struct
       ~cwd:(repo_root |> Vcs.Repo_root.to_absolute_path)
       ~args:[ "log"; "-r"; "."; "--template"; "{node}" ]
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* stdout = Vcs.Hg.Result.exit0_and_stdout output in
         match Vcs.Rev.of_string (String.strip stdout) with
         | Ok _ as ok -> ok

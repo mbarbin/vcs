@@ -268,7 +268,7 @@ module Url = struct
   ;;
 
   let of_string (s : string) : (t, [ `Msg of string ]) Result.t =
-    let open Result.Monad_syntax in
+    let open Result.Syntax in
     let starts_with_ssh = String.starts_with s ~prefix:"ssh://" in
     let protocols =
       if String.starts_with s ~prefix:"https://"

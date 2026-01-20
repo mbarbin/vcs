@@ -35,7 +35,7 @@ module Make (Runtime : Runtime.S) = struct
                 [ "--include"; Printf.sprintf "./%s/" (Vcs.Path_in_repo.to_string below) ])
            ])
       ~f:(fun output ->
-        let open Result.Monad_syntax in
+        let open Result.Syntax in
         let* stdout = Vcs.Hg.Result.exit0_and_stdout output in
         Vcs.Private.try_with (fun () ->
           String.split_lines stdout |> List.map ~f:Vcs.Path_in_repo.v))

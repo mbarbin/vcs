@@ -23,7 +23,7 @@ module Make (Runtime : Runtime.S) = struct
   type t = Runtime.t
 
   let init t ~path =
-    let open Result.Monad_syntax in
+    let open Result.Syntax in
     let* () = Runtime.hg t ~cwd:path ~args:[ "init" ] ~f:Vcs.Hg.Result.exit0 in
     Result.return (path |> Vcs.Repo_root.of_absolute_path)
   ;;

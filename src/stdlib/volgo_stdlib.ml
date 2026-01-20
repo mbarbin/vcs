@@ -306,7 +306,7 @@ module Result = struct
 
   include (Result : module type of Result with type ('a, 'b) t := ('a, 'b) t)
 
-  module Monad_syntax = struct
+  module Syntax = struct
     let ( let* ) = Result.bind
   end
 
