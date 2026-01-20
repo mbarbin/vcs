@@ -243,7 +243,7 @@ module Url = struct
            | Bitbucket ->
              (* For bitbucket, since this could be ambiguous, we have to decide
                 between requiring the ".git" suffix, or not being able to parse
-                hg url. The Sunsetting of Mercurial support in Bitbucket
+                hg url. The sunsetting of Mercurial support in Bitbucket
                 happened in 2020. We favor greater compatibility with Git users
                 here. Note the library is still able to produce a url for hg
                 repo, just not parse one. *)
