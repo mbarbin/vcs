@@ -290,8 +290,8 @@ let%expect_test "v" =
   let test str =
     print_s [%sexp (Vcs.Platform_repo.Url.v str : Vcs.Platform_repo.Url.t)]
   in
-  require_does_raise [%here] (fun () -> test "user/my_repo");
-  [%expect {| (Invalid_argument "\"user/my_repo\": invalid url") |}];
+  require_does_raise (fun () -> test "user/my_repo");
+  [%expect {| Invalid_argument("\"user/my_repo\": invalid url") |}];
   test "https://github.com/user/repo.git";
   [%expect
     {|

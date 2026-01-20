@@ -154,17 +154,17 @@ let%expect_test "eio" =
             (error "Expected exit code 0."))
            |}])
     | Raise_failure ->
-      require_does_raise [%here] test;
-      [%expect {| (Failure Raise_failure) |}]
+      require_does_raise test;
+      [%expect {| Failure("Raise_failure") |}]
     | Raise_invalid_argument ->
-      require_does_raise [%here] test;
-      [%expect {| (Invalid_argument Raise_invalid_argument) |}]
+      require_does_raise test;
+      [%expect {| Invalid_argument("Raise_invalid_argument") |}]
     | Raise_custom_exception ->
-      require_does_raise [%here] test;
+      require_does_raise test;
       [%expect
-        {| (Vcs_expect_test.Git_exception_handler.Handler_scenario.Custom_exception) |}]
+        {| Vcs_expect_test.Git_exception_handler.Handler_scenario.Custom_exception |}]
     | Raise_vcs_exception ->
-      require_does_raise [%here] test;
+      require_does_raise test;
       [%expect {| Raise_vcs_exception |}]);
   ()
 ;;
@@ -209,17 +209,17 @@ let%expect_test "blocking" =
             (error "Expected exit code 0."))
            |}])
     | Raise_failure ->
-      require_does_raise [%here] test;
-      [%expect {| (Failure Raise_failure) |}]
+      require_does_raise test;
+      [%expect {| Failure("Raise_failure") |}]
     | Raise_invalid_argument ->
-      require_does_raise [%here] test;
-      [%expect {| (Invalid_argument Raise_invalid_argument) |}]
+      require_does_raise test;
+      [%expect {| Invalid_argument("Raise_invalid_argument") |}]
     | Raise_custom_exception ->
-      require_does_raise [%here] test;
+      require_does_raise test;
       [%expect
-        {| (Vcs_expect_test.Git_exception_handler.Handler_scenario.Custom_exception) |}]
+        {| Vcs_expect_test.Git_exception_handler.Handler_scenario.Custom_exception |}]
     | Raise_vcs_exception ->
-      require_does_raise [%here] test;
+      require_does_raise test;
       [%expect {| Raise_vcs_exception |}]);
   ()
 ;;

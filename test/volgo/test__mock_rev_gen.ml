@@ -52,7 +52,6 @@ let%expect_test "next" =
   let r3_3 = next t3 in
   [%expect {| 37b01b20ef41eafea0aedad8a6dcde1837b01b20 |}];
   require
-    [%here]
     (List.for_all
        [ r1_1, r3_1; r1_2, r3_2; r1_3, r3_3 ]
        ~f:(fun (a, b) -> Vcs.Rev.equal a b));

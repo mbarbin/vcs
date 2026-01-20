@@ -22,7 +22,7 @@
 let%expect_test "zero" =
   print_s [%sexp (Vcs.Num_lines_in_diff.zero : Vcs.Num_lines_in_diff.t)];
   [%expect {| ((insertions 0) (deletions 0)) |}];
-  require [%here] (Vcs.Num_lines_in_diff.is_zero Vcs.Num_lines_in_diff.zero);
+  require (Vcs.Num_lines_in_diff.is_zero Vcs.Num_lines_in_diff.zero);
   [%expect {||}];
   require_equal
     [%here]

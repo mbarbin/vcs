@@ -301,8 +301,8 @@ let%expect_test "hello cli" =
     |}];
   (* However when your handler [f] raises, the function will raise too, and you
      won't get the context in this case. *)
-  require_does_raise [%here] (fun () : string Or_error.t -> abbrev_ref "/bogus");
-  [%expect {| (Failure "Unexpected error code") |}];
+  require_does_raise (fun () : string Or_error.t -> abbrev_ref "/bogus");
+  [%expect {| Failure("Unexpected error code") |}];
   (* If you use a raising handler [f], you probably meant to use [Vcs.git]. *)
   let abbrev_ref ?(repo_root = repo_root) ref_ =
     Vcs.git
