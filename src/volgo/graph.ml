@@ -100,12 +100,12 @@ module T = struct
     type t = Node_kind.t array
 
     let to_dyn t =
-      t
-      |> Array.mapi ~f:(fun node node_kind ->
-        Dyn.Tuple [ Node.to_dyn node; Node_kind.to_dyn node_kind ])
-      |> Array.rev
-      |> Array.to_list
-      |> Dyn.list Fun.id
+      Dyn.List
+        (t
+         |> Array.mapi ~f:(fun node node_kind ->
+           Dyn.Tuple [ Node.to_dyn node; Node_kind.to_dyn node_kind ])
+         |> Array.rev
+         |> Array.to_list)
     ;;
   end
 
@@ -115,11 +115,10 @@ module T = struct
     let to_dyn (t : t) =
       let revs = Rev_table.to_seq t |> Array.of_seq in
       Array.sort revs ~compare:(fun (_, n1) (_, n2) -> Int.compare n2 n1);
-      revs
-      |> Array.map ~f:(fun (rev, index) ->
-        Dyn.Tuple [ Node.to_dyn index; Rev.to_dyn rev ])
-      |> Array.to_list
-      |> Dyn.list Fun.id
+      Dyn.List
+        (revs
+         |> Array.to_list_mapi ~f:(fun _ (rev, index) ->
+           Dyn.Tuple [ Node.to_dyn index; Rev.to_dyn rev ]))
     ;;
   end
 
@@ -133,11 +132,10 @@ module T = struct
         |> Array.map ~f:(fun (n, refs) -> n, List.sort refs ~compare:Ref_kind.compare)
       in
       Array.sort revs ~compare:(fun (n1, _) (n2, _) -> Int.compare n2 n1);
-      revs
-      |> Array.map ~f:(fun (node, ref_kinds) ->
-        Dyn.Tuple [ Node.to_dyn node; Dyn.list Ref_kind.to_dyn ref_kinds ])
-      |> Array.to_list
-      |> Dyn.list Fun.id
+      Dyn.List
+        (revs
+         |> Array.to_list_mapi ~f:(fun _ (node, ref_kinds) ->
+           Dyn.Tuple [ Node.to_dyn node; Dyn.list Ref_kind.to_dyn ref_kinds ]))
     ;;
   end
 

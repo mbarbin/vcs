@@ -139,6 +139,18 @@ module Array = struct
   ;;
 
   let sort t ~compare = sort t ~cmp:compare
+
+  let[@tail_mod_cons] rec to_list_mapi_aux t ~f ~index ~len =
+    if index >= len
+    then []
+    else (
+      let elt = Array.unsafe_get t index in
+      (* Coverage is off in the second part of the expression because the
+         instrumentation breaks [@tail_mod_cons], triggering warning 71. *)
+      f index elt :: (to_list_mapi_aux t ~f ~index:(index + 1) ~len [@coverage off]))
+  ;;
+
+  let to_list_mapi t ~f = to_list_mapi_aux t ~f ~index:0 ~len:(Array.length t)
 end
 
 module Bool = struct

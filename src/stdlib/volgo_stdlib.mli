@@ -67,6 +67,7 @@ end
 module Array : sig
   include module type of ArrayLabels
 
+  val to_list_mapi : 'a t -> f:(int -> 'a -> 'b) -> 'b list
   val sexp_of_t : ('a -> Sexp.t) -> 'a t -> Sexp.t
   val create : len:int -> 'a -> 'a array
   val filter_mapi : 'a array -> f:(int -> 'a -> 'b option) -> 'b array
