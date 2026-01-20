@@ -22,7 +22,6 @@
   -open
   Volgo_stdlib)
  (libraries
-  astring
   fpath
   fpath-sexp0
   pp

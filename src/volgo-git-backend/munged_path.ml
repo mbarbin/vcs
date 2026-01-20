@@ -36,39 +36,34 @@ include T
 let parse_exn str =
   match
     Vcs.Private.try_with (fun () ->
-      match Astring.String.cuts ~empty:false ~sep:" => " str with
-      | [] -> raise (Err.E (Err.create [ Pp.text "Unexpected empty path." ]))
-      | [ str ] ->
-        if
-          String.exists str ~f:(function
-            | '{' | '}' -> true
-            | _ -> false)
-        then
-          (* Files with these characters are actually useful, such as in some
-             templating systems. *)
-          One_file (Vcs.Path_in_repo.v str)
-        else One_file (Vcs.Path_in_repo.v str)
-      | [ left; right ] ->
+      match Arrow_split.split str with
+      | Empty -> raise_notrace (Err.E (Err.create [ Pp.text "Unexpected empty path." ]))
+      | More_than_two -> raise_notrace (Err.E (Err.create [ Pp.text "Too many ['=>']." ]))
+      | One str ->
+        (* Files may contain '{' or '}' characters (e.g., in some templating
+           systems). We simply accept them as-is. *)
+        One_file (Vcs.Path_in_repo.v str)
+      | Two (left, right) ->
         (match String.lsplit2 left ~on:'{' with
          | None ->
            if
              String.exists str ~f:(function
                | '}' -> true
                | _ -> false)
-           then raise (Err.E (Err.create [ Pp.text "Matching '{' not found." ]))
+           then raise_notrace (Err.E (Err.create [ Pp.text "Matching '{' not found." ]))
            else
              Two_files { src = Vcs.Path_in_repo.v left; dst = Vcs.Path_in_repo.v right }
          | Some (prefix, left_of_arrow) ->
            let right_of_arrow, suffix =
              match String.rsplit2 right ~on:'}' with
              | Some split -> split
-             | None -> raise (Err.E (Err.create [ Pp.text "Matching '}' not found." ]))
+             | None ->
+               raise_notrace (Err.E (Err.create [ Pp.text "Matching '}' not found." ]))
            in
            Two_files
              { src = Vcs.Path_in_repo.v (prefix ^ left_of_arrow ^ suffix)
              ; dst = Vcs.Path_in_repo.v (prefix ^ right_of_arrow ^ suffix)
-             })
-      | _ :: _ :: _ -> raise (Err.E (Err.create [ Pp.text "Too many ['=>']." ])))
+             }))
   with
   | Ok t -> t
   | Error err ->

@@ -125,8 +125,6 @@
  (depends
   (ocaml
    (>= 4.14))
-  (astring
-   (>= 0.8.5))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
