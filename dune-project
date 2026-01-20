@@ -320,8 +320,6 @@
    (>= 0.7.3))
   (fpath-sexp0
    (>= 0.4.0))
-  (fpath-sexp0
-   (>= 0.4.0))
   (pp
    (>= 2.0.0))
   (pplumbing-err
