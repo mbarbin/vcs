@@ -346,8 +346,6 @@
    (>= 1.8.0))
   (spawn
    (>= v0.17))
-  (stdio
-   (>= v0.17))
   (vcs-test-helpers
    (= :version))
   (volgo
