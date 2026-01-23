@@ -655,18 +655,24 @@ let%expect_test "gca - regression" =
    of nodes that are ancestors of a given node. *)
 
 let ancestors graph node =
-  let rec loop acc to_visit =
+  let visited = Bitv.create (Vcs.Graph.node_count graph) false in
+  let rec loop to_visit =
     match to_visit with
-    | [] -> acc
+    | [] -> ()
     | node :: to_visit ->
-      if Set.mem acc node
-      then loop acc to_visit
-      else
-        loop
-          (Set.add acc node)
-          (Vcs.Graph.prepend_parents graph ~node ~prepend_to:to_visit)
+      let node_index = Vcs.Graph.node_index node in
+      if Bitv.get visited node_index
+      then loop to_visit
+      else (
+        Bitv.set visited node_index true;
+        loop (Vcs.Graph.prepend_parents graph ~node ~prepend_to:to_visit))
   in
-  loop (Set.empty (module Volgo_base.Vcs.Graph.Node)) [ node ]
+  loop [ node ];
+  Bitv.foldi_right
+    (fun i visited set ->
+       if visited then Vcs.Graph.get_node_exn graph ~index:i :: set else set)
+    visited
+    []
 ;;
 
 let%expect_test "debug graph" =
@@ -755,8 +761,7 @@ let%expect_test "debug graph" =
     {| Commit { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" } |}];
   (* ancestors *)
   let print_ancestors rev =
-    print_dyn
-      (ancestors graph (Mock.node t ~rev) |> Set.to_list |> Dyn.list Vcs.Graph.Node.to_dyn)
+    print_dyn (ancestors graph (Mock.node t ~rev) |> Dyn.list Vcs.Graph.Node.to_dyn)
   in
   print_ancestors r0;
   [%expect {| [ "#0" ] |}];

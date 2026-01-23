@@ -14,8 +14,6 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Fpath_sexp0
   -open
   Pplumbing_err
@@ -24,7 +22,6 @@
   -open
   Volgo_stdlib)
  (libraries
-  base
   bitv
   eio
   eio_main
@@ -33,7 +30,6 @@
   pp
   pplumbing-err
   volgo
-  volgo_base
   volgo_git_backend
   volgo_stdlib)
  (instrumentation

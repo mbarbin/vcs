@@ -40,7 +40,7 @@ let%expect_test "num stat without lines" =
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   let rev1 = commit_file ~path:hello_file ~file_contents:"Hello World!\n" in
   let () =
-    match Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev:rev1 ~path:hello_file with
+    match Vcs.Result.show_file_at_rev vcs ~repo_root ~rev:rev1 ~path:hello_file with
     | Error _ | Ok `Absent -> assert false
     | Ok (`Present file_contents) -> print_dyn (file_contents |> Vcs.File_contents.to_dyn)
   in

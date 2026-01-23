@@ -19,6 +19,8 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
+module Path_set = Set.Make (Vcs.Path_in_repo)
+
 let%expect_test "parse_exn" =
   Eio_main.run
   @@ fun env ->
@@ -26,16 +28,12 @@ let%expect_test "parse_exn" =
   let contents = Eio.Path.load path in
   let lines = String.split_lines contents in
   let name_status = Volgo_git_backend.Name_status.parse_lines_exn ~lines in
-  let files_at_src =
-    Vcs.Name_status.files_at_src name_status
-    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
-  in
-  let files_at_dst =
-    Vcs.Name_status.files_at_dst name_status
-    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
-  in
+  let files_at_src = Vcs.Name_status.files_at_src name_status |> Path_set.of_list in
+  let files_at_dst = Vcs.Name_status.files_at_dst name_status |> Path_set.of_list in
   print_dyn
-    (Set.diff files_at_dst files_at_src |> Set.to_list |> Dyn.list Vcs.Path_in_repo.to_dyn);
+    (Path_set.diff files_at_dst files_at_src
+     |> Path_set.to_list
+     |> Dyn.list Vcs.Path_in_repo.to_dyn);
   [%expect
     {|
     [ "CHANGES.md"
@@ -88,11 +86,8 @@ let%expect_test "files" =
     ; "removed_file"
     ]
     |}];
-  let files_at_src =
-    Vcs.Name_status.files_at_src name_status
-    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
-  in
-  print_dyn (files_at_src |> Set.to_list |> Dyn.list Vcs.Path_in_repo.to_dyn);
+  let files_at_src = Vcs.Name_status.files_at_src name_status |> Path_set.of_list in
+  print_dyn (files_at_src |> Path_set.to_list |> Dyn.list Vcs.Path_in_repo.to_dyn);
   [%expect
     {|
     [ "modified_file"
@@ -101,17 +96,18 @@ let%expect_test "files" =
     ; "removed_file"
     ]
     |}];
-  let files_at_dst =
-    Vcs.Name_status.files_at_dst name_status
-    |> Set.of_list (module Volgo_base.Vcs.Path_in_repo)
-  in
-  print_dyn (files_at_dst |> Set.to_list |> Dyn.list Vcs.Path_in_repo.to_dyn);
+  let files_at_dst = Vcs.Name_status.files_at_dst name_status |> Path_set.of_list in
+  print_dyn (files_at_dst |> Path_set.to_list |> Dyn.list Vcs.Path_in_repo.to_dyn);
   [%expect {| [ "added_file"; "modified_file"; "new_copied_file"; "new_renamed_file" ] |}];
   print_dyn
-    (Set.diff files_at_dst files_at_src |> Set.to_list |> Dyn.list Vcs.Path_in_repo.to_dyn);
+    (Path_set.diff files_at_dst files_at_src
+     |> Path_set.to_list
+     |> Dyn.list Vcs.Path_in_repo.to_dyn);
   [%expect {| [ "added_file"; "new_copied_file"; "new_renamed_file" ] |}];
   print_dyn
-    (Set.diff files_at_src files_at_dst |> Set.to_list |> Dyn.list Vcs.Path_in_repo.to_dyn);
+    (Path_set.diff files_at_src files_at_dst
+     |> Path_set.to_list
+     |> Dyn.list Vcs.Path_in_repo.to_dyn);
   [%expect {| [ "original_copied_file"; "original_renamed_file"; "removed_file" ] |}];
   ()
 ;;

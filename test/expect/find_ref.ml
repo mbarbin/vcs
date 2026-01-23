@@ -32,6 +32,12 @@ let commit_file vcs ~repo_root ~path ~file_contents ~commit_message =
   Vcs.commit vcs ~repo_root ~commit_message
 ;;
 
+let find_ref ~refs ~ref_kind:arg =
+  List.find_map
+    (refs : Vcs.Refs.t)
+    ~f:(fun { rev; ref_kind } -> Option.some_if (Vcs.Ref_kind.equal ref_kind arg) rev)
+;;
+
 let%expect_test "find ref" =
   Eio_main.run
   @@ fun env ->
@@ -100,7 +106,7 @@ let%expect_test "find ref" =
      Is it the tag, or the branch? *)
   create_tag "branch1" branch2_head;
   (* We show first how to do reference lookup using [Vcs.refs]. *)
-  let refs = Vcs.refs vcs ~repo_root |> Vcs.Refs.to_map in
+  let refs = Vcs.refs vcs ~repo_root in
   let lookup ~(find_exn : Vcs.Ref_kind.t -> Vcs.Rev.t) =
     Dyn.record
       [ ( "branch1"
@@ -114,8 +120,8 @@ let%expect_test "find ref" =
       ]
   in
   let dyn1 =
-    let find_exn arg =
-      let rev = Map.find_exn refs arg in
+    let find_exn ref_kind =
+      let rev = find_ref ~refs ~ref_kind |> Option.get in
       Vcs.Mock_revs.to_mock mock_revs ~rev
     in
     lookup ~find_exn
@@ -167,9 +173,12 @@ let%expect_test "find ref" =
   in
   [%expect {| warning: refname 'branch1' is ambiguous. |}];
   let branch1_rev =
-    Map.find_exn refs (Local_branch { branch_name = Vcs.Branch_name.v "branch1" })
+    find_ref ~refs ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "branch1" })
+    |> Option.get
   in
-  let tag_rev = Map.find_exn refs (Tag { tag_name = Vcs.Tag_name.v "branch1" }) in
+  let tag_rev =
+    find_ref ~refs ~ref_kind:(Tag { tag_name = Vcs.Tag_name.v "branch1" }) |> Option.get
+  in
   require
     (List.exists [ branch1_rev; tag_rev ] ~f:(fun rev -> Vcs.Rev.equal ambiguous_rev rev));
   ()

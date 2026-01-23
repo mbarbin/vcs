@@ -33,7 +33,7 @@ let%expect_test "bw_and_in_place" =
   print_dyn (v1 |> Bitv.to_dyn);
   [%expect {| "0000000000" |}];
   for i = 0 to Bitv.length v1 - 1 do
-    if i % 2 = 0 then Bitv.set v1 i true
+    if i mod 2 = 0 then Bitv.set v1 i true
   done;
   Bitv.bw_and_in_place ~dst:v0 v0 v1;
   print_dyn (v0 |> Bitv.to_dyn);
@@ -42,7 +42,7 @@ let%expect_test "bw_and_in_place" =
   [%expect {| "1010101010" |}];
   Bitv.fill v1 0 (Bitv.length v1) false;
   for i = 0 to Bitv.length v1 - 1 do
-    if i % 3 = 0 then Bitv.set v1 i true
+    if i mod 3 = 0 then Bitv.set v1 i true
   done;
   Bitv.bw_and_in_place ~dst:v0 v0 v1;
   print_dyn (v0 |> Bitv.to_dyn);

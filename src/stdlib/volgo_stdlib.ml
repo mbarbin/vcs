@@ -288,6 +288,7 @@ module List = struct
 
   let filter_opt t = filter_map t ~f:Fun.id
   let find t ~f = find_opt t ~f
+  let find_map t ~f = find_map ~f t
   let fold t ~init ~f = fold_left ~f ~init t
   let iter t ~f = iter t ~f
   let sort t ~compare = sort t ~cmp:compare

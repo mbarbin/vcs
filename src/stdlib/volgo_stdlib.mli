@@ -137,6 +137,7 @@ module List : sig
   val dedup_and_sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
   val filter_opt : 'a option list -> 'a list
   val find : 'a list -> f:('a -> bool) -> 'a option
+  val find_map : 'a list -> f:('a -> 'b option) -> 'b option
   val fold : 'a list -> init:'b -> f:('b -> 'a -> 'b) -> 'b
   val hd : 'a list -> 'a option
   val iter : 'a list -> f:('a -> unit) -> unit
