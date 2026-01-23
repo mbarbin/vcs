@@ -47,9 +47,9 @@ let%expect_test "hello error" =
     |}];
   (* Let's do the same with the non-raising interfaces. *)
   let () =
-    match Vcs.Or_error.init vcs ~path:invalid_path with
+    match Vcs.Result.init vcs ~path:invalid_path with
     | Ok _ -> assert false
-    | Error err -> print_s (redact_sexp (err |> Error.sexp_of_t))
+    | Error err -> print_s (redact_sexp (err |> Err.sexp_of_t))
   in
   [%expect
     {|

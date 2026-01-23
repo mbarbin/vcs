@@ -9,17 +9,14 @@
   -warn-error
   +a
   -open
-  Base
-  -open
   Fpath_sexp0
   -open
   Pplumbing_err
   -open
-  Volgo_base
+  Volgo
   -open
   Volgo_stdlib)
  (libraries
-  base
   eio
   eio_main
   fpath
@@ -28,7 +25,7 @@
   pplumbing-err
   unix
   vcs_test_helpers
-  volgo_base
+  volgo
   volgo_git_eio
   volgo_git_unix
   volgo_stdlib)
