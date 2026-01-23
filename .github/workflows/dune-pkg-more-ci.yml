@@ -50,7 +50,7 @@ jobs:
           if [ "${{ matrix.ocaml-version }}" = "4.14" ]; then
             echo "PACKAGES=volgo,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-hg-backend,volgo-hg-unix" >> "$GITHUB_ENV"
           else
-            echo "PACKAGES=volgo,volgo-base,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-git-eio,volgo-hg-backend,volgo-hg-unix,volgo-hg-eio,vcs-test-helpers,volgo-tests" >> "$GITHUB_ENV"
+            echo "PACKAGES=volgo,volgo-base,volgo-base-tests,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-git-eio,volgo-hg-backend,volgo-hg-unix,volgo-hg-eio,vcs-test-helpers,volgo-tests" >> "$GITHUB_ENV"
           fi
 
       - name: Setup Dune

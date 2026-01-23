@@ -26,7 +26,7 @@ let%expect_test "reraise_with_context" =
       match raise (Err.E err) with
       | _ -> assert false
       | exception Err.E err ->
-        let bt = Stdlib.Printexc.get_raw_backtrace () in
+        let bt = Printexc.get_raw_backtrace () in
         (Err.reraise_with_context err bt [ Pp.verbatim "Step" ] [@coverage off])
     with
     | _ -> assert false

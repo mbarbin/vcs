@@ -58,15 +58,11 @@ let%expect_test "small graph" =
   let mock_revs = Vcs.Mock_revs.create () in
   let repo_root = Vcs_test_helpers.init_temp_repo ~env ~sw ~vcs in
   let () =
-    match
-      Vcs.Or_error.add vcs ~repo_root ~path:(Vcs.Path_in_repo.v "unknown-file.txt")
-    with
+    match Vcs.Result.add vcs ~repo_root ~path:(Vcs.Path_in_repo.v "unknown-file.txt") with
     | Ok () -> assert false
     | Error e ->
       print_s
-        (Vcs_test_helpers.redact_sexp
-           (e |> Error.sexp_of_t)
-           ~fields:[ "cwd"; "repo_root" ])
+        (Vcs_test_helpers.redact_sexp (e |> Err.sexp_of_t) ~fields:[ "cwd"; "repo_root" ])
   in
   [%expect
     {|
@@ -78,7 +74,7 @@ let%expect_test "small graph" =
     |}];
   let () =
     match
-      Vcs.Or_error.commit
+      Vcs.Result.commit
         vcs
         ~repo_root
         ~commit_message:(Vcs.Commit_message.v "Nothing to commit")
@@ -87,7 +83,7 @@ let%expect_test "small graph" =
     | Error e ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           (e |> Error.sexp_of_t)
+           (e |> Err.sexp_of_t)
            ~fields:[ "cwd"; "repo_root"; "stdout" ])
   in
   [%expect
@@ -97,19 +93,19 @@ let%expect_test "small graph" =
        (cwd <REDACTED>) (stdout <REDACTED>) (stderr "")))
      (error "Expected exit code 0."))
     |}];
-  let ( let* ) x f = Or_error.bind x ~f in
+  let open Result.Syntax in
   let commit_file ~path ~file_contents =
     let result =
       let* () =
-        Vcs.Or_error.save_file
+        Vcs.Result.save_file
           vcs
           ~path:(Vcs.Repo_root.append repo_root path)
           ~file_contents:(Vcs.File_contents.create file_contents)
       in
-      let* () = Vcs.Or_error.add vcs ~repo_root ~path in
-      Vcs.Or_error.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "_")
+      let* () = Vcs.Result.add vcs ~repo_root ~path in
+      Vcs.Result.commit vcs ~repo_root ~commit_message:(Vcs.Commit_message.v "_")
     in
-    Or_error.ok_exn result
+    Result.get_ok result
   in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in
   let rev = commit_file ~path:hello_file ~file_contents:"Hello World!" in
@@ -118,30 +114,30 @@ let%expect_test "small graph" =
   [%expect {| "1185512b92d612b25613f2e5b473e5231185512b" |}];
   let result =
     let* () =
-      Vcs.Or_error.rename_current_branch vcs ~repo_root ~to_:(Vcs.Branch_name.v "branch")
+      Vcs.Result.rename_current_branch vcs ~repo_root ~to_:(Vcs.Branch_name.v "branch")
     in
-    Vcs.Or_error.current_branch vcs ~repo_root
+    Vcs.Result.current_branch vcs ~repo_root
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.Branch_name.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.Branch_name.sexp_of_t);
   [%expect {| (Ok branch) |}];
   Vcs.rename_current_branch vcs ~repo_root ~to_:Vcs.Branch_name.main;
   let result =
-    let* rev = Vcs.Or_error.current_revision vcs ~repo_root in
+    let* rev = Vcs.Result.current_revision vcs ~repo_root in
     Ok (Vcs.Mock_revs.to_mock mock_revs ~rev)
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.Rev.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.Rev.sexp_of_t);
   [%expect {| (Ok 1185512b92d612b25613f2e5b473e5231185512b) |}];
-  let result = Vcs.Or_error.current_branch vcs ~repo_root in
-  print_s (result |> Or_error.sexp_of_t Vcs.Branch_name.sexp_of_t);
+  let result = Vcs.Result.current_branch vcs ~repo_root in
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.Branch_name.sexp_of_t);
   [%expect {| (Ok main) |}];
   let show_file_at_rev ~rev ~path =
-    Vcs.Or_error.show_file_at_rev vcs ~repo_root ~rev ~path
+    Vcs.Result.show_file_at_rev vcs ~repo_root ~rev ~path
   in
   let result = show_file_at_rev ~rev ~path:hello_file in
-  print_s (result |> Or_error.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok (Present "Hello World!")) |}];
   let result = show_file_at_rev ~rev ~path:(Vcs.Path_in_repo.v "absent-file.txt") in
-  print_s (result |> Or_error.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok Absent) |}];
   let result =
     (* We've characterized here that Git does not distinguish between a file
@@ -150,24 +146,24 @@ let%expect_test "small graph" =
       ~rev:(Vcs.Mock_revs.next mock_revs)
       ~path:(Vcs.Path_in_repo.v "absent-file.txt")
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.File_shown_at_rev.sexp_of_t);
   [%expect {| (Ok Absent) |}];
   let result =
-    Vcs.Or_error.load_file vcs ~path:(Vcs.Repo_root.append repo_root hello_file)
+    Vcs.Result.load_file vcs ~path:(Vcs.Repo_root.append repo_root hello_file)
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.File_contents.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.File_contents.sexp_of_t);
   [%expect {| (Ok "Hello World!") |}];
-  let result = Vcs.Or_error.ls_files vcs ~repo_root ~below:Vcs.Path_in_repo.root in
-  print_s (result |> Or_error.sexp_of_t (List.sexp_of_t Vcs.Path_in_repo.sexp_of_t));
+  let result = Vcs.Result.ls_files vcs ~repo_root ~below:Vcs.Path_in_repo.root in
+  print_s (result |> Vcs.Result.sexp_of_t (List.sexp_of_t Vcs.Path_in_repo.sexp_of_t));
   [%expect {| (Ok (hello.txt)) |}];
   let () =
     (* Below must be an existing directory or [ls_files] returns an error. *)
-    match Vcs.Or_error.ls_files vcs ~repo_root ~below:(Vcs.Path_in_repo.v "dir") with
+    match Vcs.Result.ls_files vcs ~repo_root ~below:(Vcs.Path_in_repo.v "dir") with
     | Ok _ -> assert false
     | Error e ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           (e |> Error.sexp_of_t)
+           (e |> Err.sexp_of_t)
            ~fields:[ "cwd"; "error"; "repo_root" ])
   in
   [%expect
@@ -183,19 +179,19 @@ let%expect_test "small graph" =
   let rev3 = commit_file ~path:bar_file ~file_contents:"Hello Bar!" in
   let rev4 = commit_file ~path:bar_file ~file_contents:"Hello Again Bar!" in
   let result =
-    Vcs.Or_error.name_status vcs ~repo_root ~changed:(Between { src = rev2; dst = rev3 })
+    Vcs.Result.name_status vcs ~repo_root ~changed:(Between { src = rev2; dst = rev3 })
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.Name_status.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.Name_status.sexp_of_t);
   [%expect {| (Ok ((Added bar.txt))) |}];
   let result =
-    Vcs.Or_error.name_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
+    Vcs.Result.name_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.Name_status.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.Name_status.sexp_of_t);
   [%expect {| (Ok ((Modified bar.txt))) |}];
   let result =
-    Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src = rev2; dst = rev3 })
+    Vcs.Result.num_status vcs ~repo_root ~changed:(Between { src = rev2; dst = rev3 })
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.Num_status.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.Num_status.sexp_of_t);
   [%expect
     {|
     (Ok
@@ -203,9 +199,9 @@ let%expect_test "small graph" =
        (num_stat (Num_lines_in_diff (insertions 1) (deletions 0))))))
     |}];
   let result =
-    Vcs.Or_error.num_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
+    Vcs.Result.num_status vcs ~repo_root ~changed:(Between { src = rev3; dst = rev4 })
   in
-  print_s (result |> Or_error.sexp_of_t Vcs.Num_status.sexp_of_t);
+  print_s (result |> Vcs.Result.sexp_of_t Vcs.Num_status.sexp_of_t);
   [%expect
     {|
     (Ok
@@ -213,13 +209,12 @@ let%expect_test "small graph" =
        (num_stat (Num_lines_in_diff (insertions 1) (deletions 1))))))
     |}];
   let () =
-    match Vcs.Or_error.log vcs ~repo_root with
-    | Error _ -> assert false
-    | Ok log ->
-      (* We traverse the log in reverse order first to assign revisions bottom
-         up (this makes it more readable). *)
-      ignore (map_sexp (List.rev log |> Vcs.Log.sexp_of_t) : Sexp.t);
-      print_s (map_sexp (log |> Vcs.Log.sexp_of_t))
+    (* Non-raising [log]. *)
+    let log = Vcs.Result.log vcs ~repo_root |> Result.get_ok in
+    (* We traverse the log in reverse order first to assign revisions bottom up
+       (this makes it more readable). *)
+    ignore (map_sexp (List.rev log |> Vcs.Log.sexp_of_t) : Sexp.t);
+    print_s (map_sexp (log |> Vcs.Log.sexp_of_t))
   in
   [%expect
     {|
@@ -227,15 +222,15 @@ let%expect_test "small graph" =
      (Commit (rev rev1) (parent rev0)) (Root (rev rev0)))
     |}];
   let () =
-    match Vcs.Or_error.refs vcs ~repo_root with
-    | Error _ -> assert false
-    | Ok refs -> print_s (map_sexp (refs |> Vcs.Refs.sexp_of_t))
+    (* Non-raising [refs]. *)
+    let refs = Vcs.Result.refs vcs ~repo_root |> Result.get_ok in
+    print_s (map_sexp (refs |> Vcs.Refs.sexp_of_t))
   in
   [%expect {| (((rev rev3) (ref_kind (Local_branch (branch_name main))))) |}];
   let () =
-    match Vcs.Or_error.graph vcs ~repo_root with
-    | Error _ -> assert false
-    | Ok graph -> print_s (map_sexp (graph |> Vcs.Graph.sexp_of_t))
+    (* Non-raising [graph]. *)
+    let graph = Vcs.Result.graph vcs ~repo_root |> Result.get_ok in
+    print_s (map_sexp (graph |> Vcs.Graph.sexp_of_t))
   in
   [%expect
     {|

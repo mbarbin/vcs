@@ -13,6 +13,19 @@
 (rule
  (cond
   ((path
+    (glob test/volgo-base/**))
+   (enforce
+    (dune
+     (library
+      (and
+       (not
+        (has_field public_name))
+       (has_field inline_tests)
+       (package
+        (equals volgo-base-tests))
+       (name
+        (equals volgo_base_test)))))))
+  ((path
     (or
      (glob test/**)
      (glob example/**)))

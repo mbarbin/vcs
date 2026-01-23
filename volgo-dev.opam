@@ -21,6 +21,7 @@ depends: [
   "vcs-test-helpers" {= version}
   "volgo" {= version}
   "volgo-base" {= version}
+  "volgo-base-tests" {= version}
   "volgo-git-backend" {= version}
   "volgo-git-eio" {= version}
   "volgo-git-unix" {= version}

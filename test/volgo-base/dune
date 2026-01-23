@@ -1,6 +1,6 @@
 (library
  (name volgo_base_test)
- (package volgo-tests)
+ (package volgo-base-tests)
  (inline_tests
   (deps
    (glob_files *.name-status)

@@ -231,12 +231,14 @@ let%expect_test "parse_lines_exn" =
   in
   List.iter lines ~f:(fun line ->
     let result =
-      Or_error.try_with (fun () -> Volgo_git_backend.Name_status.parse_line_exn ~line)
+      match Volgo_git_backend.Name_status.parse_line_exn ~line with
+      | ok -> Ok ok
+      | exception Err.E err -> Error (Err.sexp_of_t err)
     in
     print_s
       (Sexp.List
          [ String.sexp_of_t line
-         ; result |> Or_error.sexp_of_t Vcs.Name_status.Change.sexp_of_t
+         ; result |> Result.sexp_of_t Vcs.Name_status.Change.sexp_of_t Fun.id
          ]));
   [%expect
     {|

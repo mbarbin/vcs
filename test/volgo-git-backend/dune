@@ -14,12 +14,12 @@
   -warn-error
   +a
   -open
-  Base
+  Pplumbing_err
   -open
   Volgo
   -open
   Volgo_stdlib)
- (libraries base eio eio_main volgo volgo_git_backend volgo_stdlib)
+ (libraries eio eio_main pplumbing-err volgo volgo_git_backend volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint

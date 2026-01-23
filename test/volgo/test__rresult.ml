@@ -29,7 +29,7 @@ let%expect_test "sexp_of_t" =
 ;;
 
 let%expect_test "pp_error" =
-  Vcs.Rresult.pp_error Stdlib.Format.std_formatter (`Vcs (Err.create [ Pp.text "Hello" ]));
+  Vcs.Rresult.pp_error Format.std_formatter (`Vcs (Err.create [ Pp.text "Hello" ]));
   [%expect {| Hello |}];
   ()
 ;;

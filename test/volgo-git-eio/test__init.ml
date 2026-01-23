@@ -25,7 +25,7 @@ let%expect_test "init" =
   Eio.Switch.run
   @@ fun sw ->
   let vcs = Volgo_git_eio.create ~env in
-  let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
+  let path = Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
   let repo_root =
     Eio.Switch.on_release sw (fun () ->
       Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));

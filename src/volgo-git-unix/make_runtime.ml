@@ -140,7 +140,7 @@ exception Uncaught_user_exn of exn * Printexc.raw_backtrace
 
 let create ~executable_basename =
   let executable =
-    match Stdlib.Sys.getenv_opt "PATH" with
+    match Sys.getenv_opt "PATH" with
     | None -> None [@coverage off]
     | Some path ->
       (match find_executable ~path ~executable_basename with

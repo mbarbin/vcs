@@ -63,7 +63,7 @@ let%expect_test "read_dir" =
   let vcs = Volgo_git_unix.create () in
   let read_dir dir = print_dyn (Vcs.read_dir vcs ~dir |> Dyn.list Fsegment.to_dyn) in
   let cwd = Unix.getcwd () in
-  let dir = Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
+  let dir = Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v in
   let save_file file file_contents =
     Vcs.save_file
       vcs

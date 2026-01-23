@@ -56,7 +56,7 @@ let%expect_test "files with curly-braces" =
       ~f:(fun dir ->
         let dir = Absolute_path.append (Vcs.Repo_root.to_absolute_path repo_root) dir in
         let dir = Absolute_path.to_string dir in
-        if not (Stdlib.Sys.file_exists dir) then Unix.mkdir dir ~perm:0o755);
+        if not (Sys.file_exists dir) then Unix.mkdir dir ~perm:0o755);
     Vcs.save_file
       vcs
       ~path:(Vcs.Repo_root.append repo_root path)

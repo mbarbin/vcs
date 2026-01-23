@@ -66,8 +66,8 @@ jobs:
             echo "PACKAGES=volgo,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-hg-backend,volgo-hg-unix" >> "$GITHUB_ENV"
             echo "OPAM_PACKAGES=./volgo.opam ./volgo-vcs.opam ./volgo-git-backend.opam ./volgo-git-unix.opam ./volgo-hg-backend.opam ./volgo-hg-unix.opam" >> "$GITHUB_ENV"
           else
-            echo "PACKAGES=volgo,volgo-base,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-git-eio,volgo-hg-backend,volgo-hg-unix,volgo-hg-eio,vcs-test-helpers,volgo-tests" >> "$GITHUB_ENV"
-            echo "OPAM_PACKAGES=./volgo.opam ./volgo-base.opam ./volgo-vcs.opam ./volgo-git-backend.opam ./volgo-git-unix.opam ./volgo-git-eio.opam ./volgo-hg-backend.opam ./volgo-hg-unix.opam ./volgo-hg-eio.opam ./vcs-test-helpers.opam ./volgo-tests.opam" >> "$GITHUB_ENV"
+            echo "PACKAGES=volgo,volgo-base,volgo-base-tests,volgo-vcs,volgo-git-backend,volgo-git-unix,volgo-git-eio,volgo-hg-backend,volgo-hg-unix,volgo-hg-eio,vcs-test-helpers,volgo-tests" >> "$GITHUB_ENV"
+            echo "OPAM_PACKAGES=./volgo.opam ./volgo-base.opam ./volgo-base-tests.opam ./volgo-vcs.opam ./volgo-git-backend.opam ./volgo-git-unix.opam ./volgo-git-eio.opam ./volgo-hg-backend.opam ./volgo-hg-unix.opam ./volgo-hg-eio.opam ./vcs-test-helpers.opam ./volgo-tests.opam" >> "$GITHUB_ENV"
           fi
 
       # We build and run tests for a subset of packages. More tests are run in

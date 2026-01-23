@@ -48,7 +48,7 @@ end
 let%expect_test "hello path" =
   let cwd = Unix.getcwd () |> Absolute_path.v in
   let dir =
-    Stdlib.Filename.temp_dir ~temp_dir:(cwd |> Absolute_path.to_string) "vcs_test" ""
+    Filename.temp_dir ~temp_dir:(cwd |> Absolute_path.to_string) "vcs_test" ""
     |> Absolute_path.v
   in
   let vcs = Volgo_git_unix.create () in
@@ -186,7 +186,7 @@ let%expect_test "hello path" =
      (error "Expected exit code 0."))
     |}];
   (* The initial PATH under which the [vcs] is created is used to pre locate the executable. *)
-  let save_path = Stdlib.Sys.getenv_opt "PATH" in
+  let save_path = Sys.getenv_opt "PATH" in
   Unix.putenv "PATH" (Absolute_path.to_string bin);
   let vcs = Volgo_git_unix.create () in
   test_with_env ~vcs ~env:None ~redact_fields:[ "cwd"; "env"; "prog"; "repo_root" ];

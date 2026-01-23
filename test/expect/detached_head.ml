@@ -72,6 +72,7 @@ let%expect_test "detached-head" =
      (error "Not currently on any branch."))
     |}];
   let current_branch_opt =
+    (* Non-raising [current_branch_opt]. *)
     Vcs.Result.current_branch_opt vcs ~repo_root |> Result.get_ok
   in
   print_dyn (current_branch_opt |> Dyn.option Vcs.Branch_name.to_dyn);

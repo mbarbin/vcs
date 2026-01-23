@@ -66,13 +66,13 @@ let%expect_test "hello cli" =
   (* Let's show also how to use the git cli in a case where we'd like to parse
      its output, and how to do this with the non-raising API of Vcs. *)
   let head_rev =
-    Vcs.Or_error.git vcs ~repo_root ~args:[ "rev-parse"; "HEAD" ] ~f:(fun output ->
-      let ( let* ) x f = Or_error.bind x ~f in
-      let* stdout = Vcs.Git.Or_error.exit0_and_stdout output in
+    Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "HEAD" ] ~f:(fun output ->
+      let open Result.Syntax in
+      let* stdout = Vcs.Git.Result.exit0_and_stdout output in
       match Vcs.Rev.of_string (String.strip stdout) with
       | Ok _ as ok -> ok
       | Error (`Msg _) -> assert false)
-    |> Or_error.ok_exn
+    |> Result.get_ok
   in
   require_equal (module Vcs.Rev) rev head_rev;
   [%expect {||}];
@@ -121,20 +121,16 @@ let%expect_test "hello cli" =
     |}];
   let () =
     match
-      Vcs.Or_error.git
-        vcs
-        ~repo_root
-        ~args:[ "rev-parse"; "INVALID-REF" ]
-        ~f:(fun output ->
-          if output.exit_code = 0
-          then assert false [@coverage off]
-          else Or_error.error_string "Hello invalid exit code")
+      Vcs.Result.git vcs ~repo_root ~args:[ "rev-parse"; "INVALID-REF" ] ~f:(fun output ->
+        if output.exit_code = 0
+        then assert false [@coverage off]
+        else Error (Err.create [ Pp.text "Hello invalid exit code" ]))
     with
     | Ok _ -> assert false
     | Error error ->
       print_s
         (Vcs_test_helpers.redact_sexp
-           (error |> Error.sexp_of_t)
+           (error |> Err.sexp_of_t)
            ~fields:[ "cwd"; "repo_root"; "stderr" ])
   in
   [%expect
@@ -198,17 +194,17 @@ let%expect_test "hello cli" =
       vcs
       ~repo_root
       ~args:[ "rev-parse"; "--abbrev-ref"; ref_ ]
-      ~f:Vcs.Git.Or_error.exit0_and_stdout
-    |> Or_error.map ~f:String.strip
+      ~f:Vcs.Git.Result.exit0_and_stdout
+    |> Result.map ~f:String.strip
   in
   (* You may be tempted to think the setup is ok, based on the happy path
      behavior. *)
-  print_s (abbrev_ref "HEAD" |> Or_error.sexp_of_t String.sexp_of_t);
+  print_s (abbrev_ref "HEAD" |> Vcs.Result.sexp_of_t String.sexp_of_t);
   [%expect {| (Ok main) |}];
   (* However, note that the call can still raise, despite its [Result] return type. *)
   let () =
     match abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD" with
-    | Ok (_ : string) | Error (_ : Error.t) -> assert false [@coverage off]
+    | Ok (_ : string) | Error (_ : Err.t) -> assert false [@coverage off]
     | exception Err.E err ->
       print_s (Vcs_test_helpers.redact_sexp (err |> Err.sexp_of_t) ~fields:[ "error" ])
   in
@@ -221,26 +217,26 @@ let%expect_test "hello cli" =
     |}];
   (* Another difference is that you do not get the context when the [f] helper
      returns an error. *)
-  print_s (abbrev_ref "/bogus" |> Or_error.sexp_of_t String.sexp_of_t);
+  print_s (abbrev_ref "/bogus" |> Vcs.Result.sexp_of_t String.sexp_of_t);
   [%expect {| (Error "Expected exit code 0.") |}];
   (* If you are using a non-raising handler [f], you probably meant to use
-     [Vcs.Or_error.git]. The type of [abbrev_ref] is the same. *)
+     [Vcs.Result.git]. The type of [abbrev_ref] is the same. *)
   let abbrev_ref ?(repo_root = repo_root) ref_ =
-    Vcs.Or_error.git
+    Vcs.Result.git
       vcs
       ~repo_root
       ~args:[ "rev-parse"; "--abbrev-ref"; ref_ ]
-      ~f:Vcs.Git.Or_error.exit0_and_stdout
-    |> Or_error.map ~f:String.strip
+      ~f:Vcs.Git.Result.exit0_and_stdout
+    |> Result.map ~f:String.strip
   in
   (* The behavior is the same in the happy path. *)
-  print_s (abbrev_ref "HEAD" |> Or_error.sexp_of_t String.sexp_of_t);
+  print_s (abbrev_ref "HEAD" |> Vcs.Result.sexp_of_t String.sexp_of_t);
   [%expect {| (Ok main) |}];
   (* However, now the function will not raise. *)
   print_s
     (Vcs_test_helpers.redact_sexp
        (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD"
-        |> Or_error.sexp_of_t String.sexp_of_t)
+        |> Vcs.Result.sexp_of_t String.sexp_of_t)
        ~fields:[ "error" ]);
   [%expect
     {|
@@ -254,7 +250,7 @@ let%expect_test "hello cli" =
   let error_with_context =
     match abbrev_ref "bogus" with
     | Ok _ -> assert false [@coverage off]
-    | Error error -> Error.sexp_of_t error
+    | Error error -> Err.sexp_of_t error
   in
   print_s
     (Vcs_test_helpers.redact_sexp
@@ -269,28 +265,28 @@ let%expect_test "hello cli" =
        (stderr <REDACTED>)))
      (error "Expected exit code 0."))
     |}];
-  (* 2. Let's look now at [Vcs.Or_error.git]. It is meant to be used with a
+  (* 2. Let's look now at [Vcs.Result.git]. It is meant to be used with a
      non-raising handler [f]. Let's see what happens when [f] raises. *)
   let abbrev_ref ?(repo_root = repo_root) ref_ =
-    Vcs.Or_error.git
+    Vcs.Result.git
       vcs
       ~repo_root
       ~args:[ "rev-parse"; "--abbrev-ref"; ref_ ]
       ~f:(fun { exit_code; stdout; stderr = _ } ->
         match exit_code with
-        | 0 -> Or_error.return (String.strip stdout)
+        | 0 -> Result.return (String.strip stdout)
         | _ -> failwith "Unexpected error code")
   in
   (* You may be tempted to think the setup is ok, based on the happy path
      behavior. *)
-  print_s (abbrev_ref "HEAD" |> Or_error.sexp_of_t String.sexp_of_t);
+  print_s (abbrev_ref "HEAD" |> Vcs.Result.sexp_of_t String.sexp_of_t);
   [%expect {| (Ok main) |}];
   (* Some error condition will even correctly be turned into Errors, which may
      further prevent you from hitting a raising case. *)
   print_s
     (Vcs_test_helpers.redact_sexp
        (abbrev_ref ~repo_root:(Vcs.Repo_root.v "/bogus") "HEAD"
-        |> Or_error.sexp_of_t String.sexp_of_t)
+        |> Vcs.Result.sexp_of_t String.sexp_of_t)
        ~fields:[ "error" ]);
   [%expect
     {|
@@ -302,7 +298,7 @@ let%expect_test "hello cli" =
     |}];
   (* However when your handler [f] raises, the function will raise too, and you
      won't get the context in this case. *)
-  require_does_raise (fun () : string Or_error.t -> abbrev_ref "/bogus");
+  require_does_raise (fun () : string Vcs.Result.t -> abbrev_ref "/bogus");
   [%expect {| Failure("Unexpected error code") |}];
   (* If you use a raising handler [f], you probably meant to use [Vcs.git]. *)
   let abbrev_ref ?(repo_root = repo_root) ref_ =

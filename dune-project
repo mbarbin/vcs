@@ -296,8 +296,6 @@
    (and
     (>= 5.2)
     (< 5.4~)))
-  (base
-   (>= v0.17))
   (bitv
    (>= 2.1))
   (cmdlang
@@ -326,8 +324,6 @@
    (>= 0.0.16))
   (ppx_expect
    (>= v0.17))
-  (ppx_hash
-   (>= v0.17))
   (ppxlib
    (>= 0.33))
   (re
@@ -337,8 +333,6 @@
   (vcs-test-helpers
    (= :version))
   (volgo
-   (= :version))
-  (volgo-base
    (= :version))
   (volgo-git-backend
    (= :version))
@@ -353,6 +347,40 @@
   (volgo-hg-unix
    (= :version))
   (volgo-vcs
+   (= :version))))
+
+(package
+ (name volgo-base-tests)
+ (synopsis "Tests for volgo-base")
+ (depends
+  (ocaml
+   (>= 5.2))
+  (base
+   (>= v0.17))
+  conf-git
+  (eio
+   (>= 1.0))
+  (eio_main
+   (>= 1.0))
+  (fpath
+   (>= 0.7.3))
+  (fpath-sexp0
+   (>= 0.4.0))
+  (pp
+   (>= 2.0.0))
+  (pplumbing-err
+   (>= 0.0.16))
+  (ppx_expect
+   (>= v0.17))
+  (ppx_hash
+   (>= v0.17))
+  (ppxlib
+   (>= 0.33))
+  (volgo
+   (= :version))
+  (volgo-base
+   (= :version))
+  (volgo-git-backend
    (= :version))))
 
 (package
@@ -385,6 +413,8 @@
   (volgo
    (= :version))
   (volgo-base
+   (= :version))
+  (volgo-base-tests
    (= :version))
   (volgo-git-backend
    (= :version))
