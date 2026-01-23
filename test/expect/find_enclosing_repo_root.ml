@@ -31,9 +31,12 @@ let%expect_test "find_enclosing_repo_root" =
     let entries = Vcs.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root) in
     print_dyn (entries |> Dyn.list Fsegment.to_dyn);
     [%expect {| [ ".git" ] |}];
-    (match Vcs.Result.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root) with
-     | Error _ -> assert false
-     | Ok entries -> print_dyn (entries |> Dyn.list Fsegment.to_dyn));
+    let entries =
+      (* Non-raising [read_dir]. *)
+      Vcs.Result.read_dir vcs ~dir:(Vcs.Repo_root.to_absolute_path repo_root)
+      |> Result.get_ok
+    in
+    print_dyn (entries |> Dyn.list Fsegment.to_dyn);
     [%expect {| [ ".git" ] |}]
   in
   (* Find the root from the root itself. *)

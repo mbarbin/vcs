@@ -69,15 +69,17 @@ let%expect_test "set-user-config" =
   show_commit_metadata vcs ~repo_root ~rev;
   [%expect {| "Other User <other@other-user.org>" |}];
   let () =
+    (* Non-raising [set_user_name]. *)
     Vcs.Result.set_user_name vcs ~repo_root ~user_name:(Vcs.User_name.v "Third User")
-    |> Stdlib.Result.get_ok
+    |> Result.get_ok
   in
   let () =
+    (* Non-raising [set_user_email]. *)
     Vcs.Result.set_user_email
       vcs
       ~repo_root
       ~user_email:(Vcs.User_email.v "third@third-user.org")
-    |> Stdlib.Result.get_ok
+    |> Result.get_ok
   in
   let rev =
     commit_file

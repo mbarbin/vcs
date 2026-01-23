@@ -209,13 +209,12 @@ let%expect_test "small graph" =
        (num_stat (Num_lines_in_diff (insertions 1) (deletions 1))))))
     |}];
   let () =
-    match Vcs.Result.log vcs ~repo_root with
-    | Error _ -> assert false
-    | Ok log ->
-      (* We traverse the log in reverse order first to assign revisions bottom
-         up (this makes it more readable). *)
-      ignore (map_sexp (List.rev log |> Vcs.Log.sexp_of_t) : Sexp.t);
-      print_s (map_sexp (log |> Vcs.Log.sexp_of_t))
+    (* Non-raising [log]. *)
+    let log = Vcs.Result.log vcs ~repo_root |> Result.get_ok in
+    (* We traverse the log in reverse order first to assign revisions bottom up
+       (this makes it more readable). *)
+    ignore (map_sexp (List.rev log |> Vcs.Log.sexp_of_t) : Sexp.t);
+    print_s (map_sexp (log |> Vcs.Log.sexp_of_t))
   in
   [%expect
     {|
@@ -223,15 +222,15 @@ let%expect_test "small graph" =
      (Commit (rev rev1) (parent rev0)) (Root (rev rev0)))
     |}];
   let () =
-    match Vcs.Result.refs vcs ~repo_root with
-    | Error _ -> assert false
-    | Ok refs -> print_s (map_sexp (refs |> Vcs.Refs.sexp_of_t))
+    (* Non-raising [refs]. *)
+    let refs = Vcs.Result.refs vcs ~repo_root |> Result.get_ok in
+    print_s (map_sexp (refs |> Vcs.Refs.sexp_of_t))
   in
   [%expect {| (((rev rev3) (ref_kind (Local_branch (branch_name main))))) |}];
   let () =
-    match Vcs.Result.graph vcs ~repo_root with
-    | Error _ -> assert false
-    | Ok graph -> print_s (map_sexp (graph |> Vcs.Graph.sexp_of_t))
+    (* Non-raising [graph]. *)
+    let graph = Vcs.Result.graph vcs ~repo_root |> Result.get_ok in
+    print_s (map_sexp (graph |> Vcs.Graph.sexp_of_t))
   in
   [%expect
     {|
