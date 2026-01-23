@@ -29,7 +29,7 @@ let%expect_test "read_dir" =
   Eio.Switch.run
   @@ fun sw ->
   let vcs = Volgo_hg_eio.create ~env in
-  let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
+  let path = Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
   Eio.Switch.on_release sw (fun () -> Eio.Path.rmtree Eio.Path.(Eio.Stdenv.fs env / path));
   let repo_root = Vcs.init vcs ~path:(Absolute_path.v path) in
   let dir = Vcs.Repo_root.to_absolute_path repo_root in

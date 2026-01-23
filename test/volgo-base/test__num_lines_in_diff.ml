@@ -22,7 +22,7 @@
 module Vcs = Volgo_base.Vcs
 
 let%expect_test "to_string_hum" =
-  let test t = print_endline (Vcs.Num_lines_in_diff.to_string_hum t) in
+  let test t = Stdlib.print_endline (Vcs.Num_lines_in_diff.to_string_hum t) in
   test { insertions = 0; deletions = 0 };
   [%expect {| 0 |}];
   test { insertions = 100; deletions = 0 };

@@ -60,7 +60,7 @@ let%expect_test "read_dir" =
     (* [Vcs.read_dir] errors out when called on an existing file rather than a
        directory. *)
     let path = Absolute_path.extend dir (Fsegment.v "foo") in
-    let file_exists = Stdlib.Sys.file_exists (Absolute_path.to_string path) in
+    let file_exists = Sys.file_exists (Absolute_path.to_string path) in
     assert file_exists;
     print_dyn (Dyn.record [ "file_exists", file_exists |> Dyn.bool ]);
     [%expect {| { file_exists = true } |}];

@@ -442,7 +442,7 @@ let require cond = if not cond then failwith "Required condition does not hold."
 let require_does_raise f =
   match f () with
   | _ -> Code_error.raise "Did not raise." []
-  | exception e -> print_endline (Stdlib.Printexc.to_string e)
+  | exception e -> print_endline (Printexc.to_string e)
 ;;
 
 let require_equal
@@ -467,6 +467,4 @@ let require_not_equal
 
 (* {1 Transition API} *)
 
-let print_endline = Stdlib.print_endline
 let print_s sexp = print_endline (Sexp.to_string_hum sexp)
-let print_string = Stdlib.print_string

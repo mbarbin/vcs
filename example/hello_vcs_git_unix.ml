@@ -32,7 +32,7 @@ let%expect_test "hello commit" =
      from your local settings, and also makes things work when running in the
      GitHub Actions environment, where no default user config exists. *)
   let repo_root =
-    let path = Stdlib.Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
+    let path = Filename.temp_dir ~temp_dir:(Unix.getcwd ()) "vcs" "test" in
     Vcs_test_helpers.init vcs ~path:(Absolute_path.v path)
   in
   (* Ok, we are all set, [repo_root] points to a Git repo and we can start using

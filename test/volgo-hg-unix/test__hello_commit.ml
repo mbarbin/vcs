@@ -27,7 +27,7 @@ let%expect_test "hello commit" =
   let mock_revs = Vcs.Mock_revs.create () in
   let temp_dir =
     let cwd = Unix.getcwd () in
-    Stdlib.Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v
+    Filename.temp_dir ~temp_dir:cwd "vcs_test" "" |> Absolute_path.v
   in
   let repo_root = Vcs.init vcs ~path:temp_dir in
   let hello_file = Vcs.Path_in_repo.v "hello.txt" in

@@ -242,6 +242,4 @@ val require_not_equal : (module With_equal_and_dyn.S with type t = 'a) -> 'a -> 
     we rework the exact set of third-party dependencies for the volgo project.
     They may be removed or renamed in the future. *)
 
-val print_endline : string -> unit
 val print_s : Sexp.t -> unit
-val print_string : string -> unit
