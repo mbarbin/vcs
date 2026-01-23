@@ -414,6 +414,8 @@
    (= :version))
   (volgo-base
    (= :version))
+  (volgo-base-tests
+   (= :version))
   (volgo-git-backend
    (= :version))
   (volgo-git-eio
