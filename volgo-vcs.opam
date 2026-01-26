@@ -26,6 +26,7 @@ depends: [
   "volgo-git-unix" {= version}
   "volgo-hg-backend" {= version}
   "volgo-hg-unix" {= version}
+  "yojson" {>= "2.1.1"}
   "odoc" {with-doc}
 ]
 build: [
