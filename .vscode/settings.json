@@ -27,6 +27,7 @@
         "ENOENT",
         "execve",
         "failwith",
+        "foldi",
         "fpath",
         "fsegment",
         "functors",
