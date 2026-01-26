@@ -31,57 +31,41 @@ module Node = struct
 end
 
 module Node_kind = struct
-  module T = struct
-    [@@@coverage off]
+  type t =
+    | Root of { rev : Rev.t }
+    | Commit of
+        { rev : Rev.t
+        ; parent : Node.t
+        }
+    | Merge of
+        { rev : Rev.t
+        ; parent1 : Node.t
+        ; parent2 : Node.t
+        }
 
-    type t =
-      | Root of { rev : Rev.t }
-      | Commit of
-          { rev : Rev.t
-          ; parent : Node.t
-          }
-      | Merge of
-          { rev : Rev.t
-          ; parent1 : Node.t
-          ; parent2 : Node.t
-          }
-
-    let to_dyn = function
-      | Root { rev } -> Dyn.inline_record "Root" [ "rev", Rev.to_dyn rev ]
-      | Commit { rev; parent } ->
-        Dyn.inline_record "Commit" [ "rev", Rev.to_dyn rev; "parent", Node.to_dyn parent ]
-      | Merge { rev; parent1; parent2 } ->
-        Dyn.inline_record
-          "Merge"
-          [ "rev", Rev.to_dyn rev
-          ; "parent1", Node.to_dyn parent1
-          ; "parent2", Node.to_dyn parent2
-          ]
-    ;;
-
-    let sexp_of_t t = Dyn.to_sexp (to_dyn t)
-
-    let equal a b =
-      phys_equal a b
-      ||
-      match a, b with
-      | Root a, Root { rev } -> Rev.equal a.rev rev
-      | Commit a, Commit { rev; parent } ->
-        Rev.equal a.rev rev && Node.equal a.parent parent
-      | Merge a, Merge { rev; parent1; parent2 } ->
-        Rev.equal a.rev rev
-        && Node.equal a.parent1 parent1
-        && Node.equal a.parent2 parent2
-      | (Root _ | Commit _ | Merge _), _ -> false
-    ;;
-  end
-
-  include T
+  let to_dyn = function
+    | Root { rev } -> Dyn.inline_record "Root" [ "rev", Rev.to_dyn rev ]
+    | Commit { rev; parent } ->
+      Dyn.inline_record "Commit" [ "rev", Rev.to_dyn rev; "parent", Node.to_dyn parent ]
+    | Merge { rev; parent1; parent2 } ->
+      Dyn.inline_record
+        "Merge"
+        [ "rev", Rev.to_dyn rev
+        ; "parent1", Node.to_dyn parent1
+        ; "parent2", Node.to_dyn parent2
+        ]
+  ;;
 
   let rev = function
     | Root { rev } -> rev
     | Commit { rev; _ } -> rev
     | Merge { rev; _ } -> rev
+  ;;
+
+  let parents = function
+    | Root { rev = _ } -> []
+    | Commit { rev = _; parent } -> [ parent ]
+    | Merge { rev = _; parent1; parent2 } -> [ parent1; parent2 ]
   ;;
 
   let to_log_line t ~f =
@@ -172,17 +156,11 @@ let node_count t = Array.length t.nodes
 let node_kind t ~node = t.nodes.(node)
 let ( .$() ) t node = node_kind t ~node
 let rev t ~node = Node_kind.rev t.$(node)
-
-let parents t ~node =
-  match t.$(node) with
-  | Node_kind.Root _ -> []
-  | Commit { parent; _ } -> [ parent ]
-  | Merge { parent1; parent2; _ } -> [ parent1; parent2 ]
-;;
+let parents t ~node = Node_kind.parents t.$(node)
 
 let prepend_parents t ~node ~prepend_to:list =
   match t.$(node) with
-  | Node_kind.Root _ -> list
+  | Root _ -> list
   | Commit { parent; _ } -> parent :: list
   | Merge { parent1; parent2; _ } -> parent1 :: parent2 :: list
 ;;

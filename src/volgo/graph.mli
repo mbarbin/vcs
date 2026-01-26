@@ -86,32 +86,21 @@ module Node : sig
 end
 
 module Node_kind : sig
-  type t = private
-    | Root of { rev : Rev.t }
-    | Commit of
-        { rev : Rev.t
-        ; parent : Node.t
-        }
-    | Merge of
-        { rev : Rev.t
-        ; parent1 : Node.t
-        ; parent2 : Node.t
-        }
+  (** In early versions of the library we used to allow public access of the
+      node kind however we ended up needed to change it to accommodate for
+      octopus merges, so we prefer for it to remain abstract. Match on the
+      node [parents] if you need to distinguish node kinds. *)
+  type t
 
-  val sexp_of_t : t -> Sexp.t
+  (** Show the kind for debug or tests. *)
   val to_dyn : t -> Dyn.t
-  val equal : t -> t -> bool
-
-  (** A helper to access the revision of the node itself. This simply returns
-      the first argument of each constructor. *)
-  val rev : t -> Rev.t
 end
 
 (** Access the revision of a node. *)
 val rev : t -> node:Node.t -> Rev.t
 
-(** Return 0 parents for root nodes, 1 parent for commits, and 2 parents for
-    merge nodes. *)
+(** Root nodes have no parents. Simple commit have one. In most repos, merge
+    nodes will have two. Octopus merge nodes may have more than two (rare). *)
 val parents : t -> node:Node.t -> Node.t list
 
 (** [prepend_parents graph ~node ~prepend_to:nodes] is an equivalent but more
