@@ -211,9 +211,7 @@ let prepend_parents t ~node ~prepend_to:list =
   | Commit { rev = _; parent } -> parent :: list
   | Merge { rev = _; parent1; parent2 } -> parent1 :: parent2 :: list
   | Octopus_merge { rev = _; parent1; parent2; parent3; other_parents } ->
-    (match other_parents with
-     | [] -> parent1 :: parent2 :: parent3 :: list
-     | _ :: _ as nonempty -> parent1 :: parent2 :: parent3 :: (nonempty @ list))
+    parent1 :: parent2 :: parent3 :: (other_parents @ list)
 ;;
 
 let node_refs t ~node =
