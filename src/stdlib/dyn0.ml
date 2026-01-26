@@ -77,16 +77,24 @@ type json =
   ]
 
 let to_json =
-  (* JavaScript's Number.MAX_SAFE_INTEGER = 2^53 - 1 *)
-  let max_safe_int = 9007199254740991 in
-  let min_safe_int = -9007199254740991 in
+  (* JavaScript's Number.MAX_SAFE_INTEGER = 2^53 - 1. We use Int64 literals to
+     avoid overflow on 32-bit architectures. To verify these values, run:
+     [node -p "Number.MAX_SAFE_INTEGER"] and [node -p "Number.MIN_SAFE_INTEGER"]. *)
+  let max_safe_int64 = 9007199254740991L in
+  let min_safe_int64 = -9007199254740991L in
   let rec aux (dyn : Dyn.t) : json =
     match[@coverage off] dyn with
     | Opaque -> `String "<opaque>"
     | Unit -> `Null
     | Int i ->
-      if i >= min_safe_int && i <= max_safe_int then `Int i else `String (Int.to_string i)
-    | Int32 i -> `Int (Int32.to_int i)
+      let i64 = Int64.of_int i in
+      if i64 >= min_safe_int64 && i64 <= max_safe_int64
+      then `Int i
+      else `String (Int.to_string i)
+    | Int32 i ->
+      (* On 32-bit architectures, Int32 (32 bits) may not fit in int (31 bits). *)
+      let i' = Int32.to_int i in
+      if Int32.equal (Int32.of_int i') i then `Int i' else `String (Int32.to_string i)
     | Int64 i -> `String (Int64.to_string i)
     | Nativeint i -> `String (Nativeint.to_string i)
     | Bool b -> `Bool b
