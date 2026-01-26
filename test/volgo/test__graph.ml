@@ -609,6 +609,44 @@ let%expect_test "octopus_merge" =
   in
   print_dyn (Dyn.Record [ "subgraph_node_count", subgraph_node_count |> Dyn.int ]);
   [%expect {| { subgraph_node_count = 6 } |}];
+  (* Test leaves - the octopus merge should be the only leaf. *)
+  print_dyn (Vcs.Graph.leaves graph |> Dyn.list Vcs.Graph.Node.to_dyn);
+  [%expect {| [ "#5" ] |}];
+  (* Test is_ancestor_or_equal through octopus merge. *)
+  let node_of_rev rev = Vcs.Graph.find_rev graph ~rev |> Option.get in
+  let is_ancestor ~ancestor ~descendant =
+    print_dyn
+      (Dyn.record
+         [ ( "is_ancestor_or_equal"
+           , Vcs.Graph.is_ancestor_or_equal
+               graph
+               ~ancestor:(node_of_rev ancestor)
+               ~descendant:(node_of_rev descendant)
+             |> Dyn.bool )
+         ])
+  in
+  is_ancestor ~ancestor:revs.(0) ~descendant:oct;
+  [%expect {| { is_ancestor_or_equal = true } |}];
+  is_ancestor ~ancestor:revs.(4) ~descendant:oct;
+  [%expect {| { is_ancestor_or_equal = true } |}];
+  is_ancestor ~ancestor:oct ~descendant:revs.(0);
+  [%expect {| { is_ancestor_or_equal = false } |}];
+  is_ancestor ~ancestor:oct ~descendant:oct;
+  [%expect {| { is_ancestor_or_equal = true } |}];
+  (* Test descendance through octopus merge. *)
+  let descendance r1 r2 =
+    print_dyn
+      (Vcs.Graph.descendance graph (node_of_rev r1) (node_of_rev r2)
+       |> Vcs.Graph.Descendance.to_dyn)
+  in
+  descendance revs.(0) oct;
+  [%expect {| Strict_ancestor |}];
+  descendance oct revs.(0);
+  [%expect {| Strict_descendant |}];
+  descendance oct oct;
+  [%expect {| Same_node |}];
+  descendance revs.(1) revs.(3);
+  [%expect {| Strict_ancestor |}];
   ()
 ;;
 
