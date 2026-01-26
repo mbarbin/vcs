@@ -73,17 +73,19 @@ let%expect_test "node hash" =
   let node ~rev = Vcs.Graph.find_rev graph ~rev |> Option.get in
   let root () =
     let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Root { rev } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.create ~rev ~parents:[] ];
     node ~rev, rev
   in
   let commit ~parent =
     let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.create ~rev ~parents:[ parent ] ];
     node ~rev, rev
   in
   let merge ~parent1 ~parent2 =
     let rev = rev () in
-    Vcs.Graph.add_nodes graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+    Vcs.Graph.add_nodes
+      graph
+      ~log:[ Vcs.Log.Line.create ~rev ~parents:[ parent1; parent2 ] ];
     node ~rev, rev
   in
   let n1, r1 = root () in

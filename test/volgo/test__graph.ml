@@ -342,22 +342,35 @@ let%expect_test "graph" =
   (* parents. *)
   let parents rev =
     let node = node_exn rev in
+    let parent_count = Vcs.Graph.parent_count graph ~node in
     let parents =
       Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
     in
-    print_dyn (parents |> Dyn.list Vcs.Rev.to_dyn)
+    print_dyn
+      (Dyn.record
+         [ "parent_count", parent_count |> Dyn.int
+         ; "parents", parents |> Dyn.list Vcs.Rev.to_dyn
+         ])
   in
   parents tip;
-  [%expect {| [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ] |}];
+  [%expect
+    {|
+    { parent_count = 1
+    ; parents = [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ]
+    }
+    |}];
   parents merge_node;
   [%expect
     {|
-    [ "735103d3d41b48b7425b5b5386f235c8940080af"
-    ; "1eafed9e1737cd2ebbfe60ca787e622c7e0fc080"
-    ]
+    { parent_count = 2
+    ; parents =
+        [ "735103d3d41b48b7425b5b5386f235c8940080af"
+        ; "1eafed9e1737cd2ebbfe60ca787e622c7e0fc080"
+        ]
+    }
     |}];
   parents root_node;
-  [%expect {| [] |}];
+  [%expect {| { parent_count = 0; parents = [] } |}];
   (* descendance. *)
   let test r1 r2 =
     print_dyn
@@ -395,13 +408,22 @@ let%expect_test "subgraphs of empty graph" =
   ()
 ;;
 
+module Line = struct
+  let root ~rev = Vcs.Log.Line.create ~rev ~parents:[]
+  let commit ~rev ~parent = Vcs.Log.Line.create ~rev ~parents:[ parent ]
+
+  let merge ~rev ~parent1 ~parent2 =
+    Vcs.Log.Line.create ~rev ~parents:[ parent1; parent2 ]
+  ;;
+end
+
 let%expect_test "Subgraph.is_empty" =
   let subgraph = { Vcs.Graph.Subgraph.log = []; refs = [] } in
   print_dyn (Vcs.Graph.Subgraph.is_empty subgraph |> Dyn.bool);
   [%expect {| true |}];
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let subgraph =
-    { Vcs.Graph.Subgraph.log = [ Root { rev = Vcs.Mock_rev_gen.next mock_rev_gen } ]
+    { Vcs.Graph.Subgraph.log = [ Line.root ~rev:(Vcs.Mock_rev_gen.next mock_rev_gen) ]
     ; refs = []
     }
   in
@@ -418,9 +440,8 @@ let%expect_test "add_nodes" =
        find this easier to reason about. We end up reversing the log when we add
        the nodes, to make it more alike what happens in the actual use cases. *)
     List.concat
-      [ [ Vcs.Log.Line.Root { rev = revs.(0) }; Vcs.Log.Line.Root { rev = revs.(1) } ]
-      ; List.init ~len:4 ~f:(fun i ->
-          Vcs.Log.Line.Commit { rev = revs.(i + 2); parent = revs.(i + 1) })
+      [ [ Line.root ~rev:revs.(0); Line.root ~rev:revs.(1) ]
+      ; List.init ~len:4 ~f:(fun i -> Line.commit ~rev:revs.(i + 2) ~parent:revs.(i + 1))
       ]
   in
   let graph = Vcs.Graph.create () in
@@ -429,10 +450,7 @@ let%expect_test "add_nodes" =
   [%expect {| 6 |}];
   (* Adding log is idempotent. Only new nodes are effectively added. *)
   let log =
-    List.concat
-      [ log
-      ; [ Vcs.Log.Line.Merge { rev = revs.(6); parent1 = revs.(2); parent2 = revs.(5) } ]
-      ]
+    List.concat [ log; [ Line.merge ~rev:revs.(6) ~parent1:revs.(2) ~parent2:revs.(5) ] ]
   in
   Vcs.Graph.add_nodes graph ~log:(List.rev log);
   print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
@@ -497,7 +515,7 @@ let%expect_test "set invalid rev" =
   in
   require_does_raise (fun () -> set_ref_r1 ());
   [%expect {| ("Rev not found." 5cd237e9598b11065c344d1eb33bc8c15cd237e9) |}];
-  Vcs.Graph.add_nodes graph ~log:[ Root { rev = r1 } ];
+  Vcs.Graph.add_nodes graph ~log:[ Line.root ~rev:r1 ];
   set_ref_r1 ();
   print_dyn (Vcs.Graph.refs graph |> Vcs.Refs.to_dyn);
   [%expect
@@ -507,6 +525,35 @@ let%expect_test "set invalid rev" =
       }
     ]
     |}];
+  ()
+;;
+
+let%expect_test "octopus_merge" =
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"octopus-graph" in
+  let len = 5 in
+  let revs = Array.init 5 ~f:(fun _ -> Vcs.Mock_rev_gen.next mock_rev_gen) in
+  let oct = Vcs.Mock_rev_gen.next mock_rev_gen in
+  let graph = Vcs.Graph.create () in
+  let () =
+    (* This test monitors the support for octopus merges. At the moment the
+       construction of merge nodes with more than 2 parents is not supported. *)
+    require_does_raise (fun () ->
+      ((let log =
+          List.concat
+            [ [ Line.root ~rev:revs.(0) ]
+            ; List.init ~len:(len - 2) ~f:(fun i ->
+                Line.commit ~rev:revs.(i + 1) ~parent:revs.(i))
+            ; [ Vcs.Log.Line.create ~rev:oct ~parents:(Array.to_list revs) ]
+            ]
+        in
+        Vcs.Graph.add_nodes graph ~log:(List.rev log))
+      [@coverage off]))
+  in
+  [%expect {| "Too many parents (expected 0, 1, or 2)." |}];
+  print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
+  [%expect {| 0 |}];
+  print_dyn (Vcs.Graph.log graph |> Vcs.Log.to_dyn);
+  [%expect {| [] |}];
   ()
 ;;
 
@@ -536,19 +583,19 @@ end = struct
 
   let root t =
     let rev = rev t in
-    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Root { rev } ];
+    Vcs.Graph.add_nodes t.graph ~log:[ Line.root ~rev ];
     rev
   ;;
 
   let commit t ~parent =
     let rev = rev t in
-    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+    Vcs.Graph.add_nodes t.graph ~log:[ Line.commit ~rev ~parent ];
     rev
   ;;
 
   let merge t ~parent1 ~parent2 =
     let rev = rev t in
-    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+    Vcs.Graph.add_nodes t.graph ~log:[ Line.merge ~rev ~parent1 ~parent2 ];
     rev
   ;;
 
@@ -680,25 +727,34 @@ let%expect_test "debug graph" =
   let graph = Vcs.Graph.create () in
   let t = Mock.create graph in
   let r0 = Mock.root t in
-  let r1 = Mock.commit t ~parent:r0 in
-  let r2 = Mock.commit t ~parent:r0 in
-  let m1 = Mock.merge t ~parent1:r1 ~parent2:r2 in
-  let r4 = Mock.commit t ~parent:m1 in
+  let c1 = Mock.commit t ~parent:r0 in
+  let c2 = Mock.commit t ~parent:r0 in
+  let m1 = Mock.merge t ~parent1:c1 ~parent2:c2 in
+  let c4 = Mock.commit t ~parent:m1 in
+  let r1 = Mock.root t in
+  let m2 = Mock.merge t ~parent1:c4 ~parent2:r1 in
   Vcs.Graph.set_refs
     graph
     ~refs:
-      [ { rev = r1
+      [ { rev = c1
         ; ref_kind =
             Remote_branch { remote_branch_name = Vcs.Remote_branch_name.v "origin/main" }
         }
-      ; { rev = r4; ref_kind = Tag { tag_name = Vcs.Tag_name.v "0.1.0" } }
-      ; { rev = r4; ref_kind = Local_branch { branch_name = Vcs.Branch_name.main } }
+      ; { rev = c4; ref_kind = Tag { tag_name = Vcs.Tag_name.v "0.1.0" } }
+      ; { rev = c4; ref_kind = Local_branch { branch_name = Vcs.Branch_name.main } }
       ];
   print_dyn (graph |> Vcs.Graph.to_dyn);
   [%expect
     {|
     { nodes =
-        [ ("#4",
+        [ ("#6",
+           Merge
+             { rev = "ed2a9ed9f5d7bee45156ba272651656ced2a9ed9"
+             ; parent1 = "#4"
+             ; parent2 = "#5"
+             })
+        ; ("#5", Root { rev = "b155b82523d24ea82eb0ad45a5e89adcb155b825" })
+        ; ("#4",
            Commit
              { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" })
         ; ("#3",
@@ -716,7 +772,9 @@ let%expect_test "debug graph" =
         ; ("#0", Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" })
         ]
     ; revs =
-        [ ("#4", "7216231cd107946841cc3eebe5da287b7216231c")
+        [ ("#6", "ed2a9ed9f5d7bee45156ba272651656ced2a9ed9")
+        ; ("#5", "b155b82523d24ea82eb0ad45a5e89adcb155b825")
+        ; ("#4", "7216231cd107946841cc3eebe5da287b7216231c")
         ; ("#3", "9a81fba7a18f740120f1141b1ed109bb9a81fba7")
         ; ("#2", "5deb4aaec51a75ef58765038b7c20b3f5deb4aae")
         ; ("#1", "f453b802f640c6888df978c712057d17f453b802")
@@ -736,7 +794,7 @@ let%expect_test "debug graph" =
     |}];
   (* node_count *)
   print_dyn (Dyn.record [ "node_count", Vcs.Graph.node_count graph |> Dyn.int ]);
-  [%expect {| { node_count = 5 } |}];
+  [%expect {| { node_count = 7 } |}];
   (* node_kind *)
   let node_kind rev =
     let node = Mock.node t ~rev in
@@ -744,7 +802,7 @@ let%expect_test "debug graph" =
   in
   node_kind r0;
   [%expect {| Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" } |}];
-  node_kind r1;
+  node_kind c1;
   [%expect
     {| Commit { rev = "f453b802f640c6888df978c712057d17f453b802"; parent = "#0" } |}];
   node_kind m1;
@@ -756,28 +814,37 @@ let%expect_test "debug graph" =
       ; parent2 = "#2"
       }
     |}];
-  node_kind r4;
+  node_kind c4;
   [%expect
     {| Commit { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" } |}];
+  node_kind m2;
+  [%expect
+    {|
+    Merge
+      { rev = "ed2a9ed9f5d7bee45156ba272651656ced2a9ed9"
+      ; parent1 = "#4"
+      ; parent2 = "#5"
+      }
+    |}];
   (* ancestors *)
   let print_ancestors rev =
     print_dyn (ancestors graph (Mock.node t ~rev) |> Dyn.list Vcs.Graph.Node.to_dyn)
   in
   print_ancestors r0;
   [%expect {| [ "#0" ] |}];
-  print_ancestors r1;
+  print_ancestors c1;
   [%expect {| [ "#0"; "#1" ] |}];
-  print_ancestors r2;
+  print_ancestors c2;
   [%expect {| [ "#0"; "#2" ] |}];
   print_ancestors m1;
   [%expect {| [ "#0"; "#1"; "#2"; "#3" ] |}];
-  print_ancestors r4;
+  print_ancestors c4;
   [%expect {| [ "#0"; "#1"; "#2"; "#3"; "#4" ] |}];
   (* Low level int indexing. *)
   let node_index node = print_dyn (Vcs.Graph.node_index node |> Dyn.int) in
   node_index (Mock.node t ~rev:r0);
   [%expect {| 0 |}];
-  node_index (Mock.node t ~rev:r4);
+  node_index (Mock.node t ~rev:c4);
   [%expect {| 4 |}];
   print_s (Vcs.Graph.get_node_exn graph ~index:0 |> Vcs.Graph.Node.sexp_of_t);
   [%expect {| #0 |}];
@@ -788,10 +855,10 @@ let%expect_test "debug graph" =
   [%expect {| "#0" |}];
   get_node_exn 4;
   [%expect {| "#4" |}];
-  require_does_raise (fun () -> get_node_exn 5);
-  [%expect {| ("Node index out of bounds." ((index 5) (node_count 5))) |}];
+  require_does_raise (fun () -> get_node_exn 50);
+  [%expect {| ("Node index out of bounds." ((index 50) (node_count 7))) |}];
   require_does_raise (fun () -> get_node_exn (-1));
-  [%expect {| ("Node index out of bounds." ((index -1) (node_count 5))) |}];
+  [%expect {| ("Node index out of bounds." ((index -1) (node_count 7))) |}];
   (* Here we monitor for a regression of a bug where [set_ref] would not
      properly update pre-existing bindings. *)
   let upstream =
@@ -806,7 +873,7 @@ let%expect_test "debug graph" =
   [%expect {| Some "#1" |}];
   (* We are now simulating that we pushed [main] and thus upstream [origin/main]
      has advanced to [r4]. *)
-  Vcs.Graph.set_ref graph ~rev:r4 ~ref_kind:upstream;
+  Vcs.Graph.set_ref graph ~rev:c4 ~ref_kind:upstream;
   show_upstream ();
   [%expect {| Some "#4" |}];
   let show_refs rev =
@@ -814,10 +881,10 @@ let%expect_test "debug graph" =
       (Vcs.Graph.node_refs graph ~node:(Mock.node t ~rev) |> Dyn.list Vcs.Ref_kind.to_dyn)
   in
   (* There are no longer any refs pointing to [r1]. *)
-  show_refs r1;
+  show_refs c1;
   [%expect {| [] |}];
   (* Both [main] and [origin/main] now point to [r4]. *)
-  show_refs r4;
+  show_refs c4;
   [%expect
     {|
     [ Local_branch { branch_name = "main" }
@@ -848,7 +915,14 @@ let%expect_test "debug graph" =
   [%expect
     {|
     { nodes =
-        [ ("#4",
+        [ ("#6",
+           Merge
+             { rev = "ed2a9ed9f5d7bee45156ba272651656ced2a9ed9"
+             ; parent1 = "#4"
+             ; parent2 = "#5"
+             })
+        ; ("#5", Root { rev = "b155b82523d24ea82eb0ad45a5e89adcb155b825" })
+        ; ("#4",
            Commit
              { rev = "7216231cd107946841cc3eebe5da287b7216231c"; parent = "#3" })
         ; ("#3",
@@ -866,7 +940,9 @@ let%expect_test "debug graph" =
         ; ("#0", Root { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9" })
         ]
     ; revs =
-        [ ("#4", "7216231cd107946841cc3eebe5da287b7216231c")
+        [ ("#6", "ed2a9ed9f5d7bee45156ba272651656ced2a9ed9")
+        ; ("#5", "b155b82523d24ea82eb0ad45a5e89adcb155b825")
+        ; ("#4", "7216231cd107946841cc3eebe5da287b7216231c")
         ; ("#3", "9a81fba7a18f740120f1141b1ed109bb9a81fba7")
         ; ("#2", "5deb4aaec51a75ef58765038b7c20b3f5deb4aae")
         ; ("#1", "f453b802f640c6888df978c712057d17f453b802")
@@ -891,10 +967,10 @@ let%expect_test "debug graph" =
   Vcs.Graph.set_ref graph ~rev:r0 ~ref_kind:(Other { name = "custom-B" });
   show_refs r0;
   [%expect {| [ Other { name = "custom-A" }; Other { name = "custom-B" } ] |}];
-  Vcs.Graph.set_ref graph ~rev:r1 ~ref_kind:custom_A;
+  Vcs.Graph.set_ref graph ~rev:c1 ~ref_kind:custom_A;
   show_refs r0;
   [%expect {| [ Other { name = "custom-B" } ] |}];
-  show_refs r1;
+  show_refs c1;
   [%expect {| [ Other { name = "custom-A" } ] |}];
   ()
 ;;

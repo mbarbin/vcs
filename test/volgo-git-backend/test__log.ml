@@ -44,11 +44,7 @@ let%expect_test "parse_exn" =
     ; "da46f0d60bfbb9dc9340e95f5625c10815c24af7"
     ]
     |}];
-  let merge_count =
-    List.count log ~f:(function
-      | Merge _ -> true
-      | Root _ | Commit _ -> false)
-  in
+  let merge_count = List.count log ~f:(fun line -> Vcs.Log.Line.parent_count line >= 2) in
   print_dyn (Dyn.record [ "merge_count", merge_count |> Dyn.int ]);
   [%expect {| { merge_count = 2 } |}];
   ()
@@ -99,7 +95,7 @@ let%expect_test "invalid lines" =
        (Volgo_git_backend.Log.parse_log_line_exn
          (line
            "3bf5092cc55bff4c3ba546c771e17ab8d29cce65 aff8c9c8601e68a41a3bb695ea4a276e2446061f d3a24cbfad0a681280ecfe021d40b69fb0b9c589 3509268b3f47a9e081bf11ac5e59f8b6eac6109b")))
-      (error "Too many words (expected 1, 2, or 3)."))
+      (error "Too many parents (expected 0, 1, or 2)."))
     |}];
   ()
 ;;

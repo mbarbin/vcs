@@ -31,52 +31,30 @@ module Node = struct
 end
 
 module Node_kind = struct
-  module T = struct
-    [@@@coverage off]
+  type t =
+    | Root of { rev : Rev.t }
+    | Commit of
+        { rev : Rev.t
+        ; parent : Node.t
+        }
+    | Merge of
+        { rev : Rev.t
+        ; parent1 : Node.t
+        ; parent2 : Node.t
+        }
 
-    type t =
-      | Root of { rev : Rev.t }
-      | Commit of
-          { rev : Rev.t
-          ; parent : Node.t
-          }
-      | Merge of
-          { rev : Rev.t
-          ; parent1 : Node.t
-          ; parent2 : Node.t
-          }
-
-    let to_dyn = function
-      | Root { rev } -> Dyn.inline_record "Root" [ "rev", Rev.to_dyn rev ]
-      | Commit { rev; parent } ->
-        Dyn.inline_record "Commit" [ "rev", Rev.to_dyn rev; "parent", Node.to_dyn parent ]
-      | Merge { rev; parent1; parent2 } ->
-        Dyn.inline_record
-          "Merge"
-          [ "rev", Rev.to_dyn rev
-          ; "parent1", Node.to_dyn parent1
-          ; "parent2", Node.to_dyn parent2
-          ]
-    ;;
-
-    let sexp_of_t t = Dyn.to_sexp (to_dyn t)
-
-    let equal a b =
-      phys_equal a b
-      ||
-      match a, b with
-      | Root a, Root { rev } -> Rev.equal a.rev rev
-      | Commit a, Commit { rev; parent } ->
-        Rev.equal a.rev rev && Node.equal a.parent parent
-      | Merge a, Merge { rev; parent1; parent2 } ->
-        Rev.equal a.rev rev
-        && Node.equal a.parent1 parent1
-        && Node.equal a.parent2 parent2
-      | (Root _ | Commit _ | Merge _), _ -> false
-    ;;
-  end
-
-  include T
+  let to_dyn = function
+    | Root { rev } -> Dyn.inline_record "Root" [ "rev", Rev.to_dyn rev ]
+    | Commit { rev; parent } ->
+      Dyn.inline_record "Commit" [ "rev", Rev.to_dyn rev; "parent", Node.to_dyn parent ]
+    | Merge { rev; parent1; parent2 } ->
+      Dyn.inline_record
+        "Merge"
+        [ "rev", Rev.to_dyn rev
+        ; "parent1", Node.to_dyn parent1
+        ; "parent2", Node.to_dyn parent2
+        ]
+  ;;
 
   let rev = function
     | Root { rev } -> rev
@@ -84,12 +62,22 @@ module Node_kind = struct
     | Merge { rev; _ } -> rev
   ;;
 
+  let parents = function
+    | Root { rev = _ } -> []
+    | Commit { rev = _; parent } -> [ parent ]
+    | Merge { rev = _; parent1; parent2 } -> [ parent1; parent2 ]
+  ;;
+
+  let parent_count = function
+    | Root { rev = _ } -> 0
+    | Commit { rev = _; parent = _ } -> 1
+    | Merge { rev = _; parent1 = _; parent2 = _ } -> 2
+  ;;
+
   let to_log_line t ~f =
-    match t with
-    | Root { rev } -> Log.Line.Root { rev }
-    | Commit { rev; parent } -> Log.Line.Commit { rev; parent = f parent }
-    | Merge { rev; parent1; parent2 } ->
-      Log.Line.Merge { rev; parent1 = f parent1; parent2 = f parent2 }
+    let rev = rev t in
+    let parents = parents t |> List.map ~f in
+    Log.Line.create ~rev ~parents
   ;;
 end
 
@@ -170,19 +158,13 @@ let create () =
 
 let node_count t = Array.length t.nodes
 let node_kind t ~node = t.nodes.(node)
-let ( .$() ) t node = node_kind t ~node
-let rev t ~node = Node_kind.rev t.$(node)
-
-let parents t ~node =
-  match t.$(node) with
-  | Node_kind.Root _ -> []
-  | Commit { parent; _ } -> [ parent ]
-  | Merge { parent1; parent2; _ } -> [ parent1; parent2 ]
-;;
+let rev t ~node = Node_kind.rev (node_kind t ~node)
+let parents t ~node = Node_kind.parents (node_kind t ~node)
+let parent_count t ~node = Node_kind.parent_count (node_kind t ~node)
 
 let prepend_parents t ~node ~prepend_to:list =
-  match t.$(node) with
-  | Node_kind.Root _ -> list
+  match node_kind t ~node with
+  | Root _ -> list
   | Commit { parent; _ } -> parent :: list
   | Merge { parent1; parent2; _ } -> parent1 :: parent2 :: list
 ;;
@@ -193,7 +175,9 @@ let node_refs t ~node =
   |> List.sort ~compare:Ref_kind.compare
 ;;
 
-let log_line t ~node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.rev t.$(i))
+let log_line t ~node =
+  Node_kind.to_log_line (node_kind t ~node) ~f:(fun i -> rev t ~node:i)
+;;
 
 (* Helper function to iter over all ancestors of a given node, itself included.
    [visited] is taken as an input so we can re-use the same array multiple
@@ -246,8 +230,7 @@ let refs t =
   Ref_kind_table.to_seq t.refs
   |> List.of_seq
   |> List.sort ~compare:(fun (r1, _) (r2, _) -> Ref_kind.compare r1 r2)
-  |> List.map ~f:(fun (ref_kind, index) ->
-    { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind })
+  |> List.map ~f:(fun (ref_kind, node) -> { Refs.Line.rev = rev t ~node; ref_kind })
 ;;
 
 let set_ref t ~rev ~ref_kind =
@@ -304,25 +287,13 @@ let add_nodes t ~log =
           [ Pp.text "Parent not found."; Err.sexp (line |> Log.Line.sexp_of_t) ]
         [@coverage off]
     in
-    match (line : Log.Line.t) with
-    | Root { rev } ->
-      if not (is_visited rev)
-      then (
-        Rev_table.add visited ~key:rev ~data:();
-        Queue.enqueue new_nodes line)
-    | Commit { rev; parent } ->
-      if not (is_visited rev)
-      then (
-        Rev_table.add visited ~key:rev ~data:();
-        if not (Rev_table.mem t.revs parent) then visit (find_parent parent);
-        Queue.enqueue new_nodes line)
-    | Merge { rev; parent1; parent2 } ->
-      if not (is_visited rev)
-      then (
-        Rev_table.add visited ~key:rev ~data:();
-        if not (Rev_table.mem t.revs parent1) then visit (find_parent parent1);
-        if not (Rev_table.mem t.revs parent2) then visit (find_parent parent2);
-        Queue.enqueue new_nodes line)
+    let rev = Log.Line.rev line in
+    if not (is_visited rev)
+    then (
+      Rev_table.add visited ~key:rev ~data:();
+      List.iter (Log.Line.parents line) ~f:(fun parent ->
+        if not (Rev_table.mem t.revs parent) then visit (find_parent parent));
+      Queue.enqueue new_nodes line)
   in
   (* We iter in reverse order to makes the depth of visited path shorter. *)
   List.iter (List.rev log) ~f:visit;
@@ -343,13 +314,17 @@ let add_nodes t ~log =
       let index = new_index + i in
       let rev = Log.Line.rev node in
       Rev_table.add_exn t.revs ~key:rev ~data:index;
-      match node with
-      | Root _ -> Node_kind.Root { rev }
-      | Commit { rev; parent; _ } ->
-        Node_kind.Commit { rev; parent = find_node_exn parent }
-      | Merge { rev; parent1; parent2; _ } ->
+      match Log.Line.parents node with
+      | [] -> Node_kind.Root { rev }
+      | [ parent ] -> Node_kind.Commit { rev; parent = find_node_exn parent }
+      | [ parent1; parent2 ] ->
         Node_kind.Merge
-          { rev; parent1 = find_node_exn parent1; parent2 = find_node_exn parent2 })
+          { rev; parent1 = find_node_exn parent1; parent2 = find_node_exn parent2 }
+      | _ :: _ :: _ :: _ ->
+        Err.raise
+          [ Pp.text "Too many parents (expected 0, 1, or 2)."
+          ; Dyn.pp (node |> Log.Line.to_dyn)
+          ] [@coverage off])
   in
   t.nodes <- Array.append t.nodes new_nodes;
   ()
@@ -518,9 +493,9 @@ let subgraphs t =
   Array.iteri components ~f:(fun i cell ->
     let id = cell.contents in
     Queue.enqueue logs.(id) (log_line t ~node:i));
-  Ref_kind_table.iter t.refs ~f:(fun ~key:ref_kind ~data:index ->
-    let id = components.(index).contents in
-    Queue.enqueue refs.(id) { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind });
+  Ref_kind_table.iter t.refs ~f:(fun ~key:ref_kind ~data:node ->
+    let id = components.(node).contents in
+    Queue.enqueue refs.(id) { Refs.Line.rev = rev t ~node; ref_kind });
   Array.map2 logs refs ~f:(fun log refs ->
     { Subgraph.log = Queue.to_list log; refs = Queue.to_list refs })
   |> Array.to_list

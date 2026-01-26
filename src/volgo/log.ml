@@ -63,6 +63,26 @@ module Line = struct
   let rev = function
     | Commit { rev; _ } | Merge { rev; _ } | Root { rev } -> rev
   ;;
+
+  let parents = function
+    | Root { rev = _ } -> []
+    | Commit { rev = _; parent } -> [ parent ]
+    | Merge { rev = _; parent1; parent2 } -> [ parent1; parent2 ]
+  ;;
+
+  let parent_count = function
+    | Root { rev = _ } -> 0
+    | Commit { rev = _; parent = _ } -> 1
+    | Merge { rev = _; parent1 = _; parent2 = _ } -> 2
+  ;;
+
+  let create ~rev ~parents =
+    match parents with
+    | [] -> Root { rev }
+    | [ parent ] -> Commit { rev; parent }
+    | [ parent1; parent2 ] -> Merge { rev; parent1; parent2 }
+    | _ -> Err.raise [ Pp.text "Too many parents (expected 0, 1, or 2)." ]
+  ;;
 end
 
 module T = struct
