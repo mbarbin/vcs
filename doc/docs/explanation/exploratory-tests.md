@@ -28,59 +28,59 @@ COMMANDS
        add [OPTION]… file
            Add a file to the index.
 
-       branch-revision [OPTION]… [BRANCH]
+       branch-revision [--output-format=FORMAT] [OPTION]… [BRANCH]
            Get the revision of a branch.
 
-       commit [--message=MSG] [--quiet] [OPTION]…
+       commit [--message=MSG] [--output-format=FORMAT] [--quiet] [OPTION]…
            Commit a file.
 
-       current-branch [--opt] [OPTION]…
+       current-branch [--output-format=FORMAT] [--opt] [OPTION]…
            Print the current branch.
 
-       current-revision [OPTION]…
+       current-revision [--output-format=FORMAT] [OPTION]…
            Print the revision of HEAD.
 
-       descendance [OPTION]… REV REV
+       descendance [--output-format=FORMAT] [OPTION]… REV REV
            Print descendance relation between 2 revisions.
 
-       find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
-       [OPTION]…
+       find-enclosing-repo-root [--from=path/to/dir] [--output-format=FORMAT]
+       [--store=VAL] [OPTION]…
            Find the root of the enclosing-repo.
 
-       gca [OPTION]… [REV]…
+       gca [--output-format=FORMAT] [OPTION]… [REV]…
            Print greatest common ancestors of revisions.
 
        git [OPTION]… [ARG]…
            Run the git cli.
 
-       graph [OPTION]…
+       graph [--output-format=FORMAT] [OPTION]…
            Compute graph of current repo.
 
        hg [OPTION]… [ARG]…
            Run the hg cli.
 
-       init [--quiet] [OPTION]… path/to/root
+       init [--output-format=FORMAT] [--quiet] [OPTION]… path/to/root
            Initialize a new repository.
 
        load-file [OPTION]… path/to/file
            Print a file from the filesystem (aka cat).
 
-       log [OPTION]…
+       log [--output-format=FORMAT] [OPTION]…
            Show the log of current repo.
 
        ls-files [--below=PATH] [OPTION]…
            List versioned file.
 
-       name-status [OPTION]… BASE TIP
+       name-status [--output-format=FORMAT] [OPTION]… BASE TIP
            Show a summary of the diff between 2 revs.
 
-       num-status [OPTION]… BASE TIP
+       num-status [--output-format=FORMAT] [OPTION]… BASE TIP
            Show a summary of the number of lines of diff between 2 revs.
 
-       read-dir [OPTION]… path/to/dir
+       read-dir [--output-format=FORMAT] [OPTION]… path/to/dir
            Print the list of files in a directory.
 
-       refs [OPTION]…
+       refs [--output-format=FORMAT] [OPTION]…
            Show the refs of current repo.
 
        rename-current-branch [OPTION]… branch

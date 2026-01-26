@@ -11,7 +11,7 @@ includes specifics required by the GitHub Actions environment.
   Hello World
 
   $ volgo-vcs add hello
-  $ rev0=$(volgo-vcs commit -m "Initial commit")
+  $ rev0=$(volgo-vcs commit -m "Initial commit" | tr -d '"')
 
 Current revision.
 
@@ -19,7 +19,7 @@ Current revision.
   rev0
 
   $ volgo-vcs current-revision | sed -e "s/$rev0/rev0/g"
-  rev0
+  "rev0"
 
 Current branch.
 
@@ -38,7 +38,7 @@ Adding a new file under a directory.
   $ echo "New file" > dir/hello
 
   $ volgo-vcs add dir/hello
-  $ rev1=$(volgo-vcs commit -m "Added dir/hello")
+  $ rev1=$(volgo-vcs commit -m "Added dir/hello" | tr -d '"')
 
   $ volgo-vcs ls-files
   dir/hello
@@ -48,7 +48,7 @@ Adding a new file under a directory.
   dir/hello
 
   $ volgo-vcs ls-files --below /dir
-  Error: Path is not in repo. (path /dir)
+  Error: Path "/dir" is not in repo.
   [123]
 
   $ volgo-vcs ls-files --below foo 2> /dev/null
