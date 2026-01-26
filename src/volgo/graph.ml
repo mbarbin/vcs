@@ -225,8 +225,7 @@ let refs t =
   Ref_kind_table.to_seq t.refs
   |> List.of_seq
   |> List.sort ~compare:(fun (r1, _) (r2, _) -> Ref_kind.compare r1 r2)
-  |> List.map ~f:(fun (ref_kind, index) ->
-    { Refs.Line.rev = rev t ~node:index; ref_kind })
+  |> List.map ~f:(fun (ref_kind, node) -> { Refs.Line.rev = rev t ~node; ref_kind })
 ;;
 
 let set_ref t ~rev ~ref_kind =
@@ -497,9 +496,9 @@ let subgraphs t =
   Array.iteri components ~f:(fun i cell ->
     let id = cell.contents in
     Queue.enqueue logs.(id) (log_line t ~node:i));
-  Ref_kind_table.iter t.refs ~f:(fun ~key:ref_kind ~data:index ->
-    let id = components.(index).contents in
-    Queue.enqueue refs.(id) { Refs.Line.rev = rev t ~node:index; ref_kind });
+  Ref_kind_table.iter t.refs ~f:(fun ~key:ref_kind ~data:node ->
+    let id = components.(node).contents in
+    Queue.enqueue refs.(id) { Refs.Line.rev = rev t ~node; ref_kind });
   Array.map2 logs refs ~f:(fun log refs ->
     { Subgraph.log = Queue.to_list log; refs = Queue.to_list refs })
   |> Array.to_list
