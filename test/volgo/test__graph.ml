@@ -528,6 +528,35 @@ let%expect_test "set invalid rev" =
   ()
 ;;
 
+let%expect_test "octopus_merge" =
+  let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"octopus-graph" in
+  let len = 5 in
+  let revs = Array.init 5 ~f:(fun _ -> Vcs.Mock_rev_gen.next mock_rev_gen) in
+  let oct = Vcs.Mock_rev_gen.next mock_rev_gen in
+  let graph = Vcs.Graph.create () in
+  let () =
+    (* This test monitors the support for octopus merges. At the moment the
+       construction of merge nodes with more than 2 parents is not supported. *)
+    require_does_raise (fun () ->
+      ((let log =
+          List.concat
+            [ [ Line.root ~rev:revs.(0) ]
+            ; List.init ~len:(len - 2) ~f:(fun i ->
+                Line.commit ~rev:revs.(i + 1) ~parent:revs.(i))
+            ; [ Vcs.Log.Line.create ~rev:oct ~parents:(Array.to_list revs) ]
+            ]
+        in
+        Vcs.Graph.add_nodes graph ~log:(List.rev log))
+      [@coverage off]))
+  in
+  [%expect {| "Too many parents (expected 0, 1, or 2)." |}];
+  print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
+  [%expect {| 0 |}];
+  print_dyn (Vcs.Graph.log graph |> Vcs.Log.to_dyn);
+  [%expect {| [] |}];
+  ()
+;;
+
 module Mock : sig
   type t
 

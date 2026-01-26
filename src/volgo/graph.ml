@@ -324,7 +324,7 @@ let add_nodes t ~log =
         Err.raise
           [ Pp.text "Too many parents (expected 0, 1, or 2)."
           ; Dyn.pp (node |> Log.Line.to_dyn)
-          ])
+          ] [@coverage off])
   in
   t.nodes <- Array.append t.nodes new_nodes;
   ()
