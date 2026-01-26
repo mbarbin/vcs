@@ -53,14 +53,23 @@ val create : unit -> t
     that already exists in the git log. *)
 
 (** [add t ~log] add to [t] all the nodes from the log. This is idempotent -
-    this doesn't add the nodes that [t] already knows. *)
+    this doesn't add the nodes that [t] already knows.
+
+    Raises [Code_error.E] if the log contains an internal consistency error
+    (e.g., a commit references a parent that doesn't exist in the log). This is
+    akin to [Invalid_argument] - it indicates a programming error that needs to
+    be fixed rather than an error condition to be handled at runtime. *)
 val add_nodes : t -> log:Log.t -> unit
 
-(** [set_refs t ~refs] add to [t] all the refs from the log. *)
-val set_refs : t -> refs:Refs.t -> unit
-
-(** Same as [set_refs], but one ref at a time. *)
+(** [set_ref t ~rev ~ref_kind] adds to [t] a ref from the log. Raises
+    [Code_error.E] if the [rev] is not known by the graph. This is akin to
+    [Invalid_argument] - it indicates a programming error that needs to be fixed
+    rather than an error condition to be handled at runtime. *)
 val set_ref : t -> rev:Rev.t -> ref_kind:Ref_kind.t -> unit
+
+(** [set_refs t ~refs] is a convenient wrapper for performing multiple [set_ref]
+    in one call. *)
+val set_refs : t -> refs:Refs.t -> unit
 
 (** {1 Nodes}
 
@@ -292,5 +301,9 @@ val summary : t -> Summary.t
     that take advantage of operations working on integers, if the rest of the
     exposed API isn't enough for your use case. *)
 
+(** Raises [Code_error.E] if the index is out of bounds. This is akin to
+    [Invalid_argument] - it indicates a programming error that needs to be
+    fixed rather than an error condition to be handled at runtime. *)
 val get_node_exn : t -> index:int -> Node.t
+
 val node_index : Node.t -> int

@@ -514,7 +514,13 @@ let%expect_test "set invalid rev" =
       ~ref_kind:(Local_branch { branch_name = Vcs.Branch_name.v "main" })
   in
   require_does_raise (fun () -> set_ref_r1 ());
-  [%expect {| ("Rev not found." 5cd237e9598b11065c344d1eb33bc8c15cd237e9) |}];
+  [%expect
+    {|
+    ("Rev not found.",
+     { rev = "5cd237e9598b11065c344d1eb33bc8c15cd237e9"
+     ; ref_kind = Local_branch { branch_name = "main" }
+     })
+    |}];
   Vcs.Graph.add_nodes graph ~log:[ Line.root ~rev:r1 ];
   set_ref_r1 ();
   print_dyn (Vcs.Graph.refs graph |> Vcs.Refs.to_dyn);
@@ -1020,9 +1026,9 @@ let%expect_test "debug graph" =
   get_node_exn 4;
   [%expect {| "#4" |}];
   require_does_raise (fun () -> get_node_exn 50);
-  [%expect {| ("Node index out of bounds." ((index 50) (node_count 7))) |}];
+  [%expect {| ("Node index out of bounds.", { index = 50; node_count = 7 }) |}];
   require_does_raise (fun () -> get_node_exn (-1));
-  [%expect {| ("Node index out of bounds." ((index -1) (node_count 7))) |}];
+  [%expect {| ("Node index out of bounds.", { index = -1; node_count = 7 }) |}];
   (* Here we monitor for a regression of a bug where [set_ref] would not
      properly update pre-existing bindings. *)
   let upstream =
