@@ -154,12 +154,11 @@ let create () =
 
 let node_count t = Array.length t.nodes
 let node_kind t ~node = t.nodes.(node)
-let ( .$() ) t node = node_kind t ~node
-let rev t ~node = Node_kind.rev t.$(node)
-let parents t ~node = Node_kind.parents t.$(node)
+let rev t ~node = Node_kind.rev (node_kind t ~node)
+let parents t ~node = Node_kind.parents (node_kind t ~node)
 
 let prepend_parents t ~node ~prepend_to:list =
-  match t.$(node) with
+  match node_kind t ~node with
   | Root _ -> list
   | Commit { parent; _ } -> parent :: list
   | Merge { parent1; parent2; _ } -> parent1 :: parent2 :: list
@@ -171,7 +170,9 @@ let node_refs t ~node =
   |> List.sort ~compare:Ref_kind.compare
 ;;
 
-let log_line t ~node = Node_kind.to_log_line t.$(node) ~f:(fun i -> Node_kind.rev t.$(i))
+let log_line t ~node =
+  Node_kind.to_log_line (node_kind t ~node) ~f:(fun i -> rev t ~node:i)
+;;
 
 (* Helper function to iter over all ancestors of a given node, itself included.
    [visited] is taken as an input so we can re-use the same array multiple
@@ -225,7 +226,7 @@ let refs t =
   |> List.of_seq
   |> List.sort ~compare:(fun (r1, _) (r2, _) -> Ref_kind.compare r1 r2)
   |> List.map ~f:(fun (ref_kind, index) ->
-    { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind })
+    { Refs.Line.rev = rev t ~node:index; ref_kind })
 ;;
 
 let set_ref t ~rev ~ref_kind =
@@ -498,7 +499,7 @@ let subgraphs t =
     Queue.enqueue logs.(id) (log_line t ~node:i));
   Ref_kind_table.iter t.refs ~f:(fun ~key:ref_kind ~data:index ->
     let id = components.(index).contents in
-    Queue.enqueue refs.(id) { Refs.Line.rev = Node_kind.rev t.$(index); ref_kind });
+    Queue.enqueue refs.(id) { Refs.Line.rev = rev t ~node:index; ref_kind });
   Array.map2 logs refs ~f:(fun log refs ->
     { Subgraph.log = Queue.to_list log; refs = Queue.to_list refs })
   |> Array.to_list
