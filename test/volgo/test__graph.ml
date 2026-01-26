@@ -543,6 +543,8 @@ let%expect_test "octopus_merge" =
       ; [ Vcs.Log.Line.create ~rev:oct ~parents:(Array.to_list revs) ]
       ]
   in
+  print_dyn (Dyn.Record [ "roots", Vcs.Log.roots log |> Dyn.list Vcs.Rev.to_dyn ]);
+  [%expect {| { roots = [ "bfd32f3af3313cad34fd988e3135a891bfd32f3a" ] } |}];
   Vcs.Graph.add_nodes graph ~log:(List.rev log);
   [%expect {||}];
   print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
@@ -577,6 +579,36 @@ let%expect_test "octopus_merge" =
         }
     ]
     |}];
+  (* Code coverage for octopus node kinds. *)
+  print_dyn (Vcs.Graph.roots graph |> Dyn.list Vcs.Graph.Node.to_dyn);
+  [%expect {| [ "#0" ] |}];
+  let oct_node = Vcs.Graph.find_rev graph ~rev:oct |> Option.get in
+  print_dyn (Vcs.Graph.node_kind graph ~node:oct_node |> Vcs.Graph.Node_kind.to_dyn);
+  [%expect
+    {|
+    Octopus_merge
+      { rev = "5ef28c38bcaa95fe160c24835e478d0a5ef28c38"
+      ; parent1 = "#0"
+      ; parent2 = "#1"
+      ; parent3 = "#2"
+      ; parent4 = "#3"
+      ; parent5 = "#4"
+      }
+    |}];
+  print_dyn (Vcs.Graph.parent_count graph ~node:oct_node |> Dyn.int);
+  [%expect {| 5 |}];
+  print_dyn
+    (Vcs.Graph.prepend_parents graph ~node:oct_node ~prepend_to:[]
+     |> Dyn.list Vcs.Graph.Node.to_dyn);
+  [%expect {| [ "#0"; "#1"; "#2"; "#3"; "#4" ] |}];
+  let subgraphs = Vcs.Graph.subgraphs graph in
+  print_dyn (Dyn.Record [ "subgraph_count", List.length subgraphs |> Dyn.int ]);
+  [%expect {| { subgraph_count = 1 } |}];
+  let subgraph_node_count =
+    List.hd subgraphs |> Option.get |> Vcs.Graph.of_subgraph |> Vcs.Graph.node_count
+  in
+  print_dyn (Dyn.Record [ "subgraph_node_count", subgraph_node_count |> Dyn.int ]);
+  [%expect {| { subgraph_node_count = 6 } |}];
   ()
 ;;
 
