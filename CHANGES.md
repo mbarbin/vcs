@@ -2,16 +2,32 @@
 
 ### Added
 
+- Add new output format (dyn, json) in `volgo-vcs` cli (#135, @mbarbin).
 - Added `dunolint` config and workflow (#99, #104, @mbarbin).
 
 ### Changed
 
+- Improve the distribution process to use GitHub immutable releases (@mbarbin)
+- Change default format of cli output to `json` (#135, @mbarbin).
+- Graph internal errors raise `Code_error.E` instead of `Err.E` (#134, @mbarbin).
+- Make `Vcs.Graph.Node_kind` and `Vcs.Log.Line` types abstract (#131, @mbarbin).
+- Reduce overall dependencies (#124, #127, #130, @mbarbin).
+- Replace dependencies to `astring` by code based on `stdlib` (#122, @mbarbin).
+- Various upgrades to dunolint workflow (@mbarbin).
+- Initiate a consistent local prelude for the project (#118, #123, @mbarbin).
+- Various improvements to CI scripts (@mbarbin).
 - Refactor pkg directory structure (#116, @mbarbin).
 - Upgrade to and require fixes from `fpath-base.0.4.0` (#109, @mbarbin).
+- Internal dependencies cleanup for tests and dev (#105, #107, #117, @mbarbin).
 - Made some internal refactors suggested by the Zanuda linter (#106, @mbarbin).
 - Upgrade `pplumbing-*` dependencies (#101, @mbarbin).
 - Upgrade `crs` (#100, #108, @mbarbin).
 - Upgrade `docusaurus` (#97, @mbarbin).
+
+### Fixed
+
+- Allow more valid characters in tag names (#133, @mbarbin).
+- Support octopus merges instead of failing (#132, @mbarbin).
 
 ### Removed
 
