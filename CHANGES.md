@@ -1,4 +1,4 @@
-## 0.0.22 (unreleased)
+## 0.0.22 (2026-01-26)
 
 ### Added
 
@@ -7,6 +7,7 @@
 
 ### Changed
 
+- Release workflow uploads artifacts to the draft release in preparation (@mbarbin).
 - Improve the distribution process to use GitHub immutable releases (@mbarbin)
 - Change default format of cli output to `json` (#135, @mbarbin).
 - Graph internal errors raise `Code_error.E` instead of `Err.E` (#134, @mbarbin).
