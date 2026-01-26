@@ -354,7 +354,7 @@ let read_dir_cmd =
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"path/to/dir"
-         ~doc:"Director to read."
+         ~doc:"Directory to read."
      and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let dir = Absolute_path.relativize ~root:cwd dir in
