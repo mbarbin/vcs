@@ -33,6 +33,13 @@ module Line = struct
         ; parent1 : Rev.t
         ; parent2 : Rev.t
         }
+    | Octopus_merge of
+        { rev : Rev.t
+        ; parent1 : Rev.t
+        ; parent2 : Rev.t
+        ; parent3 : Rev.t
+        ; other_parents : Rev.t list
+        }
 
   let to_dyn = function
     | Root { rev } -> Dyn.inline_record "Root" [ "rev", Rev.to_dyn rev ]
@@ -45,6 +52,15 @@ module Line = struct
         ; "parent1", Rev.to_dyn parent1
         ; "parent2", Rev.to_dyn parent2
         ]
+    | Octopus_merge { rev; parent1; parent2; parent3; other_parents } ->
+      Dyn.inline_record
+        "Octopus_merge"
+        (("rev", Rev.to_dyn rev)
+         :: ("parent1", Rev.to_dyn parent1)
+         :: ("parent2", Rev.to_dyn parent2)
+         :: ("parent3", Rev.to_dyn parent3)
+         :: List.mapi other_parents ~f:(fun i parent ->
+           Printf.sprintf "parent%d" (i + 4), Rev.to_dyn parent))
   ;;
 
   let sexp_of_t t = Dyn.to_sexp (to_dyn t)
@@ -57,23 +73,34 @@ module Line = struct
     | Commit a, Commit { rev; parent } -> Rev.equal a.rev rev && Rev.equal a.parent parent
     | Merge a, Merge { rev; parent1; parent2 } ->
       Rev.equal a.rev rev && Rev.equal a.parent1 parent1 && Rev.equal a.parent2 parent2
-    | (Root _ | Commit _ | Merge _), _ -> false
+    | Octopus_merge a, Octopus_merge { rev; parent1; parent2; parent3; other_parents } ->
+      Rev.equal a.rev rev
+      && Rev.equal a.parent1 parent1
+      && Rev.equal a.parent2 parent2
+      && Rev.equal a.parent3 parent3
+      && List.equal ~eq:Rev.equal a.other_parents other_parents
+    | (Root _ | Commit _ | Merge _ | Octopus_merge _), _ -> false
   ;;
 
   let rev = function
-    | Commit { rev; _ } | Merge { rev; _ } | Root { rev } -> rev
+    | Root { rev } | Commit { rev; _ } | Merge { rev; _ } | Octopus_merge { rev; _ } ->
+      rev
   ;;
 
   let parents = function
     | Root { rev = _ } -> []
     | Commit { rev = _; parent } -> [ parent ]
     | Merge { rev = _; parent1; parent2 } -> [ parent1; parent2 ]
+    | Octopus_merge { rev = _; parent1; parent2; parent3; other_parents } ->
+      parent1 :: parent2 :: parent3 :: other_parents
   ;;
 
   let parent_count = function
     | Root { rev = _ } -> 0
     | Commit { rev = _; parent = _ } -> 1
     | Merge { rev = _; parent1 = _; parent2 = _ } -> 2
+    | Octopus_merge { rev = _; parent1 = _; parent2 = _; parent3 = _; other_parents } ->
+      3 + List.length other_parents
   ;;
 
   let create ~rev ~parents =
@@ -81,7 +108,8 @@ module Line = struct
     | [] -> Root { rev }
     | [ parent ] -> Commit { rev; parent }
     | [ parent1; parent2 ] -> Merge { rev; parent1; parent2 }
-    | _ -> Err.raise [ Pp.text "Too many parents (expected 0, 1, or 2)." ]
+    | parent1 :: parent2 :: parent3 :: other_parents ->
+      Octopus_merge { rev; parent1; parent2; parent3; other_parents }
   ;;
 end
 
@@ -101,5 +129,5 @@ let roots (t : t) =
   List.filter_map t ~f:(fun line ->
     match (line : Line.t) with
     | Root { rev } -> Some rev
-    | Commit _ | Merge _ -> None)
+    | Commit _ | Merge _ | Octopus_merge _ -> None)
 ;;

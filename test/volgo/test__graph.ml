@@ -529,31 +529,54 @@ let%expect_test "set invalid rev" =
 ;;
 
 let%expect_test "octopus_merge" =
+  (* This test monitors the support for octopus merges implemented in vcs. *)
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"octopus-graph" in
   let len = 5 in
   let revs = Array.init 5 ~f:(fun _ -> Vcs.Mock_rev_gen.next mock_rev_gen) in
   let oct = Vcs.Mock_rev_gen.next mock_rev_gen in
   let graph = Vcs.Graph.create () in
-  let () =
-    (* This test monitors the support for octopus merges. At the moment the
-       construction of merge nodes with more than 2 parents is not supported. *)
-    require_does_raise (fun () ->
-      ((let log =
-          List.concat
-            [ [ Line.root ~rev:revs.(0) ]
-            ; List.init ~len:(len - 2) ~f:(fun i ->
-                Line.commit ~rev:revs.(i + 1) ~parent:revs.(i))
-            ; [ Vcs.Log.Line.create ~rev:oct ~parents:(Array.to_list revs) ]
-            ]
-        in
-        Vcs.Graph.add_nodes graph ~log:(List.rev log))
-      [@coverage off]))
+  let log =
+    List.concat
+      [ [ Line.root ~rev:revs.(0) ]
+      ; List.init ~len:(len - 1) ~f:(fun i ->
+          Line.commit ~rev:revs.(i + 1) ~parent:revs.(i))
+      ; [ Vcs.Log.Line.create ~rev:oct ~parents:(Array.to_list revs) ]
+      ]
   in
-  [%expect {| "Too many parents (expected 0, 1, or 2)." |}];
+  Vcs.Graph.add_nodes graph ~log:(List.rev log);
+  [%expect {||}];
   print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
-  [%expect {| 0 |}];
+  [%expect {| 6 |}];
   print_dyn (Vcs.Graph.log graph |> Vcs.Log.to_dyn);
-  [%expect {| [] |}];
+  [%expect
+    {|
+    [ Root { rev = "bfd32f3af3313cad34fd988e3135a891bfd32f3a" }
+    ; Commit
+        { rev = "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822"
+        ; parent = "bfd32f3af3313cad34fd988e3135a891bfd32f3a"
+        }
+    ; Commit
+        { rev = "db529706776748aef99c04f4e71457e5db529706"
+        ; parent = "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822"
+        }
+    ; Commit
+        { rev = "e80940773fa5563bc1708976ce1c29f3e8094077"
+        ; parent = "db529706776748aef99c04f4e71457e5db529706"
+        }
+    ; Commit
+        { rev = "e797f5f4f71cb1c58260feee65acea0ee797f5f4"
+        ; parent = "e80940773fa5563bc1708976ce1c29f3e8094077"
+        }
+    ; Octopus_merge
+        { rev = "5ef28c38bcaa95fe160c24835e478d0a5ef28c38"
+        ; parent1 = "bfd32f3af3313cad34fd988e3135a891bfd32f3a"
+        ; parent2 = "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822"
+        ; parent3 = "db529706776748aef99c04f4e71457e5db529706"
+        ; parent4 = "e80940773fa5563bc1708976ce1c29f3e8094077"
+        ; parent5 = "e797f5f4f71cb1c58260feee65acea0ee797f5f4"
+        }
+    ]
+    |}];
   ()
 ;;
 
