@@ -31,6 +31,28 @@ module Node = struct
 end
 
 module Node_kind = struct
+  (* When this type was public, we could probably make a stronger case for it
+     distinguishing clearly the different kinds of nodes encountered in the
+     Graph. But now, it is only visible in this file. A fair question to ask
+     would be, could we adopt a more dynamic representation?
+
+     The following comes to mind:
+
+     {[
+       type t =
+         { rev : Rev.t
+         ; parents : Node.t list
+         }
+     ]}
+
+     It is possible that we'd look into it at some point. It is not clear
+     whether this would really make the implementation in this file that much
+     clearer. Meanwhile we do find at least some value in the fact that the kind
+     is clearly readable in the expect tests, so we are somewhat attached to the
+     distinction surviving at least in one of the [to_dyn] strategies that we
+     expose. This may be a sign that this benefits the implementation too. This
+     question is left as potential future work. *)
+
   type t =
     | Root of { rev : Rev.t }
     | Commit of
