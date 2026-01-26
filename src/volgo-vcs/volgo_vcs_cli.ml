@@ -571,11 +571,15 @@ let greatest_common_ancestors_cmd =
 
 let main =
   Command.group
-    ~summary:"Call a command from the vcs interface."
+    ~summary:"Call a command from the Vcs interface."
     ~readme:(fun () ->
-      "This is an executable to test the Version Control System (vcs) library.\n\n\
-       We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the sub \
-       commands exposed here, plus additional ones.")
+      {|This CLI is built with the Volgo libraries (Versatile OCaml Library for Git Operations). It is designed for exploratory testing and debugging of the Vcs packages.
+
+We expect a 1:1 mapping between the functions exposed in [Vcs.S] and the sub commands exposed here, plus additional ones.
+
+Several output formats are available via the --output-format option (json, sexp, dyn) to accommodate different workflows and tools during debugging sessions.
+
+STABILITY NOTICE: This CLI is not intended for stable scripting. Its output format and behavior may change between releases without stability guarantees. If you encounter issues or have suggestions, please open an issue at: https://github.com/mbarbin/vcs/issues|})
     [ "add", add_cmd
     ; "branch-revision", branch_revision_cmd
     ; "commit", commit_cmd
