@@ -23,7 +23,7 @@ let print_result ~output_format dyn =
   print_endline
     (match (output_format : Output_format.t) with
      | Dyn -> Dyn.to_string dyn
-     | Json -> Yojson.Basic.pretty_to_string ~std:true (Dyn.to_json dyn :> Yojson.Basic.t)
+     | Json -> Yojson.Basic.pretty_to_string (Dyn.to_json dyn :> Yojson.Basic.t)
      | Sexp -> Sexplib0.Sexp.to_string_hum (Dyn.to_sexp dyn))
 ;;
 
