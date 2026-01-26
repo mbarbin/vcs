@@ -88,8 +88,10 @@ end
 module Node_kind : sig
   (** In early versions of the library we used to allow public access of the
       node kind however we ended up needed to change it to accommodate for
-      octopus merges, so we prefer for it to remain abstract. Match on the
-      node [parents] if you need to distinguish node kinds. *)
+      octopus merges, so we prefer for it to remain abstract.
+
+      You may match on the node's {!val:parents} or {!val:parent_count} if you
+      need to distinguish between node kinds. *)
   type t
 
   (** Show the kind for debug or tests. *)
@@ -102,6 +104,9 @@ val rev : t -> node:Node.t -> Rev.t
 (** Root nodes have no parents. Simple commit have one. In most repos, merge
     nodes will have two. Octopus merge nodes may have more than two (rare). *)
 val parents : t -> node:Node.t -> Node.t list
+
+(** Equivalent to counting the number of [parents] but more efficient. *)
+val parent_count : t -> node:Node.t -> int
 
 (** [prepend_parents graph ~node ~prepend_to:nodes] is an equivalent but more
     efficient version of [parents graph ~node @ nodes]. It may be useful for

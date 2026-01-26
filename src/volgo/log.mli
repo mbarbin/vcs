@@ -24,23 +24,15 @@
     It contains all the commits, along with the parents of each commit. *)
 
 module Line : sig
-  (** @canonical Volgo.Vcs.Log.Line.t *)
-  type t =
-    | Root of { rev : Rev.t }
-    | Commit of
-        { rev : Rev.t
-        ; parent : Rev.t
-        }
-    | Merge of
-        { rev : Rev.t
-        ; parent1 : Rev.t
-        ; parent2 : Rev.t
-        }
+  type t (** @canonical Volgo.Vcs.Log.Line.t *)
 
+  val create : rev:Rev.t -> parents:Rev.t list -> t
   val to_dyn : t -> Dyn.t
   val sexp_of_t : t -> Sexp.t
   val equal : t -> t -> bool
   val rev : t -> Rev.t
+  val parents : t -> Rev.t list
+  val parent_count : t -> int
 end
 
 type t = Line.t list

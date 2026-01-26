@@ -342,22 +342,35 @@ let%expect_test "graph" =
   (* parents. *)
   let parents rev =
     let node = node_exn rev in
+    let parent_count = Vcs.Graph.parent_count graph ~node in
     let parents =
       Vcs.Graph.parents graph ~node |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
     in
-    print_dyn (parents |> Dyn.list Vcs.Rev.to_dyn)
+    print_dyn
+      (Dyn.record
+         [ "parent_count", parent_count |> Dyn.int
+         ; "parents", parents |> Dyn.list Vcs.Rev.to_dyn
+         ])
   in
   parents tip;
-  [%expect {| [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ] |}];
+  [%expect
+    {|
+    { parent_count = 1
+    ; parents = [ "3820ba70563c65ee9f6d516b8e70eb5ea8173d45" ]
+    }
+    |}];
   parents merge_node;
   [%expect
     {|
-    [ "735103d3d41b48b7425b5b5386f235c8940080af"
-    ; "1eafed9e1737cd2ebbfe60ca787e622c7e0fc080"
-    ]
+    { parent_count = 2
+    ; parents =
+        [ "735103d3d41b48b7425b5b5386f235c8940080af"
+        ; "1eafed9e1737cd2ebbfe60ca787e622c7e0fc080"
+        ]
+    }
     |}];
   parents root_node;
-  [%expect {| [] |}];
+  [%expect {| { parent_count = 0; parents = [] } |}];
   (* descendance. *)
   let test r1 r2 =
     print_dyn
@@ -395,13 +408,22 @@ let%expect_test "subgraphs of empty graph" =
   ()
 ;;
 
+module Line = struct
+  let root ~rev = Vcs.Log.Line.create ~rev ~parents:[]
+  let commit ~rev ~parent = Vcs.Log.Line.create ~rev ~parents:[ parent ]
+
+  let merge ~rev ~parent1 ~parent2 =
+    Vcs.Log.Line.create ~rev ~parents:[ parent1; parent2 ]
+  ;;
+end
+
 let%expect_test "Subgraph.is_empty" =
   let subgraph = { Vcs.Graph.Subgraph.log = []; refs = [] } in
   print_dyn (Vcs.Graph.Subgraph.is_empty subgraph |> Dyn.bool);
   [%expect {| true |}];
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"test-graph" in
   let subgraph =
-    { Vcs.Graph.Subgraph.log = [ Root { rev = Vcs.Mock_rev_gen.next mock_rev_gen } ]
+    { Vcs.Graph.Subgraph.log = [ Line.root ~rev:(Vcs.Mock_rev_gen.next mock_rev_gen) ]
     ; refs = []
     }
   in
@@ -418,9 +440,8 @@ let%expect_test "add_nodes" =
        find this easier to reason about. We end up reversing the log when we add
        the nodes, to make it more alike what happens in the actual use cases. *)
     List.concat
-      [ [ Vcs.Log.Line.Root { rev = revs.(0) }; Vcs.Log.Line.Root { rev = revs.(1) } ]
-      ; List.init ~len:4 ~f:(fun i ->
-          Vcs.Log.Line.Commit { rev = revs.(i + 2); parent = revs.(i + 1) })
+      [ [ Line.root ~rev:revs.(0); Line.root ~rev:revs.(1) ]
+      ; List.init ~len:4 ~f:(fun i -> Line.commit ~rev:revs.(i + 2) ~parent:revs.(i + 1))
       ]
   in
   let graph = Vcs.Graph.create () in
@@ -429,10 +450,7 @@ let%expect_test "add_nodes" =
   [%expect {| 6 |}];
   (* Adding log is idempotent. Only new nodes are effectively added. *)
   let log =
-    List.concat
-      [ log
-      ; [ Vcs.Log.Line.Merge { rev = revs.(6); parent1 = revs.(2); parent2 = revs.(5) } ]
-      ]
+    List.concat [ log; [ Line.merge ~rev:revs.(6) ~parent1:revs.(2) ~parent2:revs.(5) ] ]
   in
   Vcs.Graph.add_nodes graph ~log:(List.rev log);
   print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
@@ -497,7 +515,7 @@ let%expect_test "set invalid rev" =
   in
   require_does_raise (fun () -> set_ref_r1 ());
   [%expect {| ("Rev not found." 5cd237e9598b11065c344d1eb33bc8c15cd237e9) |}];
-  Vcs.Graph.add_nodes graph ~log:[ Root { rev = r1 } ];
+  Vcs.Graph.add_nodes graph ~log:[ Line.root ~rev:r1 ];
   set_ref_r1 ();
   print_dyn (Vcs.Graph.refs graph |> Vcs.Refs.to_dyn);
   [%expect
@@ -536,19 +554,19 @@ end = struct
 
   let root t =
     let rev = rev t in
-    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Root { rev } ];
+    Vcs.Graph.add_nodes t.graph ~log:[ Line.root ~rev ];
     rev
   ;;
 
   let commit t ~parent =
     let rev = rev t in
-    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Commit { rev; parent } ];
+    Vcs.Graph.add_nodes t.graph ~log:[ Line.commit ~rev ~parent ];
     rev
   ;;
 
   let merge t ~parent1 ~parent2 =
     let rev = rev t in
-    Vcs.Graph.add_nodes t.graph ~log:[ Vcs.Log.Line.Merge { rev; parent1; parent2 } ];
+    Vcs.Graph.add_nodes t.graph ~log:[ Line.merge ~rev ~parent1 ~parent2 ];
     rev
   ;;
 

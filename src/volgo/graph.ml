@@ -68,12 +68,16 @@ module Node_kind = struct
     | Merge { rev = _; parent1; parent2 } -> [ parent1; parent2 ]
   ;;
 
+  let parent_count = function
+    | Root { rev = _ } -> 0
+    | Commit { rev = _; parent = _ } -> 1
+    | Merge { rev = _; parent1 = _; parent2 = _ } -> 2
+  ;;
+
   let to_log_line t ~f =
-    match t with
-    | Root { rev } -> Log.Line.Root { rev }
-    | Commit { rev; parent } -> Log.Line.Commit { rev; parent = f parent }
-    | Merge { rev; parent1; parent2 } ->
-      Log.Line.Merge { rev; parent1 = f parent1; parent2 = f parent2 }
+    let rev = rev t in
+    let parents = parents t |> List.map ~f in
+    Log.Line.create ~rev ~parents
   ;;
 end
 
@@ -156,6 +160,7 @@ let node_count t = Array.length t.nodes
 let node_kind t ~node = t.nodes.(node)
 let rev t ~node = Node_kind.rev (node_kind t ~node)
 let parents t ~node = Node_kind.parents (node_kind t ~node)
+let parent_count t ~node = Node_kind.parent_count (node_kind t ~node)
 
 let prepend_parents t ~node ~prepend_to:list =
   match node_kind t ~node with
@@ -282,25 +287,13 @@ let add_nodes t ~log =
           [ Pp.text "Parent not found."; Err.sexp (line |> Log.Line.sexp_of_t) ]
         [@coverage off]
     in
-    match (line : Log.Line.t) with
-    | Root { rev } ->
-      if not (is_visited rev)
-      then (
-        Rev_table.add visited ~key:rev ~data:();
-        Queue.enqueue new_nodes line)
-    | Commit { rev; parent } ->
-      if not (is_visited rev)
-      then (
-        Rev_table.add visited ~key:rev ~data:();
-        if not (Rev_table.mem t.revs parent) then visit (find_parent parent);
-        Queue.enqueue new_nodes line)
-    | Merge { rev; parent1; parent2 } ->
-      if not (is_visited rev)
-      then (
-        Rev_table.add visited ~key:rev ~data:();
-        if not (Rev_table.mem t.revs parent1) then visit (find_parent parent1);
-        if not (Rev_table.mem t.revs parent2) then visit (find_parent parent2);
-        Queue.enqueue new_nodes line)
+    let rev = Log.Line.rev line in
+    if not (is_visited rev)
+    then (
+      Rev_table.add visited ~key:rev ~data:();
+      List.iter (Log.Line.parents line) ~f:(fun parent ->
+        if not (Rev_table.mem t.revs parent) then visit (find_parent parent));
+      Queue.enqueue new_nodes line)
   in
   (* We iter in reverse order to makes the depth of visited path shorter. *)
   List.iter (List.rev log) ~f:visit;
@@ -321,13 +314,17 @@ let add_nodes t ~log =
       let index = new_index + i in
       let rev = Log.Line.rev node in
       Rev_table.add_exn t.revs ~key:rev ~data:index;
-      match node with
-      | Root _ -> Node_kind.Root { rev }
-      | Commit { rev; parent; _ } ->
-        Node_kind.Commit { rev; parent = find_node_exn parent }
-      | Merge { rev; parent1; parent2; _ } ->
+      match Log.Line.parents node with
+      | [] -> Node_kind.Root { rev }
+      | [ parent ] -> Node_kind.Commit { rev; parent = find_node_exn parent }
+      | [ parent1; parent2 ] ->
         Node_kind.Merge
-          { rev; parent1 = find_node_exn parent1; parent2 = find_node_exn parent2 })
+          { rev; parent1 = find_node_exn parent1; parent2 = find_node_exn parent2 }
+      | _ :: _ :: _ :: _ ->
+        Err.raise
+          [ Pp.text "Too many parents (expected 0, 1, or 2)."
+          ; Dyn.pp (node |> Log.Line.to_dyn)
+          ])
   in
   t.nodes <- Array.append t.nodes new_nodes;
   ()
