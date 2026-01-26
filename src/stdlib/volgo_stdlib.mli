@@ -141,6 +141,8 @@ module List : sig
   val fold : 'a list -> init:'b -> f:('b -> 'a -> 'b) -> 'b
   val hd : 'a list -> 'a option
   val iter : 'a list -> f:('a -> unit) -> unit
+  val map : 'a list -> f:('a -> 'b) -> 'b list
+  val mapi : 'a list -> f:(int -> 'a -> 'b) -> 'b list
   val sort : 'a list -> compare:('a -> 'a -> int) -> 'a list
 end
 

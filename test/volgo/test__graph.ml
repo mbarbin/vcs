@@ -529,31 +529,195 @@ let%expect_test "set invalid rev" =
 ;;
 
 let%expect_test "octopus_merge" =
+  (* This test monitors the support for octopus merges implemented in vcs. *)
   let mock_rev_gen = Vcs.Mock_rev_gen.create ~name:"octopus-graph" in
   let len = 5 in
   let revs = Array.init 5 ~f:(fun _ -> Vcs.Mock_rev_gen.next mock_rev_gen) in
   let oct = Vcs.Mock_rev_gen.next mock_rev_gen in
   let graph = Vcs.Graph.create () in
-  let () =
-    (* This test monitors the support for octopus merges. At the moment the
-       construction of merge nodes with more than 2 parents is not supported. *)
-    require_does_raise (fun () ->
-      ((let log =
-          List.concat
-            [ [ Line.root ~rev:revs.(0) ]
-            ; List.init ~len:(len - 2) ~f:(fun i ->
-                Line.commit ~rev:revs.(i + 1) ~parent:revs.(i))
-            ; [ Vcs.Log.Line.create ~rev:oct ~parents:(Array.to_list revs) ]
-            ]
-        in
-        Vcs.Graph.add_nodes graph ~log:(List.rev log))
-      [@coverage off]))
+  let log =
+    List.concat
+      [ [ Line.root ~rev:revs.(0) ]
+      ; List.init ~len:(len - 1) ~f:(fun i ->
+          Line.commit ~rev:revs.(i + 1) ~parent:revs.(i))
+      ; [ Vcs.Log.Line.create ~rev:oct ~parents:(Array.to_list revs) ]
+      ]
   in
-  [%expect {| "Too many parents (expected 0, 1, or 2)." |}];
+  print_dyn (Dyn.Record [ "roots", Vcs.Log.roots log |> Dyn.list Vcs.Rev.to_dyn ]);
+  [%expect {| { roots = [ "bfd32f3af3313cad34fd988e3135a891bfd32f3a" ] } |}];
+  Vcs.Graph.add_nodes graph ~log:(List.rev log);
+  [%expect {||}];
   print_dyn (List.length (Vcs.Graph.log graph) |> Dyn.int);
-  [%expect {| 0 |}];
+  [%expect {| 6 |}];
   print_dyn (Vcs.Graph.log graph |> Vcs.Log.to_dyn);
-  [%expect {| [] |}];
+  [%expect
+    {|
+    [ Root { rev = "bfd32f3af3313cad34fd988e3135a891bfd32f3a" }
+    ; Commit
+        { rev = "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822"
+        ; parent = "bfd32f3af3313cad34fd988e3135a891bfd32f3a"
+        }
+    ; Commit
+        { rev = "db529706776748aef99c04f4e71457e5db529706"
+        ; parent = "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822"
+        }
+    ; Commit
+        { rev = "e80940773fa5563bc1708976ce1c29f3e8094077"
+        ; parent = "db529706776748aef99c04f4e71457e5db529706"
+        }
+    ; Commit
+        { rev = "e797f5f4f71cb1c58260feee65acea0ee797f5f4"
+        ; parent = "e80940773fa5563bc1708976ce1c29f3e8094077"
+        }
+    ; Octopus_merge
+        { rev = "5ef28c38bcaa95fe160c24835e478d0a5ef28c38"
+        ; parent1 = "bfd32f3af3313cad34fd988e3135a891bfd32f3a"
+        ; parent2 = "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822"
+        ; parent3 = "db529706776748aef99c04f4e71457e5db529706"
+        ; parent4 = "e80940773fa5563bc1708976ce1c29f3e8094077"
+        ; parent5 = "e797f5f4f71cb1c58260feee65acea0ee797f5f4"
+        }
+    ]
+    |}];
+  (* Code coverage for octopus node kinds. *)
+  print_dyn (Vcs.Graph.roots graph |> Dyn.list Vcs.Graph.Node.to_dyn);
+  [%expect {| [ "#0" ] |}];
+  let oct_node = Vcs.Graph.find_rev graph ~rev:oct |> Option.get in
+  print_dyn (Vcs.Graph.node_kind graph ~node:oct_node |> Vcs.Graph.Node_kind.to_dyn);
+  [%expect
+    {|
+    Octopus_merge
+      { rev = "5ef28c38bcaa95fe160c24835e478d0a5ef28c38"
+      ; parent1 = "#0"
+      ; parent2 = "#1"
+      ; parent3 = "#2"
+      ; parent4 = "#3"
+      ; parent5 = "#4"
+      }
+    |}];
+  print_dyn (Vcs.Graph.parent_count graph ~node:oct_node |> Dyn.int);
+  [%expect {| 5 |}];
+  print_dyn
+    (Vcs.Graph.prepend_parents graph ~node:oct_node ~prepend_to:[]
+     |> Dyn.list Vcs.Graph.Node.to_dyn);
+  [%expect {| [ "#0"; "#1"; "#2"; "#3"; "#4" ] |}];
+  let subgraphs = Vcs.Graph.subgraphs graph in
+  print_dyn (Dyn.Record [ "subgraph_count", List.length subgraphs |> Dyn.int ]);
+  [%expect {| { subgraph_count = 1 } |}];
+  let subgraph_node_count =
+    List.hd subgraphs |> Option.get |> Vcs.Graph.of_subgraph |> Vcs.Graph.node_count
+  in
+  print_dyn (Dyn.Record [ "subgraph_node_count", subgraph_node_count |> Dyn.int ]);
+  [%expect {| { subgraph_node_count = 6 } |}];
+  (* Test leaves - the octopus merge should be the only leaf. *)
+  print_dyn (Vcs.Graph.leaves graph |> Dyn.list Vcs.Graph.Node.to_dyn);
+  [%expect {| [ "#5" ] |}];
+  (* Test is_ancestor_or_equal through octopus merge. *)
+  let node_of_rev rev = Vcs.Graph.find_rev graph ~rev |> Option.get in
+  let is_ancestor ~ancestor ~descendant =
+    print_dyn
+      (Dyn.record
+         [ ( "is_ancestor_or_equal"
+           , Vcs.Graph.is_ancestor_or_equal
+               graph
+               ~ancestor:(node_of_rev ancestor)
+               ~descendant:(node_of_rev descendant)
+             |> Dyn.bool )
+         ])
+  in
+  is_ancestor ~ancestor:revs.(0) ~descendant:oct;
+  [%expect {| { is_ancestor_or_equal = true } |}];
+  is_ancestor ~ancestor:revs.(4) ~descendant:oct;
+  [%expect {| { is_ancestor_or_equal = true } |}];
+  is_ancestor ~ancestor:oct ~descendant:revs.(0);
+  [%expect {| { is_ancestor_or_equal = false } |}];
+  is_ancestor ~ancestor:oct ~descendant:oct;
+  [%expect {| { is_ancestor_or_equal = true } |}];
+  (* Test descendance through octopus merge. *)
+  let descendance r1 r2 =
+    print_dyn
+      (Vcs.Graph.descendance graph (node_of_rev r1) (node_of_rev r2)
+       |> Vcs.Graph.Descendance.to_dyn)
+  in
+  descendance revs.(0) oct;
+  [%expect {| Strict_ancestor |}];
+  descendance oct revs.(0);
+  [%expect {| Strict_descendant |}];
+  descendance oct oct;
+  [%expect {| Same_node |}];
+  descendance revs.(1) revs.(3);
+  [%expect {| Strict_ancestor |}];
+  (* Test GCA with octopus merge. Add two children of the octopus merge. *)
+  let child1 = Vcs.Mock_rev_gen.next mock_rev_gen in
+  let child2 = Vcs.Mock_rev_gen.next mock_rev_gen in
+  Vcs.Graph.add_nodes
+    graph
+    ~log:[ Line.commit ~rev:child1 ~parent:oct; Line.commit ~rev:child2 ~parent:oct ];
+  print_dyn (Vcs.Graph.to_dyn graph);
+  [%expect
+    {|
+    { nodes =
+        [ ("#7",
+           Commit
+             { rev = "a10df8416f2f220ed41ac630e04ce0eca10df841"; parent = "#5" })
+        ; ("#6",
+           Commit
+             { rev = "7ed4d629173cfd51910db866822b4ffc7ed4d629"; parent = "#5" })
+        ; ("#5",
+           Octopus_merge
+             { rev = "5ef28c38bcaa95fe160c24835e478d0a5ef28c38"
+             ; parent1 = "#0"
+             ; parent2 = "#1"
+             ; parent3 = "#2"
+             ; parent4 = "#3"
+             ; parent5 = "#4"
+             })
+        ; ("#4",
+           Commit
+             { rev = "e797f5f4f71cb1c58260feee65acea0ee797f5f4"; parent = "#3" })
+        ; ("#3",
+           Commit
+             { rev = "e80940773fa5563bc1708976ce1c29f3e8094077"; parent = "#2" })
+        ; ("#2",
+           Commit
+             { rev = "db529706776748aef99c04f4e71457e5db529706"; parent = "#1" })
+        ; ("#1",
+           Commit
+             { rev = "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822"; parent = "#0" })
+        ; ("#0", Root { rev = "bfd32f3af3313cad34fd988e3135a891bfd32f3a" })
+        ]
+    ; revs =
+        [ ("#7", "a10df8416f2f220ed41ac630e04ce0eca10df841")
+        ; ("#6", "7ed4d629173cfd51910db866822b4ffc7ed4d629")
+        ; ("#5", "5ef28c38bcaa95fe160c24835e478d0a5ef28c38")
+        ; ("#4", "e797f5f4f71cb1c58260feee65acea0ee797f5f4")
+        ; ("#3", "e80940773fa5563bc1708976ce1c29f3e8094077")
+        ; ("#2", "db529706776748aef99c04f4e71457e5db529706")
+        ; ("#1", "a84ce8227bc12bf8e1bb8ca3b2a350b8a84ce822")
+        ; ("#0", "bfd32f3af3313cad34fd988e3135a891bfd32f3a")
+        ]
+    ; refs = []
+    }
+    |}];
+  descendance child1 child2;
+  [%expect {| Other |}];
+  let gca revs =
+    let nodes = List.map revs ~f:node_of_rev in
+    print_dyn
+      (Vcs.Graph.greatest_common_ancestors graph ~nodes |> Dyn.list Vcs.Graph.Node.to_dyn)
+  in
+  (* GCA of two children of the octopus merge is the octopus merge. *)
+  gca [ child1; child2 ];
+  [%expect {| [ "#5" ] |}];
+  (* GCA of a child and an ancestor of the octopus merge. *)
+  gca [ child1; revs.(2) ];
+  [%expect {| [ "#2" ] |}];
+  (* GCA of octopus merge and one of its parents. *)
+  gca [ oct; revs.(2) ];
+  [%expect {| [ "#2" ] |}];
+  (* GCA of a child and the octopus merge itself. *)
+  gca [ child1; oct ];
+  [%expect {| [ "#5" ] |}];
   ()
 ;;
 

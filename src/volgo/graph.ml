@@ -31,6 +31,28 @@ module Node = struct
 end
 
 module Node_kind = struct
+  (* When this type was public, we could probably make a stronger case for it
+     distinguishing clearly the different kinds of nodes encountered in the
+     Graph. But now, it is only visible in this file. A fair question to ask
+     would be, could we adopt a more dynamic representation?
+
+     The following comes to mind:
+
+     {[
+       type t =
+         { rev : Rev.t
+         ; parents : Node.t list
+         }
+     ]}
+
+     It is possible that we'd look into it at some point. It is not clear
+     whether this would really make the implementation in this file that much
+     clearer. Meanwhile we do find at least some value in the fact that the kind
+     is clearly readable in the expect tests, so we are somewhat attached to the
+     distinction surviving at least in one of the [to_dyn] strategies that we
+     expose. This may be a sign that this benefits the implementation too. This
+     question is left as potential future work. *)
+
   type t =
     | Root of { rev : Rev.t }
     | Commit of
@@ -41,6 +63,13 @@ module Node_kind = struct
         { rev : Rev.t
         ; parent1 : Node.t
         ; parent2 : Node.t
+        }
+    | Octopus_merge of
+        { rev : Rev.t
+        ; parent1 : Node.t
+        ; parent2 : Node.t
+        ; parent3 : Node.t
+        ; other_parents : Node.t list
         }
 
   let to_dyn = function
@@ -54,24 +83,38 @@ module Node_kind = struct
         ; "parent1", Node.to_dyn parent1
         ; "parent2", Node.to_dyn parent2
         ]
+    | Octopus_merge { rev; parent1; parent2; parent3; other_parents } ->
+      Dyn.inline_record
+        "Octopus_merge"
+        (("rev", Rev.to_dyn rev)
+         :: ("parent1", Node.to_dyn parent1)
+         :: ("parent2", Node.to_dyn parent2)
+         :: ("parent3", Node.to_dyn parent3)
+         :: List.mapi other_parents ~f:(fun i parent ->
+           Printf.sprintf "parent%d" (i + 4), Node.to_dyn parent))
   ;;
 
   let rev = function
     | Root { rev } -> rev
     | Commit { rev; _ } -> rev
     | Merge { rev; _ } -> rev
+    | Octopus_merge { rev; _ } -> rev
   ;;
 
   let parents = function
     | Root { rev = _ } -> []
     | Commit { rev = _; parent } -> [ parent ]
     | Merge { rev = _; parent1; parent2 } -> [ parent1; parent2 ]
+    | Octopus_merge { rev = _; parent1; parent2; parent3; other_parents } ->
+      parent1 :: parent2 :: parent3 :: other_parents
   ;;
 
   let parent_count = function
     | Root { rev = _ } -> 0
     | Commit { rev = _; parent = _ } -> 1
     | Merge { rev = _; parent1 = _; parent2 = _ } -> 2
+    | Octopus_merge { rev = _; parent1 = _; parent2 = _; parent3 = _; other_parents } ->
+      3 + List.length other_parents
   ;;
 
   let to_log_line t ~f =
@@ -164,9 +207,11 @@ let parent_count t ~node = Node_kind.parent_count (node_kind t ~node)
 
 let prepend_parents t ~node ~prepend_to:list =
   match node_kind t ~node with
-  | Root _ -> list
-  | Commit { parent; _ } -> parent :: list
-  | Merge { parent1; parent2; _ } -> parent1 :: parent2 :: list
+  | Root { rev = _ } -> list
+  | Commit { rev = _; parent } -> parent :: list
+  | Merge { rev = _; parent1; parent2 } -> parent1 :: parent2 :: list
+  | Octopus_merge { rev = _; parent1; parent2; parent3; other_parents } ->
+    parent1 :: parent2 :: parent3 :: (other_parents @ list)
 ;;
 
 let node_refs t ~node =
@@ -284,8 +329,12 @@ let add_nodes t ~log =
       | Some node -> node
       | None ->
         Err.raise
-          [ Pp.text "Parent not found."; Err.sexp (line |> Log.Line.sexp_of_t) ]
-        [@coverage off]
+          [ Pp.text "Parent not found."
+          ; Err.sexp
+              (Dyn.to_sexp
+                 (Dyn.record
+                    [ "parent", parent |> Rev.to_dyn; "line", line |> Log.Line.to_dyn ]))
+          ] [@coverage off]
     in
     let rev = Log.Line.rev line in
     if not (is_visited rev)
@@ -314,17 +363,13 @@ let add_nodes t ~log =
       let index = new_index + i in
       let rev = Log.Line.rev node in
       Rev_table.add_exn t.revs ~key:rev ~data:index;
-      match Log.Line.parents node with
+      let parent_nodes = Log.Line.parents node |> List.map ~f:find_node_exn in
+      match parent_nodes with
       | [] -> Node_kind.Root { rev }
-      | [ parent ] -> Node_kind.Commit { rev; parent = find_node_exn parent }
-      | [ parent1; parent2 ] ->
-        Node_kind.Merge
-          { rev; parent1 = find_node_exn parent1; parent2 = find_node_exn parent2 }
-      | _ :: _ :: _ :: _ ->
-        Err.raise
-          [ Pp.text "Too many parents (expected 0, 1, or 2)."
-          ; Dyn.pp (node |> Log.Line.to_dyn)
-          ] [@coverage off])
+      | [ parent ] -> Node_kind.Commit { rev; parent }
+      | [ parent1; parent2 ] -> Node_kind.Merge { rev; parent1; parent2 }
+      | parent1 :: parent2 :: parent3 :: other_parents ->
+        Node_kind.Octopus_merge { rev; parent1; parent2; parent3; other_parents })
   in
   t.nodes <- Array.append t.nodes new_nodes;
   ()
@@ -334,7 +379,7 @@ let roots t =
   Array.filter_mapi t.nodes ~f:(fun i node ->
     match node with
     | Root _ -> Some i
-    | Commit _ | Merge _ -> None)
+    | Commit _ | Merge _ | Octopus_merge _ -> None)
   |> Array.to_list
 ;;
 
@@ -411,13 +456,9 @@ let descendance t a b : Descendance.t =
 
 let leaves t =
   let has_children = Bitv.create (node_count t) false in
-  Array.iter t.nodes ~f:(fun node ->
-    match (node : Node_kind.t) with
-    | Root _ -> ()
-    | Commit { parent; _ } -> Bitv.set has_children parent true
-    | Merge { parent1; parent2; _ } ->
-      Bitv.set has_children parent1 true;
-      Bitv.set has_children parent2 true);
+  Array.iter t.nodes ~f:(fun node_kind ->
+    List.iter (Node_kind.parents node_kind) ~f:(fun parent ->
+      Bitv.set has_children parent true));
   Array.filter_mapi t.nodes ~f:(fun i _ ->
     if Bitv.get has_children i then None else Some i)
   |> Array.to_list
@@ -465,6 +506,7 @@ let subgraphs t =
   let dummy_cell = ref (-1) in
   let components = Array.map t.nodes ~f:(fun _ -> dummy_cell) in
   let component_id = ref 0 in
+  let set_representative parent ~repr = components.(parent).contents <- repr in
   Array.iteri t.nodes ~f:(fun i node ->
     let representative =
       match (node : Node_kind.t) with
@@ -479,7 +521,14 @@ let subgraphs t =
       | Merge { rev = _; parent1; parent2 } ->
         (* Keep component1 as representative for the union of 2 nodes. *)
         let component1 = components.(parent1) in
-        components.(parent2).contents <- component1.contents;
+        set_representative parent2 ~repr:component1.contents;
+        component1
+      | Octopus_merge { rev = _; parent1; parent2; parent3; other_parents } ->
+        let component1 = components.(parent1) in
+        let repr = component1.contents in
+        set_representative parent2 ~repr;
+        set_representative parent3 ~repr;
+        List.iter other_parents ~f:(fun parent -> set_representative parent ~repr);
         component1
     in
     components.(i) <- representative);

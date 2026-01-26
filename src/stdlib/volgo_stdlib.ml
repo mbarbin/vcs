@@ -291,6 +291,8 @@ module List = struct
   let find_map t ~f = find_map ~f t
   let fold t ~init ~f = fold_left ~f ~init t
   let iter t ~f = iter t ~f
+  let map t ~f = map ~f t
+  let mapi t ~f = mapi ~f t
   let sort t ~compare = sort t ~cmp:compare
   let count t ~f = fold t ~init:0 ~f:(fun acc e -> acc + if f e then 1 else 0)
 end
