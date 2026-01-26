@@ -27,10 +27,16 @@ let%expect_test "of_string" =
   in
   test "no space";
   [%expect {| Error "\"no space\": invalid tag_name" |}];
-  test "slashes/are/not/allowed";
-  [%expect {| Error "\"slashes/are/not/allowed\": invalid tag_name" |}];
+  test "slashes/are/allowed";
+  [%expect {| slashes/are/allowed |}];
   test "dashes-and_underscores";
   [%expect {| dashes-and_underscores |}];
+  test "with@at";
+  [%expect {| with@at |}];
+  test "with#hash";
+  [%expect {| with#hash |}];
+  test "predicate@0.1.0";
+  [%expect {| predicate@0.1.0 |}];
   test "0.1.8";
   [%expect {| 0.1.8 |}];
   test "v0.1.8";

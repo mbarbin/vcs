@@ -28,7 +28,10 @@ let invariant t =
     || Char.equal c '-'
     || Char.equal c '_'
     || Char.equal c '.'
-    || Char.equal c '+')
+    || Char.equal c '+'
+    || Char.equal c '@'
+    || Char.equal c '#'
+    || Char.equal c '/')
 ;;
 
 include Validated_string.Make (struct
