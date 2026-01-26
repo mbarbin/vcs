@@ -280,7 +280,10 @@ let refs t =
 
 let set_ref t ~rev ~ref_kind =
   match Rev_table.find t.revs rev with
-  | None -> Err.raise [ Pp.text "Rev not found."; Err.sexp (rev |> Rev.sexp_of_t) ]
+  | None ->
+    Code_error.raise
+      "Rev not found."
+      [ "rev", rev |> Rev.to_dyn; "ref_kind", ref_kind |> Ref_kind.to_dyn ]
   | Some index ->
     (match Ref_kind_table.find t.refs ref_kind with
      | None -> ()
@@ -328,13 +331,10 @@ let add_nodes t ~log =
       match Rev_table.find nodes_table parent with
       | Some node -> node
       | None ->
-        Err.raise
-          [ Pp.text "Parent not found."
-          ; Err.sexp
-              (Dyn.to_sexp
-                 (Dyn.record
-                    [ "parent", parent |> Rev.to_dyn; "line", line |> Log.Line.to_dyn ]))
-          ] [@coverage off]
+        Code_error.raise
+          "Parent not found."
+          [ "parent", parent |> Rev.to_dyn; "line", line |> Log.Line.to_dyn ]
+        [@coverage off]
     in
     let rev = Log.Line.rev line in
     if not (is_visited rev)
@@ -352,10 +352,9 @@ let add_nodes t ~log =
       match Rev_table.find t.revs rev with
       | Some node -> node
       | None ->
-        Err.raise
-          [ Pp.text "Node not found during the building of new nodes (internal error)."
-          ; Err.sexp (sexp_field (module Rev) "rev" rev)
-          ] [@coverage off]
+        Code_error.raise
+          "Node not found during the building of new nodes (internal error)."
+          [ "rev", rev |> Rev.to_dyn ] [@coverage off]
     in
     Queue.to_seq new_nodes
     |> Array.of_seq
@@ -601,14 +600,9 @@ let check_index_exn t ~index =
   let node_count = node_count t in
   if index < 0 || index >= node_count
   then
-    Err.raise
-      [ Pp.text "Node index out of bounds."
-      ; Err.sexp
-          (List
-             [ sexp_field (module Int) "index" index
-             ; sexp_field (module Int) "node_count" node_count
-             ])
-      ]
+    Code_error.raise
+      "Node index out of bounds."
+      [ "index", index |> Dyn.int; "node_count", node_count |> Dyn.int ]
 ;;
 
 let get_node_exn t ~index =
