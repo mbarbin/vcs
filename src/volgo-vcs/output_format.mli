@@ -19,7 +19,11 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-(** Output format selector for CLI commands. *)
+(** Output format selector for CLI commands.
+
+    - [Dyn]: Dynamic values that looks like OCaml literals
+    - [Json]: JSON format suitable for parsing by other tools
+    - [Sexp]: S-expression format *)
 
 type t =
   | Dyn
