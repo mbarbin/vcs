@@ -6,81 +6,107 @@ It's a practical tool for conducting exploratory testing within your repositorie
 
 Whether you're testing new features, diagnosing problems, or seeking to understand the library's application, `volgo-vcs` can be a useful resource.
 
+:::warning[Not intended for stable scripts]
+
+The `volgo-vcs` CLI is designed primarily for **exploratory testing and debugging** purposes. It is **not intended** to be consumed by stable scripts or automated pipelines.
+
+**Output format instability**: The precise structure and formatting of the CLI output (including `--output-format` options like `Dyn`, `Json`, and `Sexp`) are subject to change over time without stability guarantees. We may modify, extend, or restructure the output in future releases without prior notice.
+
+**Development standards**: This CLI component is generally developed with slightly less rigorous stability standards compared to the user-facing library APIs (such as `Vcs`, `Volgo`, etc.). While the code is thoroughly tested and functional, it remains somewhat experimental. You may encounter rough edges or behaviors that differ from your expectations.
+
+**We welcome your feedback!** If you encounter issues, unexpected behaviors, or have suggestions for improvements, please don't hesitate to [open an issue](https://github.com/mbarbin/vcs/issues) on GitHub. Your bug reports and feedback help us improve this tool.
+
+:::
+
 Below is a quick overview of the commands available in `volgo-vcs`:
 
 ```bash
 $ volgo-vcs --help=plain
 NAME
-       volgo-vcs - Call a command from the vcs interface.
+       volgo-vcs - Call a command from the Vcs interface.
 
 SYNOPSIS
        volgo-vcs COMMAND …
 
-       This is an executable to test the Version Control System (vcs)
-       library.
+       This CLI is built with the Volgo libraries (Versatile OCaml Library
+       for Git Operations). It is designed for exploratory testing and
+       debugging of the Vcs packages.
 
 
 
-       We expect a 1:1 mapping between the function exposed in the [Vcs.S]
-       and the sub commands exposed here, plus additional ones.
+       We expect a 1:1 mapping between the functions exposed in [Vcs.S] and
+       the sub commands exposed here, plus additional ones.
+
+
+
+       Several output formats are available via the --output-format option
+       (json, sexp, dyn) to accommodate different workflows and tools during
+       debugging sessions.
+
+
+
+       STABILITY NOTICE: This CLI is not intended for stable scripting. Its
+       output format and behavior may change between releases without
+       stability guarantees. If you encounter issues or have suggestions,
+       please open an issue at: https://github.com/mbarbin/vcs/issues
 
 COMMANDS
        add [OPTION]… file
            Add a file to the index.
 
-       branch-revision [OPTION]… [BRANCH]
+       branch-revision [--output-format=FORMAT] [OPTION]… [BRANCH]
            Get the revision of a branch.
 
-       commit [--message=MSG] [--quiet] [OPTION]…
+       commit [--message=MSG] [--output-format=FORMAT] [--quiet] [OPTION]…
            Commit a file.
 
-       current-branch [--opt] [OPTION]…
+       current-branch [--output-format=FORMAT] [--opt] [OPTION]…
            Print the current branch.
 
-       current-revision [OPTION]…
+       current-revision [--output-format=FORMAT] [OPTION]…
            Print the revision of HEAD.
 
-       descendance [OPTION]… REV REV
+       descendance [--output-format=FORMAT] [OPTION]… REV REV
            Print descendance relation between 2 revisions.
 
-       find-enclosing-repo-root [--from=path/to/dir] [--store=VAL]
-       [OPTION]…
+       find-enclosing-repo-root [--from=path/to/dir] [--output-format=FORMAT]
+       [--store=VAL] [OPTION]…
            Find the root of the enclosing-repo.
 
-       gca [OPTION]… [REV]…
+       gca [--output-format=FORMAT] [OPTION]… [REV]…
            Print greatest common ancestors of revisions.
 
        git [OPTION]… [ARG]…
            Run the git cli.
 
-       graph [OPTION]…
+       graph [--output-format=FORMAT] [OPTION]…
            Compute graph of current repo.
 
        hg [OPTION]… [ARG]…
            Run the hg cli.
 
-       init [--quiet] [OPTION]… path/to/root
+       init [--output-format=FORMAT] [--quiet] [OPTION]… path/to/root
            Initialize a new repository.
 
        load-file [OPTION]… path/to/file
            Print a file from the filesystem (aka cat).
 
-       log [OPTION]…
+       log [--output-format=FORMAT] [OPTION]…
            Show the log of current repo.
 
        ls-files [--below=PATH] [OPTION]…
            List versioned file.
 
-       name-status [OPTION]… BASE TIP
+       name-status [--output-format=FORMAT] [OPTION]… BASE TIP
            Show a summary of the diff between 2 revs.
 
-       num-status [OPTION]… BASE TIP
+       num-status [--output-format=FORMAT] [OPTION]… BASE TIP
            Show a summary of the number of lines of diff between 2 revs.
 
-       read-dir [OPTION]… path/to/dir
+       read-dir [--output-format=FORMAT] [OPTION]… path/to/dir
            Print the list of files in a directory.
 
-       refs [OPTION]…
+       refs [--output-format=FORMAT] [OPTION]…
            Show the refs of current repo.
 
        rename-current-branch [OPTION]… branch

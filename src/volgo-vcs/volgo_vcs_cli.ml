@@ -19,7 +19,23 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-let print_sexp sexp = print_endline (Sexp.to_string_hum sexp)
+let print_result ~output_format dyn =
+  print_endline
+    (match (output_format : Output_format.t) with
+     | Dyn -> Dyn.to_string dyn
+     | Json -> Yojson.Basic.pretty_to_string (Dyn.to_json dyn :> Yojson.Basic.t)
+     | Sexp -> Sexplib0.Sexp.to_string_hum (Dyn.to_sexp dyn))
+;;
+
+let output_format_arg =
+  let open Command.Std in
+  Arg.named_opt
+    [ "output-format"; "o" ]
+    (Param.enumerated (module Output_format))
+    ~docv:"FORMAT"
+    ~doc:"Output format (default: json)."
+  >>| Option.value ~default:Output_format.Json
+;;
 
 module Initialized = struct
   type t =
@@ -39,12 +55,11 @@ let find_enclosing_repo vcs ~from =
   | Some repo -> repo
   | None ->
     Err.raise
-      [ Err.sexp
-          (List
-             [ Atom "Failed to locate enclosing repo root from directory."
-             ; sexp_field (module Absolute_path) "from" from
-             ])
-      ]
+      Pp.O.
+        [ Pp.text "Failed to locate enclosing repo root from directory "
+          ++ Pp_tty.path (module Absolute_path) from
+          ++ Pp.text "."
+        ]
 ;;
 
 let initialize () =
@@ -81,12 +96,11 @@ let relativize ~repo_root ~cwd ~path =
   | Some relative_path -> Vcs.Path_in_repo.of_relative_path relative_path
   | None ->
     Err.raise
-      [ Err.sexp
-          (List
-             [ Atom "Path is not in repo."
-             ; sexp_field (module Absolute_path) "path" path
-             ])
-      ]
+      Pp.O.
+        [ Pp.text "Path "
+          ++ Pp_tty.path (module Absolute_path) path
+          ++ Pp.text " is not in repo."
+        ]
 ;;
 
 open Command.Std
@@ -120,10 +134,11 @@ let commit_cmd =
          (Param.validated_string (module Vcs.Commit_message))
          ~docv:"MSG"
          ~doc:"Commit message."
-     and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"Suppress output on success." in
+     and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"Suppress output on success."
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.commit vcs ~repo_root ~commit_message in
-     if not quiet then print_sexp (rev |> Vcs.Rev.sexp_of_t);
+     if not quiet then print_result ~output_format (Vcs.Rev.to_dyn rev);
      ())
 ;;
 
@@ -136,25 +151,25 @@ let current_branch_cmd =
          ~doc:
            "Do not fail if the repo is not currently on any branch. This effectively \
             changes the returned type from a branch to a branch option."
-     in
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      (match opt with
       | true ->
         let branch = Vcs.current_branch_opt vcs ~repo_root in
-        print_sexp (branch |> Option.sexp_of_t Vcs.Branch_name.sexp_of_t)
+        print_result ~output_format (Dyn.option Vcs.Branch_name.to_dyn branch)
       | false ->
         let branch = Vcs.current_branch vcs ~repo_root in
-        print_sexp (branch |> Vcs.Branch_name.sexp_of_t));
+        print_result ~output_format (Vcs.Branch_name.to_dyn branch));
      ())
 ;;
 
 let current_revision_cmd =
   Command.make
     ~summary:"Print the revision of HEAD."
-    (let+ () = Arg.return () in
+    (let+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.current_revision vcs ~repo_root in
-     print_sexp (rev |> Vcs.Rev.sexp_of_t);
+     print_result ~output_format (Vcs.Rev.to_dyn rev);
      ())
 ;;
 
@@ -173,7 +188,7 @@ let find_enclosing_repo_root_cmd =
          (Param.comma_separated (Param.validated_string (module Fsegment)))
          ~doc:"Stop the search if one of these entries is found (e.g. '.hg')."
        >>| Option.value ~default:[ Fsegment.dot_git; Fsegment.dot_hg ]
-     in
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let from =
        match from with
@@ -181,13 +196,13 @@ let find_enclosing_repo_root_cmd =
        | Some from -> Absolute_path.relativize ~root:cwd from
      in
      let store = List.map store ~f:(fun store -> store, `Store store) in
-     match Vcs.find_enclosing_repo_root vcs ~from ~store with
-     | None -> ()
-     | Some (`Store store, repo_root) ->
-       Printf.printf
-         "%s: %s\n"
-         (Fsegment.to_string store)
-         (Vcs.Repo_root.to_string repo_root))
+     let result =
+       Vcs.find_enclosing_repo_root vcs ~from ~store
+       |> Option.map ~f:(fun (`Store store, repo_root) ->
+         Dyn.record
+           [ "store", Fsegment.to_dyn store; "path", Vcs.Repo_root.to_dyn repo_root ])
+     in
+     print_result ~output_format (Dyn.option Fun.id result))
 ;;
 
 let git_cmd =
@@ -214,13 +229,13 @@ let init_cmd =
          (Param.validated_string (module Fpath))
          ~docv:"path/to/root"
          ~doc:"Where to initialize the repository."
-     and+ quiet =
-       Arg.flag [ "quiet"; "q" ] ~doc:"Do not print the initialized repo root."
-     in
+     and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"Do not print the initialized repo root."
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
      let repo_root = Vcs.init vcs ~path in
-     if not quiet then print_sexp (repo_root |> Vcs.Repo_root.sexp_of_t) [@coverage off];
+     if not quiet
+     then print_result ~output_format (Vcs.Repo_root.to_dyn repo_root) [@coverage off];
      ())
 ;;
 
@@ -280,10 +295,10 @@ let ls_files_cmd =
 let log_cmd =
   Command.make
     ~summary:"Show the log of current repo."
-    (let+ () = Arg.return () in
+    (let+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let log = Vcs.log vcs ~repo_root in
-     print_sexp (log |> Vcs.Log.sexp_of_t);
+     print_result ~output_format (log |> Vcs.Log.to_dyn);
      ())
 ;;
 
@@ -302,10 +317,10 @@ let name_status_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"TIP"
          ~doc:"The tip revision."
-     in
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
-     print_sexp (name_status |> Vcs.Name_status.sexp_of_t);
+     print_result ~output_format (name_status |> Vcs.Name_status.to_dyn);
      ())
 ;;
 
@@ -324,10 +339,10 @@ let num_status_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"TIP"
          ~doc:"The tip revision."
-     in
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
-     print_sexp (num_status |> Vcs.Num_status.sexp_of_t);
+     print_result ~output_format (num_status |> Vcs.Num_status.to_dyn);
      ())
 ;;
 
@@ -339,12 +354,12 @@ let read_dir_cmd =
          ~pos:0
          (Param.validated_string (module Fpath))
          ~docv:"path/to/dir"
-         ~doc:"Director to read."
-     in
+         ~doc:"Directory to read."
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let dir = Absolute_path.relativize ~root:cwd dir in
      let entries = Vcs.read_dir vcs ~dir in
-     print_sexp (entries |> List.sexp_of_t Fsegment.sexp_of_t);
+     print_result ~output_format (Dyn.list Fsegment.to_dyn entries);
      ())
 ;;
 
@@ -366,10 +381,10 @@ let rename_current_branch_cmd =
 let refs_cmd =
   Command.make
     ~summary:"Show the refs of current repo."
-    (let+ () = Arg.return () in
+    (let+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let refs = Vcs.refs vcs ~repo_root in
-     print_sexp (refs |> Vcs.Refs.sexp_of_t);
+     print_result ~output_format (refs |> Vcs.Refs.to_dyn);
      ())
 ;;
 
@@ -446,10 +461,10 @@ let show_file_at_rev_cmd =
 let graph_cmd =
   Command.make
     ~summary:"Compute graph of current repo."
-    (let+ () = Arg.return () in
+    (let+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
-     print_sexp (Vcs.Graph.summary graph |> Vcs.Graph.Summary.sexp_of_t);
+     print_result ~output_format (Vcs.Graph.summary graph |> Vcs.Graph.Summary.to_dyn);
      ())
 ;;
 
@@ -464,7 +479,7 @@ let branch_revision_cmd =
          (Param.validated_string (module Vcs.Branch_name))
          ~docv:"BRANCH"
          ~doc:"Specify which branch to select (defaults to $(b,current-branch))."
-     in
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let branch_name =
        match branch_name with
@@ -488,7 +503,7 @@ let branch_revision_cmd =
                ++ Pp.text " not found."
              ] [@coverage off]
      in
-     print_sexp (rev |> Vcs.Rev.sexp_of_t);
+     print_result ~output_format (Vcs.Rev.to_dyn rev);
      ())
 ;;
 
@@ -507,7 +522,7 @@ let descendance_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"
          ~doc:"The rev2."
-     in
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
      let find_node ~rev =
@@ -521,7 +536,7 @@ let descendance_cmd =
      let node1 = find_node ~rev:rev1 in
      let node2 = find_node ~rev:rev2 in
      let descendance = Vcs.Graph.descendance graph node1 node2 in
-     print_sexp (descendance |> Vcs.Graph.Descendance.sexp_of_t);
+     print_result ~output_format (descendance |> Vcs.Graph.Descendance.to_dyn);
      ())
 ;;
 
@@ -533,7 +548,7 @@ let greatest_common_ancestors_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"
          ~doc:"All revisions that must descend from the gcas."
-     in
+     and+ output_format = output_format_arg in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
      let nodes =
@@ -550,17 +565,21 @@ let greatest_common_ancestors_cmd =
        Vcs.Graph.greatest_common_ancestors graph ~nodes
        |> List.map ~f:(fun node -> Vcs.Graph.rev graph ~node)
      in
-     print_sexp (gca |> List.sexp_of_t Vcs.Rev.sexp_of_t);
+     print_result ~output_format (Dyn.list Vcs.Rev.to_dyn gca);
      ())
 ;;
 
 let main =
   Command.group
-    ~summary:"Call a command from the vcs interface."
+    ~summary:"Call a command from the Vcs interface."
     ~readme:(fun () ->
-      "This is an executable to test the Version Control System (vcs) library.\n\n\
-       We expect a 1:1 mapping between the function exposed in the [Vcs.S] and the sub \
-       commands exposed here, plus additional ones.")
+      {|This CLI is built with the Volgo libraries (Versatile OCaml Library for Git Operations). It is designed for exploratory testing and debugging of the Vcs packages.
+
+We expect a 1:1 mapping between the functions exposed in [Vcs.S] and the sub commands exposed here, plus additional ones.
+
+Several output formats are available via the --output-format option (json, sexp, dyn) to accommodate different workflows and tools during debugging sessions.
+
+STABILITY NOTICE: This CLI is not intended for stable scripting. Its output format and behavior may change between releases without stability guarantees. If you encounter issues or have suggestions, please open an issue at: https://github.com/mbarbin/vcs/issues|})
     [ "add", add_cmd
     ; "branch-revision", branch_revision_cmd
     ; "commit", commit_cmd

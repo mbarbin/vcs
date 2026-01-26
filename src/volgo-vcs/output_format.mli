@@ -19,24 +19,15 @@
 (*_  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*_******************************************************************************)
 
-include module type of struct
-  include Dyn
-end
+(** Output format selector for CLI commands.
 
-val inline_record : string -> (string * Dyn.t) list -> Dyn.t
-val to_sexp : Dyn.t -> Sexplib0.Sexp.t
+    - [Dyn]: Dynamic values that looks like OCaml literals
+    - [Json]: JSON format suitable for parsing by other tools
+    - [Sexp]: S-expression format *)
 
-(** A JSON-like type, structurally compatible with [Yojson.Basic.t] without
-    adding the dependency. *)
-type json =
-  [ `Null
-  | `Bool of bool
-  | `Int of int
-  | `Float of float
-  | `String of string
-  | `Assoc of (string * json) list
-  | `List of json list
-  ]
+type t =
+  | Dyn
+  | Json
+  | Sexp
 
-(** Convert a dynamic value to JSON. *)
-val to_json : Dyn.t -> json
+include Command.Enumerated_stringable with type t := t

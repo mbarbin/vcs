@@ -40,7 +40,7 @@ Oftentimes in the documentation, you'll find references to the project using the
 
 The main reason for that naming duality is that, even though the project is designed such that the main library be referred to and used as `Vcs`, we didn't want to claim the `vcs.opam` name from the main opam-repository. Thus we have resorted to introducing the `volgo` name for packaging and publication purposes.
 
-*volgo-vcs* is the name of a cli built with the libraries of this project. It is distributed by the opam package of the same name (`volgo-vcs`).
+*volgo-vcs* is the name of a cli built with the libraries of this project. It is distributed by the opam package of the same name (`volgo-vcs`). Note that this CLI is designed for exploratory testing and debugging rather than stable scripting. Its output format and behavior may change between releases without stability guarantees. See the [Exploratory tests](doc/docs/explanation/exploratory-tests.md) documentation for more details.
 
 ## Mercurial Compatibility
 

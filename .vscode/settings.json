@@ -19,12 +19,14 @@
         "dedup",
         "descr",
         "diataxis",
+        "docv",
         "downto",
         "dunolint",
         "Dynable",
         "EINTR",
         "endline",
         "ENOENT",
+        "eprintf",
         "execve",
         "failwith",
         "foldi",
@@ -56,6 +58,7 @@
         "pathspec",
         "pplumbing",
         "ppxlib",
+        "prerr",
         "Printexc",
         "putenv",
         "quickcheck",
@@ -92,6 +95,7 @@
         "wronly",
         "WSIGNALED",
         "WSTOPPED",
+        "yojson",
         "Zanuda"
     ]
 }
