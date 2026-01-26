@@ -9,7 +9,6 @@
 
 - Release workflow uploads artifacts to the draft release in preparation (@mbarbin).
 - Improve the distribution process to use GitHub immutable releases (@mbarbin)
-- Change default format of cli output to `json` (#135, @mbarbin).
 - Graph internal errors raise `Code_error.E` instead of `Err.E` (#134, @mbarbin).
 - Make `Vcs.Graph.Node_kind` and `Vcs.Log.Line` types abstract (#131, @mbarbin).
 - Reduce overall dependencies (#124, #127, #130, @mbarbin).

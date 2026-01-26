@@ -27,14 +27,14 @@ let print_result ~output_format dyn =
      | Sexp -> Sexplib0.Sexp.to_string_hum (Dyn.to_sexp dyn))
 ;;
 
-let output_format_arg =
+let output_format_arg ~default =
   let open Command.Std in
-  Arg.named_opt
+  Arg.named_with_default
     [ "output-format"; "o" ]
     (Param.enumerated (module Output_format))
+    ~default
     ~docv:"FORMAT"
-    ~doc:"Output format (default: json)."
-  >>| Option.value ~default:Output_format.Json
+    ~doc:"Output format."
 ;;
 
 module Initialized = struct
@@ -135,7 +135,7 @@ let commit_cmd =
          ~docv:"MSG"
          ~doc:"Commit message."
      and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"Suppress output on success."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.commit vcs ~repo_root ~commit_message in
      if not quiet then print_result ~output_format (Vcs.Rev.to_dyn rev);
@@ -151,7 +151,7 @@ let current_branch_cmd =
          ~doc:
            "Do not fail if the repo is not currently on any branch. This effectively \
             changes the returned type from a branch to a branch option."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      (match opt with
       | true ->
@@ -166,7 +166,7 @@ let current_branch_cmd =
 let current_revision_cmd =
   Command.make
     ~summary:"Print the revision of HEAD."
-    (let+ output_format = output_format_arg in
+    (let+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let rev = Vcs.current_revision vcs ~repo_root in
      print_result ~output_format (Vcs.Rev.to_dyn rev);
@@ -188,7 +188,7 @@ let find_enclosing_repo_root_cmd =
          (Param.comma_separated (Param.validated_string (module Fsegment)))
          ~doc:"Stop the search if one of these entries is found (e.g. '.hg')."
        >>| Option.value ~default:[ Fsegment.dot_git; Fsegment.dot_hg ]
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let from =
        match from with
@@ -230,7 +230,7 @@ let init_cmd =
          ~docv:"path/to/root"
          ~doc:"Where to initialize the repository."
      and+ quiet = Arg.flag [ "quiet"; "q" ] ~doc:"Do not print the initialized repo root."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let path = Absolute_path.relativize ~root:cwd path in
      let repo_root = Vcs.init vcs ~path in
@@ -295,7 +295,7 @@ let ls_files_cmd =
 let log_cmd =
   Command.make
     ~summary:"Show the log of current repo."
-    (let+ output_format = output_format_arg in
+    (let+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let log = Vcs.log vcs ~repo_root in
      print_result ~output_format (log |> Vcs.Log.to_dyn);
@@ -317,7 +317,7 @@ let name_status_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"TIP"
          ~doc:"The tip revision."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let name_status = Vcs.name_status vcs ~repo_root ~changed:(Between { src; dst }) in
      print_result ~output_format (name_status |> Vcs.Name_status.to_dyn);
@@ -339,7 +339,7 @@ let num_status_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"TIP"
          ~doc:"The tip revision."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let num_status = Vcs.num_status vcs ~repo_root ~changed:(Between { src; dst }) in
      print_result ~output_format (num_status |> Vcs.Num_status.to_dyn);
@@ -355,7 +355,7 @@ let read_dir_cmd =
          (Param.validated_string (module Fpath))
          ~docv:"path/to/dir"
          ~doc:"Directory to read."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root = _; cwd } = initialize () in
      let dir = Absolute_path.relativize ~root:cwd dir in
      let entries = Vcs.read_dir vcs ~dir in
@@ -381,7 +381,7 @@ let rename_current_branch_cmd =
 let refs_cmd =
   Command.make
     ~summary:"Show the refs of current repo."
-    (let+ output_format = output_format_arg in
+    (let+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let refs = Vcs.refs vcs ~repo_root in
      print_result ~output_format (refs |> Vcs.Refs.to_dyn);
@@ -461,7 +461,7 @@ let show_file_at_rev_cmd =
 let graph_cmd =
   Command.make
     ~summary:"Compute graph of current repo."
-    (let+ output_format = output_format_arg in
+    (let+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
      print_result ~output_format (Vcs.Graph.summary graph |> Vcs.Graph.Summary.to_dyn);
@@ -479,7 +479,7 @@ let branch_revision_cmd =
          (Param.validated_string (module Vcs.Branch_name))
          ~docv:"BRANCH"
          ~doc:"Specify which branch to select (defaults to $(b,current-branch))."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let branch_name =
        match branch_name with
@@ -522,7 +522,7 @@ let descendance_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"
          ~doc:"The rev2."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
      let find_node ~rev =
@@ -548,7 +548,7 @@ let greatest_common_ancestors_cmd =
          (Param.validated_string (module Vcs.Rev))
          ~docv:"REV"
          ~doc:"All revisions that must descend from the gcas."
-     and+ output_format = output_format_arg in
+     and+ output_format = output_format_arg ~default:Sexp in
      let { Initialized.vcs; repo_root; cwd = _ } = initialize () in
      let graph = Vcs.graph vcs ~repo_root in
      let nodes =

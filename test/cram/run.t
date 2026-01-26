@@ -12,7 +12,7 @@ includes specifics required by the GitHub Actions environment.
   Hello World
 
   $ volgo-vcs add hello
-  $ rev0=$(volgo-vcs commit -m "Initial commit" | tr -d '"')
+  $ rev0=$(volgo-vcs commit -m "Initial commit" -o sexp)
 
 Making sure the branch name is deterministic.
 
@@ -24,13 +24,13 @@ Rev-parse.
   rev0
 
   $ volgo-vcs current-revision | sed -e "s/$rev0/rev0/g"
-  "rev0"
+  rev0
 
   $ volgo-vcs current-branch
-  "main"
+  main
 
   $ volgo-vcs current-branch --opt
-  "main"
+  (main)
 
   $ git switch --detach main 2> /dev/null
 
@@ -43,16 +43,16 @@ Rev-parse.
   [123]
 
   $ volgo-vcs current-branch --opt
-  null
+  ()
 
   $ git checkout main
   Switched to branch 'main'
 
   $ volgo-vcs branch-revision | sed -e "s/$rev0/rev0/g"
-  "rev0"
+  rev0
 
   $ volgo-vcs branch-revision main | sed -e "s/$rev0/rev0/g"
-  "rev0"
+  rev0
 
   $ volgo-vcs branch-revision unknown-branch
   Error: Branch [unknown-branch] not found.
@@ -87,12 +87,12 @@ File system operations.
   $ mkdir -p untracked
 
   $ volgo-vcs read-dir untracked
-  []
+  ()
 
   $ echo "New untracked file" | volgo-vcs save-file untracked/hello
 
   $ volgo-vcs read-dir untracked
-  [ "hello" ]
+  (hello)
 
   $ volgo-vcs read-dir untracked/hello
   Context:
@@ -128,35 +128,31 @@ Find enclosing repo root.
   [123]
 
   $ volgo-vcs find-enclosing-repo-root
-  {
-    "store": ".git",
-    "path": "$TESTCASE_ROOT"
-  }
+  (((store .git)
+    (path
+     $TESTCASE_ROOT)))
 
   $ mkdir subdir
   $ volgo-vcs find-enclosing-repo-root --from subdir
-  {
-    "store": ".git",
-    "path": "$TESTCASE_ROOT"
-  }
+  (((store .git)
+    (path
+     $TESTCASE_ROOT)))
 
   $ volgo-vcs find-enclosing-repo-root --from "/"
-  null
+  ()
 
   $ mkdir -p subdir/hg/otherdir
   $ touch subdir/hg/.hg
 
   $ volgo-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .git
-  {
-    "store": ".git",
-    "path": "$TESTCASE_ROOT"
-  }
+  (((store .git)
+    (path
+     $TESTCASE_ROOT)))
 
   $ volgo-vcs find-enclosing-repo-root --from subdir/hg/otherdir --store .hg
-  {
-    "store": ".hg",
-    "path": "$TESTCASE_ROOT/subdir/hg"
-  }
+  (((store .hg)
+    (path
+     $TESTCASE_ROOT/subdir/hg)))
 
   $ volgo-vcs find-enclosing-repo-root --output-format=dyn
   Some
@@ -176,7 +172,7 @@ Adding a new file under a directory.
   $ echo "New file" > dir/hello
 
   $ volgo-vcs add dir/hello
-  $ rev1=$(volgo-vcs commit -m "Added dir/hello" | tr -d '"')
+  $ rev1=$(volgo-vcs commit -m "Added dir/hello" -o sexp)
 
   $ volgo-vcs ls-files
   dir/hello
@@ -217,29 +213,15 @@ Testing an unsuccessful file show with git and via vcs.
 Name status.
 
   $ volgo-vcs name-status $rev0 $rev2
-  [ { "Added": [ "dir/hello" ] }, { "Removed": [ "hello" ] } ]
+  ((Added dir/hello) (Removed hello))
 
 Num status.
 
   $ volgo-vcs num-status $rev0 $rev2
-  [
-    {
-      "key": { "One_file": [ "dir/hello" ] },
-      "num_stat": {
-        "type": "Num_lines_in_diff",
-        "insertions": 1,
-        "deletions": 0
-      }
-    },
-    {
-      "key": { "One_file": [ "hello" ] },
-      "num_stat": {
-        "type": "Num_lines_in_diff",
-        "insertions": 0,
-        "deletions": 1
-      }
-    }
-  ]
+  (((key (One_file dir/hello))
+    (num_stat (Num_lines_in_diff (insertions 1) (deletions 0))))
+   ((key (One_file hello))
+    (num_stat (Num_lines_in_diff (insertions 0) (deletions 1)))))
 
 Stabilize output.
 
@@ -250,6 +232,22 @@ Stabilize output.
 Refs.
 
   $ volgo-vcs refs | stabilize_output
+  (((rev $REV2)
+    (ref_kind (Local_branch (branch_name main)))))
+
+Testing different output formats.
+
+  $ volgo-vcs refs -o dyn | stabilize_output
+  [ { rev = "$REV2"
+    ; ref_kind = Local_branch { branch_name = "main" }
+    }
+  ]
+
+  $ volgo-vcs refs -o sexp | stabilize_output
+  (((rev $REV2)
+    (ref_kind (Local_branch (branch_name main)))))
+
+  $ volgo-vcs refs -o json | stabilize_output
   [
     {
       "rev": "$REV2",
@@ -257,58 +255,32 @@ Refs.
     }
   ]
 
-Testing different output formats.
-
-  $ volgo-vcs refs --output-format=dyn | stabilize_output
-  [ { rev = "$REV2"
-    ; ref_kind = Local_branch { branch_name = "main" }
-    }
-  ]
-
-  $ volgo-vcs refs --output-format=sexp | stabilize_output
-  (((rev $REV2)
-    (ref_kind (Local_branch (branch_name main)))))
-
 Log.
 
   $ volgo-vcs log | stabilize_output
-  [
-    {
-      "type": "Commit",
-      "rev": "$REV2",
-      "parent": "$REV1"
-    },
-    {
-      "type": "Commit",
-      "rev": "$REV1",
-      "parent": "$REV0"
-    },
-    { "type": "Root", "rev": "$REV0" }
-  ]
+  ((Commit (rev $REV2)
+    (parent $REV1))
+   (Commit (rev $REV1)
+    (parent $REV0))
+   (Root (rev $REV0)))
 
 Graph.
 
   $ volgo-vcs graph | stabilize_output
-  {
-    "refs": [
-      [ "$REV2", "refs/heads/main" ]
-    ],
-    "roots": [ "$REV0" ],
-    "leaves": [
-      [ "$REV2", [ "refs/heads/main" ] ]
-    ]
-  }
+  ((refs (($REV2 refs/heads/main)))
+   (roots ($REV0))
+   (leaves (($REV2 (refs/heads/main)))))
 
 Greatest common ancestors.
 
   $ volgo-vcs gca
-  []
+  ()
 
   $ volgo-vcs gca $rev1 | stabilize_output
-  [ "$REV1" ]
+  ($REV1)
 
   $ volgo-vcs gca $rev1 $rev2 | stabilize_output
-  [ "$REV1" ]
+  ($REV1)
 
   $ volgo-vcs gca $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
   Error: Rev [2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e] not found.
@@ -317,13 +289,13 @@ Greatest common ancestors.
 Descendance.
 
   $ volgo-vcs descendance $rev1 $rev1
-  "Same_node"
+  Same_node
 
   $ volgo-vcs descendance $rev1 $rev2
-  "Strict_ancestor"
+  Strict_ancestor
 
   $ volgo-vcs descendance $rev2 $rev1
-  "Strict_descendant"
+  Strict_descendant
 
   $ volgo-vcs descendance $rev1 2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e
   Error: Rev [2e9ab12edfe8e3a01cf2fa2b46210c042e9ab12e] not found.
