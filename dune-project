@@ -115,7 +115,7 @@
   (volgo-hg-unix
    (= :version))
   (yojson
-   (>= 2.1.1))))
+   (>= 2.2.2))))
 
 (package
  (name volgo-git-backend)
