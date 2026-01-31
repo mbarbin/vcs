@@ -28,7 +28,6 @@
   pplumbing-err
   pplumbing-pp-tty
   sexplib0
-  unix
   volgo
   volgo-git-unix
   volgo-hg-backend

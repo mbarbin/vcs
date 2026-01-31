@@ -12,7 +12,7 @@
   Volgo
   -open
   Volgo_stdlib)
- (libraries eio eio_main volgo volgo_hg_backend volgo_stdlib)
+ (libraries volgo volgo_hg_backend volgo_stdlib)
  (instrumentation
   (backend bisect_ppx))
  (lint

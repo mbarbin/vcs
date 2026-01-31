@@ -19,7 +19,6 @@
 (*  <http://www.gnu.org/licenses/> and <https://spdx.org>, respectively.       *)
 (*******************************************************************************)
 
-(* Tests for [Vcs_cli] are done as cram tests running the [volgo-vcs]
-   executable. They're located in ["%{project_root}/test/cram/run.t"]. *)
-
-open! Volgo_vcs_cli
+open! Volgo
+open! Volgo_stdlib
+open! Volgo_hg_backend
