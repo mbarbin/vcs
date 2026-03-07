@@ -86,7 +86,7 @@ jobs:
           os=$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')
           arch=$(uname -m)
           bin_name="${{ github.workspace }}/volgo-vcs-$TAG_NAME-$os-$arch"
-          cp "$OPAM_DESTDIR/bin/volgo-vcs" $bin_name
+          cp "$OPAM_DESTDIR/bin/volgo-vcs" "$bin_name"
           echo "BIN_NAME=$bin_name" >> $GITHUB_ENV
 
       - name: Attest Build Provenance
