@@ -88,6 +88,9 @@ jobs:
           bin_name="${{ github.workspace }}/volgo-vcs-$TAG_NAME-$os-$arch"
           cp "$OPAM_DESTDIR/bin/volgo-vcs" "$bin_name"
           echo "BIN_NAME=$bin_name" >> $GITHUB_ENV
+          archive_name="${bin_name}.tar.gz"
+          tar -czf "$archive_name" -C "$OPAM_DESTDIR/bin" volgo-vcs
+          echo "ARCHIVE_NAME=$archive_name" >> $GITHUB_ENV
 
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
