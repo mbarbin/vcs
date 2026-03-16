@@ -4,4 +4,6 @@
 (*  SPDX-License-Identifier: LGPL-3.0-or-later WITH LGPL-3.0-linking-exception   *)
 (*********************************************************************************)
 
-include Stdlib0
+include Absolute_path
+
+let to_dyn t = Dyn.string (Absolute_path.to_string t)
