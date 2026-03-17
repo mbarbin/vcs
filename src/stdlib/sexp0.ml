@@ -4,4 +4,9 @@
 (*  SPDX-License-Identifier: LGPL-3.0-or-later WITH LGPL-3.0-linking-exception   *)
 (*********************************************************************************)
 
-include Stdlib0
+include Sexp
+
+let rec to_dyn = function
+  | Sexp.Atom s -> Dyn.variant "Atom" [ Dyn.string s ]
+  | Sexp.List l -> Dyn.variant "List" [ Dyn.list to_dyn l ]
+;;

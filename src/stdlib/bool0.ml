@@ -4,4 +4,6 @@
 (*  SPDX-License-Identifier: LGPL-3.0-or-later WITH LGPL-3.0-linking-exception   *)
 (*********************************************************************************)
 
-include Stdlib0
+include Bool
+
+let to_dyn = Dyn.bool

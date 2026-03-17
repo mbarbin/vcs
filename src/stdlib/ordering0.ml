@@ -4,4 +4,10 @@
 (*  SPDX-License-Identifier: LGPL-3.0-or-later WITH LGPL-3.0-linking-exception   *)
 (*********************************************************************************)
 
-include Stdlib0
+include Ordering
+
+let to_dyn = function
+  | Lt -> Dyn.Variant ("Lt", [])
+  | Eq -> Dyn.Variant ("Eq", [])
+  | Gt -> Dyn.Variant ("Gt", [])
+;;
