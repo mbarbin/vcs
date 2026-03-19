@@ -24,10 +24,10 @@ module Node_kind = struct
      The following comes to mind:
 
      {[
-       type t =
-         { rev : Rev.t
-         ; parents : Node.t list
-         }
+     type t =
+       { rev : Rev.t
+       ; parents : Node.t list
+       }
      ]}
 
      It is possible that we'd look into it at some point. It is not clear

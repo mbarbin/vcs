@@ -294,21 +294,17 @@ module Git = Git
     For example using the raising API::
 
     {[
-      let git_status () : string =
-        Vcs.git vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Git.exit0_and_stdout
-      ;;
+    let git_status () : string =
+      Vcs.git vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Git.exit0_and_stdout
+    ;;
     ]}
 
     Or the {{!non_raising_apis} non-raising API} (result):
 
     {[
-      let git_status () : string Vcs.Result.t =
-        Vcs.Result.git
-          vcs
-          ~repo_root
-          ~args:[ "status" ]
-          ~f:Vcs.Git.Result.exit0_and_stdout
-      ;;
+    let git_status () : string Vcs.Result.t =
+      Vcs.Result.git vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Git.Result.exit0_and_stdout
+    ;;
     ]} *)
 val git
   :  ?env:string array
@@ -338,17 +334,17 @@ module Hg = Hg
     For example using the raising API:
 
     {[
-      let hg_status () : string =
-        Vcs.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.exit0_and_stdout
-      ;;
+    let hg_status () : string =
+      Vcs.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.exit0_and_stdout
+    ;;
     ]}
 
     Or the {{!non_raising_apis} non-raising API} (result):
 
     {[
-      let hg_status () : string Vcs.Result.t =
-        Vcs.Result.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.Result.exit0_and_stdout
-      ;;
+    let hg_status () : string Vcs.Result.t =
+      Vcs.Result.hg vcs ~repo_root ~args:[ "status" ] ~f:Vcs.Hg.Result.exit0_and_stdout
+    ;;
     ]} *)
 val hg
   :  ?env:string array

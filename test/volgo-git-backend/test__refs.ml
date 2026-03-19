@@ -6,9 +6,7 @@
 
 (* [super-master-mind.refs] has been created by capturing the output of:
 
-   {v
-      $ git show-refs
-   v}
+   {v    $ git show-refs v}
 
    In this test we verify that we can parse this output. *)
 

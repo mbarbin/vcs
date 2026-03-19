@@ -6,9 +6,7 @@
 
 (* [super-master-mind.log] has been created by capturing the output of:
 
-   {v
-      $ git log --all --pretty=format:'%H %P'
-   v}
+   {v    $ git log --all --pretty=format:'%H %P' v}
 
    In this test we verify that we can parse this output. *)
 

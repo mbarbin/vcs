@@ -10,17 +10,17 @@
 
     1. A simple path:
     {[
-      "a/simple/path"
+    "a/simple/path"
     ]}
 
     2. A pair of paths, with an arrow separator
     {[
-      "a/simple/path => another/path"
+    "a/simple/path => another/path"
     ]}
 
     3. (The more involved case). A pair of paths, with common parts
     {[
-      "a/{simple => not/so/simple}/path"
+    "a/{simple => not/so/simple}/path"
     ]}
 
     This module is able to parse all these forms and returned a typed version of

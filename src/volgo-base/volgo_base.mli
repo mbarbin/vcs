@@ -14,7 +14,7 @@
     they can be used with Base-style containers:
 
     {[
-      let create_path_in_repo_table () = Hashtbl.create (module Vcs.Path_in_repo)
+    let create_path_in_repo_table () = Hashtbl.create (module Vcs.Path_in_repo)
     ]}
 
     There's also a new module [Vcs.Or_error] which allows using [Vcs] with the
@@ -28,7 +28,7 @@
     available to your scope:
 
     {[
-      module Vcs = Volgo_base.Vcs
+    module Vcs = Volgo_base.Vcs
     ]}
 
     Another way to achieve this is to open [Volgo_base] via dune flags. When doing

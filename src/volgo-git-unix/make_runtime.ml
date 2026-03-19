@@ -224,7 +224,7 @@ let vcs_cli ~of_process_output ?env t ~cwd ~args ~f =
 
        Illustrating what the inserted unvisitable coverage point looks like:
        {[
-         ___bisect_post_visit___ 36 (raise_notrace (Err.E err))
+       ___bisect_post_visit___ 36 (raise_notrace (Err.E err))
        ]}
     *)
     match
