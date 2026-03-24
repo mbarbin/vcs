@@ -92,6 +92,8 @@
    (>= 0.0.16))
   (conf-git :with-test)
   (conf-hg :with-test)
+  (dune-build-info
+   (>= 3.17))
   (fpath
    (>= 0.7.3))
   (fpath-sexp0

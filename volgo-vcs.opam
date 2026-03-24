@@ -15,6 +15,7 @@ depends: [
   "cmdlang-cmdliner-err-runner" {>= "0.0.16"}
   "conf-git" {with-test}
   "conf-hg" {with-test}
+  "dune-build-info" {>= "3.17"}
   "fpath" {>= "0.7.3"}
   "fpath-sexp0" {>= "0.4.0"}
   "pp" {>= "2.0.0"}

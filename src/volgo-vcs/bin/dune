@@ -3,7 +3,10 @@
  (public_name volgo-vcs)
  (package volgo-vcs)
  (flags :standard -w +a-4-40-41-42-44-45-48-66 -warn-error +a)
- (libraries cmdlang-cmdliner-err-runner volgo-vcs.volgo-vcs-cli)
+ (libraries
+  cmdlang-cmdliner-err-runner
+  dune-build-info
+  volgo-vcs.volgo-vcs-cli)
  (instrumentation
   (backend bisect_ppx))
  (lint
