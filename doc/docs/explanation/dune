@@ -1,6 +1,0 @@
-(mdx
- (package volgo-dev)
- (deps
-  (package volgo)
-  (package volgo-vcs))
- (preludes prelude.txt))
