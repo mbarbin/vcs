@@ -297,9 +297,7 @@
  (synopsis "Tests & Examples for volgo")
  (depends
   (ocaml
-   (and
-    (>= 5.2)
-    (< 5.4~)))
+   (>= 5.2))
   (bitv
    (>= 2.1))
   (cmdlang
@@ -307,9 +305,7 @@
   (cmdlang-cmdliner-err-runner
    (>= 0.0.16))
   (cmdliner
-   (and
-    (>= 1.3.0)
-    (< 2.0)))
+   (>= 1.3.0))
   conf-git
   conf-hg
   (eio
@@ -393,17 +389,13 @@
  (allow_empty)
  (depends
   (ocaml
-   (and
-    (>= 5.3)
-    (< 5.4~)))
+   (>= 5.3))
   (ocamlformat
    (= 0.29.0))
   (bisect_ppx
    (>= 2.8.3))
   (cmdliner
-   (and
-    (>= 1.3.0)
-    (< 2.0)))
+   (>= 1.3.0))
   conf-git
   conf-hg
   (mdx

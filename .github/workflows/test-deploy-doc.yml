@@ -15,7 +15,7 @@ jobs:
     name: Test deployment
     runs-on: ubuntu-latest
     env:
-      OCAML_VERSION: "5.3"
+      OCAML_VERSION: "5.4"
     defaults:
       run:
         shell: bash

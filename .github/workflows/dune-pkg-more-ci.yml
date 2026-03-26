@@ -25,13 +25,14 @@ jobs:
           - ubuntu-latest
           - macos-latest
         ocaml-version:
+          - "5.4"
           - "5.3"
           - "5.2"
           - "4.14"
         exclude:
           # Exclude the combination already tested in the main ci workflow.
           - os: ubuntu-latest
-            ocaml-version: "5.3"
+            ocaml-version: "5.4"
 
     runs-on: ${{ matrix.os }}
 
