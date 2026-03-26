@@ -4,7 +4,7 @@
 
 (library
  (name volgo_toplevel_test)
- (package volgo-tests)
+ (package volgo-dev)
  (inline_tests
   (deps volgo_toplevel.exe))
  (flags
