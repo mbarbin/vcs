@@ -15,7 +15,6 @@
 
 (documentation "https://mbarbin.github.io/vcs/")
 
-
 ;; The value for the [implicit_transitive_deps] option is set during the CI
 ;; depending on the OCaml compiler version.
 ;;
