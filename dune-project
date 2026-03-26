@@ -305,9 +305,7 @@
   (cmdlang-cmdliner-err-runner
    (>= 0.0.16))
   (cmdliner
-   (and
-    (>= 1.3.0)
-    (< 2.0)))
+   (>= 1.3.0))
   conf-git
   conf-hg
   (eio
@@ -397,9 +395,7 @@
   (bisect_ppx
    (>= 2.8.3))
   (cmdliner
-   (and
-    (>= 1.3.0)
-    (< 2.0)))
+   (>= 1.3.0))
   conf-git
   conf-hg
   (mdx
