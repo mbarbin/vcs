@@ -26,6 +26,19 @@
        (name
         (equals volgo_base_test)))))))
   ((path
+    (glob test/toplevel/**))
+   (enforce
+    (dune
+     (library
+      (and
+       (not
+        (has_field public_name))
+       (has_field inline_tests)
+       (package
+        (equals volgo-dev))
+       (name
+        (equals volgo_toplevel_test)))))))
+  ((path
     (or
      (glob test/**)
      (glob example/**)))

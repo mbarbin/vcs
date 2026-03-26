@@ -1,6 +1,41 @@
-(mdx
+(toplevel
+ (name volgo_toplevel)
+ (libraries volgo))
+
+(library
+ (name volgo_toplevel_test)
  (package volgo-dev)
- (deps
-  (package volgo)
-  (package volgo-tests))
- (preludes prelude.txt))
+ (inline_tests
+  (deps volgo_toplevel.exe))
+ (flags
+  :standard
+  -w
+  +a-4-40-41-42-44-45-48-66
+  -warn-error
+  +a
+  -open
+  Volgo_stdlib)
+ (libraries unix volgo_stdlib)
+ (instrumentation
+  (backend bisect_ppx))
+ (lint
+  (pps ppx_js_style -allow-let-operators -check-doc-comments))
+ (preprocess
+  (pps ppx_expect)))
+
+(rule
+ (package volgo-dev)
+ (enabled_if %{bin-available:mdexp})
+ (target process_output.md.gen)
+ (deps process_output.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (run mdexp pp %{deps}))))
+
+(rule
+ (package volgo-dev)
+ (enabled_if %{bin-available:mdexp})
+ (alias runtest)
+ (action
+  (diff process_output.md process_output.md.gen)))
