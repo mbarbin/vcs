@@ -16,8 +16,6 @@
   -open
   Base
   -open
-  Fpath_sexp0
-  -open
   Pplumbing_err
   -open
   Volgo
@@ -25,10 +23,6 @@
   Volgo_stdlib)
  (libraries
   base
-  eio
-  eio_main
-  fpath
-  fpath-sexp0
   pp
   pplumbing-err
   ppx_hash.runtime-lib

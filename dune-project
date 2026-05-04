@@ -60,15 +60,9 @@
    (>= 5.2))
   (base
    (>= v0.17))
-  (fpath
-   (>= 0.7.3))
-  (fpath-sexp0
-   (>= 0.4.0))
   (pp
    (>= 2.0.0))
   (pplumbing-err
-   (>= 0.0.16))
-  (pplumbing-pp-tty
    (>= 0.0.16))
   (ppx_hash
    (>= v0.17))
@@ -353,14 +347,6 @@
   (base
    (>= v0.17))
   conf-git
-  (eio
-   (>= 1.0))
-  (eio_main
-   (>= 1.0))
-  (fpath
-   (>= 0.7.3))
-  (fpath-sexp0
-   (>= 0.4.0))
   (pp
    (>= 2.0.0))
   (pplumbing-err

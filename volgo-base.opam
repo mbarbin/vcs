@@ -11,11 +11,8 @@ depends: [
   "dune" {>= "3.17"}
   "ocaml" {>= "5.2"}
   "base" {>= "v0.17"}
-  "fpath" {>= "0.7.3"}
-  "fpath-sexp0" {>= "0.4.0"}
   "pp" {>= "2.0.0"}
   "pplumbing-err" {>= "0.0.16"}
-  "pplumbing-pp-tty" {>= "0.0.16"}
   "ppx_hash" {>= "v0.17"}
   "ppxlib" {>= "0.33"}
   "volgo" {= version}
