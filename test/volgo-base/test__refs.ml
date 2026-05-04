@@ -7,10 +7,7 @@
 module Vcs = Volgo_base.Vcs
 
 let%expect_test "parse_exn" =
-  Eio_main.run
-  @@ fun env ->
-  let path = Eio.Path.(Eio.Stdenv.fs env / "super-master-mind.refs") in
-  let contents = Eio.Path.load path in
+  let contents = In_channel.with_open_bin "super-master-mind.refs" In_channel.input_all in
   let lines = String.split_lines contents in
   let refs = Volgo_git_backend.Refs.parse_lines_exn ~lines in
   print_dyn

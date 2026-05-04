@@ -60,15 +60,9 @@
    (>= 5.2))
   (base
    (>= v0.17))
-  (fpath
-   (>= 0.7.3))
-  (fpath-sexp0
-   (>= 0.4.0))
   (pp
    (>= 2.0.0))
   (pplumbing-err
-   (>= 0.0.16))
-  (pplumbing-pp-tty
    (>= 0.0.16))
   (ppx_hash
    (>= v0.17))
@@ -89,7 +83,6 @@
   (cmdlang-cmdliner-err-runner
    (>= 0.0.16))
   (conf-git :with-test)
-  (conf-hg :with-test)
   (dune-build-info
    (>= 3.17))
   (fpath
@@ -193,7 +186,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (conf-hg :with-test)
   (eio
    (>= 1.0))
   (fpath
@@ -249,7 +241,6 @@
  (depends
   (ocaml
    (>= 4.14))
-  (conf-hg :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
@@ -356,14 +347,6 @@
   (base
    (>= v0.17))
   conf-git
-  (eio
-   (>= 1.0))
-  (eio_main
-   (>= 1.0))
-  (fpath
-   (>= 0.7.3))
-  (fpath-sexp0
-   (>= 0.4.0))
   (pp
    (>= 2.0.0))
   (pplumbing-err
@@ -396,6 +379,8 @@
    (>= 1.3.0))
   conf-git
   conf-hg
+  (ppx_expect
+   (>= v0.17))
   (ppx_js_style
    (>= v0.17))
   (ppxlib
