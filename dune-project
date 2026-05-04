@@ -89,7 +89,6 @@
   (cmdlang-cmdliner-err-runner
    (>= 0.0.16))
   (conf-git :with-test)
-  (conf-hg :with-test)
   (dune-build-info
    (>= 3.17))
   (fpath
@@ -193,7 +192,6 @@
  (depends
   (ocaml
    (>= 5.2))
-  (conf-hg :with-test)
   (eio
    (>= 1.0))
   (fpath
@@ -249,7 +247,6 @@
  (depends
   (ocaml
    (>= 4.14))
-  (conf-hg :with-test)
   (fpath
    (>= 0.7.3))
   (fpath-sexp0
