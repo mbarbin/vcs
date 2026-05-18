@@ -141,7 +141,7 @@ let%expect_test "find ref" =
      makes.
 
      This is the reason why we ended up removing [rev_parse] from the vcs api,
-     and replaced it with the 2 technics shown above:
+     and replaced it with the 2 techniques shown above:
 
      1. [Vcs.Graph.find_ref] and
      2. [Vcs.refs |> Vcs.Refs.to_map]. *)

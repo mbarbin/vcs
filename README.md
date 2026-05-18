@@ -28,7 +28,7 @@ Explore the [example](example/) directory to get a firsthand look at how Vcs wor
 
 ## Motivation
 
-Our goal is to create a versatile and highly compatible library that can cater to a wide range of use cases, while also fostering community engagement. We also hope to gain practical experience with the use of various technics to build parametric libraries.
+Our goal is to create a versatile and highly compatible library that can cater to a wide range of use cases, while also fostering community engagement. We also hope to gain practical experience with the use of various techniques to build parametric libraries.
 
 ## Naming is hard: Volgo vs Vcs?
 
